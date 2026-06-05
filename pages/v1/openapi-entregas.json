@@ -1,0 +1,5173 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "API de Integração",
+    "description": "API de Integração V1",
+    "license": {
+      "name": "MIT"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api-vendas.taximachine.com.br/api/integracao"
+    },
+    {
+      "url": "https://api.taximachine.com.br/api/integracao"
+    }
+  ],
+  "security": [
+    {
+      "basicAuth": [],
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/cliente": {
+      "get": {
+        "summary": "Obter clientes",
+        "description": "Quando acionada, são retornados todos os clientes da central conforme os parâmetros informados.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "ID do cliente de que se deseja saber informações, caso seja informado, os demais parâmetros serão ignorados. Caso não seja informado, retornará todos os clientes conforme os limites informados. O limite padrão é 20 e o máximo é 100.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "status_cliente",
+            "in": "query",
+            "description": "Filtra os clientes pelo status:\n\nA: Ativo\nI: Inativo\nS: Suspenso\nG: Aguardando ativação",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "A",
+                "I",
+                "S",
+                "G"
+              ]
+            }
+          },
+          {
+            "name": "limite",
+            "in": "query",
+            "description": "Quantidade de clientes retornados. O limite padrão é 20 e o máximo é 100.",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "pagina",
+            "in": "query",
+            "description": "Qual início da contagem para o limite. O padrão é 1.",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": [
+                    {
+                      "id": "1",
+                      "nome": "Exemplo",
+                      "email": "exemplo@email.com.br",
+                      "telefone": "(11) 97772-3133",
+                      "status_cliente": "A",
+                      "cpf": null
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/criarCupom": {
+      "post": {
+        "summary": "Criar cupom",
+        "description": "Cria um novo cupom de desconto.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "gerador_cupom_id",
+                  "codigo",
+                  "data_hora_inicio",
+                  "data_hora_final",
+                  "limite_de_uso",
+                  "limite_de_uso_individual",
+                  "tipo_desconto",
+                  "desconto",
+                  "tipos_pagamentos"
+                ],
+                "properties": {
+                  "gerador_cupom_id": {
+                    "type": "integer",
+                    "description": "ID do gerador de cupons de que deve seguir o padrão."
+                  },
+                  "codigo": {
+                    "type": "string",
+                    "description": "Código do cupom."
+                  },
+                  "data_hora_inicio": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Data hora do início da validade do cupom."
+                  },
+                  "data_hora_final": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Data hora do fim da validade do cupom."
+                  },
+                  "limite_de_uso": {
+                    "type": "string",
+                    "description": "Quantidade de vezes que o cupom poderá ser utilizado, podendo ser: sem_limite, apenas_uma_vez, apenas_primeira_corrida, ate_n_vezes_por_passageiro.",
+                    "enum": [
+                      "sem_limite",
+                      "apenas_uma_vez",
+                      "apenas_primeira_corrida",
+                      "ate_n_vezes_por_passageiro"
+                    ]
+                  },
+                  "limite_de_uso_individual": {
+                    "type": "integer",
+                    "description": "Quantidade de vezes que o cupom pode ser utilizado, caso limite_de_uso seja ate_n_vezes_por_passageiro."
+                  },
+                  "tipo_desconto": {
+                    "type": "string",
+                    "description": "Tipo de desconto como percentual (percentual) ou valor fixo (valor_fixo).",
+                    "enum": [
+                      "percentual",
+                      "valor_fixo"
+                    ]
+                  },
+                  "desconto": {
+                    "type": "string",
+                    "description": "Valor do desconto que será aplicado no cupom."
+                  },
+                  "tipos_pagamentos": {
+                    "type": "array",
+                    "description": "Tipos de pagamento em que o cupom irá se aplicar, valores aceitos: Dinheiro (D), Débito (máquina) (B), Crédito máquina (C), eTicket (T), Voucher (V), Pix (X), Picpay (P), Whatsapp (H), Cartão via app (A), Faturado (F), Picpay (P), Pix via app (I) e Carteira de Créditos (R).",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "D",
+                        "B",
+                        "C",
+                        "T",
+                        "V",
+                        "X",
+                        "P",
+                        "H",
+                        "A",
+                        "F",
+                        "I",
+                        "R"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "codigo": "BLACK FRIDAY",
+                    "mensagem": "Cupom criado com sucesso"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/geradorCupom": {
+      "get": {
+        "summary": "Obter geradores de cupom",
+        "description": "Retorna uma lista com os geradores de cupom disponíveis.",
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": [
+                    {
+                      "id": "3",
+                      "nome": "Gerador apenas primeira corrida",
+                      "tipo": "apenas_primeira_corrida",
+                      "data_hora_inicio": "2023-08-15T03:00:00Z",
+                      "data_hora_fim": "2023-11-16T02:59:59Z",
+                      "quantidade_maxima_cupons": "10",
+                      "quantidade_cupons_gerados": "2",
+                      "tipo_desconto": "percentual",
+                      "desconto": "10.00",
+                      "tipos_pagamentos": [
+                        {
+                          "tipo": "D",
+                          "nome": "Dinheiro"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/obterDocumentos": {
+      "get": {
+        "summary": "Obter documentos da central",
+        "description": "Responsável por retornar todos os documentos criados pela central.",
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "documentos": [
+                      {
+                        "nome": "CNH",
+                        "tipo": "ZG9jXzQz",
+                        "ativo": true
+                      }
+                    ],
+                    "quantidade_documentos": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/listarAreas": {
+      "get": {
+        "summary": "Listar áreas",
+        "description": "Responsável por listar as áreas de bloqueio disponíveis para central.",
+        "parameters": [
+          {
+            "name": "limite",
+            "in": "query",
+            "description": "Quantidade de áreas retornadas. O limite padrão é 20 e o máximo é 100.",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "pagina",
+            "in": "query",
+            "description": "Qual início da contagem para o limite. O padrão é 1.",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array"
+                },
+                "example": [
+                  {
+                    "id": "1",
+                    "nome": "Abelardo Bueno"
+                  },
+                  {
+                    "id": "2",
+                    "nome": "01"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/enviarMensagem": {
+      "post": {
+        "summary": "Enviar mensagem",
+        "description": "Permite enviar mensagens entre empresa e central, e entre central e condutores. Para acessar este endpoint, o usuário precisa ter a permissão `API - Mensagem`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "tipo_chat",
+                  "destinatario_id",
+                  "mensagem"
+                ],
+                "properties": {
+                  "tipo_chat": {
+                    "type": "string",
+                    "description": "Obrigatório. Especifica o tipo de conversa. Valores aceitos: `E` (empresa ↔ central), `C` (central → empresa), `G` (central → condutores) e `P` (central ↔ condutores).",
+                    "enum": [
+                      "E",
+                      "C",
+                      "G",
+                      "P"
+                    ]
+                  },
+                  "destinatario_id": {
+                    "type": "integer",
+                    "description": "Obrigatório para os tipos `E` e `P`. Ignorado para os tipos `C` e `G`. Se `tipo_chat` for `E`, informe o ID da empresa. Se `tipo_chat` for `P`, informe o ID do condutor."
+                  },
+                  "mensagem": {
+                    "type": "string",
+                    "maxLength": 10000,
+                    "description": "Obrigatório. Mensagem que você deseja enviar, com no máximo 10000 caracteres."
+                  }
+                }
+              },
+              "example": {
+                "tipo_chat": "G",
+                "destinatario_id": 1,
+                "mensagem": "Bom dia, está indo ao local de partida?"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "status": "OK",
+                    "mensagem": "Mensagem enviada com sucesso."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integracao/v1/bandeira": {
+      "servers": [
+        {
+          "url": "https://api-vendas.taximachine.com.br"
+        },
+        {
+          "url": "https://api.taximachine.com.br"
+        }
+      ],
+      "put": {
+        "summary": "Alterar configurações da central",
+        "description": "Permite alterar as configurações da sua central. Pelo menos um dos campos opcionais deve ser informado, caso contrário, a requisição será rejeitada.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "permitir_solicitacao_espera": {
+                    "type": "boolean",
+                    "description": "Opcional. Indica se deve habilitar as solicitações em espera. Use `true` para habilitar e `false` para desabilitar."
+                  },
+                  "distancia_km_solicitacao_espera": {
+                    "type": "number",
+                    "format": "float",
+                    "minimum": 0.25,
+                    "maximum": 10,
+                    "description": "Opcional. Distância em quilômetros entre o ponto atual do condutor e o destino informado de finalização da corrida para que o condutor receba uma solicitação em espera. Aceita valores entre `0.25` e `10.0`."
+                  },
+                  "limite_cancelamentos_permitidos": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Opcional. Quantidade limite de cancelamentos permitidos pelo condutor. A configuração `Habilita a punição por cancelamentos` deve estar habilitada."
+                  }
+                }
+              },
+              "example": {
+                "permitir_solicitacao_espera": true,
+                "distancia_km_solicitacao_espera": 0.25
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Central modificada com sucesso."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/listarWebhook": {
+      "get": {
+        "summary": "Listar webhooks",
+        "description": "Permite visualizar os webhooks cadastrados.",
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "webhooks": [
+                      {
+                        "id": "5",
+                        "tipo": "posicao",
+                        "responsavel": "corrida",
+                        "url": "https://teste-2.com"
+                      },
+                      {
+                        "id": "6",
+                        "tipo": "posicao",
+                        "responsavel": "solicitante",
+                        "url": "https://url-de-teste-2.com"
+                      }
+                    ],
+                    "quantidade_webhooks": 2
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cadastrarWebhook": {
+      "post": {
+        "summary": "Cadastrar webhook",
+        "description": "Permite cadastrar um webhook.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tipo": {
+                    "type": "string",
+                    "description": "Indica o tipo de webhook. Valores aceitos: posicao ou status",
+                    "enum": [
+                      "posicao",
+                      "status"
+                    ]
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Indica a URL que receberá o evento"
+                  },
+                  "responsabilidade": {
+                    "type": "string",
+                    "description": "Obrigatório se o usuário autenticado não for de \"empresa\". Define quem é o responsável pelo evento. Valores aceitos: solicitante ou corrida. IMPORTANTE: para usuários \"empresa\", a responsabilidade será definida automaticamente.",
+                    "enum": [
+                      "solicitante",
+                      "corrida"
+                    ]
+                  }
+                },
+                "required": [
+                  "tipo",
+                  "url",
+                  "responsabilidade"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "mensagem": "Webhook criado com sucesso"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/atualizarWebhook/{id}": {
+      "put": {
+        "summary": "Atualizar webhook",
+        "description": "Permite atualizar a url de um webhook. É possível uma central atualizar o webhook de uma empresa cadastrada em sua operação.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "Indica a URL que receberá o evento"
+                  }
+                },
+                "required": [
+                  "url"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "mensagem": "Webhook atualizado com sucesso"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/deletarWebhook/{id}": {
+      "delete": {
+        "summary": "Deletar webhook",
+        "description": "Permite deletar um webhook.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do webhook a ser deletado",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "mensagem": "Webhook deletado com sucesso"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integracao/v1/notificacao/push": {
+      "servers": [
+        {
+          "url": "https://api-vendas.taximachine.com.br"
+        },
+        {
+          "url": "https://api.taximachine.com.br"
+        }
+      ],
+      "post": {
+        "summary": "Enviar notificação push",
+        "description": "Envia notificações via push.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "passageiros",
+                  "mensagem"
+                ],
+                "properties": {
+                  "passageiros": {
+                    "type": "array",
+                    "description": "Obrigatório. Lista de usuários que irão receber as notificações.",
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "titulo": {
+                    "type": "string",
+                    "maxLength": 40,
+                    "description": "Opcional. Título da notificação. Limite de 40 caracteres."
+                  },
+                  "mensagem": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "description": "Obrigatório. Mensagem da notificação. Limite de 255 caracteres."
+                  }
+                }
+              },
+              "example": {
+                "passageiros": [
+                  123
+                ],
+                "titulo": "Titulo",
+                "mensagem": "Mensagem aqui"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Push enviado com sucesso"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integracao/v1/notificacao/inAppMessaging": {
+      "servers": [
+        {
+          "url": "https://api-vendas.taximachine.com.br"
+        },
+        {
+          "url": "https://api.taximachine.com.br"
+        }
+      ],
+      "post": {
+        "summary": "Enviar notificação in-app",
+        "description": "Envia notificações via inAppMessaging.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "passageiros",
+                  "body",
+                  "titulo"
+                ],
+                "properties": {
+                  "passageiros": {
+                    "type": "array",
+                    "description": "Obrigatório. Lista de usuários que irão receber as notificações.",
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "titulo": {
+                    "type": "string",
+                    "maxLength": 40,
+                    "description": "Opcional. Título da notificação. Limite de 40 caracteres."
+                  },
+                  "body": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "description": "Obrigatório. Mensagem da notificação. Limite de 255 caracteres."
+                  },
+                  "url_imagem": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Opcional. URL de uma imagem a ser exibida."
+                  },
+                  "solicitacao_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Opcional. ID da solicitação. Se informado, a notificação só será exibida caso a solicitação esteja em andamento."
+                  },
+                  "titulo_botao_redirecionamento": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "maxLength": 20,
+                    "description": "Obrigatório. Título do botão de redirecionamento. Limite de 20 caracteres."
+                  },
+                  "link_redirecionamento": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Opcional. URL de redirecionamento do botão."
+                  }
+                }
+              },
+              "example": {
+                "passageiros": [
+                  123
+                ],
+                "titulo": "Titulo",
+                "body": "Mensagem aqui",
+                "url_imagem": null,
+                "solicitacao_id": null,
+                "titulo_botao_redirecionamento": null,
+                "link_redirecionamento": null
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "message": "inAppMessaging enviado com sucesso"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/dinamica/area": {
+      "get": {
+        "summary": "Obter dinâmicas por área",
+        "description": "Esse endpoint retorna a lista de dinâmicas associadas às áreas. Cada item da resposta representa um fator de dinâmica vinculado a uma área específica, contendo informações sobre seu estado atual, tipo de fator e valor aplicado.",
+        "servers": [
+          {
+            "url": "https://api-vendas.taximachine.com.br/integracao"
+          },
+          {
+            "url": "https://api.taximachine.com.br/integracao"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "data": [
+                    {
+                      "id": 10,
+                      "nome": "Área Central",
+                      "fator": 1.25,
+                      "ativo": true,
+                      "tipo": "No embarque"
+                    },
+                    {
+                      "id": 12,
+                      "nome": "Zona Norte",
+                      "fator": 1.1,
+                      "ativo": false,
+                      "tipo": "No embarque"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/dinamica/area/{id}": {
+      "patch": {
+        "summary": "Ativar/Desativar dinâmica por área",
+        "description": "Este endpoint permite ativar ou desativar uma dinâmica associada a uma área específica, identificada pelo id informado na URL. A operação altera apenas o estado (`ativo`) da dinâmica, respeitando validações de estado atual e tipo do fator.",
+        "servers": [
+          {
+            "url": "https://api-vendas.taximachine.com.br/integracao"
+          },
+          {
+            "url": "https://api.taximachine.com.br/integracao"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ativo": {
+                    "type": "boolean",
+                    "description": "Indica se o fator de dinâmica será ativo ou desativado. Valores válidos: true, false, 1, 0"
+                  }
+                },
+                "required": [
+                  "ativo"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "message": "Dinâmica atualizada com sucesso"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/dinamica/semArea": {
+      "get": {
+        "summary": "Obter dinâmica sem área",
+        "description": "Este endpoint retorna a dinâmica sem área. A dinâmica sem área representa um fator único aplicado de forma geral, independentemente da área, permitindo identificar se o fator está ativo e qual valor está configurado.",
+        "servers": [
+          {
+            "url": "https://api-vendas.taximachine.com.br/integracao"
+          },
+          {
+            "url": "https://api.taximachine.com.br/integracao"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "data": {
+                    "nome": "Dinâmica sem área",
+                    "fator": 1.15,
+                    "ativo": true,
+                    "tipo": "Sem área"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Ativar/Desativar dinâmica sem área",
+        "description": "Este endpoint permite ativar ou desativar a dinâmica global (sem área). A dinâmica sem área representa um fator único aplicado de forma geral, sem vínculo com áreas específicas.",
+        "servers": [
+          {
+            "url": "https://api-vendas.taximachine.com.br/integracao"
+          },
+          {
+            "url": "https://api.taximachine.com.br/api/integracao"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ativo": {
+                    "type": "boolean",
+                    "description": "Indica se o fator de dinâmica será ativo ou desativado. Valores válidos: true, false, 1, 0"
+                  }
+                },
+                "required": [
+                  "ativo"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "message": "Dinamica sem area atualizada com sucesso."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integracao/v1/saqueAutomatico/ativarDesativar": {
+      "servers": [
+        {
+          "url": "https://api-vendas.taximachine.com.br"
+        },
+        {
+          "url": "https://api.taximachine.com.br"
+        }
+      ],
+      "post": {
+        "summary": "Ativar ou desativar saque automático",
+        "description": "Ativa ou desativa a funcionalidade de saque automático. É necessário ter uma integração ativa para usar esta operação. O limite é de 5 requisições por minuto.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "ativar"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "ativar": {
+                    "type": "boolean",
+                    "description": "Obrigatório. Indica se o saque automático será ativado ou desativado. Valores aceitos pela API: `true`, `false`, `1` e `0`."
+                  }
+                }
+              },
+              "example": {
+                "ativar": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Saque automático ativado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Saque automático ativado"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categoria": {
+      "get": {
+        "summary": "Obter Categorias",
+        "description": "Retorna as categorias ativas da central. Caso seja informada uma localização pertencente a uma filial, serão retornadas as categorias ativas da filial.",
+        "parameters": [
+          {
+            "name": "lat",
+            "in": "query",
+            "description": "Obrigatório caso envie lng",
+            "schema": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          {
+            "name": "lng",
+            "in": "query",
+            "description": "Obrigatório caso envie lat",
+            "schema": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          {
+            "name": "cidade",
+            "in": "query",
+            "description": "Obrigatório se não enviar lat/lng",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endereco",
+            "in": "query",
+            "description": "Obrigatório se não enviar lat/lng",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bairro",
+            "in": "query",
+            "description": "Obrigatório se não enviar lat/lng",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "estado",
+            "in": "query",
+            "description": "Estado",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "response": [
+                    {
+                      "id": "1",
+                      "nome": "Comum"
+                    },
+                    {
+                      "id": "2",
+                      "nome": "VIP"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/categoria/{id}": {
+      "put": {
+        "summary": "Atualizar categoria",
+        "description": "Permite atualizar os dados de uma categoria da central.",
+        "servers": [
+          {
+            "url": "https://api-vendas.taximachine.com.br/integracao"
+          },
+          {
+            "url": "https://api.taximachine.com.br/integracao"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "exibir_no_app": {
+                    "type": "boolean",
+                    "description": "Opcional. Indica se a categoria deve ser exibida no app. Se true, exibe a categoria no aplicativo. Se false, a categoria deixa de ser exibida no aplicativo."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "message": "Categoria modificada com sucesso!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/estimarSolicitacao": {
+      "get": {
+        "summary": "Estimar solicitação",
+        "description": "Permite obter a estimativa do valor da solicitação em uma única categoria. Para acessar esta endpoint, o usuário precisa ter a permissão `API - Corrida`.",
+        "parameters": [
+          {
+            "name": "endereco_partida",
+            "in": "query",
+            "required": true,
+            "description": "Endereço de partida.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bairro_partida",
+            "in": "query",
+            "required": true,
+            "description": "Bairro de partida.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cidade_partida",
+            "in": "query",
+            "required": true,
+            "description": "Cidade de partida.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "estado_partida",
+            "in": "query",
+            "required": true,
+            "description": "Estado de partida.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lat_partida",
+            "in": "query",
+            "description": "Latitude de partida.",
+            "schema": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          {
+            "name": "lng_partida",
+            "in": "query",
+            "description": "Longitude de partida.",
+            "schema": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          {
+            "name": "endereco_desejado",
+            "in": "query",
+            "required": true,
+            "description": "Endereço de destino.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bairro_desejado",
+            "in": "query",
+            "required": true,
+            "description": "Bairro de destino.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cidade_desejado",
+            "in": "query",
+            "required": true,
+            "description": "Cidade de destino.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "estado_desejado",
+            "in": "query",
+            "required": true,
+            "description": "Estado de destino.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lat_desejado",
+            "in": "query",
+            "description": "Latitude de destino.",
+            "schema": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          {
+            "name": "lng_desejado",
+            "in": "query",
+            "description": "Longitude de destino.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "latlng_paradas",
+            "in": "query",
+            "description": "String contendo a latitude e longitude das paradas da solicitação, separadas por `|`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "categoria_id",
+            "in": "query",
+            "description": "ID da categoria que se deseja estimar.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "categoria_nome",
+            "in": "query",
+            "description": "Nome da categoria que se deseja estimar.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "data",
+            "in": "query",
+            "description": "Data de abertura da solicitação (YYYY-MM-DD).",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "hora",
+            "in": "query",
+            "description": "Hora de abertura da solicitação (HH:MM:SS).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "com_retorno",
+            "in": "query",
+            "description": "Indica se a solicitação possui retorno.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "estimativa_valor": 181.3,
+                    "estimativa_minutos": 7,
+                    "estimativa_km": 4.05,
+                    "categoria_nome": "et",
+                    "tarifa_nome": "ea",
+                    "partida": {
+                      "lat": -16.7177506,
+                      "lng": -43.8340907
+                    },
+                    "desejado": {
+                      "lat": -16.7049531,
+                      "lng": -43.8199862
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/estimarSolicitacaoMulticategorias": {
+      "get": {
+        "summary": "Estimar solicitação multicategorias",
+        "description": "Permite obter a estimativa do valor da solicitação de todas as categorias da central que possuem uma tarifa associada. Para acessar esta endpoint, o usuário precisa ter a permissão `API - Corrida`.",
+        "parameters": [
+          {
+            "name": "empresa_id",
+            "in": "query",
+            "description": "ID da empresa do usuário. Obrigatório quando o usuário autenticado é um usuário de empresa.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "lat_partida",
+            "in": "query",
+            "description": "Obrigatório apenas na ausência dos parâmetros de endereço de partida. Caso o usuário autenticado seja de empresa, não é necessário informar o local de partida.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lng_partida",
+            "in": "query",
+            "description": "Obrigatório apenas na ausência dos parâmetros de endereço de partida. Caso o usuário autenticado seja de empresa, não é necessário informar o local de partida.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endereco_partida",
+            "in": "query",
+            "description": "Obrigatório apenas na ausência dos parâmetros `lat_partida` e `lng_partida`. Caso o usuário autenticado seja de empresa, não é necessário informar o local de partida.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bairro_partida",
+            "in": "query",
+            "description": "Obrigatório apenas na ausência dos parâmetros `lat_partida` e `lng_partida`. Caso o usuário autenticado seja de empresa, não é necessário informar o local de partida.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cidade_partida",
+            "in": "query",
+            "description": "Obrigatório apenas na ausência dos parâmetros `lat_partida` e `lng_partida`. Caso o usuário autenticado seja de empresa, não é necessário informar o local de partida.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "estado_partida",
+            "in": "query",
+            "description": "Obrigatório apenas na ausência dos parâmetros `lat_partida` e `lng_partida`. Caso o usuário autenticado seja de empresa, não é necessário informar o local de partida.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lat_desejado",
+            "in": "query",
+            "description": "Obrigatório apenas na ausência dos parâmetros de endereço desejado.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lng_desejado",
+            "in": "query",
+            "description": "Obrigatório apenas na ausência dos parâmetros de endereço desejado.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endereco_desejado",
+            "in": "query",
+            "description": "Obrigatório apenas na ausência dos parâmetros `lat_desejado` e `lng_desejado`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bairro_desejado",
+            "in": "query",
+            "description": "Obrigatório apenas na ausência dos parâmetros `lat_desejado` e `lng_desejado`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cidade_desejado",
+            "in": "query",
+            "description": "Obrigatório apenas na ausência dos parâmetros `lat_desejado` e `lng_desejado`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "estado_desejado",
+            "in": "query",
+            "description": "Obrigatório apenas na ausência dos parâmetros `lat_desejado` e `lng_desejado`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "data",
+            "in": "query",
+            "description": "Data de abertura da solicitação. Obrigatório caso seja para uma corrida programada.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hora",
+            "in": "query",
+            "description": "Hora de abertura da solicitação. Obrigatório caso seja para uma solicitação programada.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "latlng_paradas",
+            "in": "query",
+            "description": "String contendo a latitude e longitude das paradas da solicitação, separadas por `|`.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ignorar_condutores_proximos",
+            "in": "query",
+            "description": "Determina se os condutores próximos serão ignorados ao realizar a estimativa. Afeta somente a configuração de despacho por proximidade.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "estimativa_minutos": 31,
+                    "estimativa_km": 14,
+                    "categorias": [
+                      {
+                        "estimativa_valor": null,
+                        "categoria_nome": "Mercado",
+                        "tarifa_nome": "Tarifa padrão"
+                      },
+                      {
+                        "estimativa_valor": 32.1,
+                        "categoria_nome": "Comum",
+                        "tarifa_nome": "Tarifa padrão"
+                      },
+                      {
+                        "estimativa_valor": 19.1,
+                        "categoria_nome": "Porta-malas grande",
+                        "tarifa_nome": "Tarifa padrão"
+                      },
+                      {
+                        "estimativa_valor": 64.8,
+                        "categoria_nome": "Táxi PcD",
+                        "tarifa_nome": "Tarifa padrão"
+                      },
+                      {
+                        "estimativa_valor": 19.2,
+                        "categoria_nome": "Elite",
+                        "tarifa_nome": "Tarifa padrão"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/condutor": {
+      "get": {
+        "summary": "Obter condutores",
+        "description": "Retorna todos os condutores da central conforme os parâmetros informados.",
+        "parameters": [
+          {
+            "name": "status_condutor",
+            "in": "query",
+            "description": "Retorna apenas os condutores no status desejado. Valores aceitos: `A`, `E`, `F`, `I`, `S`, `R` e `D`.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "A",
+                "E",
+                "F",
+                "I",
+                "S",
+                "R",
+                "D"
+              ]
+            }
+          },
+          {
+            "name": "limite",
+            "in": "query",
+            "description": "Quantidade de condutores retornados. O limite padrão é `20` e o máximo é `100`.",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "pagina",
+            "in": "query",
+            "description": "Qual início da contagem para o limite. O padrão é `1`.",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "telefone",
+            "in": "query",
+            "description": "Telefone do condutor que você deseja consultar.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "description": "ID do condutor.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cpf",
+            "in": "query",
+            "description": "CPF do condutor. Aceita valor completo ou parcial, com ou sem máscara. Exemplos: `123.456.789-09` ou `12345`.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": [
+                    {
+                      "id": "5574",
+                      "nome": "Lara",
+                      "email": "lara@exemplo.com",
+                      "telefone": "(012) 93485-8345",
+                      "status": "E",
+                      "cpf": "879.213.930-20",
+                      "chave_pix": null,
+                      "pagamentos": [],
+                      "avaliacao_media": null,
+                      "data_hora_situacao_cadastral": "2024-03-27 09:54:53",
+                      "data_hora_ultima_corrida": null,
+                      "numero_viatura": null,
+                      "observacao_interna_1": null,
+                      "observacao_interna_2": null,
+                      "observacao_interna_3": null,
+                      "endereco": "Gutmann Village",
+                      "numero_endereco": "",
+                      "complemento": "",
+                      "bairro": "",
+                      "nome_cidade": "Lake Oranbury",
+                      "uf_sigla": "",
+                      "cep": "99999-999",
+                      "pais_nome": "Ethiopia",
+                      "referencia_endereco": null,
+                      "dados_extras": ""
+                    },
+                    {
+                      "id": "5575",
+                      "nome": "Jorge",
+                      "email": "jorge@exemplo.com",
+                      "telefone": "(012) 93485-8345",
+                      "status": "E",
+                      "cpf": "879.213.930-20",
+                      "chave_pix": null,
+                      "pagamentos": [],
+                      "avaliacao_media": null,
+                      "data_hora_situacao_cadastral": "2024-03-27 09:55:40",
+                      "data_hora_ultima_corrida": null,
+                      "numero_viatura": null,
+                      "observacao_interna_1": null,
+                      "observacao_interna_2": null,
+                      "observacao_interna_3": null,
+                      "endereco": "Kertzmann Track",
+                      "numero_endereco": "",
+                      "complemento": "",
+                      "bairro": "",
+                      "nome_cidade": "Pacochaville",
+                      "uf_sigla": "",
+                      "cep": "99999-999",
+                      "pais_nome": "Belize",
+                      "referencia_endereco": null,
+                      "dados_extras": ""
+                    },
+                    {
+                      "id": "712",
+                      "nome": "Roberto",
+                      "email": "roberto@exemplo.com",
+                      "telefone": "(021) 98466-9933",
+                      "status": "E",
+                      "cpf": "145.744.687-18",
+                      "chave_pix": null,
+                      "pagamentos": [
+                        "B"
+                      ],
+                      "avaliacao_media": null,
+                      "data_hora_situacao_cadastral": "2018-05-22 14:32:32",
+                      "data_hora_ultima_corrida": null,
+                      "numero_viatura": null,
+                      "observacao_interna_1": null,
+                      "observacao_interna_2": null,
+                      "observacao_interna_3": null,
+                      "endereco": "Hessel Roads",
+                      "numero_endereco": "",
+                      "complemento": "",
+                      "bairro": "",
+                      "nome_cidade": "Hillltown",
+                      "uf_sigla": "",
+                      "cep": "99999-999",
+                      "pais_nome": "Nigeria",
+                      "referencia_endereco": null,
+                      "dados_extras": ""
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/posicaoCondutor": {
+      "get": {
+        "summary": "Obter posição do entregador",
+        "description": "O retorno será a latitude e longitude do condutor no instante. Caso a entrega ainda estiver na fase de despacho (status distribuindo, pendente ou aguardando aceite) ou já estiver sido finalizada/cancelada (status não atendida, cancelada ou finalizada), o retorno será latitude e longitude null.",
+        "parameters": [
+          {
+            "name": "id_mch",
+            "in": "query",
+            "required": true,
+            "description": "Número da O.S",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "lat_condutor": "-51.0676",
+                    "lng_condutor": "-78.3142"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitação não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 25,
+                      "message": "Solicitacao não encontrada."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recarregarCreditosCondutor": {
+      "post": {
+        "summary": "Recarregar créditos do condutor",
+        "description": "Os condutores podem possuir carteiras de crédito. Esse endpoint permite adicionar créditos para o condutor informado. Para acessar este endpoint, o usuário precisa ter a permissão `API - Carteira de créditos`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "condutor",
+                  "valor"
+                ],
+                "properties": {
+                  "condutor": {
+                    "type": "object",
+                    "description": "Obrigatório. Objeto para identificar o condutor.",
+                    "required": [
+                      "tipo_identificacao",
+                      "identificacao"
+                    ],
+                    "properties": {
+                      "tipo_identificacao": {
+                        "type": "string",
+                        "description": "Forma de identificação do condutor. Valores aceitos: `C` (CPF), `V` (VTR), `T` (Telefone), `P` (Placa) e `I` (ID).",
+                        "enum": [
+                          "C",
+                          "V",
+                          "T",
+                          "P",
+                          "I"
+                        ]
+                      },
+                      "identificacao": {
+                        "oneOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "integer"
+                          }
+                        ],
+                        "description": "Valor do atributo de identificação."
+                      }
+                    }
+                  },
+                  "valor": {
+                    "oneOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ],
+                    "description": "Valor a ser recarregado."
+                  }
+                }
+              },
+              "example": {
+                "condutor": {
+                  "tipo_identificacao": "I",
+                  "identificacao": "5601"
+                },
+                "valor": "1"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso ou falha de negócio",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "sucesso": {
+                    "summary": "Recarga realizada com sucesso",
+                    "value": {
+                      "success": true,
+                      "response": {
+                        "registro_id": "12512"
+                      }
+                    }
+                  },
+                  "identificacaoNaoEncontrada": {
+                    "summary": "Identificação não encontrada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 6,
+                          "message": "Identificação não encontrada."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Entrada incorreta",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 24,
+                      "message": "Formato da entrada incorreto. {valor}"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sacarCreditosCondutor": {
+      "post": {
+        "summary": "Sacar créditos do condutor",
+        "description": "Os condutores podem possuir carteiras de crédito. Esse endpoint permite sacar créditos do condutor informado. Apenas usuários da central com a permissão `Carteira de créditos` podem acessá-lo. Para acessar este endpoint, o usuário precisa ter a permissão `API - Carteira de créditos`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "condutor",
+                  "valor"
+                ],
+                "properties": {
+                  "condutor": {
+                    "type": "object",
+                    "description": "Obrigatório. Objeto para identificar o condutor.",
+                    "required": [
+                      "tipo_identificacao",
+                      "identificacao"
+                    ],
+                    "properties": {
+                      "tipo_identificacao": {
+                        "type": "string",
+                        "description": "Forma de identificação do condutor. Valores aceitos: `C` (CPF), `V` (VTR), `T` (Telefone), `P` (Placa) e `I` (ID).",
+                        "enum": [
+                          "C",
+                          "V",
+                          "T",
+                          "P",
+                          "I"
+                        ]
+                      },
+                      "identificacao": {
+                        "oneOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "integer"
+                          }
+                        ],
+                        "description": "Valor do atributo de identificação."
+                      }
+                    }
+                  },
+                  "valor": {
+                    "oneOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ],
+                    "description": "Valor do saque."
+                  }
+                }
+              },
+              "example": {
+                "condutor": {
+                  "tipo_identificacao": "I",
+                  "identificacao": "5601"
+                },
+                "valor": "10000000000"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "registro_id": "12516"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Falha no saque",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "entradaIncorreta": {
+                    "summary": "Entrada incorreta",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 24,
+                          "message": "Formato da entrada incorreto. {valor}"
+                        }
+                      ]
+                    }
+                  },
+                  "identificacaoNaoEncontrada": {
+                    "summary": "Identificação não encontrada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 6,
+                          "message": "Identificação não encontrada."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/saldoCreditosCondutor": {
+      "post": {
+        "summary": "Verificar saldo de créditos do condutor",
+        "description": "Permite verificar o saldo da carteira de crédito de um condutor. Para acessar este endpoint, o usuário precisa ter a permissão `API - Carteira de créditos`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "condutor"
+                ],
+                "properties": {
+                  "condutor": {
+                    "type": "object",
+                    "description": "Obrigatório. Objeto para identificar o condutor.",
+                    "required": [
+                      "tipo_identificacao",
+                      "identificacao"
+                    ],
+                    "properties": {
+                      "tipo_identificacao": {
+                        "type": "string",
+                        "description": "Forma de identificação do condutor. Valores aceitos: `C` (CPF), `V` (VTR), `T` (Telefone), `P` (Placa) e `I` (ID).",
+                        "enum": [
+                          "C",
+                          "V",
+                          "T",
+                          "P",
+                          "I"
+                        ]
+                      },
+                      "identificacao": {
+                        "oneOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "integer"
+                          }
+                        ],
+                        "description": "Valor do atributo de identificação."
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "condutor": {
+                  "tipo_identificacao": "I",
+                  "identificacao": "5601"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "saldo": 95.06
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Falha na consulta do saldo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "identificacaoNaoEncontrada": {
+                    "summary": "Identificação não encontrada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 6,
+                          "message": "Identificação não encontrada."
+                        }
+                      ]
+                    }
+                  },
+                  "entradaIncorreta": {
+                    "summary": "Entrada incorreta",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 24,
+                          "message": "Formato da entrada incorreto."
+                        }
+                      ]
+                    }
+                  },
+                  "tipoInvalido": {
+                    "summary": "Tipo inválido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 5,
+                          "message": "Tipo de identificação inválida."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documentoCondutor/{id}": {
+      "post": {
+        "summary": "Atualizar documento do condutor",
+        "description": "Permite atualizar um documento do condutor. Apenas os parâmetros enviados são alterados.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Obrigatório. ID do condutor.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "tipo",
+                  "foto"
+                ],
+                "properties": {
+                  "tipo": {
+                    "type": "string",
+                    "description": "Obrigatório. Tipo do documento a ser enviado. Consulte os tipos aceitos em `GET /obterDocumentos`, na seção da central, ou envie `rosto` para a foto do rosto."
+                  },
+                  "foto": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Obrigatório. Foto do documento."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "status": "success",
+                    "mensagem": "Foto alterada com sucesso"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Falha na atualização do documento",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "tipoInvalido": {
+                    "summary": "Tipo inválido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 60,
+                          "message": "tipo é inválido"
+                        }
+                      ]
+                    }
+                  },
+                  "arquivoVazio": {
+                    "summary": "Arquivo vazio",
+                    "value": {
+                      "success": false,
+                      "validationErrors": [
+                        {
+                          "code": 62,
+                          "message": "Arquivo vazio."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/atualizarCondutores": {
+      "put": {
+        "summary": "Atualizar condutores",
+        "description": "Permite a atualização em massa dos condutores. Os dados que você deseja atualizar devem ser enviados no corpo da requisição, assim como os condutores que devem receber a alteração. O parâmetro `condutores` deve ser um array de inteiros com os IDs dos condutores. O parâmetro `areas_bloqueio` deve ser um array de inteiros com os IDs das áreas que deseja atribuir aos condutores.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "condutores"
+                ],
+                "properties": {
+                  "condutores": {
+                    "type": "array",
+                    "description": "Array de inteiros contendo os IDs dos condutores a serem atualizados.",
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "areas_bloqueio": {
+                    "type": "array",
+                    "description": "Array de inteiros contendo os IDs das áreas que deseja atribuir aos condutores.",
+                    "items": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              },
+              "example": {
+                "condutores": [
+                  809,
+                  62
+                ],
+                "areas_bloqueio": [
+                  304,
+                  294,
+                  821
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Falha na atualização em massa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "semCamposParaAtualizar": {
+                    "summary": "Sem campos para atualizar",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        "É necessário enviar um ou mais campos para realizar atualização dos entregadores."
+                      ]
+                    }
+                  },
+                  "condutoresFormatoIncorreto": {
+                    "summary": "Condutores em formato incorreto",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        "Campo condutores é inválido. Deve ser um array."
+                      ]
+                    }
+                  },
+                  "areasFormatoIncorreto": {
+                    "summary": "Áreas em formato incorreto",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        "Campo areas_bloqueio é inválido. Deve ser um array."
+                      ]
+                    }
+                  },
+                  "condutorInvalido": {
+                    "summary": "Condutor inválido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        "Um ou mais entregadores não foram encontrados."
+                      ]
+                    }
+                  },
+                  "areaInvalida": {
+                    "summary": "Área inválida",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        "Área 30000 é inválida"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/obterDocumentosCadastroCondutor": {
+      "post": {
+        "summary": "Obter documentos cadastrados do condutor",
+        "description": "Retorna todos os documentos cadastrados de um condutor.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "condutor"
+                ],
+                "properties": {
+                  "condutor": {
+                    "type": "object",
+                    "description": "Obrigatório. Objeto para identificar o condutor.",
+                    "required": [
+                      "tipo_identificacao",
+                      "identificacao"
+                    ],
+                    "properties": {
+                      "tipo_identificacao": {
+                        "type": "string",
+                        "description": "Forma de identificação do condutor. Valores aceitos: `C` (CPF), `V` (VTR), `T` (telefone), `P` (placa) e `I` (ID).",
+                        "enum": [
+                          "C",
+                          "V",
+                          "T",
+                          "P",
+                          "I"
+                        ]
+                      },
+                      "identificacao": {
+                        "oneOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "integer"
+                          }
+                        ],
+                        "description": "Valor do atributo de identificação."
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "condutor": {
+                  "tipo_identificacao": "I",
+                  "identificacao": 666
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "documentos": [
+                      {
+                        "nome": "Alvará de táxi",
+                        "tipo": "ZG9jXzI2",
+                        "ativo": false
+                      },
+                      {
+                        "nome": "Autonomia (frente)",
+                        "tipo": "ZG9jXzI3",
+                        "ativo": false
+                      },
+                      {
+                        "nome": "Autonomia (verso)",
+                        "tipo": "ZG9jXzI4",
+                        "ativo": false
+                      },
+                      {
+                        "nome": "Certidão de antecedentes criminais",
+                        "tipo": "ZG9jXzI1",
+                        "ativo": false
+                      },
+                      {
+                        "nome": "CNH (Carteira Nacional de Habilitação)",
+                        "tipo": "ZG9jXzIy",
+                        "ativo": false
+                      },
+                      {
+                        "nome": "Comprovante de residência",
+                        "tipo": "ZG9jXzIz",
+                        "ativo": false
+                      },
+                      {
+                        "nome": "CRLV (Certificado de Registro e Licenciamento do Veículo)",
+                        "tipo": "ZG9jXzI0",
+                        "ativo": false
+                      }
+                    ],
+                    "quantidade_documentos": 7
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Falha na consulta dos documentos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "atributoObrigatorio": {
+                    "summary": "Atributo obrigatório ausente",
+                    "value": {
+                      "success": false,
+                      "validationErrors": [
+                        {
+                          "code": 2,
+                          "message": "Atributo 'condutor' é obrigatório."
+                        }
+                      ]
+                    }
+                  },
+                  "identificacaoNaoEncontrada": {
+                    "summary": "Identificação não encontrada",
+                    "value": {
+                      "success": false,
+                      "validationErrors": [
+                        {
+                          "code": 6,
+                          "message": "Identificação não encontrada."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vincularAreaPermissao/{id}": {
+      "post": {
+        "summary": "Vincular área permissão motorista",
+        "description": "Vincula um condutor a uma área de permissão.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do condutor.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "area_id"
+                ],
+                "properties": {
+                  "area_id": {
+                    "type": "integer",
+                    "description": "ID da área que será vinculada ao condutor."
+                  }
+                }
+              },
+              "example": {
+                "area_id": 667
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "status": "OK",
+                    "mensagem": "Entregador atualizado com sucesso"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Área ou motorista não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "areaNaoEncontrada": {
+                    "summary": "Área não encontrada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Área não encontrada"
+                        }
+                      ]
+                    }
+                  },
+                  "motoristaNaoEncontrado": {
+                    "summary": "Motorista não encontrado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 56,
+                          "message": "Motorista não encontrado"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/desvincularAreaPermissao/{id}": {
+      "post": {
+        "summary": "Desvincular área permissão motorista",
+        "description": "Desvincula um condutor de uma área de permissão.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do condutor.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "status": "OK",
+                    "mensagem": "Entregador atualizado com sucesso"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Condutor sem área vinculada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 129,
+                      "message": "CONDUTOR_SEM_AREA_VINCULADA"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/atualizarCondutor/{id}": {
+      "post": {
+        "summary": "Atualizar dados do condutor",
+        "description": "Permite atualizar os dados de um condutor. Apenas os atributos enviados são alterados. Os demais permanecem com os valores atuais.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Obrigatório. ID do condutor que você deseja atualizar.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "ID do condutor."
+                  },
+                  "nome": {
+                    "type": "string",
+                    "description": "Novo nome do condutor."
+                  },
+                  "sexo": {
+                    "type": "string",
+                    "description": "Sexo do condutor. Valores aceitos: `M`, `F`, `O` e `N`.",
+                    "enum": [
+                      "M",
+                      "F",
+                      "O",
+                      "N"
+                    ]
+                  },
+                  "data_nascimento": {
+                    "type": "string",
+                    "description": "Nova data de nascimento do condutor. Exemplo: `2000-01-13`."
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "Novo e-mail do condutor."
+                  },
+                  "telefone": {
+                    "type": "string",
+                    "description": "Novo telefone do condutor."
+                  },
+                  "status_condutor": {
+                    "type": "string",
+                    "description": "Novo status do condutor. Valores aceitos: `A`, `E`, `F`, `I`, `S`, `R` e `D`.",
+                    "enum": [
+                      "A",
+                      "E",
+                      "F",
+                      "I",
+                      "S",
+                      "R",
+                      "D"
+                    ]
+                  },
+                  "endereco": {
+                    "type": "string",
+                    "description": "Novo endereço do condutor."
+                  },
+                  "numero_endereco": {
+                    "type": "string",
+                    "description": "Novo número do endereço do condutor."
+                  },
+                  "complemento": {
+                    "type": "string",
+                    "description": "Novo complemento do endereço do condutor."
+                  },
+                  "cep": {
+                    "type": "string",
+                    "description": "Novo CEP do condutor."
+                  },
+                  "bairro": {
+                    "type": "string",
+                    "description": "Novo bairro do condutor."
+                  },
+                  "cpf": {
+                    "type": "string",
+                    "description": "Novo CPF do condutor."
+                  },
+                  "cnpj": {
+                    "type": "string",
+                    "description": "Novo CNPJ do condutor."
+                  },
+                  "cnh": {
+                    "type": "string",
+                    "description": "Nova CNH do condutor."
+                  },
+                  "possui_vinculo": {
+                    "type": "boolean",
+                    "description": "Indica se o condutor possui vínculo."
+                  },
+                  "vinculo": {
+                    "type": "string",
+                    "description": "Novo vínculo do condutor. Obrigatório quando `possui_vinculo` for `true`."
+                  },
+                  "veiculo_tipo": {
+                    "type": "string",
+                    "description": "Novo tipo de veículo do condutor. Valores aceitos: `C`, `M`, `T` e `B`.",
+                    "enum": [
+                      "C",
+                      "M",
+                      "T",
+                      "B"
+                    ]
+                  },
+                  "placa": {
+                    "type": "string",
+                    "description": "Nova placa do veículo do condutor."
+                  },
+                  "modelo": {
+                    "type": "string",
+                    "description": "Novo modelo do veículo do condutor."
+                  },
+                  "ano_modelo": {
+                    "oneOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ],
+                    "description": "Novo ano do modelo do veículo do condutor."
+                  },
+                  "cor": {
+                    "type": "string",
+                    "description": "Nova cor do veículo do condutor."
+                  },
+                  "porta_malas_grande": {
+                    "type": "boolean",
+                    "description": "Indica se o veículo possui porta-malas grande."
+                  },
+                  "adaptado_cadeirante": {
+                    "type": "boolean",
+                    "description": "Indica se o veículo é adaptado para cadeirantes."
+                  },
+                  "numero_viatura": {
+                    "oneOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ],
+                    "description": "Número de viatura do condutor."
+                  },
+                  "categorias": {
+                    "type": "array",
+                    "description": "Categorias do condutor.",
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "pagamentos": {
+                    "type": "array",
+                    "description": "Siglas dos tipos de pagamento aceitos pelo condutor. Valores aceitos: `D`, `B`, `C`, `T`, `V`, `X`, `P`, `H`, `A`, `F`, `I` e `R`.",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "D",
+                        "B",
+                        "C",
+                        "T",
+                        "V",
+                        "X",
+                        "P",
+                        "H",
+                        "A",
+                        "F",
+                        "I",
+                        "R"
+                      ]
+                    }
+                  },
+                  "exigencia": {
+                    "type": "object",
+                    "description": "Exigências aceitas pelo condutor.",
+                    "properties": {
+                      "veiculo_a_disposicao": {
+                        "type": "boolean",
+                        "description": "Indica se o condutor aceita veículo à disposição."
+                      },
+                      "aceita_encomendas": {
+                        "type": "boolean",
+                        "description": "Indica se o condutor aceita encomendas."
+                      },
+                      "filtro_1": {
+                        "type": "boolean"
+                      },
+                      "filtro_2": {
+                        "type": "boolean"
+                      },
+                      "filtro_3": {
+                        "type": "boolean"
+                      },
+                      "filtro_4": {
+                        "type": "boolean"
+                      },
+                      "filtro_5": {
+                        "type": "boolean"
+                      },
+                      "filtro_6": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "informacoes_adicionais": {
+                    "type": "string",
+                    "description": "Informações adicionais do condutor."
+                  },
+                  "observacao_interna_1": {
+                    "type": "string",
+                    "description": "Observação interna 1 do condutor."
+                  },
+                  "observacao_interna_2": {
+                    "type": "string",
+                    "description": "Observação interna 2 do condutor."
+                  },
+                  "observacao_interna_3": {
+                    "type": "string",
+                    "description": "Observação interna 3 do condutor."
+                  }
+                }
+              },
+              "example": {
+                "id": 5378,
+                "nome": "Rafael",
+                "sexo": "M",
+                "data_nascimento": "2000-01-13",
+                "email": "rafalem@exemplo.com",
+                "telefone": "(021) 91234-5678",
+                "possui_vinculo": true,
+                "vinculo": "A",
+                "status_condutor": "A",
+                "veiculo_tipo": "B",
+                "placa": "XXX-9999",
+                "cor": "ffffff",
+                "modelo": "Siena",
+                "ano_modelo": 2008,
+                "porta_malas_grande": true,
+                "adaptado_cadeirante": true,
+                "categorias": [
+                  1,
+                  2,
+                  3
+                ],
+                "endereco": "rua da saudade",
+                "endereco_numero": "12",
+                "complemento": "lote 12",
+                "cep": "12345-678",
+                "bairro": "bairro 1",
+                "cpf": "306.093.750-83",
+                "cnh": "99999999999",
+                "numero_viatura": "12",
+                "pagamentos": [
+                  "B",
+                  "C",
+                  "T"
+                ],
+                "exigencia": {
+                  "veiculo_a_disposicao": true,
+                  "aceita_encomendas": true,
+                  "filtro_1": false,
+                  "filtro_2": true,
+                  "filtro_3": true,
+                  "filtro_4": true,
+                  "filtro_5": true,
+                  "filtro_6": true
+                },
+                "informacoes_adicionais": "Taxista empresario",
+                "observacao_interna_1": "Observação 1",
+                "observacao_interna_2": "Observação 2",
+                "observacao_interna_3": "Observação 3"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "status": "OK",
+                    "mensagem": "Motorista atualizado com sucesso"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Falha na atualização do condutor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "naoEncontrado": {
+                    "summary": "Condutor não encontrado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 56,
+                          "message": "Motorista não encontrado"
+                        }
+                      ]
+                    }
+                  },
+                  "valoresInvalidos": {
+                    "summary": "Campos com valores inválidos",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 49,
+                          "message": "Cor inválida"
+                        },
+                        {
+                          "code": 45,
+                          "message": "sexo é inválido"
+                        },
+                        {
+                          "code": 46,
+                          "message": "E-mail não é um endereço de e-mail válido."
+                        },
+                        {
+                          "code": 30,
+                          "message": "Telefone é inválido"
+                        },
+                        {
+                          "code": 54,
+                          "message": "CPF é inválido"
+                        },
+                        {
+                          "code": 43,
+                          "message": "Data de nascimento é inválida"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integracao/v1/engajamento/index": {
+      "servers": [
+        {
+          "url": "https://api-vendas.taximachine.com.br"
+        },
+        {
+          "url": "https://api.taximachine.com.br"
+        }
+      ],
+      "get": {
+        "summary": "Listar webhooks de engajamento",
+        "description": "Lista os webhooks de engajamento cadastrados e as bandeiras sem webhook vinculado. Apenas bandeiras do mesmo grupo são consideradas, e somente bandeiras ativas são retornadas na lista de bandeiras sem webhook vinculado.",
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "webhooks": [
+                      {
+                        "id": 1,
+                        "headers": {
+                          "X-Cliente-Nome": "nome-exemplo",
+                          "X-Cliente-Chave": "chave-exemplo"
+                        },
+                        "url": "https://www.exemplo.url",
+                        "bandeiras": [
+                          {
+                            "id": 1,
+                            "nome": "Bandeira Exemplo 1",
+                            "eventos": [
+                              "cadastro_passageiro_app",
+                              "estimativa_passageiro_app",
+                              "solicitacao_passageiro_app_abertura",
+                              "solicitacao_passageiro_app_finalizada"
+                            ]
+                          },
+                          {
+                            "id": 2,
+                            "nome": "Bandeira Exemplo 2",
+                            "eventos": [
+                              "cadastro_passageiro_app",
+                              "estimativa_passageiro_app",
+                              "solicitacao_passageiro_app_abertura",
+                              "solicitacao_passageiro_app_finalizada"
+                            ]
+                          },
+                          {
+                            "id": 3,
+                            "nome": "Bandeira Exemplo 3",
+                            "eventos": [
+                              "cadastro_passageiro_app",
+                              "estimativa_passageiro_app",
+                              "solicitacao_passageiro_app_abertura",
+                              "solicitacao_passageiro_app_finalizada"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "id": 2,
+                        "headers": null,
+                        "url": "https://www.exemplo.url2",
+                        "bandeiras": [
+                          {
+                            "id": 6,
+                            "nome": "Bandeira Exemplo 6",
+                            "eventos": [
+                              "cadastro_passageiro_app",
+                              "estimativa_passageiro_app",
+                              "solicitacao_passageiro_app_abertura",
+                              "solicitacao_passageiro_app_finalizada"
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "bandeiras_sem_webhook": [
+                      {
+                        "id": 4,
+                        "nome": "Bandeira Exemplo 4"
+                      },
+                      {
+                        "id": 5,
+                        "nome": "Bandeira Exemplo 5"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Criar webhook de engajamento",
+        "description": "Cria um webhook de engajamento a partir da URL. Os headers são opcionais e limitados a 10 chaves. Não é possível criar dois webhooks com a mesma URL.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "url"
+                ],
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "Obrigatório. URL para envio dos eventos."
+                  },
+                  "headers": {
+                    "type": "object",
+                    "description": "Opcional. Headers utilizados no envio à URL. Limite de 10 chaves.",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "example": {
+                "url": "https://mariela.net"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Webhook de engajamento criado com sucesso."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integracao/v1/engajamento/index/{id}": {
+      "servers": [
+        {
+          "url": "https://api-vendas.taximachine.com.br"
+        },
+        {
+          "url": "https://api.taximachine.com.br"
+        }
+      ],
+      "put": {
+        "summary": "Editar webhook de engajamento",
+        "description": "Edita um webhook de engajamento a partir do ID. Você pode editar a URL ou os headers. Os headers são limitados a 10 chaves. Não é possível usar a mesma URL de outro webhook já existente. O envio de eventos é alterado em até 5 minutos após a edição.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do webhook.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "Opcional. URL para envio dos eventos."
+                  },
+                  "headers": {
+                    "type": "object",
+                    "description": "Opcional. Headers utilizados no envio à URL. Limite de 10 chaves.",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "example": {
+                "url": "https://agustina.info"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Webhook de engajamento atualizado com sucesso."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Deletar webhook de engajamento",
+        "description": "Deleta um webhook de engajamento a partir do ID. O envio de eventos do webhook removido para em até 5 minutos após a exclusão.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do webhook.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Webhook de engajamento excluído com sucesso."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integracao/v1/engajamento/permissao/{id}": {
+      "servers": [
+        {
+          "url": "https://api-vendas.taximachine.com.br"
+        },
+        {
+          "url": "https://api.taximachine.com.br"
+        }
+      ],
+      "post": {
+        "summary": "Adicionar bandeiras e permissões a webhook",
+        "description": "Adiciona ou substitui o grupo atual de bandeiras de um webhook e define as permissões dessas bandeiras. As bandeiras e permissões anteriores do webhook são removidas. Impede a inclusão de bandeiras já atreladas a outros webhooks. O envio de eventos é alterado em até 5 minutos após a edição.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do webhook.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "bandeiras"
+                ],
+                "properties": {
+                  "bandeiras": {
+                    "type": "array",
+                    "description": "Obrigatório. Lista de bandeiras com `bandeira_id` e os `eventos` que cada bandeira deve receber.",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "bandeira_id",
+                        "eventos"
+                      ],
+                      "properties": {
+                        "bandeira_id": {
+                          "type": "integer",
+                          "description": "ID da bandeira."
+                        },
+                        "eventos": {
+                          "type": "array",
+                          "description": "Eventos que a bandeira deve receber.",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "bandeiras": [
+                  {
+                    "bandeira_id": 913,
+                    "eventos": [
+                      "cadastro_passageiro_app",
+                      "estimativa_passageiro_app",
+                      "solicitacao_passageiro_app_abertura",
+                      "solicitacao_passageiro_app_finalizada"
+                    ]
+                  },
+                  {
+                    "bandeira_id": 8,
+                    "eventos": [
+                      "cadastro_passageiro_app",
+                      "estimativa_passageiro_app",
+                      "solicitacao_passageiro_app_abertura",
+                      "solicitacao_passageiro_app_finalizada"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Permissões de engajamento criadas com sucesso."
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Adicionar ou editar permissões de uma bandeira",
+        "description": "Adiciona uma bandeira a um webhook e define as permissões dessa bandeira. Se a bandeira já estiver no grupo, as permissões de eventos dessa bandeira são alteradas. Impede a inclusão de bandeiras já atreladas a outros webhooks. O envio de eventos é alterado em até 5 minutos após a edição.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do webhook.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "bandeira"
+                ],
+                "properties": {
+                  "bandeira": {
+                    "type": "object",
+                    "required": [
+                      "bandeira_id",
+                      "eventos"
+                    ],
+                    "properties": {
+                      "bandeira_id": {
+                        "type": "integer",
+                        "description": "ID da bandeira."
+                      },
+                      "eventos": {
+                        "type": "array",
+                        "description": "Eventos que a bandeira deve receber.",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "bandeira": {
+                  "bandeira_id": 402,
+                  "eventos": [
+                    "cadastro_passageiro_app",
+                    "estimativa_passageiro_app",
+                    "solicitacao_passageiro_app_abertura",
+                    "solicitacao_passageiro_app_finalizada"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Permissões de engajamento criadas com sucesso."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remover bandeiras de webhook",
+        "description": "Remove o vínculo de um grupo de bandeiras do webhook. Recebe uma lista de `bandeiras` com cada `bandeira_id` a ser removido. O envio de eventos é alterado em até 5 minutos após a exclusão.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do webhook.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "bandeiras"
+                ],
+                "properties": {
+                  "bandeiras": {
+                    "type": "array",
+                    "description": "Obrigatório. Lista de IDs das bandeiras que serão removidas.",
+                    "items": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              },
+              "example": {
+                "bandeiras": [
+                  820,
+                  620,
+                  767
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Permissões de engajamento excluídas com sucesso."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/empresa": {
+      "get": {
+        "summary": "Obter empresas da central",
+        "description": "Retorna todas as empresas conveniadas à central, podendo também retornar os dados de uma empresa específica, ou a do usuário, caso seja um usuário da empresa. O campo \"dados_extras\" somente é retornado quando a autenticação é de central. Caso uma quebra de linha esteja presente, será indicada com os caracteres \"\\r\\n\". Para ter acesso à essa endpoint o usuário autenticado deve ter a permissão “API - Empresa”.",
+        "parameters": [
+          {
+            "name": "empresa_id",
+            "in": "query",
+            "description": "Caso não seja especificado, retorna todas as empresas pertencentes à central. Se for usuário de empresa, o endpoint irá retornar apenas os dados da empresa do usuário e este parâmetro é ignorado.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limite",
+            "in": "query",
+            "description": "Default 20, Max 100",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "pagina",
+            "in": "query",
+            "description": "Default 1",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "response": [
+                    {
+                      "id": "420",
+                      "nome": "Gaudium",
+                      "numero_contrato": "123",
+                      "endereco": "Rua da Assembleia",
+                      "complemento": "10",
+                      "bairro": "Centro",
+                      "cidade": "Rio de Janeiro",
+                      "uf": "RJ",
+                      "cep": "20011-001",
+                      "lat": "-22.905164000",
+                      "lng": "-43.176447800",
+                      "telefone": "21999999999",
+                      "telefone_internacional": "5521999999999",
+                      "status_empresa": "A",
+                      "data_hora_cadastro": "2023-01-01 10:00:00",
+                      "dados_extras": "Informação 1\r\nInformação 2",
+                      "tipo_documento": "CNPJ",
+                      "documento": "12.345.678/0001-90",
+                      "tipos_pagamento": [
+                        "D",
+                        "B",
+                        "C"
+                      ],
+                      "categorias": [
+                        {
+                          "id": "1",
+                          "nome": "Comum"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "474",
+                      "nome": "Gutmann Inc",
+                      "numero_contrato": "456",
+                      "endereco": "Avenida Brasil",
+                      "complemento": null,
+                      "bairro": "Bonsucesso",
+                      "cidade": "Rio de Janeiro",
+                      "uf": "RJ",
+                      "cep": "21040-000",
+                      "lat": "-22.876543000",
+                      "lng": "-43.234567000",
+                      "telefone": "21888888888",
+                      "telefone_internacional": "5521888888888",
+                      "status_empresa": "S",
+                      "data_hora_cadastro": "2023-02-01 11:00:00",
+                      "dados_extras": "Outros dados\r\nMais dados",
+                      "tipo_documento": "CPF",
+                      "documento": "123.456.789-00",
+                      "tipos_pagamento": [
+                        "D"
+                      ],
+                      "categorias": [
+                        {
+                          "id": "2",
+                          "nome": "Executivo"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/atualizarEmpresa/{id}": {
+      "put": {
+        "summary": "Atualizar empresa",
+        "description": "Esse endpoint permite a atualização de dados da empresa (status ou número de contrato), sendo necessário informar o ID da empresa que se deseja atualizar no final da URL. Para ter acesso a essa endpoint, é necessário que o usuário tenha a permissão \"API - Empresa\"",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status_empresa": {
+                    "type": "string",
+                    "description": "Status da empresa para o qual se deseja atualizar:\n- A: Ativo\n- G: Aguardando Ativação\n- S: Suspenso",
+                    "enum": [
+                      "A",
+                      "G",
+                      "S"
+                    ]
+                  },
+                  "numero_contrato": {
+                    "type": "integer",
+                    "description": "Novo número do contrato da empresa."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "response": {
+                    "status": "OK",
+                    "mensagem": "Empresa atualizada com sucesso"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/atualizarEmpresas": {
+      "put": {
+        "summary": "Atualizar empresas",
+        "description": "Esse endpoint permite a atualização de empresas em massa. Para acessá-la, é necessário que o usuário utilizado na autenticação tenha a permissão “API - Empresa”.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "empresas": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "Array de inteiros, contendo os Ids das empresas a serem atualizadas."
+                  },
+                  "status_empresa": {
+                    "type": "string",
+                    "description": "A - Ativo, S - Suspenso, G - Aguardando ativação",
+                    "enum": [
+                      "A",
+                      "S",
+                      "G"
+                    ]
+                  },
+                  "categorias": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "Array de inteiros, contendo os Ids das categorias que deseja utilizar para as empresas."
+                  },
+                  "tipos_pagamento": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "B",
+                        "C",
+                        "D",
+                        "F",
+                        "H",
+                        "P",
+                        "R",
+                        "X"
+                      ]
+                    },
+                    "description": "Array de strings, contendo as siglas dos tipos de pagamento que deseja utilizar para as empresas (B, C, D, F, H, P, R, X)."
+                  },
+                  "area_atuacao_empresa_id": {
+                    "type": "integer",
+                    "description": "ID da área de atuação da empresa."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/centroDeCusto": {
+      "get": {
+        "summary": "Obter centro de custo",
+        "description": "Esse endpoint retorna todos os centros de custos da empresa (esta última, deve pertencer à central). Para acessá-la, é necessário que o usuário utilizado na autenticação tenha a permissão “API - Empresa”.",
+        "parameters": [
+          {
+            "name": "empresa_id",
+            "in": "query",
+            "description": "Se for usuário de empresa, o endpoint irá retornar apenas os dados da empresa do usuário e este parâmetro é ignorado. Se o usuário autenticado for da central, este parâmetro é obrigatório.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limite",
+            "in": "query",
+            "description": "default 20, max 100",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "pagina",
+            "in": "query",
+            "description": "default 1",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "response": [
+                    {
+                      "id": "1",
+                      "nome": "Administrativo",
+                      "limite_mensal": "10000.00"
+                    },
+                    {
+                      "id": "25",
+                      "nome": "CEO",
+                      "limite_mensal": "1500000.00"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/funcionario": {
+      "get": {
+        "summary": "Obter funcionários",
+        "description": "Para o serviço em questão, há três opções de parâmetros: empresa_id, centro_custo_id ou ambos. Se apenas o empresa_id for fornecido, serão retornados os funcionários da empresa correspondente. Se apenas o centro_custo_id for fornecido, serão retornados os funcionários do centro de custo correspondente. A permissão \"API - Empresa\" é necessária para acessar este endpoint.",
+        "parameters": [
+          {
+            "name": "empresa_id",
+            "in": "query",
+            "description": "Obrigatório caso não seja informado o centro_custo_id ou caso o usuário autenticado seja da central.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "centro_custo_id",
+            "in": "query",
+            "description": "ID do centro de custo.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limite",
+            "in": "query",
+            "description": "default 20, max 100",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "pagina",
+            "in": "query",
+            "description": "default 1",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "response": [
+                    {
+                      "nome": "João Pedro",
+                      "email": "jaopedro@exemplo.com",
+                      "centro_custo_id": "1",
+                      "centro_custo_nome": "Administrativo",
+                      "empresa_id": "1",
+                      "empresa_nome": "EcoCups",
+                      "limite_mensal": "400.00",
+                      "saldo": "0.00"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cadastrarEmpresa": {
+      "post": {
+        "summary": "Cadastrar empresa",
+        "description": "Endpoint para cadastro de empresa. Para ter acesso a essa endpoint, é necessário que o usuário tenha a permissão \"API - Empresa\"",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "documento": {
+                    "type": "string",
+                    "description": "(Obrigatório). Exemplo: 83.769.522/0001-80"
+                  },
+                  "tipo_documento": {
+                    "type": "string",
+                    "enum": [
+                      "CNPJ",
+                      "CPF"
+                    ],
+                    "description": "(Obrigatório). Exemplo: CNPJ"
+                  },
+                  "numero_contrato": {
+                    "type": "string",
+                    "description": "(Obrigatório). Exemplo: 104536"
+                  },
+                  "razao_social": {
+                    "type": "string",
+                    "description": "Razão social da empresa. Exemplo: Razão social nova empresa"
+                  },
+                  "nome_fantasia": {
+                    "type": "string",
+                    "description": "(Obrigatório). Exemplo: Nome nova empresa"
+                  },
+                  "endereco": {
+                    "type": "object",
+                    "description": "Dados de endereço da empresa.",
+                    "properties": {
+                      "logradouro": {
+                        "type": "string",
+                        "description": "Exemplo: Avenida Barão do Rio Branco 261"
+                      },
+                      "complemento": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Exemplo: null"
+                      },
+                      "uf": {
+                        "type": "string",
+                        "description": "Exemplo: AP"
+                      },
+                      "cidade": {
+                        "type": "string",
+                        "description": "Exemplo: Oiapoque"
+                      },
+                      "bairro": {
+                        "type": "string",
+                        "description": "Exemplo: Centro"
+                      },
+                      "cep": {
+                        "type": "string",
+                        "description": "Exemplo: 68980-000"
+                      }
+                    }
+                  },
+                  "telefone": {
+                    "type": "object",
+                    "description": "Dados de telefone da empresa.",
+                    "properties": {
+                      "ddd": {
+                        "type": "string",
+                        "description": "Exemplo: 85"
+                      },
+                      "numero": {
+                        "type": "string",
+                        "description": "Exemplo: 99999-8888"
+                      }
+                    }
+                  },
+                  "situacao_cadastral": {
+                    "type": "string",
+                    "enum": [
+                      "A",
+                      "G",
+                      "S"
+                    ],
+                    "description": "A - Ativo, G - Aguardando ativação ou S - Suspenso. Exemplo: S"
+                  },
+                  "categorias": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "Array de inteiros indicando o id da categoria que deseja disponibilizar para empresa. Um array vazio ([]) significa todas as categorias. Exemplo: [71]"
+                  },
+                  "tipos_pagamento": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "B",
+                        "C",
+                        "D",
+                        "F",
+                        "H",
+                        "P",
+                        "R",
+                        "X"
+                      ]
+                    },
+                    "description": "Array de string contendo a sigla do tipo de pagamento. Um array vazio ([]) significa todos os tipos de pagamento.\nB: Débito (máquina)\nC: Crédito (máquina)\nD: Dinheiro\nF: Faturado\nH: WhatsApp\nP: Picpay\nR: Carteira de Créditos\nX: Pix\nExemplo: [\"B\", \"C\", \"D\", \"F\", \"H\", \"P\", \"R\", \"X\"]"
+                  },
+                  "area_atuacao_empresa_id": {
+                    "type": "integer",
+                    "description": "ID da área de atuação da empresa."
+                  },
+                  "cobrar_retorno": {
+                    "type": "boolean",
+                    "description": "Indica se deve cobrar retorno."
+                  },
+                  "obrigar_finalizacao_com_retorno_pela_empresa": {
+                    "type": "boolean",
+                    "description": "Indica se deve obrigar a finalização com retorno pela empresa."
+                  },
+                  "solicitacao_rapida": {
+                    "type": "object",
+                    "properties": {
+                      "habilitar": {
+                        "type": "boolean",
+                        "description": "Indica se a solicitação rápida está habilitada."
+                      },
+                      "categoria": {
+                        "type": "integer",
+                        "description": "ID da categoria da solicitação rápida."
+                      },
+                      "tipo_pagamento": {
+                        "type": "string",
+                        "description": "Sigla do tipo de pagamento da solicitação rápida."
+                      }
+                    }
+                  },
+                  "observacao_condutor": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Indicar observação se tiver (passar null caso contrário). Exemplo: Obs"
+                  },
+                  "dados_extras": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Indicar dados extras se tiver (passar null caso contrário). Exemplo: Dados"
+                  }
+                }
+              },
+              "example": {
+                "documento": "97.553.510/0001-28",
+                "tipo_documento": "CNPJ",
+                "numero_contrato": "104536",
+                "razao_social": "Razão social nova empresa",
+                "nome_fantasia": "Nome nova empresa",
+                "endereco": {
+                  "logradouro": "Avenida Barão do Rio Branco 261",
+                  "complemento": null,
+                  "uf": "AP",
+                  "cidade": "Oiapoque",
+                  "bairro": "Centro",
+                  "cep": "68980-000"
+                },
+                "telefone": {
+                  "ddd": "85",
+                  "numero": "99999-8888"
+                },
+                "situacao_cadastral": "S",
+                "categorias": [
+                  71
+                ],
+                "tipos_pagamento": [
+                  "B",
+                  "C",
+                  "D",
+                  "F",
+                  "H",
+                  "P",
+                  "R",
+                  "X"
+                ],
+                "area_atuacao_empresa_id": 38,
+                "cobrar_retorno": true,
+                "obrigar_finalizacao_com_retorno_pela_empresa": false,
+                "solicitacao_rapida": {
+                  "habilitar": true,
+                  "categoria": 71,
+                  "tipo_pagamento": "D"
+                },
+                "observacao_condutor": "Obs",
+                "dados_extras": "Dados"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "response": {
+                    "status": "OK",
+                    "mensagem": "Empresa cadastrada com sucesso."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/listarAreasAtuacaoEmpresa": {
+      "get": {
+        "summary": "Obter áreas de atuação",
+        "description": "Retorna as áreas de atuação da empresa.",
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "id": 38,
+                    "nome": "Área 1",
+                    "padrao": true
+                  },
+                  {
+                    "id": 41,
+                    "nome": "Área 2",
+                    "padrao": false
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/saldoCreditosEmpresa": {
+      "post": {
+        "summary": "Obter saldo da empresa",
+        "description": "Permite verificar o saldo da carteira de crédito de uma empresa.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "empresa"
+                ],
+                "properties": {
+                  "empresa": {
+                    "type": "object",
+                    "required": [
+                      "tipo_identificacao",
+                      "identificacao"
+                    ],
+                    "properties": {
+                      "tipo_identificacao": {
+                        "type": "string",
+                        "enum": [
+                          "F",
+                          "J",
+                          "T",
+                          "C",
+                          "I"
+                        ],
+                        "description": "F: CPF, J: CNPJ, T: Telefone, C: Código, I: ID"
+                      },
+                      "identificacao": {
+                        "oneOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "integer"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "response": {
+                    "saldo": 100
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recarregarCreditosEmpresa": {
+      "post": {
+        "summary": "Recarregar créditos da empresa",
+        "description": "Permite recarregar créditos para uma empresa.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "valor",
+                  "empresa"
+                ],
+                "properties": {
+                  "valor": {
+                    "type": "number",
+                    "format": "float"
+                  },
+                  "observacao": {
+                    "type": "string"
+                  },
+                  "empresa": {
+                    "type": "object",
+                    "required": [
+                      "tipo_identificacao",
+                      "identificacao"
+                    ],
+                    "properties": {
+                      "tipo_identificacao": {
+                        "type": "string",
+                        "enum": [
+                          "F",
+                          "J",
+                          "T",
+                          "C",
+                          "I"
+                        ]
+                      },
+                      "identificacao": {
+                        "oneOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "integer"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "response": {
+                    "registro_id": 12345
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sacarCreditosEmpresa": {
+      "post": {
+        "summary": "Sacar créditos da empresa",
+        "description": "Permite sacar créditos de uma empresa.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "valor",
+                  "empresa"
+                ],
+                "properties": {
+                  "valor": {
+                    "type": "number",
+                    "format": "float"
+                  },
+                  "observacao": {
+                    "type": "string"
+                  },
+                  "empresa": {
+                    "type": "object",
+                    "required": [
+                      "tipo_identificacao",
+                      "identificacao"
+                    ],
+                    "properties": {
+                      "tipo_identificacao": {
+                        "type": "string",
+                        "enum": [
+                          "F",
+                          "J",
+                          "T",
+                          "C",
+                          "I"
+                        ]
+                      },
+                      "identificacao": {
+                        "oneOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "integer"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "response": {
+                    "registro_id": 12346
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/solicitacao": {
+      "get": {
+        "summary": "Obter solicitações",
+        "description": "Ao acionar, são retornadas todas as solicitações da central conforme os parâmetros informados.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "ID da solicitação. Caso seja informado os outros parâmetros serão ignorados.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "status_solicitacao",
+            "in": "query",
+            "description": "Status da solicitação. Caso não seja informado, todos serão considerados. Valores possíveis: Distribuindo (D), Aguardando aceite (G), Pendente (P), Não atendida (N), Aceita (A), Arredores local (A), Cheguei ao local (C), Entrada do passageiro (E), Partida prolongada (O), Alteração de trajeto (T), Em espera (S), Em andamento (E), Parada confirmada (R), Finalizada (F), Cancelada (C), Aguardando pagamento (R).",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "D",
+                "G",
+                "P",
+                "N",
+                "A",
+                "C",
+                "E",
+                "O",
+                "T",
+                "S",
+                "R",
+                "F"
+              ]
+            }
+          },
+          {
+            "name": "taxista_id",
+            "in": "query",
+            "description": "ID do taxista que aceitou a solicitação. Caso não seja informado, todos serão considerados.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cliente_id",
+            "in": "query",
+            "description": "ID do cliente que aceitou a solicitação. Caso não seja informado, todos serão considerados.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "tipo_pagamento",
+            "in": "query",
+            "description": "Tipo de pagamento selecionado pelo cliente. Caso não seja informado, todos serão considerado. Valores aceitos: Dinheiro (D), Débito (máquina) (B), Crédito máquina (C), eTicket (T), Voucher (V), Pix (X), Picpay (P), Whatsapp (H), Cartão via app (A), Faturado (F), Pix via app (I), Carteira de créditos (R).",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "D",
+                "B",
+                "C",
+                "T",
+                "V",
+                "X",
+                "P",
+                "H",
+                "A",
+                "F",
+                "I",
+                "R"
+              ]
+            }
+          },
+          {
+            "name": "data_hora_solicitacao_min",
+            "in": "query",
+            "description": "Data/hora miníma da abertura da solicitação, intervalo máximo de 31 dias em relação ao data_hora_max.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "data_hora_solicitacao_max",
+            "in": "query",
+            "description": "Data/hora máxima da abertura da solicitação, intervalo máximo de 31 dias em relação ao data_hora_min.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "empresa_id",
+            "in": "query",
+            "description": "ID da empresa que aceitou a corrida.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limite",
+            "in": "query",
+            "description": "Quantidade de solicitações retornadas. O limite padrão é 20 e o máximo é 100.",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "pagina",
+            "in": "query",
+            "description": "Qual início da contagem para o limite. O padrão é 1.",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": [
+                    {
+                      "id": "790",
+                      "data_hora_solicitacao": "2021-02-18 10:23:42",
+                      "data_hora_chegada_local": "2021-02-18 10:24:42",
+                      "status_solicitacao": "A",
+                      "cliente_id": "1",
+                      "nome_passageiro": "NOME DO CLIENTE",
+                      "empresa_id": null,
+                      "bandeira_chamada_id": "1",
+                      "data_hora_aceite": "2021-02-18 10:23:42",
+                      "data_hora_finalizacao": null,
+                      "data_hora_cancelamento": null,
+                      "data_hora_pendencia": null,
+                      "distancia_coleta_km": "1.00",
+                      "valor_corrida": "0.00",
+                      "condutor_especificado": false,
+                      "com_retorno": false,
+                      "condutor_id": "1",
+                      "nome_condutor": "NOME DO CONDUTOR",
+                      "telefone_condutor": "(99) 99999-9999",
+                      "veiculo": "NOME DO VEICULO",
+                      "placa_veiculo": "ABC-1234",
+                      "cor_veiculo": "AZUL",
+                      "duracao_corrida": "0",
+                      "distancia_percorrida_km": "0.00",
+                      "taxas_cancelamento": null,
+                      "paradas": []
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/solicitacaoStatus": {
+      "get": {
+        "summary": "Status da solicitação",
+        "description": "Informa o status da solicitação informada. Os status podem ser: Distribuindo (D), Aguardando aceite (G), Pendente (P), Não atendida (N), Aceita (A), Em espera (S), Em andamento (E), Finalizada (F) ou Cancelada (C).",
+        "parameters": [
+          {
+            "name": "id_mch",
+            "in": "query",
+            "required": true,
+            "description": "ID da solicitação que se deseja visualizar o status.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "status": "A"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cancelar": {
+      "post": {
+        "summary": "Cancelar solicitação",
+        "description": "Cancela (mudando para status C), a solicitação informada. A solicitação não pode estar com o status finalizada (F), cancelada (C) ou não atendida (N).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id_mch",
+                  "motivo_id"
+                ],
+                "properties": {
+                  "id_mch": {
+                    "type": "integer",
+                    "description": "ID da solicitação que se deseja cancelar."
+                  },
+                  "motivo_id": {
+                    "type": "integer",
+                    "description": "ID do motivo do cancelamento:\n1: Tempo de espera, 2: Mudança de planos, 3: Acidente/Carro quebrado, 4: Difícil acesso, 5: Passageiro não entrou, 6: Outros, 7: Endereço errado, 8: Corrida em andamento há mais de 24 h, 9: Falha no sistema, 10: Outros casos, 11: Rejeitada, 12: Motorista não está vindo, 13: Transação rejeitada, 16: Despachado na plataforma parceira, 17: Cancelado na plataforma parceira, 18: Não foi possível realizar o pagamento, 19: Pagamento não realizado.",
+                    "enum": [
+                      1,
+                      2,
+                      3,
+                      4,
+                      5,
+                      6,
+                      7,
+                      8,
+                      9,
+                      10,
+                      11,
+                      12,
+                      13,
+                      16,
+                      17,
+                      18,
+                      19
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "status": "success",
+                    "mensagem": "Entrega cancelada com sucesso"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reciboEntrega": {
+      "get": {
+        "summary": "Obter recibo da solicitação",
+        "description": "Retorna as informações necessárias para a construção do recibo da solicitação. A solicitação deve pertencer a bandeira e ter seu status como finalizada (F).",
+        "parameters": [
+          {
+            "name": "id_mch",
+            "in": "query",
+            "required": true,
+            "description": "ID da solicitação que se deseja obter os dados para recibo.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "id_mch": "100003661",
+                    "condutor": {
+                      "nome": "Pedro João",
+                      "telefone": "(021) 99883-3505",
+                      "modelo": "FORD",
+                      "placa": "ABC-1234"
+                    },
+                    "dados_solicitacao": {
+                      "valor": "4.00",
+                      "duracao": "0",
+                      "distancia": "0.001",
+                      "tarifa": "Tarifa padrão",
+                      "id_categoria": "71",
+                      "categoria": "Comum",
+                      "descricao_categoria": "Viagens curtas-médias",
+                      "desconto": "0.00",
+                      "tipo_pagamento": "D"
+                    },
+                    "partida": {
+                      "endereco": "R. Prof. Eurico Rabelo",
+                      "bairro": "Maracanã",
+                      "cidade": "Rio de Janeiro",
+                      "estado": "RJ",
+                      "data_hora": "2021-05-12T09:13:42Z"
+                    },
+                    "desejado": {
+                      "endereco": "Praça Mauá, 1",
+                      "bairro": "Centro",
+                      "cidade": "Rio de Janeiro",
+                      "estado": "RJ",
+                      "data_hora": "2021-05-12T09:14:09Z"
+                    },
+                    "cliente": {
+                      "cliente_id": "1",
+                      "nome": "Marcio",
+                      "cpf": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/obterLinkRastreio/{id}": {
+      "get": {
+        "summary": "Obter link de rastreio dos pedidos",
+        "description": "Retorna o link de rastreio de uma solicitação específica.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID da solicitação.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "link": "https://rastreio.taximachine.com.br/rastreio/XXXXX"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/abrirSolicitacao": {
+      "post": {
+        "summary": "Abrir solicitação",
+        "description": "Por meio dessa endpoint, é permitido abrir novas solicitações. Caso seja informado a data e a hora em que a solicitação deve ser aberta, é criada uma solicitação programada.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "forma_pagamento": {
+                    "type": "string",
+                    "enum": [
+                      "D",
+                      "B",
+                      "C",
+                      "X",
+                      "P",
+                      "H",
+                      "F",
+                      "R"
+                    ],
+                    "description": "Forma de pagamento."
+                  },
+                  "empresa_id": {
+                    "type": "integer",
+                    "description": "ID da empresa."
+                  },
+                  "condutor": {
+                    "type": "object",
+                    "properties": {
+                      "tipo_identificacao": {
+                        "type": "string",
+                        "enum": [
+                          "I"
+                        ]
+                      },
+                      "identificacao": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "categoria_id": {
+                    "type": "integer"
+                  },
+                  "categoria_nome": {
+                    "type": "string"
+                  },
+                  "partida": {
+                    "type": "object",
+                    "properties": {
+                      "endereco": {
+                        "type": "string"
+                      },
+                      "bairro": {
+                        "type": "string"
+                      },
+                      "complemento": {
+                        "type": "string"
+                      },
+                      "cidade": {
+                        "type": "string"
+                      },
+                      "estado": {
+                        "type": "string"
+                      },
+                      "referencia": {
+                        "type": "string"
+                      },
+                      "lat": {
+                        "type": "number",
+                        "format": "float"
+                      },
+                      "lng": {
+                        "type": "number",
+                        "format": "float"
+                      }
+                    }
+                  },
+                  "paradas": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "endereco_parada": {
+                          "type": "string"
+                        },
+                        "bairro_parada": {
+                          "type": "string"
+                        },
+                        "complemento_parada": {
+                          "type": "string"
+                        },
+                        "cidade_parada": {
+                          "type": "string"
+                        },
+                        "estado_parada": {
+                          "type": "string"
+                        },
+                        "referencia_parada": {
+                          "type": "string"
+                        },
+                        "lat_parada": {
+                          "type": "number",
+                          "format": "float"
+                        },
+                        "lng_parada": {
+                          "type": "number",
+                          "format": "float"
+                        },
+                        "id_externo": {
+                          "type": "string"
+                        },
+                        "observacao_parada": {
+                          "type": "string"
+                        },
+                        "nome_cliente_parada": {
+                          "type": "string"
+                        },
+                        "telefone_cliente_parada": {
+                          "type": "string"
+                        },
+                        "codigo_confirmacao": {
+                          "type": "string"
+                        },
+                        "valor_cobrar": {
+                          "type": "number",
+                          "format": "float"
+                        }
+                      }
+                    }
+                  },
+                  "retorno": {
+                    "type": "boolean"
+                  },
+                  "data": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "hora": {
+                    "type": "string"
+                  },
+                  "antecedencia": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "id_mch": "160"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/integracao/v1/request/{id}": {
+      "get": {
+        "summary": "Obter detalhes da solicitação",
+        "description": "Retorna os detalhes de uma solicitação específica.",
+        "servers": [
+          {
+            "url": "https://api-vendas.taximachine.com.br/api"
+          },
+          {
+            "url": "https://api.taximachine.com.br/api"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador da solicitação",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "request_id": "int",
+                  "external_id": "string",
+                  "full_code": "ENUM",
+                  "short_code": "string(2)",
+                  "requested_at": "ISO8601",
+                  "manager": "string",
+                  "route_key": "string",
+                  "return_trip": "bool",
+                  "category": "string",
+                  "driver": {
+                    "id": "int",
+                    "name": "string",
+                    "phone": "string",
+                    "cpf": "string",
+                    "vtr": "string",
+                    "vehicle_plate": "string",
+                    "vehicle_model": "string"
+                  },
+                  "enterprise": {
+                    "id": "int",
+                    "name": "string",
+                    "cost_center": "string",
+                    "voucher_series": "string",
+                    "voucher_number": "string",
+                    "ticket_status": "string",
+                    "authorization_number": "string",
+                    "authorization_at": "ISO8601",
+                    "finalization_type": "string"
+                  },
+                  "progress": {
+                    "accepted_at": "ISO8601",
+                    "accept_lat": "float",
+                    "accept_lng": "float",
+                    "accept_eta_seconds": "int",
+                    "accept_eta_km": "float",
+                    "accept_duration_minutes": "int",
+                    "accept_distance_km": "float",
+                    "estimated_distance_km": "float",
+                    "estimated_duration_minutes": "int",
+                    "estimated_value": "decimal",
+                    "pickup_arrival": "ISO8601",
+                    "arrival_at_surroundings": "ISO8601",
+                    "start_trip": "ISO8601",
+                    "pending_at": "ISO8601"
+                  },
+                  "finished": {
+                    "finished_at": "ISO8601",
+                    "finalized_distance_km": "float",
+                    "traveled_distance_km": "float",
+                    "stopped_time_virtual_taximeter": "int",
+                    "final_value": "float",
+                    "coupon_value": "float",
+                    "address": {
+                      "address": "string",
+                      "neighborhood": "string",
+                      "city": "string",
+                      "state": "string",
+                      "latitude": "float",
+                      "longitude": "float"
+                    }
+                  },
+                  "cancellation": [
+                    {
+                      "cancelled_at": "ISO8601",
+                      "cancelled_reason": "string",
+                      "cancelled_by": "string",
+                      "cancelled_by_name": "string"
+                    }
+                  ],
+                  "stops": [
+                    {
+                      "order": "int",
+                      "status": "string",
+                      "notes": "string",
+                      "client": {
+                        "name": "string",
+                        "phone": "string"
+                      },
+                      "address": {
+                        "address": "string",
+                        "complement": "string",
+                        "reference": "string",
+                        "neighborhood": "string",
+                        "city": "string",
+                        "state": "string",
+                        "latitude": "float",
+                        "longitude": "float"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/consultarProgramada": {
+      "get": {
+        "summary": "Consultar solicitações programadas",
+        "description": "Ao acionar, são retornadas todas as solicitações programadas da central conforme os parâmetros informados.",
+        "parameters": [
+          {
+            "name": "id_mch_programada",
+            "in": "query",
+            "description": "ID da solicitação que se deseja consultar, de forma específica.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limite",
+            "in": "query",
+            "description": "Quantidade de solicitações programadas retornadas. O limite padrão é 20 e o máximo é 100.",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "pagina",
+            "in": "query",
+            "description": "Qual início da contagem para o limite. O padrão é 1.",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": [
+                    {
+                      "id_mch_programada": "1394",
+                      "situacao": "Aguardando Distribuição",
+                      "situacao_formatada": "12/12/2023 17:32:18",
+                      "data_previsao_disparo": "12/12/2023",
+                      "hora_previsao_disparo": "17:32:18",
+                      "id_mch": null,
+                      "empresa": {
+                        "id": "427",
+                        "nome": "empresa_nome"
+                      }
+                    },
+                    {
+                      "id_mch_programada": "1393",
+                      "situacao": "Cancelada",
+                      "situacao_formatada": "26/01/2021 01:50:00",
+                      "data_previsao_disparo": "26/01/2021",
+                      "hora_previsao_disparo": "01:50:00",
+                      "id_mch": null,
+                      "empresa": {
+                        "id": null,
+                        "nome": null
+                      }
+                    },
+                    {
+                      "id_mch_programada": "1392",
+                      "situacao": "Distribuída",
+                      "situacao_formatada": "21/01/2021 00:55:00",
+                      "data_previsao_disparo": "21/01/2021",
+                      "hora_previsao_disparo": "00:55:00",
+                      "id_mch": "100003594",
+                      "empresa": {
+                        "id": "726",
+                        "nome": "empresa_nome"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cancelarProgramada": {
+      "post": {
+        "summary": "Cancelar solicitação programada",
+        "description": "Cancela (mudando para status C), a solicitação programada informada. A solicitação não pode estar com o status aguardando (A). Para ter acesso a endpoint o usuário autenticado deve ter a permissão de “API - Corrida”.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id_mch_programada": {
+                    "type": "integer",
+                    "description": "ID da solicitação programada que se deseja cancelar."
+                  }
+                },
+                "required": [
+                  "id_mch_programada"
+                ]
+              },
+              "example": {
+                "id_mch_programada": 3
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "response": {
+                    "id_mch_programada": 5642,
+                    "mensagem": "Programada cancelada com sucesso"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      },
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "api-key",
+        "description": "Obrigatório. Sua chave API."
+      }
+    }
+  }
+}

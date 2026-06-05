@@ -1,0 +1,252 @@
+---
+title: "Bem-vindo"
+mode: "custom"
+---
+
+<div style={{ 
+    position: "relative",
+    textAlign: "center", 
+    padding: "120px 24px",
+    backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.85)), url('/images/gaudium-terra.webp')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    borderRadius: "24px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "20px 0 48px",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
+    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)"
+}}>
+  <h1 style={{ 
+    fontSize: "48px", 
+    fontWeight: "800", 
+    marginBottom: "24px", 
+    color: "#fff",
+    letterSpacing: "-0.02em",
+    textShadow: "0 2px 10px rgba(0,0,0,0.5)"
+  }}>
+    API de Integração V2
+  </h1>
+  <p style={{
+    maxWidth: "700px",
+    color: "rgba(255, 255, 255, 0.95)",
+    fontSize: "20px",
+    lineHeight: "1.6",
+    fontWeight: "400",
+    textShadow: "0 1px 4px rgba(0,0,0,0.3)"
+  }}>
+    Integre seu sistema com a plataforma Machine de maneira simples, segura e eficaz. 
+    Este guia contém tudo o que você precisa para começar sua jornada conosco.
+  </p>
+</div>
+
+<div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 20px" }}>
+  <CardGroup cols={2}>
+    <Card title="Quem Somos" icon="building" iconType="duotone">
+      A **Machine** é um produto **Gaudium**, projetado para fornecer tecnologia que permite a operação eficiente e segura 
+      das centrais de mobilidade urbana e entregas. Fornecemos as ferramentas para que condutores realizem serviços com excelência.
+    </Card>
+    <Card title="Evolução Constante" icon="arrow-trend-up" iconType="duotone">
+      Nossa plataforma está em constante evolução. Recomendamos acompanhar nossos **informes** e o **changelog** para se manter atualizado sobre as novas funcionalidades e melhorias na integração.
+    </Card>
+  </CardGroup>
+
+  <div style={{ marginTop: "64px" }}>
+    <h2 style={{ fontSize: "32px", fontWeight: "700", marginBottom: "24px", color: "var(--tw-prose-headings)" }}>
+      Tipos de Solicitações e Pagamento
+    </h2>
+    
+    <p style={{ fontSize: "18px", opacity: 0.8, marginBottom: "32px", lineHeight: "1.6" }}>
+      As solicitações podem ser feitas de imediato ou programadas para o futuro, cada uma identificada por números diferentes. 
+      Após o disparo de uma solicitação programada, uma nova solicitação é criada no sistema.
+    </p>
+
+    <Card title="Formas de Pagamento Suportadas" icon="credit-card" iconType="duotone">
+      Todas as solicitações estão associadas a uma forma de pagamento. As opções incluem:
+      
+      <div style={{ 
+        display: "grid", 
+        gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", 
+        gap: "12px", 
+        marginTop: "24px" 
+      }}>
+        {[
+          { name: 'Dinheiro', code: 'D' }, { name: 'Débito', code: 'B' }, { name: 'Crédito', code: 'C' },
+          { name: 'eTicket', code: 'T' }, { name: 'Voucher', code: 'V' }, { name: 'Pix', code: 'X' },
+          { name: 'PicPay', code: 'P' }, { name: 'WhatsApp', code: 'H' }, { name: 'Cartão via app', code: 'A' },
+          { name: 'Faturado', code: 'F' }, { name: 'Pix via app', code: 'I' }, { name: 'Carteira de Créditos', code: 'R' }
+        ].map(item => (
+          <div key={item.code} style={{ 
+            padding: "10px 16px", 
+            background: "rgba(22, 163, 74, 0.05)", 
+            borderRadius: "12px", 
+            fontSize: "14px",
+            border: "1px solid rgba(22, 163, 74, 0.15)",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center"
+          }}>
+            <span style={{ fontWeight: "500" }}>{item.name}</span>
+            <code style={{ fontSize: "12px", background: "rgba(22, 163, 74, 0.2)", padding: "2px 6px", borderRadius: "4px", color: "#16A34A" }}>{item.code}</code>
+          </div>
+        ))}
+      </div>
+    </Card>
+
+    <div style={{ marginTop: "32px" }}>
+      <p style={{ fontSize: "17px", opacity: 0.8, marginBottom: "20px" }}>
+        As solicitações podem ter vários objetivos, dependendo do modelo de negócio e do tipo de cliente:
+      </p>
+      <CardGroup cols={3}>
+        <Card title="Passageiro" icon="user" iconType="duotone">
+          Levar uma pessoa para o destino solicitado.
+        </Card>
+        <Card title="Empresa" icon="briefcase" iconType="duotone">
+          Transportar o funcionário de uma organização.
+        </Card>
+        <Card title="Estabelecimento" icon="hotel" iconType="duotone">
+          Levar o hóspede de um hotel para o destino.
+        </Card>
+      </CardGroup>
+    </div>
+  </div>
+
+  <div style={{ marginTop: "64px" }}>
+    <h2 style={{ fontSize: "32px", fontWeight: "700", marginBottom: "24px", color: "var(--tw-prose-headings)" }}>
+      Agentes das Solicitações e Estimativas
+    </h2>
+    <Card icon="calculator" iconType="duotone">
+      Os principais agentes das solicitações são os **condutores** (motoristas, mototaxistas e taxistas). 
+      Para otimizar seu negócio, é possível criar categorias e associar os condutores a elas, como uma categoria específica para carregar compras.
+      
+      Antes da solicitação, o cliente pode obter uma **estimativa de custo**, que é sempre feita por categoria. 
+      Cada categoria tem suas tarifas definidas pela central.
+    </Card>
+  </div>
+
+  <div style={{ marginTop: "64px" }}>
+    <h2 style={{ fontSize: "32px", fontWeight: "700", marginBottom: "24px", color: "var(--tw-prose-headings)" }}>
+      Ciclo de Vida das Solicitações
+    </h2>
+    <p style={{ fontSize: "17px", opacity: 0.8, marginBottom: "32px" }}>
+      As solicitações passam por várias etapas e subetapas. Os registros de solicitação não alteram o status da solicitação. Segue a estrutura correta do ciclo:
+    </p>
+    
+    <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "16px" }}>
+      {[
+        { n: '1', title: 'Distribuindo', code: 'D', desc: 'Solicitação aberta e ainda não atribuída a um condutor.' },
+        { n: '2', title: 'Aguardando aceite', code: 'G', desc: 'Esperando um condutor aceitar a solicitação.' },
+        { n: '3', title: 'Pendente', code: 'P', desc: 'Solicitação não aceita, aguardando aceitação.' },
+        { n: '4', title: 'Não atendida', code: 'N', desc: 'Nenhum condutor aceitou a solicitação.' },
+        { n: '5', title: 'Aceita', code: 'A', desc: 'Solicitação aceita por um condutor.', sub: [
+          { code: 'A', title: 'Arredores local', desc: 'Condutor próximo ao local de embarque.' },
+          { code: 'C', title: 'Cheguei ao local', desc: 'Condutor chegou ao local de embarque.' },
+          { code: 'E', title: 'Entrada do passageiro', desc: 'Passageiro entrou no veículo.' },
+          { code: 'O', title: 'Partida prolongada', desc: 'Passageiro demorou para embarcar.' },
+          { code: 'T', title: 'Alteração de trajeto', desc: 'Passageiro alterou o trajeto.' },
+        ]},
+        { n: '6', title: 'Em espera', code: 'S', desc: 'Solicitação em espera até a conclusão de uma anterior.' },
+        { n: '7', title: 'Em andamento', code: 'E', desc: 'Corrida iniciada.', sub: [
+          { code: 'R', title: 'Parada confirmada', desc: 'Parada concluída.' },
+          { code: 'S', title: 'Registro saída passageiro', desc: 'Solicitação finalizada pelo condutor.' },
+        ]},
+        { n: '8', title: 'Finalizada', code: 'F', desc: 'Corrida concluída.' },
+        { n: '9', title: 'Cancelada', code: 'C', desc: 'Solicitação cancelada.' },
+        { n: '10', title: 'Aguardando pagamento', code: 'R', desc: 'Pagamento pendente de confirmação.' },
+      ].map((item) => (
+        <div key={item.n} style={{
+          padding: "20px 24px",
+          background: "rgba(255, 255, 255, 0.02)",
+          borderRadius: "16px",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+          display: "flex",
+          flexDirection: "column",
+          gap: "8px"
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <span style={{ 
+              width: "28px", height: "28px", borderRadius: "50%", background: "#16A34A", 
+              color: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "14px", fontWeight: "700"
+            }}>
+              {item.n}
+            </span>
+            <span style={{ fontSize: "18px", fontWeight: "600" }}>{item.title}</span>
+            <code style={{ fontSize: "12px", background: "rgba(255,255,255,0.1)", padding: "2px 6px", borderRadius: "4px" }}>{item.code}</code>
+          </div>
+          <p style={{ opacity: 0.7, fontSize: "15px", marginLeft: "40px" }}>{item.desc}</p>
+          
+          {item.sub && (
+            <div style={{ marginLeft: "40px", marginTop: "12px", display: "grid", gap: "8px" }}>
+              {item.sub.map((s, idx) => (
+                <div key={idx} style={{ 
+                  display: "flex", alignItems: "baseline", gap: "10px", padding: "10px 16px",
+                  background: "rgba(22, 163, 74, 0.03)", borderRadius: "10px", fontSize: "14px",
+                  border: "1px solid rgba(22, 163, 74, 0.1)"
+                }}>
+                  <span style={{ fontWeight: "700", color: "#16A34A" }}>{String.fromCharCode(97 + idx)}.</span>
+                  <span style={{ fontWeight: "600" }}>{s.title} ({s.code}):</span>
+                  <span style={{ opacity: 0.8 }}>{s.desc}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div style={{ marginTop: "64px" }}>
+    <h2 style={{ fontSize: "32px", fontWeight: "700", marginBottom: "24px", color: "var(--tw-prose-headings)" }}>
+      Solicitações Programadas
+    </h2>
+    <p style={{ fontSize: "17px", opacity: 0.8, marginBottom: "32px", lineHeight: "1.6" }}>
+      Solicitações aceitas e canceladas por um condutor antes do início podem ser redistribuídas, ocasionando a repetição de alguns status. 
+      Solicitações programadas seguem um ciclo específico de estados:
+    </p>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "16px" }}>
+      {[
+        { name: 'Aguardando', code: 'A', color: '#3b82f6', desc: 'Aguardando horário de disparo.' },
+        { name: 'Disparada', code: 'D', color: '#10b981', desc: 'Solicitação programada disparada.' },
+        { name: 'Cancelada', code: 'C', color: '#ef4444', desc: 'Solicitação cancelada.' },
+        { name: 'Erro', code: 'X', color: '#f59e0b', desc: 'Problema no processo da solicitação.' }
+      ].map(status => (
+        <div key={status.code} style={{ 
+          padding: "20px", 
+          background: "rgba(255, 255, 255, 0.02)", 
+          borderRadius: "16px", 
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+          borderLeft: `4px solid ${status.color}`, 
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+            <span style={{ fontWeight: "700", fontSize: "18px" }}>{status.name}</span>
+            <code style={{ fontSize: "12px", background: "rgba(255,255,255,0.1)", padding: "2px 6px", borderRadius: "4px" }}>({status.code})</code>
+          </div>
+          <p style={{ fontSize: "14px", opacity: 0.7, lineHeight: "1.4" }}>{status.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div style={{ 
+    marginTop: "80px", 
+    padding: "64px 32px", 
+    borderRadius: "32px", 
+    background: "linear-gradient(135deg, rgba(22, 163, 74, 0.1) 0%, rgba(22, 163, 74, 0.02) 100%)",
+    border: "1px solid rgba(22, 163, 74, 0.2)", 
+    textAlign: "center",
+    marginBottom: "80px"
+  }}>
+    <h2 style={{ fontSize: "32px", fontWeight: "800", marginBottom: "16px" }}>Primeiros passos</h2>
+    <p style={{ fontSize: "19px", opacity: 0.8, marginBottom: "40px", maxWidth: "600px", margin: "0 auto 40px" }}>
+      Explore a tab <a href="/pages/v2/referencia/introducao" style={{ color: "#16A34A", textDecoration: "underline", fontWeight: "700" }}>"Referência"</a> para obter mais informações sobre como se conectar à API e testar os endpoints.
+    </p>
+    <div style={{ fontWeight: "600", fontSize: "22px", color: "#16A34A" }}>
+      Pronto! Agora você está preparado para explorar a nossa integração para que, juntos, possamos crescer ainda mais.
+    </div>
+  </div>
+</div>
+
+
