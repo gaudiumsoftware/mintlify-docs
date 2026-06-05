@@ -1,53 +1,485 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mintlify Starter Kit",
+  "name": "api-integracao-docs",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
     "dark": "#15803D"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/logo/gaudium-simbolo-transparente.png",
   "navigation": {
-    "pages": [
+    "versions": [
       {
-        "group": "Getting Started",
-        "pages": [
-          "index",
-          "quickstart"
+        "version": "v2",
+        "tag": "Nova",
+        "tabs": [
+          {
+            "tab": "Comece aqui",
+            "groups": [
+              {
+                "group": "Comece aqui",
+                "pages": [
+                  "pages/v2/welcome"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Referência",
+            "groups": [
+              {
+                "group": "Introdução",
+                "pages": [
+                  "pages/v2/referencia/introducao"
+                ]
+              },
+              {
+                "group": "Clientes",
+                "pages": [
+                  "pages/v2/referencia/clientes/endpoint/get",
+                  "pages/v2/referencia/clientes/endpoint/get-by-id"
+                ]
+              },
+              {
+                "group": "Corridas",
+                "pages": [
+                  "pages/v2/referencia/corridas/endpoint/post-consultar",
+                  "pages/v2/referencia/corridas/endpoint/get-by-id",
+                  "pages/v2/referencia/corridas/endpoint/get-detalhes",
+                  "pages/v2/referencia/corridas/endpoint/post-criar",
+                  "pages/v2/referencia/corridas/endpoint/post-criar-programada",
+                  "pages/v2/referencia/corridas/endpoint/post-estimativas",
+                  "pages/v2/referencia/corridas/endpoint/post-empresa-estimativas",
+                  "pages/v2/referencia/corridas/endpoint/post-programada-estimativas",
+                  "pages/v2/referencia/corridas/endpoint/get-programadas",
+                  "pages/v2/referencia/corridas/endpoint/get-programada-by-id",
+                  "pages/v2/referencia/corridas/endpoint/post-cancelar",
+                  "pages/v2/referencia/corridas/endpoint/post-cancelar-programada",
+                  "pages/v2/referencia/corridas/endpoint/get-posicao-condutor",
+                  "pages/v2/referencia/corridas/endpoint/get-status",
+                  "pages/v2/referencia/corridas/endpoint/get-centros-custo",
+                  "pages/v2/referencia/corridas/endpoint/get-funcionarios"
+                ]
+              },
+              {
+                "group": "Dinâmicas",
+                "pages": [
+                  "pages/v2/referencia/dinamicas/endpoint/get-area",
+                  "pages/v2/referencia/dinamicas/endpoint/get-sem-area",
+                  "pages/v2/referencia/dinamicas/endpoint/patch-area",
+                  "pages/v2/referencia/dinamicas/endpoint/patch-sem-area"
+                ]
+              },
+              {
+                "group": "Condutores",
+                "pages": [
+                  "pages/v2/referencia/condutores/endpoint/get",
+                  "pages/v2/referencia/condutores/endpoint/get-by-id",
+                  "pages/v2/referencia/condutores/endpoint/patch-by-id",
+                  "pages/v2/referencia/condutores/endpoint/put-by-id",
+                  "pages/v2/referencia/condutores/endpoint/post-documentos-atualizar",
+                  "pages/v2/referencia/condutores/endpoint/post-requisitos-cadastro-documentos-consultar",
+                  "pages/v2/referencia/condutores/endpoint/post-documentos-consultar",
+                  "pages/v2/referencia/condutores/endpoint/post-creditos-saldo-consultar",
+                  "pages/v2/referencia/condutores/endpoint/post-creditos-recargas",
+                  "pages/v2/referencia/condutores/endpoint/post-creditos-saques",
+                  "pages/v2/referencia/condutores/endpoint/put-areas-bloqueio-batch",
+                  "pages/v2/referencia/condutores/endpoint/post-areas-permissao",
+                  "pages/v2/referencia/condutores/endpoint/delete-areas-permissao"
+                ]
+              },
+              {
+                "group": "Empresas",
+                "pages": [
+                  "pages/v2/referencia/empresas/endpoint/get",
+                  "pages/v2/referencia/empresas/endpoint/get-by-id",
+                  "pages/v2/referencia/empresas/endpoint/post",
+                  "pages/v2/referencia/empresas/endpoint/put",
+                  "pages/v2/referencia/empresas/endpoint/put-batch"
+                ]
+              },
+              {
+                "group": "Cupons",
+                "pages": [
+                  "pages/v2/referencia/cupons/endpoint/post",
+                  "pages/v2/referencia/cupons/endpoint/get-geradores"
+                ]
+              },
+              {
+                "group": "Configurações",
+                "pages": [
+                  "pages/v2/referencia/configuracoes/endpoint/patch",
+                  "pages/v2/referencia/configuracoes/endpoint/tipos-documento",
+                  "pages/v2/referencia/configuracoes/endpoint/areas-geograficas",
+                  "pages/v2/referencia/configuracoes/endpoint/categorias",
+                  "pages/v2/referencia/configuracoes/endpoint/put-categorias",
+                  "pages/v2/referencia/configuracoes/endpoint/saque-automatico-ativacao"
+                ]
+              },
+              {
+                "group": "Notificação",
+                "pages": [
+                  "pages/v2/referencia/notificacao/endpoint/post-push",
+                  "pages/v2/referencia/notificacao/endpoint/post-in-app-messaging"
+                ]
+              },
+              {
+                "group": "Webhooks",
+                "pages": [
+                  "pages/v2/referencia/webhooks/endpoint/get",
+                  "pages/v2/referencia/webhooks/endpoint/post",
+                  "pages/v2/referencia/webhooks/endpoint/put",
+                  "pages/v2/referencia/webhooks/endpoint/delete"
+                ]
+              },
+              {
+                "group": "Mensagens",
+                "pages": [
+                  "pages/v2/referencia/mensagens/endpoint/post-condutor-broadcast",
+                  "pages/v2/referencia/mensagens/endpoint/post-condutor-privada",
+                  "pages/v2/referencia/mensagens/endpoint/post-empresa-broadcast",
+                  "pages/v2/referencia/mensagens/endpoint/post-empresa-privada"
+                ]
+              },
+              {
+                "group": "Engajamento",
+                "pages": [
+                  "pages/v2/referencia/engajamento/endpoint/get",
+                  "pages/v2/referencia/engajamento/endpoint/post",
+                  "pages/v2/referencia/engajamento/endpoint/put",
+                  "pages/v2/referencia/engajamento/endpoint/delete",
+                  {
+                    "group": "Permissões",
+                    "pages": [
+                      "pages/v2/referencia/engajamento/permissoes/endpoint/post",
+                      "pages/v2/referencia/engajamento/permissoes/endpoint/put",
+                      "pages/v2/referencia/engajamento/permissoes/endpoint/delete"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Entregas",
+                "pages": [
+                  "pages/v2/referencia/entregas/endpoint/post-consultar",
+                  "pages/v2/referencia/entregas/endpoint/get-by-id",
+                  "pages/v2/referencia/entregas/endpoint/post",
+                  "pages/v2/referencia/entregas/endpoint/get-detalhes",
+                  "pages/v2/referencia/entregas/endpoint/post-cancelar",
+                  "pages/v2/referencia/entregas/endpoint/post-estimativas",
+                  "pages/v2/referencia/entregas/endpoint/get-status",
+                  "pages/v2/referencia/entregas/endpoint/get-recibo",
+                  "pages/v2/referencia/entregas/endpoint/get-links-rastreio",
+                  "pages/v2/referencia/entregas/endpoint/get-areas-atuacao",
+                  "pages/v2/referencia/entregas/endpoint/get-condutor-posicao",
+                  {
+                    "group": "Programadas",
+                    "pages": [
+                      "pages/v2/referencia/entregas/endpoint/get-programadas",
+                      "pages/v2/referencia/entregas/endpoint/post-programadas",
+                      "pages/v2/referencia/entregas/endpoint/get-programadas-by-id",
+                      "pages/v2/referencia/entregas/endpoint/post-programadas-cancelar",
+                      "pages/v2/referencia/entregas/endpoint/post-programadas-estimativas"
+                    ]
+                  },
+                  {
+                    "group": "Empresas",
+                    "pages": [
+                      "pages/v2/referencia/entregas/endpoint/post-empresas-estimativas",
+                      "pages/v2/referencia/entregas/endpoint/post-saldo",
+                      "pages/v2/referencia/entregas/endpoint/post-recargas",
+                      "pages/v2/referencia/entregas/endpoint/post-saques"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "version": "v1",
+        "tag": "Antiga",
+        "tabs": [
+          {
+            "tab": "Comece aqui",
+            "groups": [
+              {
+                "group": "Comece aqui",
+                "pages": [
+                  "pages/v1/welcome"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Corridas",
+            "groups": [
+              {
+                "group": "Introdução",
+                "pages": [
+                  "pages/v1/referencia/introducao"
+                ]
+              },
+              {
+                "group": "Clientes",
+                "pages": [
+                  "pages/v1/referencia/clientes/endpoint/get"
+                ]
+              },
+              {
+                "group": "Cupons",
+                "pages": [
+                  "pages/v1/referencia/cupons/endpoint/post-criarCupom",
+                  "pages/v1/referencia/cupons/endpoint/get-geradorCupom"
+                ]
+              },
+              {
+                "group": "Central",
+                "pages": [
+                  "pages/v1/referencia/central/endpoint/get-obterDocumentos",
+                  "pages/v1/referencia/central/endpoint/get-listarAreas",
+                  "pages/v1/referencia/central/endpoint/post-enviarMensagem",
+                  "pages/v1/referencia/central/endpoint/put-atualizarCentral"
+                ]
+              },
+              {
+                "group": "Webhooks",
+                "pages": [
+                  "pages/v1/referencia/webhooks/endpoint/get",
+                  "pages/v1/referencia/webhooks/endpoint/post",
+                  "pages/v1/referencia/webhooks/endpoint/put",
+                  "pages/v1/referencia/webhooks/endpoint/delete"
+                ]
+              },
+              {
+                "group": "Notificação",
+                "pages": [
+                  "pages/v1/referencia/notificacao/endpoint/post-push",
+                  "pages/v1/referencia/notificacao/endpoint/post-inAppMessaging"
+                ]
+              },
+              {
+                "group": "Dinâmica",
+                "pages": [
+                  "pages/v1/referencia/dinamica/endpoint/get-area",
+                  "pages/v1/referencia/dinamica/endpoint/patch-area",
+                  "pages/v1/referencia/dinamica/endpoint/get-sem-area",
+                  "pages/v1/referencia/dinamica/endpoint/patch-sem-area"
+                ]
+              },
+              {
+                "group": "Saque automático",
+                "pages": [
+                  "pages/v1/referencia/saque-automatico/endpoint/post-ativarDesativar"
+                ]
+              },
+              {
+                "group": "Categorias",
+                "pages": [
+                  "pages/v1/referencia/categorias/endpoint/get",
+                  "pages/v1/referencia/categorias/endpoint/put"
+                ]
+              },
+              {
+                "group": "Estimativa",
+                "pages": [
+                  "pages/v1/referencia/estimativa/endpoint/get-estimarSolicitacao",
+                  "pages/v1/referencia/estimativa/endpoint/get-estimarSolicitacaoMulticategorias"
+                ]
+              },
+              {
+                "group": "Condutores",
+                "pages": [
+                  "pages/v1/referencia/condutores/endpoint/get-condutor",
+                  "pages/v1/referencia/condutores/endpoint/get-posicao-condutor",
+                  "pages/v1/referencia/condutores/endpoint/post-recarregar-creditos-condutor",
+                  "pages/v1/referencia/condutores/endpoint/post-sacar-creditos-condutor",
+                  "pages/v1/referencia/condutores/endpoint/post-saldo-creditos-condutor",
+                  "pages/v1/referencia/condutores/endpoint/post-atualizar-condutor",
+                  "pages/v1/referencia/condutores/endpoint/post-obter-documentos-cadastro-condutor",
+                  "pages/v1/referencia/condutores/endpoint/post-documento-condutor",
+                  "pages/v1/referencia/condutores/endpoint/post-vincular-area-permissao",
+                  "pages/v1/referencia/condutores/endpoint/post-desvincular-area-permissao",
+                  "pages/v1/referencia/condutores/endpoint/put-atualizar-condutores"
+                ]
+              },
+              {
+                "group": "Engajamento",
+                "pages": [
+                  "pages/v1/referencia/engajamento/endpoint/get-index",
+                  "pages/v1/referencia/engajamento/endpoint/post-index",
+                  "pages/v1/referencia/engajamento/endpoint/put-index-by-id",
+                  "pages/v1/referencia/engajamento/endpoint/delete-index-by-id",
+                  "pages/v1/referencia/engajamento/permissoes/endpoint/post-permissao-by-id",
+                  "pages/v1/referencia/engajamento/permissoes/endpoint/put-permissao-by-id",
+                  "pages/v1/referencia/engajamento/permissoes/endpoint/delete-permissao-by-id"
+                ]
+              },
+              {
+                "group": "Empresa",
+                "pages": [
+                  "pages/v1/referencia/empresa/endpoint/get-empresa",
+                  "pages/v1/referencia/empresa/endpoint/post-cadastrar-empresa",
+                  "pages/v1/referencia/empresa/endpoint/put-atualizar-empresa",
+                  "pages/v1/referencia/empresa/endpoint/put-atualizar-empresas",
+                  "pages/v1/referencia/empresa/endpoint/get-centro-custo",
+                  "pages/v1/referencia/empresa/endpoint/get-funcionario"
+                ]
+              },
+              {
+                "group": "Solicitação",
+                "pages": [
+                  "pages/v1/referencia/solicitacao/endpoint/get-solicitacao",
+                  "pages/v1/referencia/solicitacao/endpoint/get-solicitacaoStatus",
+                  "pages/v1/referencia/solicitacao/endpoint/post-cancelar",
+                  "pages/v1/referencia/solicitacao/endpoint/get-recibo",
+                  "pages/v1/referencia/solicitacao/endpoint/post-abrirSolicitacao",
+                  "pages/v1/referencia/solicitacao/endpoint/get-request-id"
+                ]
+              },
+              {
+                "group": "Solicitação programada",
+                "pages": [
+                  "pages/v1/referencia/solicitacao-programada/endpoint/get-consultarProgramada",
+                  "pages/v1/referencia/solicitacao-programada/endpoint/post-cancelarProgramada",
+                  "pages/v1/referencia/solicitacao-programada/endpoint/post-abrirSolicitacao"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Entregas",
+            "groups": [
+              {
+                "group": "Cupons",
+                "pages": [
+                  "pages/v1/entregas/cupons/endpoint/post-criarCupom",
+                  "pages/v1/entregas/cupons/endpoint/get-geradorCupom"
+                ]
+              },
+              {
+                "group": "Central",
+                "pages": [
+                  "pages/v1/entregas/central/endpoint/get-obterDocumentos",
+                  "pages/v1/entregas/central/endpoint/get-listarAreas",
+                  "pages/v1/entregas/central/endpoint/post-enviarMensagem",
+                  "pages/v1/entregas/central/endpoint/put-atualizarCentral"
+                ]
+              },
+              {
+                "group": "Saque automático",
+                "pages": [
+                  "pages/v1/entregas/saque-automatico/endpoint/post-ativarDesativar"
+                ]
+              },
+              {
+                "group": "Dinâmica",
+                "pages": [
+                  "pages/v1/entregas/dinamica/endpoint/get-area",
+                  "pages/v1/entregas/dinamica/endpoint/patch-area",
+                  "pages/v1/entregas/dinamica/endpoint/get-sem-area",
+                  "pages/v1/entregas/dinamica/endpoint/patch-sem-area"
+                ]
+              },
+              {
+                "group": "Entregador",
+                "pages": [
+                  "pages/v1/entregas/entregador/endpoint/get-condutor",
+                  "pages/v1/entregas/entregador/endpoint/get-posicao-condutor",
+                  "pages/v1/entregas/entregador/endpoint/post-recarregar-creditos-condutor",
+                  "pages/v1/entregas/entregador/endpoint/post-sacar-creditos-condutor",
+                  "pages/v1/entregas/entregador/endpoint/post-saldo-creditos-condutor",
+                  "pages/v1/entregas/entregador/endpoint/post-atualizar-condutor",
+                  "pages/v1/entregas/entregador/endpoint/post-obter-documentos-cadastro-condutor",
+                  "pages/v1/entregas/entregador/endpoint/post-documento-condutor",
+                  "pages/v1/entregas/entregador/endpoint/post-vincular-area-permissao",
+                  "pages/v1/entregas/entregador/endpoint/post-desvincular-area-permissao",
+                  "pages/v1/entregas/entregador/endpoint/put-atualizar-condutores"
+                ]
+              },
+              {
+                "group": "Webhooks",
+                "pages": [
+                  "pages/v1/entregas/webhooks/endpoint/get",
+                  "pages/v1/entregas/webhooks/endpoint/post",
+                  "pages/v1/entregas/webhooks/endpoint/put",
+                  "pages/v1/entregas/webhooks/endpoint/delete"
+                ]
+              },
+              {
+                "group": "Categorias",
+                "pages": [
+                  "pages/v1/entregas/categorias/endpoint/get",
+                  "pages/v1/entregas/categorias/endpoint/put"
+                ]
+              },
+              {
+                "group": "Solicitação",
+                "pages": [
+                  "pages/v1/entregas/solicitacao/endpoint/get-estimarSolicitacao",
+                  "pages/v1/entregas/solicitacao/endpoint/post-abrirSolicitacao",
+                  "pages/v1/entregas/solicitacao/endpoint/get-solicitacao",
+                  "pages/v1/entregas/solicitacao/endpoint/get-solicitacaoStatus",
+                  "pages/v1/entregas/solicitacao/endpoint/post-cancelar",
+                  "pages/v1/entregas/solicitacao/endpoint/get-recibo",
+                  "pages/v1/entregas/solicitacao/endpoint/get-obterLinkRastreio",
+                  "pages/v1/entregas/solicitacao/endpoint/get-request-id",
+                  {
+                    "group": "Programada",
+                    "pages": [
+                      "pages/v1/entregas/solicitacao/programada/endpoint/get-consultarProgramada",
+                      "pages/v1/entregas/solicitacao/programada/endpoint/post-cancelarProgramada"
+                    ]
+                  },
+                  {
+                    "group": "Entregador",
+                    "pages": [
+                      "pages/v1/entregas/solicitacao/entregador/endpoint/get-posicao-condutor"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Empresa",
+                "pages": [
+                  "pages/v1/entregas/empresa/endpoint/get-empresa",
+                  "pages/v1/entregas/empresa/endpoint/put-atualizar-empresa",
+                  "pages/v1/entregas/empresa/endpoint/put-atualizar-empresas",
+                  "pages/v1/entregas/empresa/endpoint/post-cadastrar-empresa",
+                  "pages/v1/entregas/empresa/endpoint/get-listarAreasAtuacaoEmpresa",
+                  {
+                    "group": "Crédito",
+                    "pages": [
+                      "pages/v1/entregas/empresa/credito/endpoint/post-saldoCreditosEmpresa",
+                      "pages/v1/entregas/empresa/credito/endpoint/post-recarregarCreditosEmpresa",
+                      "pages/v1/entregas/empresa/credito/endpoint/post-sacarCreditosEmpresa"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/gaudium-simbolo-transparente.png",
+    "dark": "/logo/gaudium-simbolo-transparente.png"
   },
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "Suporte",
+        "href": "https://suporte.machine.global/hc/pt-br"
       }
     ],
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://app.mintlify.com"
+      "href": "https://status.machine.global/"
     }
   },
   "contextual": {
@@ -64,9 +496,11 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "website": "https://www.gaudium.global/",
+      "linkedin": "https://www.linkedin.com/company/gaudiumglobal/",
+      "instagram": "https://www.instagram.com/gaudium.global/",
+      "youtube": "https://www.youtube.com/c/GaudiumGlobal",
+      "facebook": "https://www.facebook.com/gaudium.global"
     }
   }
 }
