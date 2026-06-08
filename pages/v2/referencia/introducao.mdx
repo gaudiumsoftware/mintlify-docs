@@ -102,24 +102,7 @@ Para garantir uma integração eficiente e segura, a API oferece integração co
 O gateway aplica rate limit por janela deslizante de 60 segundos.
 Quando a requisição excede o limite de bloqueio, a API retorna `429`.
 
-Os limites são aplicados por `api-key`, exceto no grupo de integrador externo, que usa `int-key`.
-Os grupos mais específicos têm prioridade sobre o grupo padrão.
-Os valores da tabela são limites base e podem variar por fatores multiplicadores configurados para cada chave e categoria.
-O limite efetivo é calculado como `limite base x fator multiplicador`.
-Quando não há fator específico, o fator padrão é `1`.
-
-| Grupo | Paths | Agrupamento | Limite |
-| -------- | -------- | -------- | -------- |
-| Crítico | `/api/integracao/solicitacao`<br />`/api/integracao/solicitacaoStatus` | `api-key` | 800 requisições por minuto |
-| Crítico por integrador externo | `/api/integracao/solicitacao`<br />`/api/integracao/solicitacaoStatus` | `int-key` | 800 requisições por minuto |
-| Condutores e créditos | `/api/integracao/saldoCreditosCondutor`<br />`/api/integracao/saldoCreditosCondutor/`<br />`/api/integracao/condutor`<br />`/api/integracao/taxista` | `api-key` | 80 requisições por minuto |
-| Posição do condutor | `/api/integracao/posicaoCondutor` | `api-key` | 1000 requisições por minuto |
-| Categorias | `/integracao/v1/categoria*` | `api-key` | Sem bloqueio configurado. O gateway registra log a partir de 10 requisições por minuto. |
-| Bandeiras | `/integracao/v1/bandeira*` | `api-key` | Sem bloqueio configurado. O gateway registra log a partir de 10 requisições por minuto. |
-| Saque automático | `/integracao/v1/saqueAutomatico*` | `api-key` | 50 requisições por minuto |
-| Programadas | `/api/integracao/consultarProgramada` | `api-key` | 200 requisições por minuto |
-| Dinâmica | `/integracao/v1/dinamica*` | `api-key` | 200 requisições por minuto |
-| Padrão | `/api/integracao/*` | `api-key` | 1000 requisições por minuto |
+As políticas e limites específicos de rate limit para os endpoints da v2 estão atualmente em desenvolvimento (*Work in Progress*). Esta seção será atualizada assim que as regras definitivas forem estabelecidas.
 
 
 ---
