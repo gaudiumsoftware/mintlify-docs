@@ -105,7 +105,7 @@ Quando a requisição excede o limite de bloqueio, a API retorna `429`.
 Os limites são aplicados por `api-key`, exceto no grupo de integrador externo, que usa `int-key`.
 Os grupos mais específicos têm prioridade sobre o grupo padrão.
 Os valores da tabela são limites base e podem variar por fatores multiplicadores configurados para cada chave e categoria.
-O limite efetivo é calculado como `limite base x fator multiplicador`.
+O limite efetivo é calculado como `limite base * fator multiplicador`.
 Quando não há fator específico, o fator padrão é `1`.
 
 | Grupo | Paths | Agrupamento | Limite |
