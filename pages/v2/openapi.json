@@ -99,7 +99,7 @@
     },
     "/clientes/{id}": {
       "get": {
-        "summary": "Obter cliente por ID",
+        "summary": "Obter cliente",
         "description": "Retorna os detalhes de um cliente específico através do seu ID.",
         "parameters": [
           {
@@ -340,7 +340,7 @@
     },
     "/corridas/{id}": {
       "get": {
-        "summary": "Consultar corrida por ID",
+        "summary": "Consultar corrida",
         "description": "Consulta uma corrida específica pelo identificador interno da corrida.",
         "parameters": [
           {
@@ -2399,7 +2399,7 @@
     },
     "/condutores/{id}": {
       "get": {
-        "summary": "Obter condutor por ID",
+        "summary": "Obter condutor",
         "description": "Retorna um condutor da central conforme o ID informado. Para acessar este endpoint, o usuário autenticado deve ter a permissão `API - Corrida`.",
         "parameters": [
           {
