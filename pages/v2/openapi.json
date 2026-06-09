@@ -6660,40 +6660,37 @@
         }
       }
     },
-    "/entregas/empresas/creditos/saldo/consultar": {
-      "post": {
+    "/entregas/empresas/creditos/saldo": {
+      "get": {
         "summary": "Obter saldo da empresa",
         "description": "As empresas podem possuir carteiras de crédito, com isso, esse endpoint permite verificar o saldo em créditos para a empresa em questão.\nO tipo de identificação, é uma forma de identificação da empresa, desta forma de acordo com o tipo de identificação, o valor da identificação da empresa irá respeitar a regra do tipo enviado.\n- `F`: CPF da empresa\n- `J`: CNPJ da empresa\n- `T`: Telefone do condutor\n- `C`: Número do contrato\n- `I`: Identificador da empresa",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "empresa": {
-                    "type": "object",
-                    "properties": {
-                      "tipo_identificacao": {
-                        "type": "string",
-                        "enum": [
-                          "F",
-                          "J",
-                          "T",
-                          "C",
-                          "I"
-                        ]
-                      },
-                      "identificacao": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
+        "parameters": [
+          {
+            "name": "tipo_identificacao",
+            "in": "query",
+            "required": true,
+            "description": "Forma de identificação da empresa",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "F",
+                "J",
+                "T",
+                "C",
+                "I"
+              ]
+            }
+          },
+          {
+            "name": "identificacao",
+            "in": "query",
+            "required": true,
+            "description": "Valor da identificação da empresa de acordo com o tipo enviado",
+            "schema": {
+              "type": "string"
             }
           }
-        },
+        ],
         "responses": {
           "200": {
             "description": "Sucesso",

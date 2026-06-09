@@ -193,7 +193,7 @@
                     "group": "Empresas",
                     "pages": [
                       "pages/v2/referencia/entregas/endpoint/post-empresas-estimativas",
-                      "pages/v2/referencia/entregas/endpoint/post-saldo",
+                      "pages/v2/referencia/entregas/endpoint/get-saldo",
                       "pages/v2/referencia/entregas/endpoint/post-recargas",
                       "pages/v2/referencia/entregas/endpoint/post-saques"
                     ]
