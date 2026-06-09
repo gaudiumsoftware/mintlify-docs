@@ -6526,7 +6526,7 @@
     },
     "/entregas/programadas/{id}": {
       "get": {
-        "summary": "Listar entrega programada",
+        "summary": "Consultar entrega programada",
         "description": "Permite obter uma única entrega programada através de seu id.",
         "parameters": [
           {
