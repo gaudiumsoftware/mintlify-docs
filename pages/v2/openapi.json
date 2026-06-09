@@ -1198,9 +1198,7 @@
                 },
                 "example": {
                   "success": true,
-                  "data": {
-                    "mensagem": "Corrida cancelada com sucesso"
-                  }
+                  "message": "Corrida cancelada com sucesso"
                 }
               }
             }
@@ -1233,9 +1231,7 @@
                 },
                 "example": {
                   "success": true,
-                  "data": {
-                    "mensagem": "Corrida cancelada com sucesso"
-                  }
+                  "message": "Corrida cancelada com sucesso"
                 }
               }
             }
@@ -2669,10 +2665,7 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": {
-                    "status": "OK",
-                    "mensagem": "Condutor atualizado com sucesso"
-                  }
+                  "message": "Condutor atualizado com sucesso"
                 }
               }
             }
@@ -2934,10 +2927,7 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": {
-                    "status": "OK",
-                    "mensagem": "Condutor atualizado com sucesso"
-                  }
+                  "message": "Condutor atualizado com sucesso"
                 }
               }
             }
@@ -3008,10 +2998,7 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": {
-                    "status": "success",
-                    "mensagem": "Foto alterada com sucesso"
-                  }
+                  "message": "Foto alterada com sucesso"
                 }
               }
             }
@@ -3634,10 +3621,7 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": {
-                    "status": "OK",
-                    "mensagem": "Condutor atualizado com sucesso"
-                  }
+                  "message": "Condutor atualizado com sucesso"
                 }
               }
             }
@@ -3681,10 +3665,7 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": {
-                    "status": "OK",
-                    "mensagem": "Condutor atualizado com sucesso"
-                  }
+                  "message": "Condutor atualizado com sucesso"
                 }
               }
             }
@@ -4804,9 +4785,7 @@
                 },
                 "example": {
                   "success": true,
-                  "data": {
-                    "mensagem": "Webhook criado com sucesso"
-                  }
+                  "message": "Webhook criado com sucesso"
                 }
               }
             }
@@ -4857,9 +4836,7 @@
                 },
                 "example": {
                   "success": true,
-                  "data": {
-                    "mensagem": "Webhook atualizado com sucesso"
-                  }
+                  "message": "Webhook atualizado com sucesso"
                 }
               }
             }
@@ -4890,9 +4867,7 @@
                 },
                 "example": {
                   "success": true,
-                  "data": {
-                    "mensagem": "Webhook deletado com sucesso"
-                  }
+                  "message": "Webhook deletado com sucesso"
                 }
               }
             }
@@ -5768,10 +5743,7 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": {
-                    "status": "success",
-                    "mensagem": "Entrega cancelada com sucesso"
-                  }
+                  "message": "Entrega cancelada com sucesso"
                 }
               }
             }
@@ -7218,10 +7190,7 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": {
-                    "status": "OK",
-                    "mensagem": "Empresa atualizada com sucesso"
-                  }
+                  "message": "Empresa atualizada com sucesso"
                 }
               }
             }
