@@ -7477,7 +7477,7 @@
         }
       }
     },
-    "/engajamento/permissoes/{id}": {
+    "/engajamento/{id}/permissoes": {
       "post": {
         "summary": "Adicionar bandeiras e permissões a webhook",
         "description": "Adiciona/Substitui o grupo de bandeiras atual de um webhook e define as permissões dessas bandeiras. **Remove bandeiras anteriores e permissões anteriores do webhook.** Regras importantes:\n- Recebe um array de bandeiras com cada bandeira_id e eventos que a bandeira deve receber;\n- Impede inclusão de bandeiras já atreladas a outros webhooks;\n- Envio de eventos do webhook é alterado em até 5 minutos após a edição.",
