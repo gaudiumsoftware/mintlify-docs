@@ -53,6 +53,7 @@
                   "pages/v2/referencia/corridas/endpoint/post-consultar",
                   "pages/v2/referencia/corridas/endpoint/get-by-id",
                   "pages/v2/referencia/corridas/endpoint/get-detalhes",
+                  "pages/v2/referencia/corridas/endpoint/get-recibo",
                   "pages/v2/referencia/corridas/endpoint/post-criar",
                   "pages/v2/referencia/corridas/endpoint/post-criar-programada",
                   "pages/v2/referencia/corridas/endpoint/post-estimativas",
