@@ -291,7 +291,7 @@ mode: "custom"
 <CodeGroup>
 
 ```php PHP
-$baseUrl = 'https://api.sua-central.com.br';
+$baseUrl = 'https://api.taximachine.com.br';
 $apiKey = 'sua-api-key';
 
 $ch = curl_init("$baseUrl/api/v2/integracao/dinamicas/area");
@@ -307,7 +307,7 @@ $dinamicas = json_decode(curl_exec($ch), true);
 curl_close($ch);
 
 $acaoAtualizar = $dinamicas['__links']['atualizar-dinamica-area'];
-$href = str_replace('{id}', $dinamicas['dados'][0]['id'], $acaoAtualizar['href']);
+$href = str_replace('{id}', $dinamicas['data'][0]['id'], $acaoAtualizar['href']);
 
 $ch = curl_init("$baseUrl/$href");
 curl_setopt_array($ch, [
@@ -327,7 +327,7 @@ curl_close($ch);
 ```
 
 ```java Java
-String baseUrl = "https://api.sua-central.com.br";
+String baseUrl = "https://api.taximachine.com.br";
 String apiKey = "sua-api-key";
 
 HttpClient client = HttpClient.newHttpClient();
@@ -343,7 +343,7 @@ HttpRequest consulta = HttpRequest.newBuilder()
 JsonNode dinamicas = mapper.readTree(client.send(consulta, BodyHandlers.ofString()).body());
 JsonNode acaoAtualizar = dinamicas.path("__links").path("atualizar-dinamica-area");
 String href = acaoAtualizar.path("href").asText()
-    .replace("{id}", dinamicas.path("dados").get(0).path("id").asText());
+    .replace("{id}", dinamicas.path("data").get(0).path("id").asText());
 
 HttpRequest atualizacao = HttpRequest.newBuilder()
     .uri(URI.create(baseUrl + "/" + href))
@@ -358,7 +358,7 @@ JsonNode dinamicaAtualizada = mapper.readTree(client.send(atualizacao, BodyHandl
 ```
 
 ```go Go
-baseURL := "https://api.sua-central.com.br"
+baseURL := "https://api.taximachine.com.br"
 apiKey := "sua-api-key"
 
 client := &http.Client{}
@@ -375,8 +375,8 @@ json.NewDecoder(resposta.Body).Decode(&dinamicas)
 
 links := dinamicas["__links"].(map[string]any)
 acaoAtualizar := links["atualizar-dinamica-area"].(map[string]any)
-dados := dinamicas["dados"].([]any)
-primeiraDinamica := dados[0].(map[string]any)
+data := dinamicas["data"].([]any)
+primeiraDinamica := data[0].(map[string]any)
 
 href := strings.Replace(
     acaoAtualizar["href"].(string),
@@ -402,7 +402,7 @@ json.NewDecoder(respostaAtualizacao.Body).Decode(&dinamicaAtualizada)
 ```
 
 ```ruby Ruby
-base_url = 'https://api.sua-central.com.br'
+base_url = 'https://api.taximachine.com.br'
 api_key = 'sua-api-key'
 
 uri = URI("#{base_url}/api/v2/integracao/dinamicas/area")
@@ -416,7 +416,7 @@ end
 
 dinamicas = JSON.parse(resposta.body)
 acao_atualizar = dinamicas['__links']['atualizar-dinamica-area']
-href = acao_atualizar['href'].sub('{id}', dinamicas['dados'][0]['id'].to_s)
+href = acao_atualizar['href'].sub('{id}', dinamicas['data'][0]['id'].to_s)
 
 uri = URI("#{base_url}/#{href}")
 atualizacao = Net::HTTP.const_get(acao_atualizar['metodo'].capitalize).new(uri)
@@ -432,7 +432,7 @@ dinamica_atualizada = JSON.parse(resposta_atualizacao.body)
 ```
 
 ```javascript JavaScript
-const baseUrl = 'https://api.sua-central.com.br';
+const baseUrl = 'https://api.taximachine.com.br';
 const apiKey = 'sua-api-key';
 
 const resposta = await fetch(`${baseUrl}/api/v2/integracao/dinamicas/area`, {
@@ -445,7 +445,7 @@ const resposta = await fetch(`${baseUrl}/api/v2/integracao/dinamicas/area`, {
 
 const dinamicas = await resposta.json();
 const acaoAtualizar = dinamicas.__links['atualizar-dinamica-area'];
-const href = acaoAtualizar.href.replace('{id}', dinamicas.dados[0].id);
+const href = acaoAtualizar.href.replace('{id}', dinamicas.data[0].id);
 
 const atualizacao = await fetch(`${baseUrl}/${href}`, {
   method: acaoAtualizar.metodo.toUpperCase(),
@@ -464,7 +464,7 @@ const dinamicaAtualizada = await atualizacao.json();
 ```python Python
 import requests
 
-base_url = 'https://api.sua-central.com.br'
+base_url = 'https://api.taximachine.com.br'
 api_key = 'sua-api-key'
 
 headers = {
@@ -479,7 +479,7 @@ resposta = requests.get(
 
 dinamicas = resposta.json()
 acao_atualizar = dinamicas['__links']['atualizar-dinamica-area']
-href = acao_atualizar['href'].replace('{id}', str(dinamicas['dados'][0]['id']))
+href = acao_atualizar['href'].replace('{id}', str(dinamicas['data'][0]['id']))
 
 atualizacao = requests.request(
     acao_atualizar['metodo'].upper(),
