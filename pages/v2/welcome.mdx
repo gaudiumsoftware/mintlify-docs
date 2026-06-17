@@ -327,6 +327,14 @@ curl_close($ch);
 ```
 
 ```java Java
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.net.http.HttpRequest.BodyPublishers;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 String baseUrl = "https://api.taximachine.com.br";
 String apiKey = "sua-api-key";
 
