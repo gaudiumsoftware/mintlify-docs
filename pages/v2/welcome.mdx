@@ -499,7 +499,16 @@ dinamica_atualizada = atualizacao.json()
       Endpoints com HATEOAS
     </h3>
 
-    <table style={{ borderCollapse: "separate", borderSpacing: "0 14px" }}>
+    <style>
+      {`
+        .hateoas-endpoints-table td {
+          padding: 18px 16px;
+          vertical-align: top;
+        }
+      `}
+    </style>
+
+    <table className="hateoas-endpoints-table" style={{ borderCollapse: "separate", borderSpacing: "0 28px" }}>
       <thead>
         <tr>
           <th>Recurso</th>
@@ -508,48 +517,48 @@ dinamica_atualizada = atualizacao.json()
       </thead>
       <tbody>
         <tr>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}>Corridas</td>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}><code>POST /api/v2/integracao/corridas/consultar</code><br /><code>POST /api/v2/integracao/corridas/</code></td>
+          <td>Corridas</td>
+          <td><code>POST /api/v2/integracao/corridas/consultar</code><br /><code>POST /api/v2/integracao/corridas/</code></td>
         </tr>
         <tr>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}>Corridas programadas</td>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}><code>GET /api/v2/integracao/corridas/programadas</code><br /><code>POST /api/v2/integracao/corridas/programadas</code></td>
+          <td>Corridas programadas</td>
+          <td><code>GET /api/v2/integracao/corridas/programadas</code><br /><code>POST /api/v2/integracao/corridas/programadas</code></td>
         </tr>
         <tr>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}>Entregas</td>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}><code>POST /api/v2/integracao/entregas/consultar</code><br /><code>POST /api/v2/integracao/entregas</code></td>
+          <td>Entregas</td>
+          <td><code>POST /api/v2/integracao/entregas/consultar</code><br /><code>POST /api/v2/integracao/entregas</code></td>
         </tr>
         <tr>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}>Entregas programadas</td>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}><code>GET /api/v2/integracao/entregas/programadas</code><br /><code>POST /api/v2/integracao/entregas/programadas</code></td>
+          <td>Entregas programadas</td>
+          <td><code>GET /api/v2/integracao/entregas/programadas</code><br /><code>POST /api/v2/integracao/entregas/programadas</code></td>
         </tr>
         <tr>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}>Créditos da empresa em entregas</td>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}><code>GET /api/v2/integracao/entregas/empresas/creditos/saldo</code><br /><code>POST /api/v2/integracao/entregas/empresas/creditos/recargas</code><br /><code>POST /api/v2/integracao/entregas/empresas/creditos/saques</code></td>
+          <td>Créditos da empresa em entregas</td>
+          <td><code>GET /api/v2/integracao/entregas/empresas/creditos/saldo</code><br /><code>POST /api/v2/integracao/entregas/empresas/creditos/recargas</code><br /><code>POST /api/v2/integracao/entregas/empresas/creditos/saques</code></td>
         </tr>
         <tr>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}>Clientes</td>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}><code>GET /api/v2/integracao/clientes</code></td>
+          <td>Clientes</td>
+          <td><code>GET /api/v2/integracao/clientes</code></td>
         </tr>
         <tr>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}>Condutores</td>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}><code>GET /api/v2/integracao/condutores</code></td>
+          <td>Condutores</td>
+          <td><code>GET /api/v2/integracao/condutores</code></td>
         </tr>
         <tr>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}>Créditos de condutores</td>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}><code>POST /api/v2/integracao/condutores/creditos/saldo/consultar</code><br /><code>POST /api/v2/integracao/condutores/creditos/recargas</code><br /><code>POST /api/v2/integracao/condutores/creditos/saques</code></td>
+          <td>Créditos de condutores</td>
+          <td><code>POST /api/v2/integracao/condutores/creditos/saldo/consultar</code><br /><code>POST /api/v2/integracao/condutores/creditos/recargas</code><br /><code>POST /api/v2/integracao/condutores/creditos/saques</code></td>
         </tr>
         <tr>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}>Empresas</td>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}><code>GET /api/v2/integracao/empresas</code><br /><code>POST /api/v2/integracao/empresas</code></td>
+          <td>Empresas</td>
+          <td><code>GET /api/v2/integracao/empresas</code><br /><code>POST /api/v2/integracao/empresas</code></td>
         </tr>
         <tr>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}>Dinâmicas</td>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}><code>GET /api/v2/integracao/dinamicas/area</code><br /><code>GET /api/v2/integracao/dinamicas/sem-area</code></td>
+          <td>Dinâmicas</td>
+          <td><code>GET /api/v2/integracao/dinamicas/area</code><br /><code>GET /api/v2/integracao/dinamicas/sem-area</code></td>
         </tr>
         <tr>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}>Mensagens</td>
-          <td style={{ padding: "18px 16px", verticalAlign: "top" }}><code>POST /api/v2/integracao/mensagens/condutor/broadcast</code><br /><code>POST /api/v2/integracao/mensagens/condutor/&#123;id&#125;</code><br /><code>POST /api/v2/integracao/mensagens/empresa/broadcast</code><br /><code>POST /api/v2/integracao/mensagens/empresa/&#123;id&#125;</code></td>
+          <td>Mensagens</td>
+          <td><code>POST /api/v2/integracao/mensagens/condutor/broadcast</code><br /><code>POST /api/v2/integracao/mensagens/condutor/&#123;id&#125;</code><br /><code>POST /api/v2/integracao/mensagens/empresa/broadcast</code><br /><code>POST /api/v2/integracao/mensagens/empresa/&#123;id&#125;</code></td>
         </tr>
       </tbody>
     </table>
