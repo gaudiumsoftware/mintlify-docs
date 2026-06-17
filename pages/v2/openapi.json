@@ -7063,7 +7063,7 @@
       },
       "post": {
         "summary": "Criar webhook de engajamento",
-        "description": "Cria um webhook de engajamento a partir de uma URL. Regras importantes:\n- Os Headers são opcionais e limitados a 1000 chaves;\n- Não é possível criar 2 webhooks com a mesma URL.",
+        "description": "Cria um webhook de engajamento a partir de uma URL. Regras importantes:\n- Os Headers são opcionais e limitados a 10 chaves;\n- Não é possível criar 2 webhooks com a mesma URL.",
         "requestBody": {
           "required": true,
           "content": {
@@ -7080,7 +7080,7 @@
                   },
                   "headers": {
                     "type": "object",
-                    "description": "Headers utilizados no envio à URL (Opcional). Limite máximo de 1000 itens.",
+                    "description": "Headers utilizados no envio à URL (Opcional). Limite máximo de 1000 chaves.",
                     "maxProperties": 1000,
                     "additionalProperties": {
                       "type": "string"
@@ -7133,7 +7133,7 @@
                   },
                   "headers": {
                     "type": "object",
-                    "description": "Headers utilizados no envio à URL (Opcional). Limite máximo de 1000 itens.",
+                    "description": "Headers utilizados no envio à URL (Opcional). Limite máximo de 1000 chaves.",
                     "maxProperties": 1000,
                     "additionalProperties": {
                       "type": "string"
