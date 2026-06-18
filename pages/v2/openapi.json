@@ -155,6 +155,688 @@
         }
       }
     },
+    "/consumidores": {
+      "get": {
+        "summary": "Listar consumidores",
+        "description": "Lista os consumidores da empresa do gestor autenticado, de forma paginada. Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor; uso obrigatório de HTTPS.",
+        "parameters": [
+          {
+            "name": "limite",
+            "in": "query",
+            "description": "Quantidade de consumidores retornados. Padrão 20, máximo 100.",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "pagina",
+            "in": "query",
+            "description": "Página da listagem. Padrão 1.",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": [
+                    {
+                      "id": 1,
+                      "nome": "Maria",
+                      "telefone": "+5544999999999"
+                    }
+                  ],
+                  "__links": [
+                    {
+                      "rel": "self",
+                      "href": "api/v2/integracao/consumidores",
+                      "metodo": "get"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Criar consumidor",
+        "description": "Cria um consumidor na empresa do gestor autenticado. Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor; uso obrigatório de HTTPS.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "nome",
+                  "telefone"
+                ],
+                "properties": {
+                  "nome": {
+                    "type": "string"
+                  },
+                  "telefone": {
+                    "type": "string",
+                    "description": "Telefone em formato internacional E.164, ex.: +5544999999999."
+                  }
+                }
+              },
+              "example": {
+                "nome": "Maria",
+                "telefone": "+5544999999999"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Criado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": 10,
+                    "nome": "Maria"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Telefone já cadastrado para esta empresa."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/consumidores/{id}": {
+      "get": {
+        "summary": "Consultar consumidor",
+        "description": "Retorna um consumidor da empresa do gestor, com seus endereços. Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor; uso obrigatório de HTTPS.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do consumidor",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": 1,
+                    "nome": "Maria",
+                    "telefone": "+5544999999999",
+                    "enderecos": [
+                      {
+                        "id": 8,
+                        "endereco": "Av. Brasil, 1000",
+                        "complemento": "Sala 2",
+                        "bairro": "Centro",
+                        "cidade": "Maringá",
+                        "estado": "PR",
+                        "cep": "87010000",
+                        "latitude": "-23.425",
+                        "longitude": "-51.938"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Consumidor não encontrado."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Editar consumidor",
+        "description": "Edita o nome do consumidor (paridade com o site). Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor; uso obrigatório de HTTPS.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do consumidor",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "nome"
+                ],
+                "properties": {
+                  "nome": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "nome": "Maria Silva"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Atualizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": 1,
+                    "nome": "Maria Silva"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Consumidor não encontrado."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/consumidores/{id}/enderecos": {
+      "get": {
+        "summary": "Listar endereços",
+        "description": "Lista os endereços de um consumidor da empresa do gestor. Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor; uso obrigatório de HTTPS.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do consumidor",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": [
+                    {
+                      "id": 8,
+                      "endereco": "Av. Brasil, 1000",
+                      "complemento": "Sala 2",
+                      "bairro": "Centro",
+                      "cidade": "Maringá",
+                      "estado": "PR",
+                      "cep": "87010000",
+                      "latitude": "-23.425",
+                      "longitude": "-51.938"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Consumidor não encontrado."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Criar endereço",
+        "description": "Cria um endereço para um consumidor da empresa do gestor. Endereços duplicados (mesmo place_id) ou a menos de 5 metros de um já cadastrado são rejeitados. Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor; uso obrigatório de HTTPS.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do consumidor",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "endereco",
+                  "latitude",
+                  "longitude"
+                ],
+                "properties": {
+                  "endereco": {
+                    "type": "string"
+                  },
+                  "latitude": {
+                    "type": "number"
+                  },
+                  "longitude": {
+                    "type": "number"
+                  },
+                  "complemento": {
+                    "type": "string"
+                  },
+                  "bairro": {
+                    "type": "string"
+                  },
+                  "cidade": {
+                    "type": "string"
+                  },
+                  "estado": {
+                    "type": "string"
+                  },
+                  "cep": {
+                    "type": "string"
+                  },
+                  "place_id": {
+                    "type": "string",
+                    "description": "Identificador do Google Places, usado para deduplicação."
+                  }
+                }
+              },
+              "example": {
+                "endereco": "Av. Brasil, 1000",
+                "complemento": "Sala 2",
+                "bairro": "Centro",
+                "cidade": "Maringá",
+                "estado": "PR",
+                "cep": "87010000",
+                "latitude": -23.425,
+                "longitude": -51.938,
+                "place_id": "ChIJ..."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Criado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "criado": true
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "'latitude': Preenchimento obrigatório"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Consumidor não encontrado."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Endereço já cadastrado ou muito próximo de um endereço existente."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/consumidores/{id}/enderecos/{enderecoId}": {
+      "patch": {
+        "summary": "Editar endereço",
+        "description": "Atualiza um endereço do consumidor. Apenas os campos enviados são alterados (cobre editar o endereço completo ou apenas o complemento). Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor; uso obrigatório de HTTPS.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do consumidor",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "enderecoId",
+            "in": "path",
+            "required": true,
+            "description": "ID do endereço",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "endereco": {
+                    "type": "string"
+                  },
+                  "complemento": {
+                    "type": "string"
+                  },
+                  "bairro": {
+                    "type": "string"
+                  },
+                  "cidade": {
+                    "type": "string"
+                  },
+                  "estado": {
+                    "type": "string"
+                  },
+                  "cep": {
+                    "type": "string"
+                  },
+                  "latitude": {
+                    "type": "number"
+                  },
+                  "longitude": {
+                    "type": "number"
+                  },
+                  "place_id": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "complemento": "Apto 31"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Atualizado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "atualizado": true
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Endereço de outro consumidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Dados inválidos."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Endereço não encontrado."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Excluir endereço",
+        "description": "Exclui um endereço do consumidor da empresa do gestor. Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor; uso obrigatório de HTTPS.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do consumidor",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "enderecoId",
+            "in": "path",
+            "required": true,
+            "description": "ID do endereço",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Excluído",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "excluido": true
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Endereço de outro consumidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Dados inválidos."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Endereço não encontrado."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/corridas/consultar": {
       "post": {
         "summary": "Consultar corridas",

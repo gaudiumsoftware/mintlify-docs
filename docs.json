@@ -48,6 +48,19 @@
                 ]
               },
               {
+                "group": "Consumidores",
+                "pages": [
+                  "pages/v2/referencia/consumidores/endpoint/get",
+                  "pages/v2/referencia/consumidores/endpoint/get-by-id",
+                  "pages/v2/referencia/consumidores/endpoint/post",
+                  "pages/v2/referencia/consumidores/endpoint/patch-by-id",
+                  "pages/v2/referencia/consumidores/endpoint/enderecos-get",
+                  "pages/v2/referencia/consumidores/endpoint/enderecos-post",
+                  "pages/v2/referencia/consumidores/endpoint/enderecos-patch",
+                  "pages/v2/referencia/consumidores/endpoint/enderecos-delete"
+                ]
+              },
+              {
                 "group": "Corridas",
                 "pages": [
                   "pages/v2/referencia/corridas/endpoint/post-consultar",
