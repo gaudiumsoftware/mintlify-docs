@@ -167,7 +167,8 @@
             "schema": {
               "type": "integer",
               "default": 20,
-              "maximum": 100
+              "maximum": 100,
+              "minimum": 1
             }
           },
           {
@@ -176,7 +177,8 @@
             "description": "Página da listagem. Padrão 1.",
             "schema": {
               "type": "integer",
-              "default": 1
+              "default": 1,
+              "minimum": 1
             }
           }
         ],
@@ -318,8 +320,8 @@
                         "cidade": "Maringá",
                         "estado": "PR",
                         "cep": "87010000",
-                        "latitude": "-23.425",
-                        "longitude": "-51.938"
+                        "latitude": -23.425,
+                        "longitude": -51.938
                       }
                     ]
                   }
@@ -457,8 +459,8 @@
                       "cidade": "Maringá",
                       "estado": "PR",
                       "cep": "87010000",
-                      "latitude": "-23.425",
-                      "longitude": "-51.938"
+                      "latitude": -23.425,
+                      "longitude": -51.938
                     }
                   ]
                 }
@@ -698,7 +700,8 @@
                 "complemento": "Apto 31"
               }
             }
-          }
+          },
+          "description": "Atualização parcial: envie ao menos um campo para atualizar; apenas os campos enviados são alterados."
         },
         "responses": {
           "200": {
@@ -713,6 +716,25 @@
                   "data": {
                     "atualizado": true
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Nenhum campo para atualizar",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Informe ao menos um campo para atualizar."
+                    }
+                  ]
                 }
               }
             }
