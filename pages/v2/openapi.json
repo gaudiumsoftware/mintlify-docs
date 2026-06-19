@@ -689,7 +689,8 @@
                     "type": "number"
                   },
                   "place_id": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Identificador do Google Places, usado para deduplicação."
                   }
                 }
               },
