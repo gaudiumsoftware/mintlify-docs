@@ -227,7 +227,8 @@
                 ],
                 "properties": {
                   "nome": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Apenas letras, espaços e os sinais - ' . (não aceita números nem outros caracteres especiais)."
                   },
                   "telefone": {
                     "type": "string",
@@ -272,7 +273,7 @@
                   "errors": [
                     {
                       "code": 0,
-                      "message": "Telefone já cadastrado para esta empresa."
+                      "message": "Já existe um consumidor com este telefone."
                     }
                   ]
                 }
