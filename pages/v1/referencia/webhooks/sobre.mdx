@@ -74,8 +74,8 @@ O **Webhook de Status** é acionado sempre que uma solicitação passa por uma *
  "stop_id": 567,
  "links": {
    "request": "https://api.taximachine.com.br/api/v1/request/12345",
-   "enterprise": "https://api.taximachine.com.br/api/integracao/condutor?id=321",
-   "driver": "https://api.taximachine.com.br/api/integracao/empresa?empresa_id=987"
+   "driver": "https://api.taximachine.com.br/api/integracao/condutor?id=321",
+   "enterprise": "https://api.taximachine.com.br/api/integracao/empresa?empresa_id=987"
  }
 }
 ```
@@ -159,7 +159,7 @@ O **Webhook de Mensagens** é acionado sempre que ocorre o recebimento de mensag
 | `event_id` | UUID | SIM | Identificação única do evento (idempotência). |
 | `company_id` | INT | SIM | Identificador da central |
 | `message_id` | INT | SIM | Identificador da mensagem |
-| `sender_id` | INT | SIM | Indentificador do remetente (condutor, empresa) |
+| `sender_id` | INT | SIM | Identificador do remetente (condutor, empresa) |
 | `sequence` | INT | SIM | Número sequencial da mensagem no contexto da solicitação |
 | `type_code` | ENUM | SIM | Origem da mensagem ( `DRIVER`, `ENTERPRISE`) |
 | `type_label` | String | SIM | Indicação adicional do tipo de mensagem (pode variar por contexto) |
