@@ -6660,6 +6660,39 @@
         }
       }
     },
+    "/entregas/parada/{id}": {
+      "delete": {
+        "summary": "Excluir entrega",
+        "description": "Esse endpoint exclui uma entrega de uma solicitação.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Id da entrega a ser excluída de uma solicitação.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "data": {
+                    "status": "OK"
+                  },
+                  "message": "Entrega excluída com sucesso."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/entregas/empresas/creditos/saldo/consultar": {
       "post": {
         "summary": "Obter saldo da empresa",

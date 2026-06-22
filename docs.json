@@ -179,6 +179,7 @@
                   "pages/v2/referencia/entregas/endpoint/get-links-rastreio",
                   "pages/v2/referencia/entregas/endpoint/get-areas-atuacao",
                   "pages/v2/referencia/entregas/endpoint/get-condutor-posicao",
+                  "pages/v2/referencia/entregas/endpoint/delete-entrega-by-id",
                   {
                     "group": "Programadas",
                     "pages": [
