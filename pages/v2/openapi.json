@@ -5498,8 +5498,8 @@
                     "bairro_parada": "Bela Vista",
                     "cidade_parada": "São Paulo",
                     "estado_parada": "SP",
-                    "lat_parada": -23.5631,
-                    "lng_parada": -46.6544,
+                    "lat_parada": "-23.5631",
+                    "lng_parada": "-46.6544",
                     "nome_cliente_parada": "João Silva",
                     "telefone_cliente_parada": "(11) 99999-0001",
                     "observacao_parada": "Portaria B",
@@ -6757,7 +6757,7 @@
             "application/json": {
               "example": {
                 "data": "31/12/2026",
-                "hora": "10:00",
+                "hora": "10:00:00",
                 "forma_pagamento": "D",
                 "partida": {
                   "endereco": "Rua da Coleta, 10",
@@ -6769,8 +6769,8 @@
                   {
                     "endereco_parada": "Rua da Entrega, 200",
                     "bairro_parada": "Vila Nova",
-                    "lat_parada": -23.56,
-                    "lng_parada": -46.64,
+                    "lat_parada": "-23.56",
+                    "lng_parada": "-46.64",
                     "nome_cliente_parada": "Maria Souza",
                     "telefone_cliente_parada": "(11) 99999-0002"
                   }
