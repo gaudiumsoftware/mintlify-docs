@@ -182,7 +182,7 @@
                       "pages/v2/referencia/entregas/endpoint/get-programadas-by-id",
                       "pages/v2/referencia/entregas/endpoint/post-programadas-cancelar",
                       "pages/v2/referencia/entregas/endpoint/post-programadas-estimativas",
-                      "pages/v2/referencia/entregas/endpoint/delete-programada-entrega-by-id"
+                      "pages/v2/referencia/entregas/endpoint/delete-entrega-programada-by-id"
                     ]
                   },
                   {
