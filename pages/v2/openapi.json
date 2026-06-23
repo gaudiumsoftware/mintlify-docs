@@ -158,7 +158,7 @@
     "/consumidores": {
       "get": {
         "summary": "Listar consumidores",
-        "description": "Lista os consumidores da empresa do gestor autenticado, de forma paginada. Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor; uso obrigatório de HTTPS.",
+        "description": "Lista os consumidores da empresa do gestor autenticado, de forma paginada. Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor da empresa; uso obrigatório de HTTPS.",
         "parameters": [
           {
             "name": "limite",
@@ -214,7 +214,7 @@
       },
       "post": {
         "summary": "Criar consumidor",
-        "description": "Cria um consumidor na empresa do gestor autenticado. Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor; uso obrigatório de HTTPS.",
+        "description": "Cria um consumidor na empresa do gestor autenticado. Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor da empresa; uso obrigatório de HTTPS.",
         "requestBody": {
           "required": true,
           "content": {
@@ -286,7 +286,7 @@
     "/consumidores/{id}": {
       "get": {
         "summary": "Consultar consumidor",
-        "description": "Retorna um consumidor da empresa do gestor, com seus endereços. Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor; uso obrigatório de HTTPS.",
+        "description": "Retorna um consumidor da empresa do gestor, com seus endereços. Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor da empresa; uso obrigatório de HTTPS.",
         "parameters": [
           {
             "name": "id",
@@ -353,7 +353,7 @@
       },
       "patch": {
         "summary": "Editar consumidor",
-        "description": "Edita o nome do consumidor (paridade com o site). Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor; uso obrigatório de HTTPS.",
+        "description": "Edita o nome do consumidor (paridade com o site). Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor da empresa; uso obrigatório de HTTPS.",
         "parameters": [
           {
             "name": "id",
@@ -429,7 +429,7 @@
     "/consumidores/{id}/enderecos": {
       "get": {
         "summary": "Listar endereços",
-        "description": "Lista os endereços de um consumidor da empresa do gestor. Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor; uso obrigatório de HTTPS.",
+        "description": "Lista os endereços de um consumidor da empresa do gestor. Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor da empresa; uso obrigatório de HTTPS.",
         "parameters": [
           {
             "name": "id",
@@ -491,7 +491,7 @@
       },
       "post": {
         "summary": "Criar endereço",
-        "description": "Cria um endereço para um consumidor da empresa do gestor. Endereços duplicados (mesmo place_id) ou a menos de 5 metros de um já cadastrado são rejeitados. Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor; uso obrigatório de HTTPS.",
+        "description": "Cria um endereço para um consumidor da empresa do gestor. Endereços duplicados (mesmo place_id) ou a menos de 5 metros de um já cadastrado são rejeitados. Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor da empresa; uso obrigatório de HTTPS.",
         "parameters": [
           {
             "name": "id",
@@ -639,7 +639,7 @@
     "/consumidores/{id}/enderecos/{enderecoId}": {
       "patch": {
         "summary": "Editar endereço",
-        "description": "Atualiza um endereço do consumidor. Apenas os campos enviados são alterados (cobre editar o endereço completo ou apenas o complemento). Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor; uso obrigatório de HTTPS.",
+        "description": "Atualiza um endereço do consumidor. Apenas os campos enviados são alterados (cobre editar o endereço completo ou apenas o complemento). Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor da empresa; uso obrigatório de HTTPS.",
         "parameters": [
           {
             "name": "id",
@@ -782,7 +782,7 @@
       },
       "delete": {
         "summary": "Excluir endereço",
-        "description": "Exclui um endereço do consumidor da empresa do gestor. Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor; uso obrigatório de HTTPS.",
+        "description": "Exclui um endereço do consumidor da empresa do gestor. Requer Api-Key (bandeira) + autenticação HTTP Basic do gestor da empresa; uso obrigatório de HTTPS.",
         "parameters": [
           {
             "name": "id",
