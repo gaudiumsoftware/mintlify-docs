@@ -5553,10 +5553,10 @@
                           "type": "string"
                         },
                         "lat_parada": {
-                          "type": "number"
+                          "type": "string"
                         },
                         "lng_parada": {
-                          "type": "number"
+                          "type": "string"
                         },
                         "nome_cliente_parada": {
                           "type": "string"
@@ -6792,7 +6792,7 @@
                   },
                   "hora": {
                     "type": "string",
-                    "description": "Hora do disparo no formato `HH:MM`."
+                    "description": "Hora do disparo no formato `HH:MM:SS`."
                   },
                   "forma_pagamento": {
                     "type": "string",
@@ -6856,10 +6856,10 @@
                           "type": "string"
                         },
                         "lat_parada": {
-                          "type": "number"
+                          "type": "string"
                         },
                         "lng_parada": {
-                          "type": "number"
+                          "type": "string"
                         },
                         "nome_cliente_parada": {
                           "type": "string"
