@@ -1,19 +1,13 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "docs.machine.global",
+  "name": "api-integracao-docs",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
     "dark": "#15803D"
   },
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "/pages/v2/welcome"
-    }
-  ],
-  "favicon": "/logo/machine-logo-transparente.png",
+  "favicon": "/logo/gaudium-simbolo-transparente.png",
   "navigation": {
     "versions": [
       {
@@ -474,8 +468,8 @@
     ]
   },
   "logo": {
-    "light": "/logo/machine-logo-transparente.png",
-    "dark": "/logo/machine-logo-transparente.png"
+    "light": "/logo/gaudium-simbolo-transparente.png",
+    "dark": "/logo/gaudium-simbolo-transparente.png"
   },
   "navbar": {
     "links": [
@@ -486,7 +480,7 @@
     ],
     "primary": {
       "type": "button",
-      "label": "Status Page",
+      "label": "Dashboard",
       "href": "https://status.machine.global/"
     }
   },
