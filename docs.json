@@ -173,6 +173,7 @@
                   "pages/v2/referencia/entregas/endpoint/post",
                   "pages/v2/referencia/entregas/endpoint/get-detalhes",
                   "pages/v2/referencia/entregas/endpoint/post-cancelar",
+                  "pages/v2/referencia/entregas/endpoint/put-by-id",
                   "pages/v2/referencia/entregas/endpoint/post-estimativas",
                   "pages/v2/referencia/entregas/endpoint/get-status",
                   "pages/v2/referencia/entregas/endpoint/get-recibo",
@@ -185,6 +186,7 @@
                       "pages/v2/referencia/entregas/endpoint/get-programadas",
                       "pages/v2/referencia/entregas/endpoint/post-programadas",
                       "pages/v2/referencia/entregas/endpoint/get-programadas-by-id",
+                      "pages/v2/referencia/entregas/endpoint/put-programadas-by-id",
                       "pages/v2/referencia/entregas/endpoint/post-programadas-cancelar",
                       "pages/v2/referencia/entregas/endpoint/post-programadas-estimativas"
                     ]
