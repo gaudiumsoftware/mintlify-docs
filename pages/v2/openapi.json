@@ -6660,13 +6660,22 @@
         }
       }
     },
-    "/entregas/paradas/{id}": {
+    "/entregas/{id}/paradas/{parada_id}": {
       "delete": {
         "summary": "Excluir entrega",
         "description": "Exclui uma entrega de uma solicitação ativa. Não é permitido excluir quando a solicitação estiver cancelada, finalizada ou não atendida, nem quando restar apenas uma entrega na solicitação.",
         "parameters": [
           {
             "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Id da solicitação.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "parada_id",
             "in": "path",
             "required": true,
             "description": "Id da entrega a ser excluída.",
@@ -6677,13 +6686,18 @@
         ],
         "responses": {
           "200": {
-            "description": "Sucesso",
+            "description": "Sucesso. O campo `estimativa` reflete os novos valores calculados com base nas entregas restantes. Pode ser `null` caso o serviço de rotas esteja indisponível.",
             "content": {
               "application/json": {
                 "example": {
                   "success": true,
                   "data": {
-                    "status": "OK"
+                    "status": "OK",
+                    "estimativa": {
+                      "estimativa_km": 5.42,
+                      "estimativa_tempo_minutos": 18,
+                      "estimativa_valor": "23.50"
+                    }
                   },
                   "message": "Entrega excluída com sucesso."
                 }
@@ -6742,13 +6756,22 @@
         }
       }
     },
-    "/entregas/programadas/paradas/{id}": {
+    "/entregas/programadas/{id}/paradas/{parada_id}": {
       "delete": {
         "summary": "Excluir entrega programada",
         "description": "Exclui uma entrega de uma solicitação programada. Não é permitido excluir quando a solicitação estiver cancelada, disparada ou quando restar apenas uma entrega na solicitação.",
         "parameters": [
           {
             "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Id da solicitação programada.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "parada_id",
             "in": "path",
             "required": true,
             "description": "Id da entrega a ser excluída.",
@@ -6759,13 +6782,18 @@
         ],
         "responses": {
           "200": {
-            "description": "Sucesso",
+            "description": "Sucesso. O campo `estimativa` reflete os novos valores calculados com base nas entregas restantes. Pode ser `null` caso o serviço de rotas esteja indisponível.",
             "content": {
               "application/json": {
                 "example": {
                   "success": true,
                   "data": {
-                    "status": "OK"
+                    "status": "OK",
+                    "estimativa": {
+                      "estimativa_km": 5.42,
+                      "estimativa_tempo_minutos": 18,
+                      "estimativa_valor": "23.50"
+                    }
                   },
                   "message": "Entrega excluída com sucesso."
                 }
