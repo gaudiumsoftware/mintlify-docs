@@ -5842,7 +5842,7 @@
     },
     "/entregas/{id}/agrupar/programadas": {
       "post": {
-        "summary": "Agrupar entregas programadas",
+        "summary": "Agrupar entregas programadas a solicitações em andamento",
         "description": "Agrupa uma ou mais entregas programadas na entrega agrupadora em andamento informada em `{id}`. Opcionalmente, também é possível agrupar entregas em andamento (`solicitacoes_agrupadas`). A empresa, a categoria, o tipo de pagamento e o retorno são obtidos automaticamente da entrega agrupadora. A estimativa da corrida e a ordenação das paradas também são calculadas pelo servidor.",
         "parameters": [
           {
