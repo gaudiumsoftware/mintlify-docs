@@ -776,6 +776,8 @@
                   },
                   "paradas": {
                     "type": "array",
+                    "description": "Lista de paradas da corrida. Limite máximo de 1000 itens.",
+                    "maxItems": 1000,
                     "items": {
                       "type": "object",
                       "properties": {
@@ -999,6 +1001,8 @@
                   },
                   "paradas": {
                     "type": "array",
+                    "description": "Lista de paradas da corrida. Limite máximo de 1000 itens.",
+                    "maxItems": 1000,
                     "items": {
                       "type": "object"
                     }
@@ -2658,7 +2662,8 @@
                   },
                   "categorias": {
                     "type": "array",
-                    "description": "Lista de categorias atendidas pelo condutor.",
+                    "description": "Lista de categorias atendidas pelo condutor. Limite máximo de 1000 itens.",
+                    "maxItems": 1000,
                     "items": {
                       "type": "integer"
                     }
@@ -2892,6 +2897,8 @@
                   },
                   "categorias": {
                     "type": "array",
+                    "description": "Lista de categorias atendidas pelo condutor. Limite máximo de 1000 itens.",
+                    "maxItems": 1000,
                     "items": {
                       "type": "integer"
                     }
@@ -3266,14 +3273,16 @@
                 "properties": {
                   "condutores": {
                     "type": "array",
-                    "description": "Lista de IDs numéricos de condutores.",
+                    "description": "Lista de IDs numéricos de condutores. Limite máximo de 1000 itens.",
+                    "maxItems": 1000,
                     "items": {
                       "type": "integer"
                     }
                   },
                   "areas_bloqueio": {
                     "type": "array",
-                    "description": "Lista de IDs numéricos das áreas de bloqueio.",
+                    "description": "Lista de IDs numéricos das áreas de bloqueio. Limite máximo de 1000 itens.",
+                    "maxItems": 1000,
                     "items": {
                       "type": "integer"
                     }
@@ -4190,8 +4199,9 @@
                 "properties": {
                   "passageiros": {
                     "type": "array",
-                    "description": "Lista de passageiros que receberão a notificação. Deve conter ao menos um item e todos os itens devem ser numéricos.",
+                    "description": "Lista de passageiros que receberão a notificação. Deve conter ao menos um item e todos os itens devem ser numéricos. Limite máximo de 1000 itens.",
                     "minItems": 1,
+                    "maxItems": 1000,
                     "items": {
                       "type": "integer"
                     }
@@ -4306,8 +4316,9 @@
                 "properties": {
                   "passageiros": {
                     "type": "array",
-                    "description": "Lista de passageiros que receberão a notificação. Deve conter ao menos um item e todos os itens devem ser numéricos.",
+                    "description": "Lista de passageiros que receberão a notificação. Deve conter ao menos um item e todos os itens devem ser numéricos. Limite máximo de 1000 itens.",
                     "minItems": 1,
+                    "maxItems": 1000,
                     "items": {
                       "type": "integer"
                     }
@@ -5252,6 +5263,8 @@
                   },
                   "paradas": {
                     "type": "array",
+                    "description": "Lista de paradas da entrega. Limite máximo de 1000 itens.",
+                    "maxItems": 1000,
                     "items": {
                       "type": "object",
                       "properties": {
@@ -6145,6 +6158,8 @@
                   },
                   "paradas": {
                     "type": "array",
+                    "description": "Lista de paradas da entrega. Limite máximo de 1000 itens.",
+                    "maxItems": 1000,
                     "items": {
                       "type": "object",
                       "properties": {
@@ -6715,10 +6730,11 @@
                   },
                   "categorias": {
                     "type": "array",
+                    "description": "Lista de categorias atendidas pela empresa. Limite máximo de 1000 itens. Array vazio ([]) indica todas as categorias.",
+                    "maxItems": 1000,
                     "items": {
                       "type": "integer"
-                    },
-                    "description": "Array vazio ([]) indica todas as categorias"
+                    }
                   },
                   "tipos_pagamento": {
                     "type": "array",
@@ -6949,13 +6965,16 @@
                   },
                   "empresas": {
                     "type": "array",
+                    "description": "IDs das empresas a serem atualizadas. Limite máximo de 1000 itens.",
+                    "maxItems": 1000,
                     "items": {
                       "type": "integer"
-                    },
-                    "description": "IDs das empresas a serem atualizadas"
+                    }
                   },
                   "categorias": {
                     "type": "array",
+                    "description": "Lista de categorias. Limite máximo de 1000 itens.",
+                    "maxItems": 1000,
                     "items": {
                       "type": "integer"
                     }
@@ -7062,7 +7081,8 @@
                   },
                   "headers": {
                     "type": "object",
-                    "description": "Headers utilizados no envio à URL (Opcional)",
+                    "description": "Headers utilizados no envio à URL (Opcional). Limite máximo de 1000 chaves.",
+                    "maxProperties": 1000,
                     "additionalProperties": {
                       "type": "string"
                     }
@@ -7090,7 +7110,7 @@
     "/engajamento/{id}": {
       "put": {
         "summary": "Editar webhook de engajamento",
-        "description": "Editar um webhook de engajamento a partir de seu ID. Regras importantes:\n- Os Headers são limitados a 10 chaves;\n- Pode-se editar a URL ou Headers;\n- Não é possível editar um webhook com mesma URL de outro já existente;\n- Envio de eventos do webhook é alterado em até 5 minutos após edição.",
+        "description": "Editar um webhook de engajamento a partir de seu ID. Regras importantes:\n- Os Headers são limitados a 1000 chaves;\n- Pode-se editar a URL ou Headers;\n- Não é possível editar um webhook com mesma URL de outro já existente;\n- Envio de eventos do webhook é alterado em até 5 minutos após edição.",
         "parameters": [
           {
             "name": "id",
@@ -7114,7 +7134,8 @@
                   },
                   "headers": {
                     "type": "object",
-                    "description": "Headers utilizados no envio à URL (Opcional)",
+                    "description": "Headers utilizados no envio à URL (Opcional). Limite máximo de 1000 chaves.",
+                    "maxProperties": 1000,
                     "additionalProperties": {
                       "type": "string"
                     }
@@ -7191,6 +7212,8 @@
                 "properties": {
                   "bandeiras": {
                     "type": "array",
+                    "description": "Lista de bandeiras e suas permissões. Limite máximo de 1000 itens.",
+                    "maxItems": 1000,
                     "items": {
                       "type": "object",
                       "properties": {
@@ -7199,6 +7222,8 @@
                         },
                         "eventos": {
                           "type": "array",
+                          "description": "Lista de eventos. Limite máximo de 1000 itens.",
+                          "maxItems": 1000,
                           "items": {
                             "type": "string"
                           }
@@ -7276,6 +7301,8 @@
                       },
                       "eventos": {
                         "type": "array",
+                        "description": "Lista de eventos. Limite máximo de 1000 itens.",
+                        "maxItems": 1000,
                         "items": {
                           "type": "string"
                         }
@@ -7335,10 +7362,11 @@
                 "properties": {
                   "bandeiras": {
                     "type": "array",
+                    "description": "Array de IDs das bandeiras a serem removidas. Limite máximo de 1000 itens.",
+                    "maxItems": 1000,
                     "items": {
                       "type": "integer"
-                    },
-                    "description": "Array de IDs das bandeiras a serem removidas"
+                    }
                   }
                 }
               },
