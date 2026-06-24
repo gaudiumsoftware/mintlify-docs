@@ -446,7 +446,8 @@
                         "ordem": 0,
                         "numero_pedido": "2"
                       }
-                    ]
+                    ],
+                    "link_acompanhamento_solicitacao": "https://link-acompanhamento-exemplo/solicitacao/acompanhar/OTU2MzE0ODIyOTM1MQ=="
                   }
                 }
               }
