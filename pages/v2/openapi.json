@@ -388,7 +388,8 @@
                       "arrival_at_surroundings": null,
                       "start_trip": null,
                       "pending_at": null
-                    }
+                    },
+                    "link_acompanhamento_solicitacao": "https://link-acompanhamento-exemplo/solicitacao/acompanhar/OTU2MzE0ODIyOTM1MQ=="
                   }
                 }
               }
