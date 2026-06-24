@@ -125,6 +125,13 @@
                 ]
               },
               {
+                "group": "Notificação",
+                "pages": [
+                  "pages/v2/referencia/notificacao/endpoint/post-push",
+                  "pages/v2/referencia/notificacao/endpoint/post-in-app-messaging"
+                ]
+              },
+              {
                 "group": "Webhooks",
                 "pages": [
                   "pages/v2/referencia/webhooks/endpoint/get",
