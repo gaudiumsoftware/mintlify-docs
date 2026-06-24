@@ -445,6 +445,78 @@
         }
       }
     },
+    "/corridas/{id}/recibo": {
+      "get": {
+        "summary": "Consultar recibo da corrida",
+        "description": "Consulta o recibo de uma corrida.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador interno da corrida.",
+            "schema": {
+              "type": "integer",
+              "example": 1948853
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id_mch": "100003661",
+                    "condutor": {
+                      "nome": "Pedro João",
+                      "telefone": "(021) 99883-3505",
+                      "modelo": "FORD",
+                      "placa": "ABC-1234"
+                    },
+                    "dados_solicitacao": {
+                      "valor": "4.00",
+                      "duracao": "0",
+                      "distancia": "0.001",
+                      "tarifa": "Tarifa padrão",
+                      "id_categoria": "71",
+                      "categoria": "Comum",
+                      "descricao_categoria": "Viagens curtas-médias",
+                      "desconto": "0.00",
+                      "tipo_pagamento": "D"
+                    },
+                    "partida": {
+                      "endereco": "R. Prof. Eurico Rabelo",
+                      "bairro": "Maracanã",
+                      "cidade": "Rio de Janeiro",
+                      "estado": "RJ",
+                      "data_hora": "2021-05-12T09:13:42Z"
+                    },
+                    "desejado": {
+                      "endereco": "Praça Mauá, 1",
+                      "bairro": "Centro",
+                      "cidade": "Rio de Janeiro",
+                      "estado": "RJ",
+                      "data_hora": "2021-05-12T09:14:09Z"
+                    },
+                    "cliente": {
+                      "cliente_id": "1",
+                      "nome": "Marcio",
+                      "cpf": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/corridas": {
       "post": {
         "summary": "Criar corrida",
@@ -1199,9 +1271,7 @@
                 },
                 "example": {
                   "success": true,
-                  "data": {
-                    "mensagem": "Corrida cancelada com sucesso"
-                  }
+                  "message": "Corrida cancelada com sucesso"
                 }
               }
             }
@@ -1234,9 +1304,7 @@
                 },
                 "example": {
                   "success": true,
-                  "data": {
-                    "mensagem": "Corrida cancelada com sucesso"
-                  }
+                  "message": "Corrida cancelada com sucesso"
                 }
               }
             }
@@ -1996,7 +2064,6 @@
                 },
                 "example": {
                   "success": true,
-                  "data": [],
                   "message": "Dinâmica sem área atualizada com sucesso."
                 }
               }
@@ -2135,7 +2202,6 @@
                 },
                 "example": {
                   "success": true,
-                  "data": [],
                   "message": "Dinâmica atualizada com sucesso."
                 }
               }
@@ -2672,10 +2738,7 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": {
-                    "status": "OK",
-                    "mensagem": "Condutor atualizado com sucesso"
-                  }
+                  "message": "Condutor atualizado com sucesso"
                 }
               }
             }
@@ -2937,10 +3000,7 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": {
-                    "status": "OK",
-                    "mensagem": "Condutor atualizado com sucesso"
-                  }
+                  "message": "Condutor atualizado com sucesso"
                 }
               }
             }
@@ -3011,10 +3071,7 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": {
-                    "status": "success",
-                    "mensagem": "Foto alterada com sucesso"
-                  }
+                  "message": "Foto alterada com sucesso"
                 }
               }
             }
@@ -3031,349 +3088,6 @@
                       "message": "Condutor não encontrado."
                     }
                   ]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/condutores/requisitos-cadastro/documentos/consultar": {
-      "post": {
-        "summary": "Consultar requisitos de documentos para cadastro",
-        "description": "Retorna os documentos necessários para o cadastro do condutor.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "condutor"
-                ],
-                "properties": {
-                  "condutor": {
-                    "type": "object",
-                    "required": [
-                      "tipo_identificacao",
-                      "identificacao"
-                    ],
-                    "properties": {
-                      "tipo_identificacao": {
-                        "type": "string",
-                        "description": "Forma de identificação do condutor: CPF (C), VTR (V), Telefone (T), Placa (P) ou ID (I).",
-                        "enum": [
-                          "C",
-                          "V",
-                          "T",
-                          "P",
-                          "I"
-                        ]
-                      },
-                      "identificacao": {
-                        "type": "string",
-                        "description": "Valor da identificação conforme o tipo informado."
-                      }
-                    }
-                  }
-                }
-              },
-              "example": {
-                "condutor": {
-                  "tipo_identificacao": "I",
-                  "identificacao": "5574"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Sucesso",
-            "content": {
-              "application/json": {
-                "example": {
-                  "success": true,
-                  "data": {
-                    "documentos": [
-                      {
-                        "nome": "Alvará de táxi",
-                        "tipo": "ZG9jXzEy",
-                        "ativo": false
-                      },
-                      {
-                        "nome": "Certidão de antecedentes criminais",
-                        "tipo": "ZG9jXzEx",
-                        "ativo": true
-                      },
-                      {
-                        "nome": "CNH (Carteira Nacional de Habilitação)",
-                        "tipo": "ZG9jXzg",
-                        "ativo": true
-                      }
-                    ],
-                    "quantidade_documentos": 6
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Erro de validação",
-            "content": {
-              "application/json": {
-                "examples": {
-                  "enum_invalido": {
-                    "summary": "Enum inválido",
-                    "value": {
-                      "success": false,
-                      "errors": [
-                        {
-                          "code": 0,
-                          "message": "'condutor.tipo_identificacao': Deve estar dentre os valores: C, V, T, P, I"
-                        }
-                      ]
-                    }
-                  },
-                  "corpo_incompleto": {
-                    "summary": "Corpo incompleto",
-                    "value": {
-                      "success": false,
-                      "errors": [
-                        {
-                          "code": 2,
-                          "message": "'condutor.tipo_identificacao': Preenchimento obrigatório"
-                        },
-                        {
-                          "code": 2,
-                          "message": "'condutor.identificacao': Preenchimento obrigatório"
-                        },
-                        {
-                          "code": 2,
-                          "message": "'condutor': Preenchimento obrigatório"
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/condutores/documentos/consultar": {
-      "post": {
-        "summary": "Consultar documentos do condutor",
-        "description": "Retorna os documentos cadastrados do condutor. O tipo de identificação pode ser CPF (C), viatura (V), telefone (T), placa do veículo (P) ou identificador do condutor (I).",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "condutor"
-                ],
-                "properties": {
-                  "condutor": {
-                    "type": "object",
-                    "required": [
-                      "tipo_identificacao",
-                      "identificacao"
-                    ],
-                    "properties": {
-                      "tipo_identificacao": {
-                        "type": "string",
-                        "description": "Forma de identificação do condutor: CPF (C), VTR (V), Telefone (T), Placa (P) ou ID (I).",
-                        "enum": [
-                          "C",
-                          "V",
-                          "T",
-                          "P",
-                          "I"
-                        ]
-                      },
-                      "identificacao": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              },
-              "example": {
-                "condutor": {
-                  "tipo_identificacao": "C",
-                  "identificacao": "123.456.789-09"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Sucesso",
-            "content": {
-              "application/json": {
-                "example": {
-                  "success": true,
-                  "data": {
-                    "documentos": [
-                      {
-                        "tipo": "ZG9jXzg",
-                        "nome": "CNH (Carteira Nacional de Habilitação)",
-                        "url_foto": "/api/foto?user_id=993&id=896"
-                      }
-                    ],
-                    "quantidade_documentos": 1
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Erro de validação",
-            "content": {
-              "application/json": {
-                "examples": {
-                  "enum_invalido": {
-                    "summary": "Enum inválido",
-                    "value": {
-                      "success": false,
-                      "errors": [
-                        {
-                          "code": 0,
-                          "message": "'condutor.tipo_identificacao': Deve estar dentre os valores: C, V, T, P, I"
-                        }
-                      ]
-                    }
-                  },
-                  "corpo_incompleto": {
-                    "summary": "Corpo incompleto",
-                    "value": {
-                      "success": false,
-                      "errors": [
-                        {
-                          "code": 2,
-                          "message": "'condutor.tipo_identificacao': Preenchimento obrigatório"
-                        },
-                        {
-                          "code": 2,
-                          "message": "'condutor.identificacao': Preenchimento obrigatório"
-                        },
-                        {
-                          "code": 2,
-                          "message": "'condutor': Preenchimento obrigatório"
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/condutores/creditos/saldo/consultar": {
-      "post": {
-        "summary": "Consultar saldo de créditos do condutor",
-        "description": "Consulta o saldo de créditos de um condutor identificado por tipo e valor de identificação.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "condutor"
-                ],
-                "properties": {
-                  "condutor": {
-                    "type": "object",
-                    "required": [
-                      "tipo_identificacao",
-                      "identificacao"
-                    ],
-                    "properties": {
-                      "tipo_identificacao": {
-                        "type": "string",
-                        "description": "Forma de identificação do condutor: CPF (C), VTR (V), Telefone (T), Placa (P) ou ID (I).",
-                        "enum": [
-                          "C",
-                          "V",
-                          "T",
-                          "P",
-                          "I"
-                        ]
-                      },
-                      "identificacao": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              },
-              "example": {
-                "condutor": {
-                  "tipo_identificacao": "I",
-                  "identificacao": "5574"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Sucesso",
-            "content": {
-              "application/json": {
-                "example": {
-                  "success": true,
-                  "data": {
-                    "saldo": 587.69
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Erro de validação",
-            "content": {
-              "application/json": {
-                "examples": {
-                  "enum_invalido": {
-                    "summary": "Enum inválido",
-                    "value": {
-                      "success": false,
-                      "errors": [
-                        {
-                          "code": 0,
-                          "message": "'condutor.tipo_identificacao': Deve estar dentre os valores: C, V, T, P, I"
-                        }
-                      ]
-                    }
-                  },
-                  "corpo_incompleto": {
-                    "summary": "Corpo incompleto",
-                    "value": {
-                      "success": false,
-                      "errors": [
-                        {
-                          "code": 2,
-                          "message": "'condutor.tipo_identificacao': Preenchimento obrigatório"
-                        },
-                        {
-                          "code": 2,
-                          "message": "'condutor.identificacao': Preenchimento obrigatório"
-                        },
-                        {
-                          "code": 2,
-                          "message": "'condutor': Preenchimento obrigatório"
-                        }
-                      ]
-                    }
-                  }
                 }
               }
             }
@@ -3637,10 +3351,7 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": {
-                    "status": "OK",
-                    "mensagem": "Condutor atualizado com sucesso"
-                  }
+                  "message": "Condutor atualizado com sucesso"
                 }
               }
             }
@@ -3684,10 +3395,7 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": {
-                    "status": "OK",
-                    "mensagem": "Condutor atualizado com sucesso"
-                  }
+                  "message": "Condutor atualizado com sucesso"
                 }
               }
             }
@@ -4209,7 +3917,6 @@
                 },
                 "example": {
                   "success": true,
-                  "data": [],
                   "message": "Categoria modificada com sucesso!"
                 }
               }
@@ -4808,9 +4515,7 @@
                 },
                 "example": {
                   "success": true,
-                  "data": {
-                    "mensagem": "Webhook criado com sucesso"
-                  }
+                  "message": "Webhook criado com sucesso"
                 }
               }
             }
@@ -4861,9 +4566,7 @@
                 },
                 "example": {
                   "success": true,
-                  "data": {
-                    "mensagem": "Webhook atualizado com sucesso"
-                  }
+                  "message": "Webhook atualizado com sucesso"
                 }
               }
             }
@@ -4894,9 +4597,7 @@
                 },
                 "example": {
                   "success": true,
-                  "data": {
-                    "mensagem": "Webhook deletado com sucesso"
-                  }
+                  "message": "Webhook deletado com sucesso"
                 }
               }
             }
@@ -5772,10 +5473,7 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": {
-                    "status": "success",
-                    "mensagem": "Entrega cancelada com sucesso"
-                  }
+                  "message": "Entrega cancelada com sucesso"
                 }
               }
             }
@@ -6661,40 +6359,37 @@
         }
       }
     },
-    "/entregas/empresas/creditos/saldo/consultar": {
-      "post": {
+    "/entregas/empresas/creditos/saldo": {
+      "get": {
         "summary": "Obter saldo da empresa",
         "description": "As empresas podem possuir carteiras de crédito, com isso, esse endpoint permite verificar o saldo em créditos para a empresa em questão.\nO tipo de identificação, é uma forma de identificação da empresa, desta forma de acordo com o tipo de identificação, o valor da identificação da empresa irá respeitar a regra do tipo enviado.\n- `F`: CPF da empresa\n- `J`: CNPJ da empresa\n- `T`: Telefone do condutor\n- `C`: Número do contrato\n- `I`: Identificador da empresa",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "empresa": {
-                    "type": "object",
-                    "properties": {
-                      "tipo_identificacao": {
-                        "type": "string",
-                        "enum": [
-                          "F",
-                          "J",
-                          "T",
-                          "C",
-                          "I"
-                        ]
-                      },
-                      "identificacao": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
+        "parameters": [
+          {
+            "name": "tipo_identificacao",
+            "in": "query",
+            "required": true,
+            "description": "Forma de identificação da empresa",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "F",
+                "J",
+                "T",
+                "C",
+                "I"
+              ]
+            }
+          },
+          {
+            "name": "identificacao",
+            "in": "query",
+            "required": true,
+            "description": "Valor da identificação da empresa de acordo com o tipo enviado",
+            "schema": {
+              "type": "string"
             }
           }
-        },
+        ],
         "responses": {
           "200": {
             "description": "Sucesso",
@@ -7225,10 +6920,7 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": {
-                    "status": "OK",
-                    "mensagem": "Empresa atualizada com sucesso"
-                  }
+                  "message": "Empresa atualizada com sucesso"
                 }
               }
             }
@@ -7387,7 +7079,6 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": [],
                   "message": "Webhook de engajamento criado com sucesso."
                 }
               }
@@ -7440,7 +7131,6 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": [],
                   "message": "Webhook de engajamento atualizado com sucesso."
                 }
               }
@@ -7469,7 +7159,6 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": [],
                   "message": "Webhook de engajamento excluído com sucesso."
                 }
               }
@@ -7478,7 +7167,7 @@
         }
       }
     },
-    "/engajamento/permissoes/{id}": {
+    "/engajamento/{id}/permissoes": {
       "post": {
         "summary": "Adicionar bandeiras e permissões a webhook",
         "description": "Adiciona/Substitui o grupo de bandeiras atual de um webhook e define as permissões dessas bandeiras. **Remove bandeiras anteriores e permissões anteriores do webhook.** Regras importantes:\n- Recebe um array de bandeiras com cada bandeira_id e eventos que a bandeira deve receber;\n- Impede inclusão de bandeiras já atreladas a outros webhooks;\n- Envio de eventos do webhook é alterado em até 5 minutos após a edição.",
@@ -7551,7 +7240,6 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": [],
                   "message": "Permissões de engajamento criadas com sucesso."
                 }
               }
@@ -7617,7 +7305,6 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": [],
                   "message": "Permissões de engajamento criadas com sucesso."
                 }
               }
@@ -7672,13 +7359,297 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": [],
                   "message": "Permissões de engajamento excluídas com sucesso."
                 }
               }
             }
           }
         }
+      }
+    },
+    "/condutores/requisitos-cadastro/documentos": {
+      "get": {
+        "summary": "Consultar requisitos de documentos para cadastro",
+        "description": "Retorna os documentos necessários para o cadastro do condutor.",
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "data": {
+                    "documentos": [
+                      {
+                        "nome": "Alvará de táxi",
+                        "tipo": "ZG9jXzEy",
+                        "ativo": false
+                      },
+                      {
+                        "nome": "Certidão de antecedentes criminais",
+                        "tipo": "ZG9jXzEx",
+                        "ativo": true
+                      },
+                      {
+                        "nome": "CNH (Carteira Nacional de Habilitação)",
+                        "tipo": "ZG9jXzg",
+                        "ativo": true
+                      }
+                    ],
+                    "quantidade_documentos": 6
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "enum_invalido": {
+                    "summary": "Enum inválido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'tipo_identificacao': Deve estar dentre os valores: C, V, T, P, I"
+                        }
+                      ]
+                    }
+                  },
+                  "corpo_incompleto": {
+                    "summary": "Parâmetros obrigatórios ausentes",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'tipo_identificacao': Preenchimento obrigatório"
+                        },
+                        {
+                          "code": 2,
+                          "message": "'identificacao': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "tipo_identificacao",
+            "in": "query",
+            "required": true,
+            "description": "Forma de identificação do condutor: CPF (C), VTR (V), Telefone (T), Placa (P) ou ID (I).",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "C",
+                "V",
+                "T",
+                "P",
+                "I"
+              ],
+              "example": "I"
+            }
+          },
+          {
+            "name": "identificacao",
+            "in": "query",
+            "required": true,
+            "description": "Valor da identificação conforme o tipo informado.",
+            "schema": {
+              "type": "string",
+              "example": "5574"
+            }
+          }
+        ]
+      }
+    },
+    "/condutores/documentos": {
+      "get": {
+        "summary": "Consultar documentos do condutor",
+        "description": "Retorna os documentos cadastrados do condutor. O tipo de identificação pode ser CPF (C), viatura (V), telefone (T), placa do veículo (P) ou identificador do condutor (I).",
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "data": {
+                    "documentos": [
+                      {
+                        "tipo": "ZG9jXzg",
+                        "nome": "CNH (Carteira Nacional de Habilitação)",
+                        "url_foto": "/api/foto?user_id=993&id=896"
+                      }
+                    ],
+                    "quantidade_documentos": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "enum_invalido": {
+                    "summary": "Enum inválido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'tipo_identificacao': Deve estar dentre os valores: C, V, T, P, I"
+                        }
+                      ]
+                    }
+                  },
+                  "corpo_incompleto": {
+                    "summary": "Parâmetros obrigatórios ausentes",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'tipo_identificacao': Preenchimento obrigatório"
+                        },
+                        {
+                          "code": 2,
+                          "message": "'identificacao': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "tipo_identificacao",
+            "in": "query",
+            "required": true,
+            "description": "Forma de identificação do condutor: CPF (C), VTR (V), Telefone (T), Placa (P) ou ID (I).",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "C",
+                "V",
+                "T",
+                "P",
+                "I"
+              ],
+              "example": "C"
+            }
+          },
+          {
+            "name": "identificacao",
+            "in": "query",
+            "required": true,
+            "description": "Valor da identificação conforme o tipo informado.",
+            "schema": {
+              "type": "string",
+              "example": "123.456.789-09"
+            }
+          }
+        ]
+      }
+    },
+    "/condutores/creditos/saldo": {
+      "get": {
+        "summary": "Consultar saldo de créditos do condutor",
+        "description": "Consulta o saldo de créditos de um condutor identificado por tipo e valor de identificação.",
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "data": {
+                    "saldo": 587.69
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "enum_invalido": {
+                    "summary": "Enum inválido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'tipo_identificacao': Deve estar dentre os valores: C, V, T, P, I"
+                        }
+                      ]
+                    }
+                  },
+                  "corpo_incompleto": {
+                    "summary": "Parâmetros obrigatórios ausentes",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'tipo_identificacao': Preenchimento obrigatório"
+                        },
+                        {
+                          "code": 2,
+                          "message": "'identificacao': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "tipo_identificacao",
+            "in": "query",
+            "required": true,
+            "description": "Forma de identificação do condutor: CPF (C), VTR (V), Telefone (T), Placa (P) ou ID (I).",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "C",
+                "V",
+                "T",
+                "P",
+                "I"
+              ],
+              "example": "I"
+            }
+          },
+          {
+            "name": "identificacao",
+            "in": "query",
+            "required": true,
+            "description": "Valor da identificação conforme o tipo informado.",
+            "schema": {
+              "type": "string",
+              "example": "5574"
+            }
+          }
+        ]
       }
     }
   },
