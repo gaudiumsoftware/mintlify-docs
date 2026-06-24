@@ -37,40 +37,6 @@
             }
           },
           {
-            "name": "cpf",
-            "in": "query",
-            "description": "CPF do cliente. Aceita com ou sem máscara, por exemplo: `064.181.699-56` ou `06418169956`. Faz correspondência exata. Quando informado, `status_cliente` e paginação são ignorados.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "email",
-            "in": "query",
-            "description": "E-mail do cliente. Faz correspondência exata. Quando informado, `status_cliente` e paginação são ignorados.",
-            "schema": {
-              "type": "string",
-              "format": "email"
-            }
-          },
-          {
-            "name": "telefone",
-            "in": "query",
-            "description": "Telefone do cliente. Aceita com ou sem DDI e com ou sem o prefixo `+`. O DDI é inferido a partir do país da bandeira (fallback Brasil `55`). Quando informado, `status_cliente` e paginação são ignorados.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "nome",
-            "in": "query",
-            "description": "Parte do nome do cliente (busca parcial, mínimo 3 caracteres). Quando informado, `status_cliente` é ignorado. A paginação continua sendo aplicada.",
-            "schema": {
-              "type": "string",
-              "minLength": 3
-            }
-          },
-          {
             "name": "status_cliente",
             "in": "query",
             "description": "Filtra os clientes pelo status:\n\nA: Ativo\nI: Inativo\nS: Suspenso\nG: Aguardando ativação",
