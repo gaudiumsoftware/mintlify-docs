@@ -99,12 +99,10 @@ Para garantir uma integração eficiente e segura, a API oferece integração co
 
 ## Rate limit
 
-Por padrão, a maioria dos endpoints tem um limite de 50 requisições por minuto. No entanto, alguns endpoints podem ter limites diferentes, conforme listado abaixo:
+O gateway aplica rate limit por janela deslizante de 60 segundos.
+Quando a requisição excede o limite de bloqueio, a API retorna `429`.
 
-| Endpoint | Rate limit |
-| -------- | -------- |
-| `/api/integracao/cliente`<br />`/api/integracao/solicitacao`<br />`/api/integracao/posicaoCondutor`<br />`/api/integracao/posicaoMotorista`<br />`/api/integracao/abrirSolicitacao` | 100 requests por minuto |
-| `/api/integracao/consultarProgramada`<br />`/api/integracao/condutor` | 200 requests por minuto |
+As políticas e limites específicos de rate limit para os endpoints da v2 estão atualmente em desenvolvimento (*Work in Progress*). Esta seção será atualizada assim que as regras definitivas forem estabelecidas.
 
 
 ---
