@@ -179,6 +179,7 @@
                   "pages/v2/referencia/entregas/endpoint/get-links-rastreio",
                   "pages/v2/referencia/entregas/endpoint/get-areas-atuacao",
                   "pages/v2/referencia/entregas/endpoint/get-condutor-posicao",
+                  "pages/v2/referencia/entregas/endpoint/post-agrupar",
                   {
                     "group": "Programadas",
                     "pages": [
@@ -186,7 +187,8 @@
                       "pages/v2/referencia/entregas/endpoint/post-programadas",
                       "pages/v2/referencia/entregas/endpoint/get-programadas-by-id",
                       "pages/v2/referencia/entregas/endpoint/post-programadas-cancelar",
-                      "pages/v2/referencia/entregas/endpoint/post-programadas-estimativas"
+                      "pages/v2/referencia/entregas/endpoint/post-programadas-estimativas",
+                      "pages/v2/referencia/entregas/endpoint/post-programadas-agrupar"
                     ]
                   },
                   {
