@@ -32,7 +32,7 @@
             ]
           },
           {
-            "tab": "Referência",
+            "tab": "Corridas",
             "groups": [
               {
                 "group": "Introdução",
@@ -41,18 +41,12 @@
                 ]
               },
               {
-                "group": "Clientes",
-                "pages": [
-                  "pages/v2/referencia/clientes/endpoint/get",
-                  "pages/v2/referencia/clientes/endpoint/get-by-id"
-                ]
-              },
-              {
                 "group": "Corridas",
                 "pages": [
                   "pages/v2/referencia/corridas/endpoint/post-consultar",
                   "pages/v2/referencia/corridas/endpoint/get-by-id",
                   "pages/v2/referencia/corridas/endpoint/get-detalhes",
+                  "pages/v2/referencia/corridas/endpoint/get-recibo",
                   "pages/v2/referencia/corridas/endpoint/post-criar",
                   "pages/v2/referencia/corridas/endpoint/post-criar-programada",
                   "pages/v2/referencia/corridas/endpoint/post-estimativas",
@@ -66,6 +60,13 @@
                   "pages/v2/referencia/corridas/endpoint/get-status",
                   "pages/v2/referencia/corridas/endpoint/get-centros-custo",
                   "pages/v2/referencia/corridas/endpoint/get-funcionarios"
+                ]
+              },
+              {
+                "group": "Clientes",
+                "pages": [
+                  "pages/v2/referencia/clientes/endpoint/get",
+                  "pages/v2/referencia/clientes/endpoint/get-by-id"
                 ]
               },
               {
@@ -85,9 +86,9 @@
                   "pages/v2/referencia/condutores/endpoint/patch-by-id",
                   "pages/v2/referencia/condutores/endpoint/put-by-id",
                   "pages/v2/referencia/condutores/endpoint/post-documentos-atualizar",
-                  "pages/v2/referencia/condutores/endpoint/post-requisitos-cadastro-documentos-consultar",
-                  "pages/v2/referencia/condutores/endpoint/post-documentos-consultar",
-                  "pages/v2/referencia/condutores/endpoint/post-creditos-saldo-consultar",
+                  "pages/v2/referencia/condutores/endpoint/get-requisitos-cadastro-documentos",
+                  "pages/v2/referencia/condutores/endpoint/get-documentos",
+                  "pages/v2/referencia/condutores/endpoint/get-creditos-saldo",
                   "pages/v2/referencia/condutores/endpoint/post-creditos-recargas",
                   "pages/v2/referencia/condutores/endpoint/post-creditos-saques",
                   "pages/v2/referencia/condutores/endpoint/put-areas-bloqueio-batch",
@@ -165,40 +166,126 @@
                     ]
                   }
                 ]
-              },
+              }
+            ]
+          },
+          {
+            "tab": "Entregas",
+            "groups": [
               {
                 "group": "Entregas",
                 "pages": [
-                  "pages/v2/referencia/entregas/endpoint/post-consultar",
-                  "pages/v2/referencia/entregas/endpoint/get-by-id",
-                  "pages/v2/referencia/entregas/endpoint/post",
-                  "pages/v2/referencia/entregas/endpoint/get-detalhes",
-                  "pages/v2/referencia/entregas/endpoint/post-cancelar",
-                  "pages/v2/referencia/entregas/endpoint/post-estimativas",
-                  "pages/v2/referencia/entregas/endpoint/get-status",
-                  "pages/v2/referencia/entregas/endpoint/get-recibo",
-                  "pages/v2/referencia/entregas/endpoint/get-links-rastreio",
-                  "pages/v2/referencia/entregas/endpoint/get-areas-atuacao",
-                  "pages/v2/referencia/entregas/endpoint/get-condutor-posicao",
+                  "pages/v2/entregas/endpoint/post-consultar",
+                  "pages/v2/entregas/endpoint/get-by-id",
+                  "pages/v2/entregas/endpoint/post",
+                  "pages/v2/entregas/endpoint/get-detalhes",
+                  "pages/v2/entregas/endpoint/post-cancelar",
+                  "pages/v2/entregas/endpoint/post-estimativas",
+                  "pages/v2/entregas/endpoint/get-status",
+                  "pages/v2/entregas/endpoint/get-recibo",
+                  "pages/v2/entregas/endpoint/get-links-rastreio",
+                  "pages/v2/entregas/endpoint/get-areas-atuacao",
+                  "pages/v2/entregas/endpoint/get-condutor-posicao",
+                  "pages/v2/entregas/endpoint/post-agrupar",
                   {
                     "group": "Programadas",
                     "pages": [
-                      "pages/v2/referencia/entregas/endpoint/get-programadas",
-                      "pages/v2/referencia/entregas/endpoint/post-programadas",
-                      "pages/v2/referencia/entregas/endpoint/get-programadas-by-id",
-                      "pages/v2/referencia/entregas/endpoint/post-programadas-cancelar",
-                      "pages/v2/referencia/entregas/endpoint/post-programadas-estimativas"
+                      "pages/v2/entregas/endpoint/get-programadas",
+                      "pages/v2/entregas/endpoint/post-programadas",
+                      "pages/v2/entregas/endpoint/get-programadas-by-id",
+                      "pages/v2/entregas/endpoint/post-programadas-cancelar",
+                      "pages/v2/entregas/endpoint/post-programadas-estimativas",
+                      "pages/v2/entregas/endpoint/post-programadas-agrupar"
                     ]
                   },
                   {
                     "group": "Empresas",
                     "pages": [
-                      "pages/v2/referencia/entregas/endpoint/post-empresas-estimativas",
-                      "pages/v2/referencia/entregas/endpoint/post-saldo",
-                      "pages/v2/referencia/entregas/endpoint/post-recargas",
-                      "pages/v2/referencia/entregas/endpoint/post-saques"
+                      "pages/v2/entregas/endpoint/post-empresas-estimativas",
+                      "pages/v2/entregas/endpoint/get-saldo",
+                      "pages/v2/entregas/endpoint/post-recargas",
+                      "pages/v2/entregas/endpoint/post-saques"
                     ]
                   }
+                ]
+              },
+              {
+                "group": "Dinâmicas",
+                "pages": [
+                  "pages/v2/entregas/dinamicas/endpoint/get-area",
+                  "pages/v2/entregas/dinamicas/endpoint/get-sem-area",
+                  "pages/v2/entregas/dinamicas/endpoint/patch-area",
+                  "pages/v2/entregas/dinamicas/endpoint/patch-sem-area"
+                ]
+              },
+              {
+                "group": "Condutores",
+                "pages": [
+                  "pages/v2/entregas/condutores/endpoint/get",
+                  "pages/v2/entregas/condutores/endpoint/get-by-id",
+                  "pages/v2/entregas/condutores/endpoint/patch-by-id",
+                  "pages/v2/entregas/condutores/endpoint/put-by-id",
+                  "pages/v2/entregas/condutores/endpoint/post-documentos-atualizar",
+                  "pages/v2/entregas/condutores/endpoint/get-requisitos-cadastro-documentos",
+                  "pages/v2/entregas/condutores/endpoint/get-documentos",
+                  "pages/v2/entregas/condutores/endpoint/get-creditos-saldo",
+                  "pages/v2/entregas/condutores/endpoint/post-creditos-recargas",
+                  "pages/v2/entregas/condutores/endpoint/post-creditos-saques",
+                  "pages/v2/entregas/condutores/endpoint/put-areas-bloqueio-batch",
+                  "pages/v2/entregas/condutores/endpoint/post-areas-permissao",
+                  "pages/v2/entregas/condutores/endpoint/delete-areas-permissao"
+                ]
+              },
+              {
+                "group": "Empresas",
+                "pages": [
+                  "pages/v2/entregas/empresas/endpoint/get",
+                  "pages/v2/entregas/empresas/endpoint/get-by-id",
+                  "pages/v2/entregas/empresas/endpoint/post",
+                  "pages/v2/entregas/empresas/endpoint/put",
+                  "pages/v2/entregas/empresas/endpoint/put-batch"
+                ]
+              },
+              {
+                "group": "Configurações",
+                "pages": [
+                  "pages/v2/entregas/configuracoes/endpoint/patch",
+                  "pages/v2/entregas/configuracoes/endpoint/tipos-documento",
+                  "pages/v2/entregas/configuracoes/endpoint/areas-geograficas",
+                  "pages/v2/entregas/configuracoes/endpoint/categorias",
+                  "pages/v2/entregas/configuracoes/endpoint/put-categorias",
+                  "pages/v2/entregas/configuracoes/endpoint/saque-automatico-ativacao"
+                ]
+              },
+              {
+                "group": "Webhooks",
+                "pages": [
+                  "pages/v2/entregas/webhooks/endpoint/get",
+                  "pages/v2/entregas/webhooks/endpoint/post",
+                  "pages/v2/entregas/webhooks/endpoint/put",
+                  "pages/v2/entregas/webhooks/endpoint/delete"
+                ]
+              },
+              {
+                "group": "Mensagens",
+                "pages": [
+                  "pages/v2/entregas/mensagens/endpoint/post-condutor-broadcast",
+                  "pages/v2/entregas/mensagens/endpoint/post-condutor-privada",
+                  "pages/v2/entregas/mensagens/endpoint/post-empresa-broadcast",
+                  "pages/v2/entregas/mensagens/endpoint/post-empresa-privada"
+                ]
+              },
+              {
+                "group": "Consumidores",
+                "pages": [
+                  "pages/v2/entregas/consumidores/endpoint/get",
+                  "pages/v2/entregas/consumidores/endpoint/get-by-id",
+                  "pages/v2/entregas/consumidores/endpoint/post",
+                  "pages/v2/entregas/consumidores/endpoint/patch-by-id",
+                  "pages/v2/entregas/consumidores/endpoint/enderecos-get",
+                  "pages/v2/entregas/consumidores/endpoint/enderecos-post",
+                  "pages/v2/entregas/consumidores/endpoint/enderecos-patch",
+                  "pages/v2/entregas/consumidores/endpoint/enderecos-delete"
                 ]
               }
             ]
