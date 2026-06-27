@@ -288,6 +288,18 @@
                 ]
               }
             ]
+          },
+          {
+            "tab": "Novidades",
+            "icon": "sparkles",
+            "groups": [
+              {
+                "group": "Changelog",
+                "pages": [
+                  "pages/v2/changelog"
+                ]
+              }
+            ]
           }
         ]
       },
