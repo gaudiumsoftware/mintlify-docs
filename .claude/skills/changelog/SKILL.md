@@ -1,11 +1,20 @@
 ---
 name: changelog
-description: "Gera uma entrada de changelog em pages/v2/changelog.mdx a partir das mudanças de uma PR ou branch. Analisa o diff do openapi.json, extrai endpoints afetados, categoriza as mudanças e prepende a entrada no topo do arquivo."
+description: "Gera uma entrada de changelog em pages/v2/changelog.mdx (Corridas) e/ou pages/v2/changelog-entregas.mdx (Entregas) a partir das mudanças de uma PR ou branch. Analisa o diff do openapi.json, extrai endpoints afetados, determina a modalidade (Corridas, Entregas ou ambas), categoriza as mudanças e insere a entrada no(s) arquivo(s) correto(s)."
 ---
 
 # /changelog
 
-Gera automaticamente uma entrada no changelog da documentação Mintlify (`pages/v2/changelog.mdx`) com base nas mudanças de uma PR ou branch.
+Gera automaticamente uma entrada no changelog da documentação Mintlify com base nas mudanças de uma PR ou branch.
+
+## Arquivos de changelog
+
+| Arquivo                                  | Modalidade |
+|------------------------------------------|------------|
+| `pages/v2/changelog.mdx`                 | Corridas   |
+| `pages/v2/changelog-entregas.mdx`        | Entregas   |
+
+A entrada deve ser inserida no arquivo correspondente à modalidade afetada. Se a mudança afeta ambas, inserir nos dois arquivos.
 
 ## Uso
 
@@ -52,11 +61,37 @@ a rota que corresponde ao endpoint. Padrão de nomenclatura do projeto:
 
 Se não encontrar correspondência, usar `href` vazio e deixar um comentário `{/* TODO: href */}`.
 
-### 4 — Perguntar a data da atualização
+### 4 — Determinar a modalidade
 
 > ⚠️ **OBRIGATÓRIO — nunca pular esta etapa.**
 
-Antes de qualquer outra ação, perguntar ao usuário:
+Analisar os paths dos endpoints afetados e inferir a modalidade:
+
+| Padrão no path              | Modalidade inferida |
+|-----------------------------|---------------------|
+| `/corridas`                 | Corridas            |
+| `/entregas`                 | Entregas            |
+| `/clientes`, `/condutores`  | **Ambas** — endpoints compartilhados entre as duas modalidades |
+| Outro                       | Inconclusivo → perguntar ao usuário |
+
+**Se a modalidade for inconclusiva**, perguntar:
+
+> "Este endpoint pertence a Corridas, Entregas ou ambas as modalidades?"
+
+**Se a modalidade for inferida com segurança**, informar ao usuário e confirmar antes de prosseguir:
+
+> "Identifiquei que esta mudança afeta [Corridas / Entregas / Corridas e Entregas]. Confirma?"
+
+A resposta determina em qual(is) arquivo(s) a entrada será inserida:
+- **Corridas** → `pages/v2/changelog.mdx`
+- **Entregas** → `pages/v2/changelog-entregas.mdx`
+- **Ambas** → os dois arquivos
+
+### 5 — Perguntar a data da atualização
+
+> ⚠️ **OBRIGATÓRIO — nunca pular esta etapa.**
+
+Perguntar ao usuário:
 
 > "Qual é a data de inclusão desta atualização no changelog? (ex: 27 jun 2025)"
 
@@ -64,7 +99,7 @@ Antes de qualquer outra ação, perguntar ao usuário:
 
 A data informada será usada no campo `date` do componente `Entry`.
 
-### 5 — Categorizar as mudanças por tipo
+### 6 — Categorizar as mudanças por tipo
 
 Agrupar os deltas em categorias para o `ChangeSection`:
 
@@ -75,7 +110,7 @@ Agrupar os deltas em categorias para o `ChangeSection`:
 | `fixed`    | Correção de comportamento documentado incorretamente        |
 | `removed`  | Parâmetros ou endpoints removidos                           |
 
-### 6 — Determinar label da entrada
+### 7 — Determinar label da entrada
 
 - **Data:** a informada pelo usuário na etapa 4, no formato `DD mmm YYYY` em português (ex: `27 jun 2025`)
 - **Label e cor:**
@@ -140,15 +175,20 @@ Regras de escrita:
   </div>
 ```
 
-### 8 — Inserir respeitando a ordenação cronológica
+### 8 — Escrever a entrada MDX
+
+Usar os componentes já definidos no topo de cada arquivo de changelog.
+**Não redefinir os componentes** — eles já existem em ambos os arquivos.
+
+### 9 — Inserir respeitando a ordenação cronológica
 
 > ⚠️ **OBRIGATÓRIO — nunca inserir sem verificar a ordem.**
 
 A ordem do changelog é **sempre decrescente: da entrada mais recente para a mais antiga** (topo = mais novo).
 
-**Passos:**
+Repetir os passos abaixo para **cada arquivo** determinado na etapa 4:
 
-1. Ler todas as `<Entry date="...">` existentes em `pages/v2/changelog.mdx` e extrair suas datas.
+1. Ler todas as `<Entry date="...">` existentes no arquivo alvo e extrair suas datas.
 2. Converter cada data para um valor comparável (ano × 10000 + mês × 100 + dia). Meses em português:
 
    | Abrev | Nº | Abrev | Nº | Abrev | Nº |
@@ -177,14 +217,16 @@ A ordem do changelog é **sempre decrescente: da entrada mais recente para a mai
 
 **Nunca** inserir baseado apenas em posição de texto — sempre comparar datas numericamente.
 
-### 9 — Confirmar com o usuário antes de salvar
+### 10 — Confirmar com o usuário antes de salvar
 
-Exibir a entrada gerada em markdown e perguntar:
-> "Entrada gerada. Deseja aplicar ao changelog? (s/n)"
+Exibir a entrada gerada em markdown, indicando em qual(is) arquivo(s) será inserida, e perguntar:
+> "Entrada gerada para [Corridas / Entregas / Corridas e Entregas]. Deseja aplicar ao changelog? (s/n)"
 
-Só editar o arquivo após confirmação.
+Só editar o(s) arquivo(s) após confirmação.
 
-## Componentes disponíveis no arquivo
+## Componentes disponíveis nos arquivos
+
+Ambos os arquivos de changelog definem os mesmos componentes no topo. Nunca redefinir.
 
 | Componente       | Props                              | Descrição                                      |
 |------------------|------------------------------------|------------------------------------------------|
@@ -195,12 +237,13 @@ Só editar o arquivo após confirmação.
 
 ## Regras de qualidade
 
-- **Nunca redefinir componentes** que já existem no arquivo
+- **Nunca redefinir componentes** que já existem nos arquivos
 - **Sempre incluir `href`** no `EndpointBadge` — buscar em `docs.json` antes de deixar vazio
 - **Ordem cronológica decrescente sempre** — comparar datas numericamente antes de inserir; nunca prependar cegamente no topo nem appendar no final sem verificar
 - **Sem `href` em `<a>` nulo** — se `href` não foi encontrado, usar `<div>` em vez de `<a>`
 - **Data sempre em português** — `jan`, `fev`, `mar`, `abr`, `mai`, `jun`, `jul`, `ago`, `set`, `out`, `nov`, `dez`
-- **Não commitar** — a skill entrega apenas a edição no arquivo; o commit é responsabilidade do autor
+- **Modalidade sempre confirmada** — nunca assumir qual arquivo editar sem analisar os paths ou perguntar ao usuário
+- **Não commitar** — a skill entrega apenas a edição no(s) arquivo(s); o commit é responsabilidade do autor
 
 ## Exemplo de invocação completa
 
@@ -211,9 +254,10 @@ Só editar o arquivo após confirmação.
 1. Executa `gh pr diff 18 -- pages/v2/openapi.json`
 2. Encontra mudanças em `/clientes` (GET) e `/condutores` (GET)
 3. Mapeia para `pages/v2/referencia/clientes/endpoint/get` e `pages/v2/referencia/condutores/endpoint/get`
-4. Pergunta a data ao usuário → resposta: `25 jun 2026`
-5. Classifica: 4 parâmetros `added` em clientes, 2 em condutores; vários `changed` em descrições
-6. Label: `Melhoria` (mix de added + changed)
-7. Lê as datas existentes no arquivo: `[27 jun 2025]` → `25 jun 2026` é mais recente → insere antes da entry de `27 jun 2025`
-8. Exibe a entrada gerada para aprovação
-9. Após confirmação, edita `pages/v2/changelog.mdx` na posição correta
+4. Identifica paths `/clientes` e `/condutores` → endpoints compartilhados → modalidade **Ambas** → confirma com usuário
+5. Pergunta a data ao usuário → resposta: `25 jun 2026`
+6. Classifica: 4 parâmetros `added` em clientes, 2 em condutores; vários `changed` em descrições
+7. Label: `Melhoria` (mix de added + changed)
+8. Lê as datas existentes em `changelog.mdx` e `changelog-entregas.mdx` separadamente
+9. Exibe a entrada gerada e informa: "será inserida em Corridas e Entregas"
+10. Após confirmação, edita os dois arquivos na posição cronológica correta

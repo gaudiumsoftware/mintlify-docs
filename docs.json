@@ -296,7 +296,8 @@
               {
                 "group": "Changelog",
                 "pages": [
-                  "pages/v2/changelog"
+                  "pages/v2/changelog",
+                  "pages/v2/changelog-entregas"
                 ]
               }
             ]
