@@ -3715,7 +3715,7 @@
     "/corridas/{id}/recibo": {
       "get": {
         "summary": "Consultar recibo da corrida",
-        "description": "Consulta o recibo de uma corrida.",
+        "description": "Consulta o recibo de uma corrida. Os campos `codigo_cupom` e `gerador_cupom_id` são retornados apenas quando a corrida utilizou um cupom de desconto.",
         "parameters": [
           {
             "name": "id",
@@ -3775,7 +3775,9 @@
                       "cliente_id": "1",
                       "nome": "Marcio",
                       "cpf": null
-                    }
+                    },
+                    "codigo_cupom": "DESCONTO10",
+                    "gerador_cupom_id": 42
                   }
                 }
               }

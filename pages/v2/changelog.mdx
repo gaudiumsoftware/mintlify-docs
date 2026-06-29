@@ -153,6 +153,54 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="2 jul 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Campos de cupom de desconto em recibo e webhook de corrida finalizada
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Parceiros agora conseguem identificar qual cupom foi utilizado em cada corrida finalizada,
+      tanto consultando o recibo quanto recebendo via webhook de mudança de status.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/corridas/{id}/recibo" href="/pages/v2/referencia/corridas/endpoint/get-recibo" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Novos campos opcionais na resposta (presentes apenas quando a corrida utilizou cupom de desconto):</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="codigo_cupom" /> — código do cupom utilizado na corrida.</li>
+        <li><ParamBadge name="gerador_cupom_id" /> — ID do gerador de cupom associado.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="Webhook de status (status_solicitacao = F)" />
+
+      <ChangeSection type="added">
+        <p style={{ marginBottom: "10px" }}>
+          Novo objeto <ParamBadge name="finalizacao.cupom" /> incluído no payload do webhook quando a corrida finalizada utilizou cupom de desconto:
+        </p>
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="codigo" /> — código do cupom.</li>
+          <li><ParamBadge name="gerador_cupom_id" /> — ID do gerador de cupom.</li>
+          <li><ParamBadge name="desconto_aplicado" /> — valor do desconto aplicado na corrida.</li>
+          <li><ParamBadge name="tipo_desconto" /> — <code>"percentual"</code> ou <code>"valor_fixo"</code>.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Campos opcionais:</strong> <code>codigo_cupom</code>, <code>gerador_cupom_id</code> e <code>finalizacao.cupom</code> são omitidos quando a corrida não utilizou cupom de desconto.
+    </div>
+  </Entry>
+
   <Entry date="25 jun 2026" label="Melhoria" labelColor="#16A34A">
     <h2 style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Novos filtros de busca em Clientes e Condutores
