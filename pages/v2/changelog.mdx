@@ -153,6 +153,46 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="25 jun 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="crud-consumidores" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      CRUD de Consumidores e Endereços
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Quatro endpoints para gerenciar consumidores da empresa e quatro para gerenciar seus endereços salvos,
+      permitindo criar, consultar, editar e excluir diretamente pela API.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/consumidores" href="/pages/v2/entregas/consumidores/endpoint/get" />
+    <EndpointBadge method="POST" path="/api/v2/integracao/consumidores" href="/pages/v2/entregas/consumidores/endpoint/post" />
+    <EndpointBadge method="GET" path="/api/v2/integracao/consumidores/{id}" href="/pages/v2/entregas/consumidores/endpoint/get-by-id" />
+    <EndpointBadge method="PATCH" path="/api/v2/integracao/consumidores/{id}" href="/pages/v2/entregas/consumidores/endpoint/patch-by-id" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>Listagem paginada de consumidores da empresa (<ParamBadge name="limite" /> e <ParamBadge name="pagina" />).</li>
+        <li>Criação de consumidor com <ParamBadge name="telefone" /> em formato E.164 (ex: <code>+5544999999999</code>).</li>
+        <li>Consulta individual retorna o consumidor com seus endereços.</li>
+        <li>Edição do nome do consumidor via PATCH.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/v2/integracao/consumidores/{id}/enderecos" href="/pages/v2/entregas/consumidores/endpoint/enderecos-get" />
+      <EndpointBadge method="POST" path="/api/v2/integracao/consumidores/{id}/enderecos" href="/pages/v2/entregas/consumidores/endpoint/enderecos-post" />
+      <EndpointBadge method="PATCH" path="/api/v2/integracao/consumidores/{id}/enderecos/{enderecoId}" href="/pages/v2/entregas/consumidores/endpoint/enderecos-patch" />
+      <EndpointBadge method="DELETE" path="/api/v2/integracao/consumidores/{id}/enderecos/{enderecoId}" href="/pages/v2/entregas/consumidores/endpoint/enderecos-delete" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Listagem dos endereços salvos de um consumidor.</li>
+          <li>Criação de endereço com deduplicação automática por <ParamBadge name="place_id" /> (Google Places).</li>
+          <li>Edição parcial de endereço via PATCH (apenas os campos enviados são alterados).</li>
+          <li>Exclusão de endereço.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+  </Entry>
+
   <Entry date="25 jun 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="filtros-busca-clientes-condutores" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Novos filtros de busca em Clientes e Condutores
