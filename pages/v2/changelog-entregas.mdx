@@ -153,6 +153,34 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="30 jun 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="excluir-entrega" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Excluir entrega de uma solicitação
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novos endpoints permitem remover uma entrega individual de solicitações ativas e programadas
+      sem cancelar toda a solicitação.
+    </p>
+
+    <EndpointBadge method="DELETE" path="/api/v2/integracao/entregas/{id}/paradas/{parada_id}" href="/pages/v2/entregas/endpoint/delete-entrega-by-id" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>Remove uma entrega de solicitação ativa pelo ID da solicitação e da entrega.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="DELETE" path="/api/v2/integracao/entregas/programadas/{id}/paradas/{parada_id}" href="/pages/v2/entregas/endpoint/delete-entrega-programada-by-id" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Remove uma entrega de solicitação programada pelo ID da solicitação e da entrega.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+  </Entry>
+
   <Entry date="25 jun 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="filtros-busca-clientes-condutores" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Novos filtros de busca em Clientes e Condutores
