@@ -1,0 +1,119 @@
+<Entry date="25 jun 2026" label="Melhoria" labelColor="#16A34A">
+  <h2 style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+    Novos filtros de busca em Clientes e Condutores
+  </h2>
+  <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+    Os endpoints de listagem foram expandidos com filtros de busca direta por CPF, e-mail,
+    telefone e nome, eliminando a necessidade de conhecer o ID do registro para localizá-lo.
+  </p>
+
+  <EndpointBadge method="GET" path="/api/v2/integracao/clientes" href="/pages/v2/referencia/clientes/endpoint/get" />
+
+  <ChangeSection type="added">
+    <p style={{ marginBottom: "10px" }}>Novos parâmetros de query disponíveis:</p>
+    <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+      <li><ParamBadge name="cpf" /> — correspondência exata, com ou sem máscara (ex: <code>064.181.699-56</code> ou <code>06418169956</code>). Ignora <code>status_cliente</code> e paginação.</li>
+      <li><ParamBadge name="email" /> — correspondência exata. Ignora <code>status_cliente</code> e paginação.</li>
+      <li><ParamBadge name="telefone" /> — aceita com ou sem DDI e prefixo <code>+</code>; DDI inferido pelo país da bandeira, fallback Brasil (<code>55</code>). Ignora <code>status_cliente</code> e paginação.</li>
+      <li><ParamBadge name="nome" /> — busca parcial, mínimo 3 caracteres. Ignora <code>status_cliente</code>, mas mantém paginação.</li>
+    </ul>
+  </ChangeSection>
+
+  <ChangeSection type="changed">
+    <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "6px" }}>
+      <li><ParamBadge name="status_cliente" />, <ParamBadge name="limite" /> e <ParamBadge name="pagina" /> agora documentam explicitamente quando são ignorados na presença de filtros diretos.</li>
+    </ul>
+  </ChangeSection>
+
+  <div style={{ marginTop: "24px" }}>
+    <EndpointBadge method="GET" path="/api/v2/integracao/condutores" href="/pages/v2/referencia/condutores/endpoint/get" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Novos parâmetros de query disponíveis:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="email" /> — correspondência exata. Ignora <code>status_condutor</code> e paginação.</li>
+        <li><ParamBadge name="nome" /> — busca parcial, mínimo 3 caracteres. Ignora <code>status_condutor</code>, mas mantém paginação.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="changed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "6px" }}>
+        <li><ParamBadge name="cpf" /> passou a aceitar apenas correspondência exata com ou sem máscara (busca parcial por inteiro removida). Ignora <code>status_condutor</code> e paginação.</li>
+        <li><ParamBadge name="telefone" /> expandido: agora documenta comportamento de DDI e prefixo <code>+</code>, alinhado ao endpoint de clientes.</li>
+        <li><ParamBadge name="status_condutor" />, <ParamBadge name="limite" /> e <ParamBadge name="pagina" /> agora documentam explicitamente quando são ignorados.</li>
+      </ul>
+    </ChangeSection>
+  </div>
+
+  <div style={{
+    marginTop: "20px",
+    padding: "14px 18px",
+    borderRadius: "10px",
+    background: "rgba(59, 130, 246, 0.08)",
+    border: "1px solid rgba(59, 130, 246, 0.2)",
+    fontSize: "13px",
+    lineHeight: "1.6",
+  }}>
+    <strong>Nota sobre prioridade de filtros:</strong> filtros diretos (<code>id</code>, <code>cpf</code>, <code>email</code> ou <code>telefone</code>) suprimem status e paginação automaticamente. O filtro <code>nome</code> mantém a paginação, mas ignora o status.
+  </div>
+</Entry>
+
+<Entry date="25 jun 2026" label="Melhoria" labelColor="#16A34A">
+  <h2 style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+    Novos filtros de busca em Clientes e Condutores
+  </h2>
+  <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+    Os endpoints de listagem foram expandidos com filtros de busca direta por CPF, e-mail,
+    telefone e nome, eliminando a necessidade de conhecer o ID do registro para localizá-lo.
+  </p>
+
+  <EndpointBadge method="GET" path="/api/v2/integracao/clientes" href="/pages/v2/referencia/clientes/endpoint/get" />
+
+  <ChangeSection type="added">
+    <p style={{ marginBottom: "10px" }}>Novos parâmetros de query disponíveis:</p>
+    <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+      <li><ParamBadge name="cpf" /> — correspondência exata, com ou sem máscara (ex: <code>064.181.699-56</code> ou <code>06418169956</code>). Ignora <code>status_cliente</code> e paginação.</li>
+      <li><ParamBadge name="email" /> — correspondência exata. Ignora <code>status_cliente</code> e paginação.</li>
+      <li><ParamBadge name="telefone" /> — aceita com ou sem DDI e prefixo <code>+</code>; DDI inferido pelo país da bandeira, fallback Brasil (<code>55</code>). Ignora <code>status_cliente</code> e paginação.</li>
+      <li><ParamBadge name="nome" /> — busca parcial, mínimo 3 caracteres. Ignora <code>status_cliente</code>, mas mantém paginação.</li>
+    </ul>
+  </ChangeSection>
+
+  <ChangeSection type="changed">
+    <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "6px" }}>
+      <li><ParamBadge name="status_cliente" />, <ParamBadge name="limite" /> e <ParamBadge name="pagina" /> agora documentam explicitamente quando são ignorados na presença de filtros diretos.</li>
+    </ul>
+  </ChangeSection>
+
+  <div style={{ marginTop: "24px" }}>
+    <EndpointBadge method="GET" path="/api/v2/integracao/condutores" href="/pages/v2/referencia/condutores/endpoint/get" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Novos parâmetros de query disponíveis:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="email" /> — correspondência exata. Ignora <code>status_condutor</code> e paginação.</li>
+        <li><ParamBadge name="nome" /> — busca parcial, mínimo 3 caracteres. Ignora <code>status_condutor</code>, mas mantém paginação.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="changed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "6px" }}>
+        <li><ParamBadge name="cpf" /> passou a aceitar apenas correspondência exata com ou sem máscara (busca parcial por inteiro removida). Ignora <code>status_condutor</code> e paginação.</li>
+        <li><ParamBadge name="telefone" /> expandido: agora documenta comportamento de DDI e prefixo <code>+</code>, alinhado ao endpoint de clientes.</li>
+        <li><ParamBadge name="status_condutor" />, <ParamBadge name="limite" /> e <ParamBadge name="pagina" /> agora documentam explicitamente quando são ignorados.</li>
+      </ul>
+    </ChangeSection>
+  </div>
+
+  <div style={{
+    marginTop: "20px",
+    padding: "14px 18px",
+    borderRadius: "10px",
+    background: "rgba(59, 130, 246, 0.08)",
+    border: "1px solid rgba(59, 130, 246, 0.2)",
+    fontSize: "13px",
+    lineHeight: "1.6",
+  }}>
+    <strong>Nota sobre prioridade de filtros:</strong> filtros diretos (<code>id</code>, <code>cpf</code>, <code>email</code> ou <code>telefone</code>) suprimem status e paginação automaticamente. O filtro <code>nome</code> mantém a paginação, mas ignora o status.
+  </div>
+</Entry>

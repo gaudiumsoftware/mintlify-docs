@@ -132,7 +132,7 @@ export const EndpointBadge = ({ method, path, href }) => (
   onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
   >
     <span style={{
-      background: method === "GET" ? "#3b82f6" : method === "POST" ? "#16A34A" : "#f59e0b",
+      background: method === "GET" ? "#3b82f6" : method === "POST" ? "#16A34A" : method === "DELETE" ? "#ef4444" : method === "PUT" ? "#f59e0b" : method === "PATCH" ? "#8b5cf6" : "#6b7280",
       color: "#fff",
       borderRadius: "4px",
       padding: "1px 7px",
@@ -147,14 +147,14 @@ export const EndpointBadge = ({ method, path, href }) => (
 <div style={{ maxWidth: "860px", margin: "0 auto", padding: "40px 20px 80px" }}>
 
   <div style={{ marginBottom: "56px" }}>
-    <h1 style={{ fontSize: "40px", fontWeight: "800", marginBottom: "12px", letterSpacing: "-0.02em" }}>Corridas</h1>
+    <div style={{ fontSize: "40px", fontWeight: "800", marginBottom: "12px", letterSpacing: "-0.02em" }}>Corridas</div>
     <p style={{ fontSize: "17px", opacity: 0.65, lineHeight: "1.6" }}>
       Acompanhe todas as novidades, melhorias e alterações nos endpoints de Corridas da API V2.
     </p>
   </div>
 
   <Entry date="25 jun 2026" label="Melhoria" labelColor="#16A34A">
-    <h2 style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+    <h2 id="filtros-busca-clientes-condutores" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Novos filtros de busca em Clientes e Condutores
     </h2>
     <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
@@ -214,7 +214,7 @@ export const EndpointBadge = ({ method, path, href }) => (
   </Entry>
 
   <Entry date="16 jun 2026" label="Novo" labelColor="#3b82f6">
-    <h2 style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+    <h2 id="link-acompanhamento-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Link de acompanhamento de solicitação no retorno da corrida
     </h2>
     <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>

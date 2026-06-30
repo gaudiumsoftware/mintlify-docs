@@ -1,6 +1,6 @@
 ---
 name: changelog
-description: "Gera uma entrada de changelog em pages/v2/changelog.mdx (Corridas) e/ou pages/v2/changelog-entregas.mdx (Entregas) a partir das mudanças de uma PR ou branch. Analisa o diff do openapi.json, extrai endpoints afetados, determina a modalidade (Corridas, Entregas ou ambas), categoriza as mudanças e insere a entrada no(s) arquivo(s) correto(s)."
+description: "Gera uma entrada de changelog em pages/v2/changelog.mdx (Corridas) e/ou pages/v2/changelog-entregas.mdx (Entregas) a partir das mudanças de uma PR ou branch. Analisa o diff do openapi.json, extrai endpoints afetados, determina a modalidade (Corridas, Entregas ou ambas), categoriza as mudanças e insere a entrada diretamente no(s) arquivo(s) correto(s) respeitando a ordem cronológica."
 ---
 
 # /changelog
@@ -14,7 +14,7 @@ Gera automaticamente uma entrada no changelog da documentação Mintlify com bas
 | `pages/v2/changelog.mdx`                 | Corridas   |
 | `pages/v2/changelog-entregas.mdx`        | Entregas   |
 
-A entrada deve ser inserida no arquivo correspondente à modalidade afetada. Se a mudança afeta ambas, inserir nos dois arquivos.
+Cada arquivo define seus próprios componentes (`Entry`, `ChangeSection`, `ParamBadge`, `EndpointBadge`) no topo via `export const`. As entradas `<Entry>` são inseridas diretamente no arquivo, dentro do `<div>` principal, em ordem cronológica decrescente.
 
 ## Uso
 
@@ -110,9 +110,9 @@ Agrupar os deltas em categorias para o `ChangeSection`:
 | `fixed`    | Correção de comportamento documentado incorretamente        |
 | `removed`  | Parâmetros ou endpoints removidos                           |
 
-### 7 — Determinar label da entrada
+### 7 — Determinar label e id da entrada
 
-- **Data:** a informada pelo usuário na etapa 4, no formato `DD mmm YYYY` em português (ex: `27 jun 2025`)
+- **Data:** a informada pelo usuário na etapa 5, no formato `DD mmm YYYY` em português (ex: `27 jun 2025`)
 - **Label e cor:**
 
 | Conteúdo da entrada                  | Label       | Cor          |
@@ -122,16 +122,22 @@ Agrupar os deltas em categorias para o `ChangeSection`:
 | `fixed`                              | `Correção`  | `#f59e0b`    |
 | `removed`                            | `Remoção`   | `#ef4444`    |
 
-### 7 — Escrever a entrada MDX
+- **`id` da entrada:** slug kebab-case curto derivado do título, único no arquivo. Usado como âncora para links diretos à entrada (ex: `filtros-busca-clientes-condutores`, `link-acompanhamento-corrida`, `excluir-entrega`). Regras:
+  - Minúsculas, apenas letras, números e hífens
+  - Máximo ~5 palavras
+  - Sem datas no slug — o slug identifica o conteúdo, não quando aconteceu
+  - Informar o link gerado ao usuário ao final: `https://docs.machine.global/v2/changelog#<id>`
 
-Usar os componentes já definidos no topo de `pages/v2/changelog.mdx`.
-**Não redefinir os componentes** — eles já existem no arquivo.
+### 8 — Escrever a entrada MDX
+
+Usar os componentes já definidos no topo de cada arquivo de changelog.
+**Não redefinir os componentes** — eles já existem em ambos os arquivos.
 
 Estrutura de uma entrada:
 
 ```mdx
 <Entry date="DD mmm YYYY" label="Label" labelColor="#cor">
-  <h2 style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+  <h2 id="slug-da-entrada" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
     Título descritivo da mudança
   </h2>
   <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
@@ -174,11 +180,6 @@ Regras de escrita:
     <strong>Nota:</strong> texto da nota.
   </div>
 ```
-
-### 8 — Escrever a entrada MDX
-
-Usar os componentes já definidos no topo de cada arquivo de changelog.
-**Não redefinir os componentes** — eles já existem em ambos os arquivos.
 
 ### 9 — Inserir respeitando a ordenação cronológica
 
@@ -226,14 +227,16 @@ Só editar o(s) arquivo(s) após confirmação.
 
 ## Componentes disponíveis nos arquivos
 
-Ambos os arquivos de changelog definem os mesmos componentes no topo. Nunca redefinir.
+Ambos os arquivos de changelog definem os mesmos componentes no topo via `export const`. Nunca redefinir.
 
-| Componente       | Props                              | Descrição                                      |
-|------------------|------------------------------------|------------------------------------------------|
-| `Entry`          | `date`, `label`, `labelColor`      | Container de uma entrada com timeline lateral  |
-| `ChangeSection`  | `type` (added/changed/fixed/removed) | Bloco colorido por categoria de mudança      |
-| `ParamBadge`     | `name`                             | Badge verde para nome de parâmetro             |
-| `EndpointBadge`  | `method`, `path`, `href`           | Badge clicável com método HTTP e caminho       |
+| Componente       | Props                                | Descrição                                      |
+|------------------|--------------------------------------|------------------------------------------------|
+| `Entry`          | `date`, `label`, `labelColor`        | Container de uma entrada com timeline lateral  |
+| `ChangeSection`  | `type` (added/changed/fixed/removed) | Bloco colorido por categoria de mudança        |
+| `ParamBadge`     | `name`                               | Badge verde para nome de parâmetro             |
+| `EndpointBadge`  | `method`, `path`, `href`             | Badge clicável com método HTTP e caminho       |
+
+O `EndpointBadge` suporta os métodos: `GET` (azul), `POST` (verde), `DELETE` (vermelho), `PUT` (amarelo), `PATCH` (roxo).
 
 ## Regras de qualidade
 
