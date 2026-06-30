@@ -154,6 +154,50 @@ export const EndpointBadge = ({ method, path, href }) => (
   </div>
 
   <Entry date="30 jun 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="editar-entrega" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Editar paradas de uma entrega em andamento ou programada
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Dois novos endpoints permitem substituir a lista de paradas de uma entrega já criada,
+      tanto para solicitações ativas quanto para programadas ainda não disparadas.
+    </p>
+
+    <EndpointBadge method="PUT" path="/api/v2/integracao/entregas/{id}" href="/pages/v2/entregas/endpoint/put-by-id" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="paradas" /> — lista completa das paradas desejadas (substituição total). A ordem define a sequência de entrega. Obrigatório.</li>
+        <li><ParamBadge name="com_retorno" /> — define se a entrega tem retorno ao ponto de partida. Se omitido, preserva o valor atual.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="PUT" path="/api/v2/integracao/entregas/programadas/{id}" href="/pages/v2/entregas/endpoint/put-programadas-by-id" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="paradas" /> — lista completa das paradas desejadas (substituição total). Obrigatório.</li>
+          <li><ParamBadge name="data" /> — data do disparo no formato <code>DD/MM/AAAA</code>. Obrigatório.</li>
+          <li><ParamBadge name="hora" /> — hora do disparo no formato <code>HH:MM</code>. Obrigatório.</li>
+          <li><ParamBadge name="forma_pagamento" /> — forma de pagamento da entrega. Obrigatório.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Substituição total:</strong> ambos os endpoints substituem toda a lista de paradas — não é um patch parcial. Inclua todas as paradas desejadas na requisição, inclusive as que devem ser mantidas.
+    </div>
+  </Entry>
+
+  <Entry date="30 jun 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="excluir-entrega" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Excluir entrega de uma solicitação
     </h2>
