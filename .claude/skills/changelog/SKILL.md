@@ -1,6 +1,6 @@
 ---
 name: changelog
-description: "Gera uma entrada de changelog em pages/v2/changelog.mdx (Corridas) e/ou pages/v2/changelog-entregas.mdx (Entregas) a partir das mudanças de uma PR ou branch. Analisa o diff do openapi.json, extrai endpoints afetados, determina a modalidade (Corridas, Entregas ou ambas), categoriza as mudanças e insere a entrada diretamente no(s) arquivo(s) correto(s) respeitando a ordem cronológica."
+description: "Gera uma entrada de changelog em pages/v2/changelog.mdx (Corridas) e/ou pages/v2/changelog-entregas.mdx (Entregas) a partir das mudanças de uma PR ou branch. Analisa o diff de openapi.json (Corridas) e/ou openapi-entregas.json (Entregas), extrai endpoints afetados, determina a modalidade pelo arquivo que mudou, categoriza as mudanças e insere a entrada diretamente no(s) arquivo(s) correto(s) respeitando a ordem cronológica."
 ---
 
 # /changelog
@@ -16,6 +16,17 @@ Gera automaticamente uma entrada no changelog da documentação Mintlify com bas
 
 Cada arquivo define seus próprios componentes (`Entry`, `ChangeSection`, `ParamBadge`, `EndpointBadge`) no topo via `export const`. As entradas `<Entry>` são inseridas diretamente no arquivo, dentro do `<div>` principal, em ordem cronológica decrescente.
 
+## Arquivos OpenAPI da V2
+
+Os endpoints estão divididos em dois arquivos separados:
+
+| Arquivo                              | Modalidade |
+|--------------------------------------|------------|
+| `pages/v2/openapi.json`              | Corridas   |
+| `pages/v2/openapi-entregas.json`     | Entregas   |
+
+**O arquivo que teve mudanças determina diretamente a modalidade** — não é preciso inferir pelos paths na maioria dos casos.
+
 ## Uso
 
 ```
@@ -28,18 +39,29 @@ Cada arquivo define seus próprios componentes (`Entry`, `ChangeSection`, `Param
 
 ### 1 — Identificar o diff
 
-- **Sem argumento:** `git diff main...HEAD -- pages/v2/openapi.json`
-- **Número de PR:** `gh pr diff <número> -- pages/v2/openapi.json`
-- **Intervalo de commits:** `git diff <intervalo> -- pages/v2/openapi.json`
+Verificar mudanças em **ambos** os arquivos OpenAPI:
 
-Se o diff de `openapi.json` estiver vazio, avisar o usuário e encerrar:
-> "Nenhuma mudança em openapi.json encontrada. Nada para incluir no changelog."
+- **Sem argumento:**
+  ```
+  git diff main...HEAD -- pages/v2/openapi.json pages/v2/openapi-entregas.json
+  ```
+- **Número de PR:**
+  ```
+  gh pr diff <número> -- pages/v2/openapi.json pages/v2/openapi-entregas.json
+  ```
+- **Intervalo de commits:**
+  ```
+  git diff <intervalo> -- pages/v2/openapi.json pages/v2/openapi-entregas.json
+  ```
+
+Se **nenhum** dos dois arquivos tiver mudanças, avisar e encerrar:
+> "Nenhuma mudança em openapi.json ou openapi-entregas.json encontrada. Nada para incluir no changelog."
 
 ### 2 — Extrair endpoints afetados
 
-No diff do `openapi.json`, identificar:
-- **Path** de cada bloco modificado (ex: `/clientes`, `/condutores`)
-- **Método HTTP** do bloco (ex: `GET`, `POST`)
+Para cada arquivo com mudanças, identificar:
+- **Path** de cada bloco modificado (ex: `/corridas/{id}`, `/entregas/{id}`)
+- **Método HTTP** do bloco (ex: `GET`, `POST`, `PUT`, `DELETE`)
 - **Natureza da mudança** por campo:
   - Linha adicionada (`+`) em `parameters` → parâmetro **novo**
   - Linha modificada (`-`/`+`) em `description` existente → **alteração de descrição**
@@ -48,44 +70,41 @@ No diff do `openapi.json`, identificar:
 
 ### 3 — Mapear endpoints para páginas de referência
 
-Ler `docs.json` e localizar em `navigation.versions[].tabs[tab="Referência"].groups[].pages[]`
-a rota que corresponde ao endpoint. Padrão de nomenclatura do projeto:
+Ler `docs.json` e localizar a rota correspondente ao endpoint. Padrão de nomenclatura do projeto:
+
+**Corridas** (`pages/v2/openapi.json`):
 
 | Endpoint                          | Rota no docs.json                                          |
 |-----------------------------------|------------------------------------------------------------|
 | `GET /clientes`                   | `pages/v2/referencia/clientes/endpoint/get`                |
 | `GET /clientes/{id}`              | `pages/v2/referencia/clientes/endpoint/get-by-id`          |
 | `GET /condutores`                 | `pages/v2/referencia/condutores/endpoint/get`              |
-| `GET /condutores/{id}`            | `pages/v2/referencia/condutores/endpoint/get-by-id`        |
-| `POST /corridas/consultar`        | `pages/v2/referencia/corridas/endpoint/post-consultar`     |
+| `GET /corridas/{id}`              | `pages/v2/referencia/corridas/endpoint/get-by-id`          |
+
+**Entregas** (`pages/v2/openapi-entregas.json`):
+
+| Endpoint                          | Rota no docs.json                                          |
+|-----------------------------------|------------------------------------------------------------|
+| `GET /entregas/{id}`              | `pages/v2/entregas/endpoint/get-by-id`                     |
+| `PUT /entregas/{id}`              | `pages/v2/entregas/endpoint/put-by-id`                     |
+| `DELETE /entregas/{id}/paradas/{parada_id}` | `pages/v2/entregas/endpoint/delete-entrega-by-id` |
 
 Se não encontrar correspondência, usar `href` vazio e deixar um comentário `{/* TODO: href */}`.
 
 ### 4 — Determinar a modalidade
 
-> ⚠️ **OBRIGATÓRIO — nunca pular esta etapa.**
+A modalidade é determinada pelo **arquivo OpenAPI que teve mudanças**:
 
-Analisar os paths dos endpoints afetados e inferir a modalidade:
+| Arquivo com mudanças                  | Modalidade    | Changelog alvo                |
+|---------------------------------------|---------------|-------------------------------|
+| Apenas `openapi.json`                 | Corridas      | `pages/v2/changelog.mdx`      |
+| Apenas `openapi-entregas.json`        | Entregas      | `pages/v2/changelog-entregas.mdx` |
+| Ambos os arquivos                     | Ambas         | Os dois arquivos              |
 
-| Padrão no path              | Modalidade inferida |
-|-----------------------------|---------------------|
-| `/corridas`                 | Corridas            |
-| `/entregas`                 | Entregas            |
-| `/clientes`, `/condutores`  | **Ambas** — endpoints compartilhados entre as duas modalidades |
-| Outro                       | Inconclusivo → perguntar ao usuário |
+**Exceção — endpoints compartilhados:** se os paths afetados forem `/clientes` ou `/condutores` (independente do arquivo), a mudança afeta **Ambas** as modalidades — inserir em ambos os changelogs.
 
-**Se a modalidade for inconclusiva**, perguntar:
-
+**Se a modalidade for genuinamente inconclusiva** (path não se encaixa em nenhum padrão), perguntar:
 > "Este endpoint pertence a Corridas, Entregas ou ambas as modalidades?"
-
-**Se a modalidade for inferida com segurança**, informar ao usuário e confirmar antes de prosseguir:
-
-> "Identifiquei que esta mudança afeta [Corridas / Entregas / Corridas e Entregas]. Confirma?"
-
-A resposta determina em qual(is) arquivo(s) a entrada será inserida:
-- **Corridas** → `pages/v2/changelog.mdx`
-- **Entregas** → `pages/v2/changelog-entregas.mdx`
-- **Ambas** → os dois arquivos
 
 ### 5 — Perguntar a data da atualização
 
@@ -98,6 +117,8 @@ Perguntar ao usuário:
 **Não assumir a data atual.** Não inferir a data do commit ou da PR. Aguardar a resposta do usuário antes de continuar.
 
 A data informada será usada no campo `date` do componente `Entry`.
+
+**Exceção:** se a data for fornecida diretamente como argumento (ex: `/changelog 18, 30 de junho de 2026`), usar essa data sem perguntar.
 
 ### 6 — Categorizar as mudanças por tipo
 
@@ -126,7 +147,7 @@ Agrupar os deltas em categorias para o `ChangeSection`:
   - Minúsculas, apenas letras, números e hífens
   - Máximo ~5 palavras
   - Sem datas no slug — o slug identifica o conteúdo, não quando aconteceu
-  - Informar o link gerado ao usuário ao final: `https://docs.machine.global/v2/changelog#<id>`
+  - Informar o link gerado ao usuário ao final: `https://docs.machine.global/v2/changelog-entregas#<id>` (Entregas) ou `https://docs.machine.global/v2/changelog#<id>` (Corridas)
 
 ### 8 — Escrever a entrada MDX
 
@@ -144,7 +165,7 @@ Estrutura de uma entrada:
     Uma ou duas frases explicando o contexto e motivação da mudança.
   </p>
 
-  <EndpointBadge method="MÉTODO" path="/api/v2/integracao/path" href="/pages/v2/referencia/..." />
+  <EndpointBadge method="MÉTODO" path="/api/v2/integracao/path" href="/pages/v2/..." />
 
   <ChangeSection type="added">
     <p style={{ marginBottom: "10px" }}>Novos parâmetros de query disponíveis:</p>
@@ -218,12 +239,8 @@ Repetir os passos abaixo para **cada arquivo** determinado na etapa 4:
 
 **Nunca** inserir baseado apenas em posição de texto — sempre comparar datas numericamente.
 
-### 10 — Confirmar com o usuário antes de salvar
-
-Exibir a entrada gerada em markdown, indicando em qual(is) arquivo(s) será inserida, e perguntar:
-> "Entrada gerada para [Corridas / Entregas / Corridas e Entregas]. Deseja aplicar ao changelog? (s/n)"
-
-Só editar o(s) arquivo(s) após confirmação.
+Após inserir, informar ao usuário:
+> "Entrada inserida em [Corridas / Entregas / Corridas e Entregas]. Link: https://docs.machine.global/v2/changelog[-entregas]#<id>"
 
 ## Componentes disponíveis nos arquivos
 
@@ -245,7 +262,7 @@ O `EndpointBadge` suporta os métodos: `GET` (azul), `POST` (verde), `DELETE` (v
 - **Ordem cronológica decrescente sempre** — comparar datas numericamente antes de inserir; nunca prependar cegamente no topo nem appendar no final sem verificar
 - **Sem `href` em `<a>` nulo** — se `href` não foi encontrado, usar `<div>` em vez de `<a>`
 - **Data sempre em português** — `jan`, `fev`, `mar`, `abr`, `mai`, `jun`, `jul`, `ago`, `set`, `out`, `nov`, `dez`
-- **Modalidade sempre confirmada** — nunca assumir qual arquivo editar sem analisar os paths ou perguntar ao usuário
+- **Modalidade pelo arquivo openapi** — se `openapi.json` mudou → Corridas; se `openapi-entregas.json` mudou → Entregas; ambos → os dois changelogs
 - **Não commitar** — a skill entrega apenas a edição no(s) arquivo(s); o commit é responsabilidade do autor
 
 ## Exemplo de invocação completa
@@ -254,13 +271,13 @@ O `EndpointBadge` suporta os métodos: `GET` (azul), `POST` (verde), `DELETE` (v
 /changelog 18
 ```
 
-1. Executa `gh pr diff 18 -- pages/v2/openapi.json`
-2. Encontra mudanças em `/clientes` (GET) e `/condutores` (GET)
-3. Mapeia para `pages/v2/referencia/clientes/endpoint/get` e `pages/v2/referencia/condutores/endpoint/get`
-4. Identifica paths `/clientes` e `/condutores` → endpoints compartilhados → modalidade **Ambas** → confirma com usuário
+1. Executa `gh pr diff 18 -- pages/v2/openapi.json pages/v2/openapi-entregas.json`
+2. Encontra mudanças apenas em `openapi-entregas.json`, nos paths `/clientes` (GET) e `/condutores` (GET)
+3. `openapi-entregas.json` mudou → Entregas; mas `/clientes` e `/condutores` são endpoints compartilhados → **Ambas**
+4. Mapeia para `pages/v2/referencia/clientes/endpoint/get` e `pages/v2/referencia/condutores/endpoint/get`
 5. Pergunta a data ao usuário → resposta: `25 jun 2026`
 6. Classifica: 4 parâmetros `added` em clientes, 2 em condutores; vários `changed` em descrições
-7. Label: `Melhoria` (mix de added + changed)
+7. Label: `Melhoria` (mix de added + changed); id: `filtros-busca-clientes-condutores`
 8. Lê as datas existentes em `changelog.mdx` e `changelog-entregas.mdx` separadamente
-9. Exibe a entrada gerada e informa: "será inserida em Corridas e Entregas"
-10. Após confirmação, edita os dois arquivos na posição cronológica correta
+9. Insere a entrada na posição cronológica correta em ambos os arquivos
+10. Informa: "Entrada inserida em Corridas e Entregas. Links: https://docs.machine.global/v2/changelog#filtros-busca-clientes-condutores / https://docs.machine.global/v2/changelog-entregas#filtros-busca-clientes-condutores"
