@@ -134,6 +134,7 @@
               {
                 "group": "Webhooks",
                 "pages": [
+                  "pages/v2/referencia/webhooks/sobre",
                   "pages/v2/referencia/webhooks/endpoint/get",
                   "pages/v2/referencia/webhooks/endpoint/post",
                   "pages/v2/referencia/webhooks/endpoint/put",
@@ -261,6 +262,7 @@
               {
                 "group": "Webhooks",
                 "pages": [
+                  "pages/v2/entregas/webhooks/sobre",
                   "pages/v2/entregas/webhooks/endpoint/get",
                   "pages/v2/entregas/webhooks/endpoint/post",
                   "pages/v2/entregas/webhooks/endpoint/put",
@@ -342,6 +344,7 @@
               {
                 "group": "Webhooks",
                 "pages": [
+                  "pages/v1/referencia/webhooks/sobre",
                   "pages/v1/referencia/webhooks/endpoint/get",
                   "pages/v1/referencia/webhooks/endpoint/post",
                   "pages/v1/referencia/webhooks/endpoint/put",
@@ -497,6 +500,7 @@
               {
                 "group": "Webhooks",
                 "pages": [
+                  "pages/v1/entregas/webhooks/sobre",
                   "pages/v1/entregas/webhooks/endpoint/get",
                   "pages/v1/entregas/webhooks/endpoint/post",
                   "pages/v1/entregas/webhooks/endpoint/put",
