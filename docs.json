@@ -188,6 +188,7 @@
                   "pages/v2/entregas/endpoint/get-areas-atuacao",
                   "pages/v2/entregas/endpoint/get-condutor-posicao",
                   "pages/v2/entregas/endpoint/post-agrupar",
+                  "pages/v2/entregas/endpoint/delete-entrega-by-id",
                   {
                     "group": "Programadas",
                     "pages": [
@@ -197,7 +198,8 @@
                       "pages/v2/entregas/endpoint/put-programadas-by-id",
                       "pages/v2/entregas/endpoint/post-programadas-cancelar",
                       "pages/v2/entregas/endpoint/post-programadas-estimativas",
-                      "pages/v2/entregas/endpoint/post-programadas-agrupar"
+                      "pages/v2/entregas/endpoint/post-programadas-agrupar",
+                      "pages/v2/entregas/endpoint/delete-entrega-programada-by-id"
                     ]
                   },
                   {
@@ -289,6 +291,19 @@
                   "pages/v2/entregas/consumidores/endpoint/enderecos-post",
                   "pages/v2/entregas/consumidores/endpoint/enderecos-patch",
                   "pages/v2/entregas/consumidores/endpoint/enderecos-delete"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Novidades",
+            "icon": "sparkles",
+            "groups": [
+              {
+                "group": "Changelog",
+                "pages": [
+                  "pages/v2/changelog",
+                  "pages/v2/changelog-entregas"
                 ]
               }
             ]
