@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "API de Integração",
-    "description": "API de Integração V1",
+    "description": "API de Integração v1",
     "license": {
       "name": "MIT"
     },
@@ -4043,7 +4043,9 @@
                 "situacao_cadastral": "S",
                 "aceita_ticket": true,
                 "aceita_voucher": false,
-                "categorias": [71],
+                "categorias": [
+                  71
+                ],
                 "tipos_pagamento": [
                   "B",
                   "C",
