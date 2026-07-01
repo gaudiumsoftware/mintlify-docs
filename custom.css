@@ -1,0 +1,19 @@
+/* Página inicial: sem seletor de versão e sem tabs de Corridas/Entregas */
+html[data-current-path="/"] .nav-tabs,
+html[data-current-path="/"] [data-component-part="version-select-trigger"],
+html[data-current-path="/pages/v2/welcome"] .nav-tabs,
+html[data-current-path="/pages/v2/welcome"] [data-component-part="version-select-trigger"] {
+  display: none !important;
+}
+
+/* Documentação de Corridas: esconde a tab de Entregas */
+html[data-current-path^="/pages/v2/referencia/"] .nav-tabs > a:nth-child(2),
+html[data-current-path^="/pages/v1/referencia/"] .nav-tabs > a:nth-child(2) {
+  display: none !important;
+}
+
+/* Documentação de Entregas: esconde a tab de Corridas */
+html[data-current-path^="/pages/v2/entregas/"] .nav-tabs > a:nth-child(1),
+html[data-current-path^="/pages/v1/entregas/"] .nav-tabs > a:nth-child(1) {
+  display: none !important;
+}

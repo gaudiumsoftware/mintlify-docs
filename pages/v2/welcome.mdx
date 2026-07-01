@@ -43,6 +43,43 @@ mode: "custom"
 </div>
 
 <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 20px" }}>
+  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px", marginBottom: "56px" }}>
+    <a href="/pages/v2/referencia/introducao" style={{ textDecoration: "none" }}>
+      <div style={{
+        padding: "40px 32px",
+        borderRadius: "20px",
+        background: "linear-gradient(135deg, #25bcff 0%, #0e9fe0 100%)",
+        boxShadow: "0 20px 40px -12px rgba(37, 188, 255, 0.45)",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "12px",
+        textAlign: "center",
+        transition: "transform 0.2s ease"
+      }}>
+        <span style={{ fontSize: "28px", fontWeight: "800", color: "#fff" }}>Documentação de Corridas</span>
+        <span style={{ fontSize: "16px", color: "rgba(255,255,255,0.9)" }}>Acesse a referência completa da API de Corridas</span>
+      </div>
+    </a>
+    <a href="/pages/v2/entregas/introducao" style={{ textDecoration: "none" }}>
+      <div style={{
+        padding: "40px 32px",
+        borderRadius: "20px",
+        background: "linear-gradient(135deg, #f13030 0%, #c01f1f 100%)",
+        boxShadow: "0 20px 40px -12px rgba(241, 48, 48, 0.45)",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "12px",
+        textAlign: "center",
+        transition: "transform 0.2s ease"
+      }}>
+        <span style={{ fontSize: "28px", fontWeight: "800", color: "#fff" }}>Documentação de Entregas</span>
+        <span style={{ fontSize: "16px", color: "rgba(255,255,255,0.9)" }}>Acesse a referência completa da API de Entregas</span>
+      </div>
+    </a>
+  </div>
+
   <CardGroup cols={2}>
     <Card title="Quem Somos" icon="building" iconType="duotone">
       A **Machine** é um produto **Gaudium**, projetado para fornecer tecnologia que permite a operação eficiente e segura 
