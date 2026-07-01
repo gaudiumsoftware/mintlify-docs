@@ -25,12 +25,12 @@ html[data-current-path^="/pages/v1/entregas/"] .nav-tabs > a:nth-child(1) {
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 28px 28px;
-  min-height: 120px;
+  padding: 40px 28px;
+  min-height: 170px;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-left: 4px solid var(--cta-color);
+  border-left: 8px solid var(--cta-color);
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
 }
 
