@@ -3245,7 +3245,7 @@
     "/entregas/consultar": {
       "post": {
         "summary": "Consultar entregas",
-        "description": "teste",
+        "description": "Ao acionar, são retornadas todas as entregas da central conforme os parâmetros informados.",
         "requestBody": {
           "required": false,
           "content": {
