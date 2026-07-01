@@ -20,38 +20,80 @@ html[data-current-path^="/pages/v1/entregas/"] .nav-tabs > a:nth-child(1) {
 
 /* Botões de acesso rápido na página inicial */
 .home-cta {
+  --cta-color: #16a34a;
+  --cta-tint: rgba(22, 163, 74, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 28px 28px;
+  min-height: 120px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 4px solid var(--cta-color);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+.home-cta:hover {
+  transform: translateY(-3px);
+  background: var(--cta-tint);
+  border-color: var(--cta-color);
+  box-shadow: 0 12px 24px -10px var(--cta-tint);
+}
+
+.home-cta .home-cta-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  border-radius: 18px;
-  padding: 48px 32px;
-  min-height: 190px;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: var(--cta-tint);
+  color: var(--cta-color);
 }
 
-.home-cta span {
-  font-size: 26px;
-  font-weight: 800;
-  color: #fff;
+.home-cta .home-cta-icon svg {
+  width: 30px;
+  height: 30px;
+}
+
+.home-cta .home-cta-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.home-cta .home-cta-text span {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--tw-prose-headings);
+}
+
+.home-cta .home-cta-text small {
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.65;
+}
+
+.home-cta .home-cta-arrow {
+  margin-left: auto;
+  color: var(--cta-color);
+  opacity: 0.7;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.home-cta:hover .home-cta-arrow {
+  transform: translateX(4px);
+  opacity: 1;
 }
 
 .home-cta-corridas {
-  background: linear-gradient(135deg, #25bcff 0%, #0e9fe0 100%);
-  box-shadow: 0 8px 16px -6px rgba(37, 188, 255, 0.25);
-}
-
-.home-cta-corridas:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 22px -6px rgba(37, 188, 255, 0.3);
+  --cta-color: #0e9fe0;
+  --cta-tint: rgba(37, 188, 255, 0.1);
 }
 
 .home-cta-entregas {
-  background: linear-gradient(135deg, #f13030 0%, #c01f1f 100%);
-  box-shadow: 0 8px 16px -6px rgba(241, 48, 48, 0.25);
-}
-
-.home-cta-entregas:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 22px -6px rgba(241, 48, 48, 0.3);
+  --cta-color: #e02020;
+  --cta-tint: rgba(241, 48, 48, 0.1);
 }
