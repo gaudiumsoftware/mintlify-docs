@@ -183,6 +183,23 @@
                         "R"
                       ]
                     }
+                  },
+                  "cliente_ids": {
+                    "type": "array",
+                    "description": "Opcional. Lista de ids dos clientes que poderão usar o cupom criado.",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "example": [
+                      83983,
+                      83992,
+                      83959
+                    ]
+                  },
+                  "area_id": {
+                    "type": "integer",
+                    "description": "Opcional. Indica a área a qual o cupom será restrito.",
+                    "example": 239
                   }
                 }
               }

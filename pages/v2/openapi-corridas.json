@@ -3921,7 +3921,7 @@
                   },
                   "cliente_ids": {
                     "type": "array",
-                    "description": "Opcional. Lista de ids dos clientes que poderão usar o cupom criado, separados por vírgula.",
+                    "description": "Opcional. Lista de ids dos clientes que poderão usar o cupom criado.",
                     "items": {
                       "type": "integer"
                     },
@@ -3932,9 +3932,9 @@
                     ]
                   },
                   "area_id": {
-                    "type": "string",
+                    "type": "integer",
                     "description": "Opcional. Indica a área a qual o cupom será restrito.",
-                    "example": "239"
+                    "example": 239
                   }
                 }
               },
@@ -3956,7 +3956,7 @@
                       83992,
                       83959
                     ],
-                    "area_id": "239"
+                    "area_id": 239
                   }
                 },
                 "cupom_porcentagem_individual": {
@@ -3979,7 +3979,7 @@
                       83992,
                       83959
                     ],
-                    "area_id": "239"
+                    "area_id": 239
                   }
                 }
               }
