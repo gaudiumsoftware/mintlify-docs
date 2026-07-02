@@ -1,5 +1,7 @@
 (function () {
   function getTabFolder(pathname) {
+    if (pathname === "/pages/v2/changelog-entregas") return "entregas";
+    if (pathname === "/pages/v2/changelog") return "referencia";
     if (pathname.indexOf("/entregas/") !== -1) return "entregas";
     if (pathname.indexOf("/referencia/") !== -1) return "referencia";
     return null;
