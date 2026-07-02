@@ -16,7 +16,7 @@ Gera automaticamente uma entrada no changelog da documentação Mintlify com bas
 
 Cada arquivo define seus próprios componentes (`Entry`, `ChangeSection`, `ParamBadge`, `EndpointBadge`) no topo via `export const`. As entradas `<Entry>` são inseridas diretamente no arquivo, dentro do `<div>` principal, em ordem cronológica decrescente.
 
-## Arquivos OpenAPI da V2
+## Arquivos OpenAPI da v2
 
 Os endpoints estão divididos em dois arquivos separados:
 

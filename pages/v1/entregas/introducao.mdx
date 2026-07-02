@@ -1,0 +1,138 @@
+---
+title: 'Introdução'
+description: 'Base URL, autenticação, códigos de status e limites da API.'
+icon: 'book-open'
+---
+
+## Autorização
+
+Toda requisição deve incluir sua chave de API no header `api-key`:
+
+```bash
+api-key: SUA_CHAVE_API
+```
+
+Também é necessário informar as credenciais de `Authorization` do tipo `Basic`:
+
+```bash
+username: SEU_USERNAME
+password: SUA_SENHA
+```
+
+Depois isso vira algo como:
+```bash
+Authorization: Basic base64(SEU_USERNAME:SUA_SENHA)
+```
+
+No final, o formato da request com os campos de autorização ficam similar a:
+
+```bash
+curl --request GET \
+  --url '<endpoint>' \
+  --header 'Authorization: Basic <base64(SEU_USERNAME:SUA_SENHA)>' \
+  --header 'api-key: SUA_CHAVE_API'
+```
+
+Requisições sem chave ou com chave inválida retornam `400` ou `403`.
+
+---
+
+## Usuário autenticado
+
+O usuário autenticado é a entidade utilizada para realizar as requisições na API da Machine. 
+Assim como qualquer outro, este possui um cargo e suas permissões. 
+O usuário autenticado terá acesso às endpoints conforme às permissões concedidas na seção Integração em: `Minha equipe > Usuário > Permissões`.
+
+Há dois logins que permitem acesso às endpoints: login de empresa (quando o usuário é de uma empresa) e o login da central (quando o usuário é da central). 
+O login também irá limitar alguns acessos, pois usuários de empresa terão acesso apenas às informações associadas a sua empresa.
+
+---
+
+## Padrão da API
+
+Todas as respostas da nossa API são em JSON.
+
+Usamos como retorno os códigos HTTP padrão para indicar tanto o sucesso de uma requisição, quanto para indicar falhas. Os principais retornos são:
+
+- 200: Sucesso.
+
+- 400: Os dados serão validados e, se faltar algum parâmetro obrigatório, será gerado um código de retorno HTTP 400. Outros erros de validação, como erros associados a regra de negócio, serão tratados com códigos de erro específicos e mensagens explicativas.
+
+- 404: Endpoint não encontrado, revise a URL passada.
+
+- 500: Erro interno, contate o nosso suporte.
+
+Caso ocorra algum erro na autenticação básica, um erro padrão de código 1 informando “usuário e/ou senhas inválidas”, será retornado.
+
+Caso a chave API não seja informada, um erro padrão será retornado:
+
+```json
+{
+  "success": false,
+  "errors": [
+    "Chave da app não informada."
+  ]
+}
+```
+
+---
+
+## Ambientes de integração com a API
+
+Para garantir uma integração eficiente e segura, a API oferece integração com dois ambientes distintos: Homologação (ou Testes) e Produção.
+
+### Ambiente de Homologação (Testes)
+- Finalidade: Este ambiente é destinado exclusivamente a testes de integração, desenvolvimento e validação de funcionalidades. Ele permite que você experimente e refine a comunicação com a API sem qualquer risco de afetar as operações reais da central.
+
+- URL de Acesso: https://api-vendas.taximachine.com.br/api/integracao
+
+- Observação: Todas as ações realizadas neste ambiente são simuladas e não impactarão os dados ou operações da central em produção.
+
+### Ambiente de Produção
+- Finalidade: Este é o ambiente principal para atuação real com a central. Após a conclusão bem-sucedida dos seus testes no ambiente de Homologação, você deve migrar para este ambiente para iniciar as operações reais.
+
+- URL de Acesso: https://api.taximachine.com.br/api/integracao
+
+- Observação: Utilize este ambiente somente quando estiver pronto para interagir de fato com a central, pois as ações aqui são reais e permanentes.
+
+---
+
+## Rate limit
+
+O gateway aplica rate limit por janela deslizante de 60 segundos.
+Quando a requisição excede o limite de bloqueio, a API retorna `429`.
+
+Os limites são aplicados por `api-key`, exceto no grupo de integrador externo, que usa `int-key`.
+Os grupos mais específicos têm prioridade sobre o grupo padrão.
+Os valores da tabela são limites base e podem variar por fatores multiplicadores configurados para cada chave e categoria.
+O limite efetivo é calculado como `limite base * fator multiplicador`.
+Quando não há fator específico, o fator padrão é `1`.
+
+| Grupo | Paths | Agrupamento | Limite |
+| -------- | -------- | -------- | -------- |
+| Crítico | `/api/integracao/solicitacao`<br />`/api/integracao/solicitacaoStatus` | `api-key` | 800 requisições por minuto |
+| Crítico por integrador externo | `/api/integracao/solicitacao`<br />`/api/integracao/solicitacaoStatus` | `int-key` | 800 requisições por minuto |
+| Condutores e créditos | `/api/integracao/saldoCreditosCondutor`<br />`/api/integracao/saldoCreditosCondutor/`<br />`/api/integracao/condutor`<br />`/api/integracao/taxista` | `api-key` | 80 requisições por minuto |
+| Posição do condutor | `/api/integracao/posicaoCondutor` | `api-key` | 1000 requisições por minuto |
+| Categorias | `/integracao/v1/categoria*` | `api-key` | Sem bloqueio configurado. O gateway registra log a partir de 10 requisições por minuto. |
+| Bandeiras | `/integracao/v1/bandeira*` | `api-key` | Sem bloqueio configurado. O gateway registra log a partir de 10 requisições por minuto. |
+| Saque automático | `/integracao/v1/saqueAutomatico*` | `api-key` | 50 requisições por minuto |
+| Programadas | `/api/integracao/consultarProgramada` | `api-key` | 200 requisições por minuto |
+| Dinâmica | `/integracao/v1/dinamica*` | `api-key` | 200 requisições por minuto |
+| Padrão | `/api/integracao/*` | `api-key` | 1000 requisições por minuto |
+
+
+---
+
+## Paginação
+
+Alguns endpoints de listagem retornam todos os registros disponíveis. Porém, alguns possuem paginação,
+controlável pelos parâmetros `limite` e `página`:
+
+- `limite`: número de registros por página (default 20, máximo 100)
+- `página`: página atual (default 1)
+
+Exemplo:
+```
+/endpoints?limite=10&página=2
+```

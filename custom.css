@@ -1,0 +1,111 @@
+/* Página inicial: sem seletor de versão e sem tabs de Corridas/Entregas */
+html[data-current-path="/"] .nav-tabs,
+html[data-current-path="/"] [data-component-part="version-select-trigger"],
+html[data-current-path="/pages/v2/welcome"] .nav-tabs,
+html[data-current-path="/pages/v2/welcome"] [data-component-part="version-select-trigger"] {
+  display: none !important;
+}
+
+/* Documentação de Corridas v1 (sem sub-tabs): esconde a tab de Entregas */
+html[data-current-path^="/pages/v1/referencia/"] .nav-tabs > a:nth-child(2) {
+  display: none !important;
+}
+
+/* Documentação de Entregas v1 (sem sub-tabs): esconde a tab de Corridas */
+html[data-current-path^="/pages/v1/entregas/"] .nav-tabs > a:nth-child(1) {
+  display: none !important;
+}
+
+/* Documentação de Corridas/Entregas v2: as sub-tabs (ex: Corridas/Novidades) ficam nos 2
+   primeiros itens da barra; os 2 últimos são as tabs externas (Corridas/Entregas) duplicadas
+   pelo Mintlify e devem ficar escondidas */
+html[data-current-path^="/pages/v2/referencia/"] .nav-tabs > a:nth-child(3),
+html[data-current-path^="/pages/v2/referencia/"] .nav-tabs > a:nth-child(4),
+html[data-current-path^="/pages/v2/entregas/"] .nav-tabs > a:nth-child(3),
+html[data-current-path^="/pages/v2/entregas/"] .nav-tabs > a:nth-child(4),
+html[data-current-path="/pages/v2/changelog"] .nav-tabs > a:nth-child(3),
+html[data-current-path="/pages/v2/changelog"] .nav-tabs > a:nth-child(4),
+html[data-current-path="/pages/v2/changelog-entregas"] .nav-tabs > a:nth-child(3),
+html[data-current-path="/pages/v2/changelog-entregas"] .nav-tabs > a:nth-child(4) {
+  display: none !important;
+}
+
+/* Botões de acesso rápido na página inicial */
+.home-cta {
+  --cta-color: #16a34a;
+  --cta-tint: rgba(22, 163, 74, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 40px 28px;
+  min-height: 170px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 8px solid var(--cta-color);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+.home-cta:hover {
+  transform: translateY(-3px);
+  background: var(--cta-tint);
+  border-color: var(--cta-color);
+  box-shadow: 0 12px 24px -10px var(--cta-tint);
+}
+
+.home-cta .home-cta-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: var(--cta-tint);
+  color: var(--cta-color);
+}
+
+.home-cta .home-cta-icon svg {
+  width: 30px;
+  height: 30px;
+}
+
+.home-cta .home-cta-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.home-cta .home-cta-text span {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--tw-prose-headings);
+}
+
+.home-cta .home-cta-text small {
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.65;
+}
+
+.home-cta .home-cta-arrow {
+  margin-left: auto;
+  color: var(--cta-color);
+  opacity: 0.7;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.home-cta:hover .home-cta-arrow {
+  transform: translateX(4px);
+  opacity: 1;
+}
+
+.home-cta-corridas {
+  --cta-color: #0e9fe0;
+  --cta-tint: rgba(37, 188, 255, 0.1);
+}
+
+.home-cta-entregas {
+  --cta-color: #e02020;
+  --cta-tint: rgba(241, 48, 48, 0.1);
+}

@@ -27,7 +27,7 @@ mode: "custom"
     letterSpacing: "-0.02em",
     textShadow: "0 2px 10px rgba(0,0,0,0.5)"
   }}>
-    API de Integração V2
+    API de Integração v2
   </h1>
   <p style={{
     maxWidth: "700px",
@@ -43,6 +43,42 @@ mode: "custom"
 </div>
 
 <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 20px" }}>
+  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "28px", marginBottom: "56px" }}>
+    <a href="/pages/v2/referencia/introducao" style={{ textDecoration: "none" }}>
+      <div className="home-cta home-cta-corridas">
+        <span className="home-cta-icon">
+          <Icon icon="car-side" size={30} color="#0e9fe0" />
+        </span>
+        <span className="home-cta-text">
+          <span>Documentação de Corridas</span>
+          <small>Transporte de passageiros</small>
+        </span>
+        <svg className="home-cta-arrow" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg>
+      </div>
+    </a>
+    <a href="/pages/v2/entregas/introducao" style={{ textDecoration: "none" }}>
+      <div className="home-cta home-cta-entregas">
+        <span className="home-cta-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+            <path d="M3.27 6.96 12 12.01l8.73-5.05" />
+            <path d="M12 22.08V12" />
+            <path d="M7.5 4.21l9 5.19" />
+          </svg>
+        </span>
+        <span className="home-cta-text">
+          <span>Documentação de Entregas</span>
+          <small>Envio de pacotes</small>
+        </span>
+        <svg className="home-cta-arrow" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg>
+      </div>
+    </a>
+  </div>
+
   <CardGroup cols={2}>
     <Card title="Quem Somos" icon="building" iconType="duotone">
       A **Machine** é um produto **Gaudium**, projetado para fornecer tecnologia que permite a operação eficiente e segura 
@@ -232,13 +268,13 @@ mode: "custom"
 
   <div style={{ marginTop: "64px" }}>
     <h2 style={{ fontSize: "32px", fontWeight: "700", marginBottom: "24px", color: "var(--tw-prose-headings)" }}>
-      HATEOAS na V2
+      HATEOAS na v2
     </h2>
 
     <p style={{ fontSize: "17px", opacity: 0.8, marginBottom: "20px", lineHeight: "1.6" }}>
       HATEOAS é um padrão em que o próprio retorno da API guia você pelos endpoints relacionados ao recurso consultado.
       Com esses links, seu sistema consegue identificar quais próximas ações estão disponíveis sem consultar a documentação
-      a cada etapa do fluxo. Na V2, esses links ficam no objeto <code>__links</code>.
+      a cada etapa do fluxo. Na v2, esses links ficam no objeto <code>__links</code>.
     </p>
 
     <Card title="Estrutura do objeto __links" icon="link" iconType="duotone">
