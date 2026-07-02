@@ -6,15 +6,27 @@ html[data-current-path="/pages/v2/welcome"] [data-component-part="version-select
   display: none !important;
 }
 
-/* Documentação de Corridas: esconde a tab de Entregas */
-html[data-current-path^="/pages/v2/referencia/"] .nav-tabs > a:nth-child(2),
+/* Documentação de Corridas v1 (sem sub-tabs): esconde a tab de Entregas */
 html[data-current-path^="/pages/v1/referencia/"] .nav-tabs > a:nth-child(2) {
   display: none !important;
 }
 
-/* Documentação de Entregas: esconde a tab de Corridas */
-html[data-current-path^="/pages/v2/entregas/"] .nav-tabs > a:nth-child(1),
+/* Documentação de Entregas v1 (sem sub-tabs): esconde a tab de Corridas */
 html[data-current-path^="/pages/v1/entregas/"] .nav-tabs > a:nth-child(1) {
+  display: none !important;
+}
+
+/* Documentação de Corridas/Entregas v2: as sub-tabs (ex: Corridas/Novidades) ficam nos 2
+   primeiros itens da barra; os 2 últimos são as tabs externas (Corridas/Entregas) duplicadas
+   pelo Mintlify e devem ficar escondidas */
+html[data-current-path^="/pages/v2/referencia/"] .nav-tabs > a:nth-child(3),
+html[data-current-path^="/pages/v2/referencia/"] .nav-tabs > a:nth-child(4),
+html[data-current-path^="/pages/v2/entregas/"] .nav-tabs > a:nth-child(3),
+html[data-current-path^="/pages/v2/entregas/"] .nav-tabs > a:nth-child(4),
+html[data-current-path="/pages/v2/changelog"] .nav-tabs > a:nth-child(3),
+html[data-current-path="/pages/v2/changelog"] .nav-tabs > a:nth-child(4),
+html[data-current-path="/pages/v2/changelog-entregas"] .nav-tabs > a:nth-child(3),
+html[data-current-path="/pages/v2/changelog-entregas"] .nav-tabs > a:nth-child(4) {
   display: none !important;
 }
 
