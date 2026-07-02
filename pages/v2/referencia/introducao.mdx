@@ -4,6 +4,59 @@ description: 'Base URL, autenticação, códigos de status e limites da API.'
 icon: 'book-open'
 ---
 
+## Tipos de Solicitações e Pagamento
+
+As solicitações podem ser feitas de imediato ou programadas para o futuro, cada uma identificada por números diferentes.
+Após o disparo de uma solicitação programada, uma nova solicitação é criada no sistema.
+
+<Card title="Formas de Pagamento Suportadas" icon="credit-card" iconType="duotone">
+  Todas as solicitações estão associadas a uma forma de pagamento. As opções incluem:
+
+  <div style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+    gap: "12px",
+    marginTop: "24px"
+  }}>
+    {[
+      { name: 'Dinheiro', code: 'D' }, { name: 'Débito', code: 'B' }, { name: 'Crédito', code: 'C' },
+      { name: 'eTicket', code: 'T' }, { name: 'Voucher', code: 'V' }, { name: 'Pix', code: 'X' },
+      { name: 'PicPay', code: 'P' }, { name: 'WhatsApp', code: 'H' }, { name: 'Cartão via app', code: 'A' },
+      { name: 'Faturado', code: 'F' }, { name: 'Pix via app', code: 'I' }, { name: 'Carteira de Créditos', code: 'R' }
+    ].map(item => (
+      <div key={item.code} style={{
+        padding: "10px 16px",
+        background: "rgba(22, 163, 74, 0.05)",
+        borderRadius: "12px",
+        fontSize: "14px",
+        border: "1px solid rgba(22, 163, 74, 0.15)",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center"
+      }}>
+        <span style={{ fontWeight: "500" }}>{item.name}</span>
+        <code style={{ fontSize: "12px", background: "rgba(22, 163, 74, 0.2)", padding: "2px 6px", borderRadius: "4px", color: "#16A34A" }}>{item.code}</code>
+      </div>
+    ))}
+  </div>
+</Card>
+
+As solicitações podem ter vários objetivos, dependendo do modelo de negócio e do tipo de cliente:
+
+<CardGroup cols={3}>
+  <Card title="Passageiro" icon="user" iconType="duotone">
+    Levar uma pessoa para o destino solicitado.
+  </Card>
+  <Card title="Empresa" icon="briefcase" iconType="duotone">
+    Transportar o funcionário de uma organização.
+  </Card>
+  <Card title="Estabelecimento" icon="hotel" iconType="duotone">
+    Levar o hóspede de um hotel para o destino.
+  </Card>
+</CardGroup>
+
+---
+
 ## Autorização
 
 Toda requisição deve incluir sua chave de API no header `api-key`:

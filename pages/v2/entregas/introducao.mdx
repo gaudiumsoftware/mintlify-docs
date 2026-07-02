@@ -4,6 +4,55 @@ description: 'Base URL, autenticação, códigos de status e limites da API.'
 icon: 'book-open'
 ---
 
+## Tipos de Solicitações e Pagamento
+
+As solicitações podem ser feitas de imediato ou programadas para o futuro, cada uma identificada por números diferentes.
+Após o disparo de uma solicitação programada, uma nova solicitação é criada no sistema.
+
+<Card title="Formas de Pagamento Suportadas" icon="credit-card" iconType="duotone">
+  Todas as solicitações estão associadas a uma forma de pagamento. As opções incluem:
+
+  <div style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+    gap: "12px",
+    marginTop: "24px"
+  }}>
+    {[
+      { name: 'Dinheiro', code: 'D' }, { name: 'Débito', code: 'B' }, { name: 'Crédito', code: 'C' },
+      { name: 'Pix', code: 'X' }, { name: 'PicPay', code: 'P' }, { name: 'WhatsApp', code: 'H' },
+      { name: 'Faturado', code: 'F' }, { name: 'Carteira de Créditos', code: 'R' }
+    ].map(item => (
+      <div key={item.code} style={{
+        padding: "10px 16px",
+        background: "rgba(22, 163, 74, 0.05)",
+        borderRadius: "12px",
+        fontSize: "14px",
+        border: "1px solid rgba(22, 163, 74, 0.15)",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center"
+      }}>
+        <span style={{ fontWeight: "500" }}>{item.name}</span>
+        <code style={{ fontSize: "12px", background: "rgba(22, 163, 74, 0.2)", padding: "2px 6px", borderRadius: "4px", color: "#16A34A" }}>{item.code}</code>
+      </div>
+    ))}
+  </div>
+</Card>
+
+As solicitações de entregas podem ter vários objetivos, dependendo do modelo de negócio e do tipo de cliente:
+
+<CardGroup cols={2}>
+  <Card title="Entrega de refeições" icon="utensils" iconType="duotone">
+    Levar a refeição de um restaurante até o cliente final.
+  </Card>
+  <Card title="Entrega de encomendas" icon="box" iconType="duotone">
+    Levar encomendas de lojas ou centrais de distribuição até o cliente final.
+  </Card>
+</CardGroup>
+
+---
+
 ## Autorização
 
 Toda requisição deve incluir sua chave de API no header `api-key`:
