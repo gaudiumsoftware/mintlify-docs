@@ -91,38 +91,6 @@ mode: "custom"
 
   <div style={{ marginTop: "64px" }}>
     <h2 style={{ fontSize: "32px", fontWeight: "700", marginBottom: "24px", color: "var(--tw-prose-headings)" }}>
-      Solicitações Programadas
-    </h2>
-    <p style={{ fontSize: "17px", opacity: 0.8, marginBottom: "32px", lineHeight: "1.6" }}>
-      Solicitações aceitas e canceladas por um condutor antes do início podem ser redistribuídas, ocasionando a repetição de alguns status. 
-      Solicitações programadas seguem um ciclo específico de estados:
-    </p>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "16px" }}>
-      {[
-        { name: 'Aguardando', code: 'A', color: '#3b82f6', desc: 'Aguardando horário de disparo.' },
-        { name: 'Disparada', code: 'D', color: '#10b981', desc: 'Solicitação programada disparada.' },
-        { name: 'Cancelada', code: 'C', color: '#ef4444', desc: 'Solicitação cancelada.' },
-        { name: 'Erro', code: 'X', color: '#f59e0b', desc: 'Problema no processo da solicitação.' }
-      ].map(status => (
-        <div key={status.code} style={{ 
-          padding: "20px", 
-          background: "rgba(255, 255, 255, 0.02)", 
-          borderRadius: "16px", 
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          borderLeft: `4px solid ${status.color}`, 
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-            <span style={{ fontWeight: "700", fontSize: "18px" }}>{status.name}</span>
-            <code style={{ fontSize: "12px", background: "rgba(255,255,255,0.1)", padding: "2px 6px", borderRadius: "4px" }}>({status.code})</code>
-          </div>
-          <p style={{ fontSize: "14px", opacity: 0.7, lineHeight: "1.4" }}>{status.desc}</p>
-        </div>
-      ))}
-    </div>
-  </div>
-
-  <div style={{ marginTop: "64px" }}>
-    <h2 style={{ fontSize: "32px", fontWeight: "700", marginBottom: "24px", color: "var(--tw-prose-headings)" }}>
       HATEOAS na v2
     </h2>
 
