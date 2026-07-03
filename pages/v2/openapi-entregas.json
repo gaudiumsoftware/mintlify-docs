@@ -4010,7 +4010,7 @@
                 "properties": {
                   "motivo_id": {
                     "type": "integer",
-                    "description": "ID do motivo do cancelamento:\n1: Tempo de espera, 2: Mudança de planos, 3: Acidente/Carro quebrado, 4: Difícil acesso, 5: Passageiro não entrou, 6: Outros, 7: Endereço errado, 8: Corrida em andamento há mais de 24 h, 9: Falha no sistema, 10: Outros casos, 11: Rejeitada, 12: Motorista não está vindo, 13: Transação rejeitada, 16: Despachado na plataforma parceira, 17: Cancelado na plataforma parceira, 18: Não foi possível realizar o pagamento, 19: Pagamento não realizado.",
+                    "description": "ID do motivo do cancelamento:\n1: Tempo de espera, 2: Mudança de planos, 3: Acidente/Carro quebrado, 4: Difícil acesso, 5: Passageiro não entrou, 6: Outros, 7: Endereço errado, 8: Corrida em andamento há mais de 24 h, 9: Falha no sistema, 10: Outros casos, 11: Rejeitada, 12: Motorista não está vindo, 13: Transação rejeitada, 14: Despachado na plataforma do iFood, 15: Cancelado via iFood, 16: Despachado na plataforma parceira, 17: Cancelado na plataforma parceira, 18: Não foi possível realizar o pagamento, 19: Pagamento não realizado, 20: Cancelado por redistribuição.",
                     "enum": [
                       1,
                       2,
@@ -4025,10 +4025,13 @@
                       11,
                       12,
                       13,
+                      14,
+                      15,
                       16,
                       17,
                       18,
-                      19
+                      19,
+                      20
                     ]
                   }
                 }
