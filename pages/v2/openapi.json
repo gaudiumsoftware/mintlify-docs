@@ -3601,7 +3601,26 @@
                 "properties": {
                   "motivo_id": {
                     "type": "integer",
-                    "description": "Motivo de cancelamento."
+                    "description": "ID do motivo do cancelamento:\n1: Tempo de espera, 2: Mudança de planos, 3: Acidente/Carro quebrado, 4: Difícil acesso, 5: Passageiro não entrou, 6: Outros, 7: Endereço errado, 8: Corrida em andamento há mais de 24 h, 9: Falha no sistema, 10: Outros casos, 11: Rejeitada, 12: Motorista não está vindo, 13: Transação rejeitada, 16: Despachado na plataforma parceira, 17: Cancelado na plataforma parceira, 18: Não foi possível realizar o pagamento, 19: Pagamento não realizado.",
+                    "enum": [
+                      1,
+                      2,
+                      3,
+                      4,
+                      5,
+                      6,
+                      7,
+                      8,
+                      9,
+                      10,
+                      11,
+                      12,
+                      13,
+                      16,
+                      17,
+                      18,
+                      19
+                    ]
                   }
                 }
               },
