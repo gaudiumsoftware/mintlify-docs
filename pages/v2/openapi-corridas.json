@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "API de Integração",
-    "description": "API de Integração V2 - Corridas",
+    "description": "API de Integração v2 - Corridas",
     "license": {
       "name": "MIT"
     },
