@@ -1218,6 +1218,20 @@
             }
           },
           {
+            "name": "complemento_partida",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "referencia_partida",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "lat_partida",
             "in": "query",
             "description": "Latitude de partida.",
@@ -1336,6 +1350,25 @@
             "schema": {
               "type": "boolean"
             }
+          },
+          {
+            "name": "tipo_operacao",
+            "in": "query",
+            "description": "Tipo de operação. P - Passageiro, E - Entrega",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "P",
+                "E"
+              ]
+            }
+          },
+          {
+            "name": "estimativa_minutos",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
           }
         ],
         "responses": {
@@ -1432,6 +1465,20 @@
             }
           },
           {
+            "name": "complemento_partida",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "referencia_partida",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "lat_desejado",
             "in": "query",
             "description": "Obrigatório apenas na ausência dos parâmetros de endereço desejado.",
@@ -1509,6 +1556,25 @@
             "description": "Determina se os condutores próximos serão ignorados ao realizar a estimativa. Afeta somente a configuração de despacho por proximidade.",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "tipo_operacao",
+            "in": "query",
+            "description": "Tipo de operação. P - Passageiro, E - Entrega",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "P",
+                "E"
+              ]
+            }
+          },
+          {
+            "name": "estimativa_minutos",
+            "in": "query",
+            "schema": {
+              "type": "number"
             }
           }
         ],
@@ -2767,7 +2833,7 @@
                     "type": "string",
                     "description": "Novo CNPJ do condutor."
                   },
-                  "cnh": {
+                  "numero_cnh": {
                     "type": "string",
                     "description": "Nova CNH do condutor."
                   },
@@ -2859,7 +2925,7 @@
                       ]
                     }
                   },
-                  "exigencia": {
+                  "exigencias": {
                     "type": "object",
                     "description": "Exigências aceitas pelo condutor.",
                     "properties": {
@@ -2937,14 +3003,14 @@
                 "cep": "12345-678",
                 "bairro": "bairro 1",
                 "cpf": "306.093.750-83",
-                "cnh": "99999999999",
+                "numero_cnh": "99999999999",
                 "numero_viatura": "12",
                 "pagamentos": [
                   "B",
                   "C",
                   "T"
                 ],
-                "exigencia": {
+                "exigencias": {
                   "veiculo_a_disposicao": true,
                   "aceita_encomendas": true,
                   "filtro_1": false,
@@ -3743,6 +3809,32 @@
                   "area_atuacao_empresa_id": {
                     "type": "integer",
                     "description": "ID da área de atuação da empresa."
+                  },
+                  "habilitar_limite_solicitacao": {
+                    "type": "boolean",
+                    "description": "Habilita o limite de solicitações simultâneas."
+                  },
+                  "limite_solicitacao_simultanea": {
+                    "type": "integer",
+                    "description": "Quantidade máxima de solicitações simultâneas."
+                  },
+                  "permitir_editar_pedidos_andamento": {
+                    "type": "boolean"
+                  },
+                  "permitir_impulsionar_entrega": {
+                    "type": "boolean"
+                  },
+                  "exibir_codigo_inicio_solicitacao": {
+                    "type": "boolean"
+                  },
+                  "exigir_codigo_inicio_solicitacao": {
+                    "type": "boolean"
+                  },
+                  "exibir_codigo_confirmacao_pedido": {
+                    "type": "boolean"
+                  },
+                  "exigir_codigo_confirmacao_pedido": {
+                    "type": "boolean"
                   }
                 }
               }
@@ -3958,6 +4050,14 @@
                     "type": "object",
                     "description": "Dados de telefone da empresa.",
                     "properties": {
+                      "codigo_pais": {
+                        "type": "string",
+                        "description": "Código do país (DDI). Quando não informado, é utilizado o DDI padrão da bandeira."
+                      },
+                      "codigo_area": {
+                        "type": "string",
+                        "description": "Código de área (DDD). Equivalente ao campo ddd; quando ambos são enviados, codigo_area prevalece."
+                      },
                       "ddd": {
                         "type": "string",
                         "description": "Exemplo: 85"
@@ -4768,6 +4868,15 @@
                   },
                   "categoria_nome": {
                     "type": "string"
+                  },
+                  "estimativa_km": {
+                    "type": "number"
+                  },
+                  "estimativa_minutos": {
+                    "type": "number"
+                  },
+                  "aguarda_liberacao": {
+                    "type": "boolean"
                   },
                   "partida": {
                     "type": "object",
