@@ -991,6 +991,9 @@
                     "type": "string",
                     "description": "CPF do condutor, com ou sem máscara."
                   },
+                  "numero_cnh": {
+                    "type": "string"
+                  },
                   "cnpj": {
                     "type": "string",
                     "description": "CNPJ do condutor, com ou sem máscara."
@@ -1050,7 +1053,7 @@
                       "type": "string"
                     }
                   },
-                  "exigencia": {
+                  "exigencias": {
                     "type": "object",
                     "description": "Bloco de exigências operacionais do condutor.",
                     "properties": {
@@ -1236,6 +1239,9 @@
                     "type": "string",
                     "description": "Obrigatório se `cnpj` não for enviado."
                   },
+                  "numero_cnh": {
+                    "type": "string"
+                  },
                   "cnpj": {
                     "type": "string",
                     "description": "Obrigatório se `cpf` não for enviado."
@@ -1284,7 +1290,7 @@
                       "type": "string"
                     }
                   },
-                  "exigencia": {
+                  "exigencias": {
                     "type": "object",
                     "properties": {
                       "veiculo_a_disposicao": {
@@ -1359,7 +1365,7 @@
                   "B",
                   "X"
                 ],
-                "exigencia": {
+                "exigencias": {
                   "veiculo_a_disposicao": false,
                   "aceita_encomendas": true,
                   "filtro_1": false,
@@ -2225,6 +2231,15 @@
                   "estimativas": {
                     "type": "boolean"
                   },
+                  "estimativa_km": {
+                    "type": "number"
+                  },
+                  "estimativa_minutos": {
+                    "type": "number"
+                  },
+                  "aguarda_liberacao": {
+                    "type": "boolean"
+                  },
                   "ignorar_condutores_proximos": {
                     "type": "boolean"
                   },
@@ -2810,6 +2825,12 @@
                   "estado_partida": {
                     "type": "string"
                   },
+                  "complemento_partida": {
+                    "type": "string"
+                  },
+                  "referencia_partida": {
+                    "type": "string"
+                  },
                   "lat_desejado": {
                     "type": "number"
                   },
@@ -2840,6 +2861,17 @@
                   },
                   "latlng_paradas": {
                     "type": "string"
+                  },
+                  "tipo_operacao": {
+                    "type": "string",
+                    "enum": [
+                      "P",
+                      "E"
+                    ],
+                    "description": "Tipo de operação. P - Passageiro, E - Entrega"
+                  },
+                  "estimativa_minutos": {
+                    "type": "number"
                   }
                 }
               },
@@ -2924,6 +2956,12 @@
                   "estado_partida": {
                     "type": "string"
                   },
+                  "complemento_partida": {
+                    "type": "string"
+                  },
+                  "referencia_partida": {
+                    "type": "string"
+                  },
                   "lat_desejado": {
                     "type": "number"
                   },
@@ -2966,6 +3004,17 @@
                   "multicategorias": {
                     "type": "boolean",
                     "description": "Quando multicategorias é true, a API calcula a estimativa de múltiplas categorias."
+                  },
+                  "tipo_operacao": {
+                    "type": "string",
+                    "enum": [
+                      "P",
+                      "E"
+                    ],
+                    "description": "Tipo de operação. P - Passageiro, E - Entrega"
+                  },
+                  "estimativa_minutos": {
+                    "type": "number"
                   }
                 }
               },
@@ -3086,6 +3135,15 @@
                     "type": "string"
                   },
                   "estimativas": {
+                    "type": "boolean"
+                  },
+                  "estimativa_km": {
+                    "type": "number"
+                  },
+                  "estimativa_minutos": {
+                    "type": "number"
+                  },
+                  "aguarda_liberacao": {
                     "type": "boolean"
                   },
                   "ignorar_condutores_proximos": {
@@ -3348,6 +3406,12 @@
                   "estado_partida": {
                     "type": "string"
                   },
+                  "complemento_partida": {
+                    "type": "string"
+                  },
+                  "referencia_partida": {
+                    "type": "string"
+                  },
                   "categoria_id": {
                     "type": "integer"
                   },
@@ -3357,6 +3421,17 @@
                   },
                   "latlng_paradas": {
                     "type": "string"
+                  },
+                  "tipo_operacao": {
+                    "type": "string",
+                    "enum": [
+                      "P",
+                      "E"
+                    ],
+                    "description": "Tipo de operação. P - Passageiro, E - Entrega"
+                  },
+                  "estimativa_minutos": {
+                    "type": "number"
                   }
                 }
               },
@@ -4673,6 +4748,14 @@
                       "numero"
                     ],
                     "properties": {
+                      "codigo_pais": {
+                        "type": "string",
+                        "description": "Código do país (DDI). Quando não informado, é utilizado o DDI padrão da bandeira."
+                      },
+                      "codigo_area": {
+                        "type": "string",
+                        "description": "Código de área (DDD). Equivalente ao campo ddd; quando ambos são enviados, codigo_area prevalece."
+                      },
                       "ddd": {
                         "oneOf": [
                           {
