@@ -4845,6 +4845,15 @@
                     ],
                     "description": "Forma de pagamento."
                   },
+                  "taxista_id": {
+                    "type": "integer"
+                  },
+                  "info_antes_aceite": {
+                    "type": "string"
+                  },
+                  "info_apos_aceite": {
+                    "type": "string"
+                  },
                   "empresa_id": {
                     "type": "integer",
                     "description": "ID da empresa."
@@ -4909,6 +4918,29 @@
                       }
                     }
                   },
+                  "desejado": {
+                    "type": "object",
+                    "properties": {
+                      "endereco": {
+                        "type": "string"
+                      },
+                      "bairro": {
+                        "type": "string"
+                      },
+                      "cidade": {
+                        "type": "string"
+                      },
+                      "estado": {
+                        "type": "string"
+                      },
+                      "lat": {
+                        "type": "number"
+                      },
+                      "lng": {
+                        "type": "number"
+                      }
+                    }
+                  },
                   "paradas": {
                     "type": "array",
                     "items": {
@@ -4959,6 +4991,50 @@
                           "type": "number",
                           "format": "float"
                         }
+                      }
+                    }
+                  },
+                  "extras": {
+                    "type": "object",
+                    "properties": {
+                      "porta_malas_grande": {
+                        "type": "boolean"
+                      },
+                      "veiculo_a_disposicao": {
+                        "type": "boolean"
+                      },
+                      "adaptado_cadeirante": {
+                        "type": "boolean"
+                      },
+                      "motorista_mulher": {
+                        "type": "boolean"
+                      },
+                      "aceita_animais": {
+                        "type": "boolean"
+                      },
+                      "aceita_encomendas": {
+                        "type": "boolean"
+                      },
+                      "com_retorno": {
+                        "type": "boolean"
+                      },
+                      "filtro_1": {
+                        "type": "boolean"
+                      },
+                      "filtro_2": {
+                        "type": "boolean"
+                      },
+                      "filtro_3": {
+                        "type": "boolean"
+                      },
+                      "filtro_4": {
+                        "type": "boolean"
+                      },
+                      "filtro_5": {
+                        "type": "boolean"
+                      },
+                      "filtro_6": {
+                        "type": "boolean"
                       }
                     }
                   },

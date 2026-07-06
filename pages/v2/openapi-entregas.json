@@ -3772,6 +3772,18 @@
                     "type": "string",
                     "description": "As formas de pagamento possíveis são: Dinheiro (`D`), Débito (`B`), Crédito (`C`), Pix (`X`), Picpay (`P`), Whatsapp (`H`), Faturado (`F`), Carteira de créditos (`R`)"
                   },
+                  "taxista_id": {
+                    "type": "integer"
+                  },
+                  "info_antes_aceite": {
+                    "type": "string"
+                  },
+                  "info_apos_aceite": {
+                    "type": "string"
+                  },
+                  "aguarda_liberacao": {
+                    "type": "boolean"
+                  },
                   "partida": {
                     "type": "object",
                     "properties": {
@@ -3798,6 +3810,29 @@
                       },
                       "lng": {
                         "type": "string"
+                      }
+                    }
+                  },
+                  "desejado": {
+                    "type": "object",
+                    "properties": {
+                      "endereco": {
+                        "type": "string"
+                      },
+                      "bairro": {
+                        "type": "string"
+                      },
+                      "cidade": {
+                        "type": "string"
+                      },
+                      "estado": {
+                        "type": "string"
+                      },
+                      "lat": {
+                        "type": "number"
+                      },
+                      "lng": {
+                        "type": "number"
                       }
                     }
                   },
@@ -3850,6 +3885,50 @@
                         "valor_cobrar": {
                           "type": "number"
                         }
+                      }
+                    }
+                  },
+                  "extras": {
+                    "type": "object",
+                    "properties": {
+                      "porta_malas_grande": {
+                        "type": "boolean"
+                      },
+                      "veiculo_a_disposicao": {
+                        "type": "boolean"
+                      },
+                      "adaptado_cadeirante": {
+                        "type": "boolean"
+                      },
+                      "motorista_mulher": {
+                        "type": "boolean"
+                      },
+                      "aceita_animais": {
+                        "type": "boolean"
+                      },
+                      "aceita_encomendas": {
+                        "type": "boolean"
+                      },
+                      "com_retorno": {
+                        "type": "boolean"
+                      },
+                      "filtro_1": {
+                        "type": "boolean"
+                      },
+                      "filtro_2": {
+                        "type": "boolean"
+                      },
+                      "filtro_3": {
+                        "type": "boolean"
+                      },
+                      "filtro_4": {
+                        "type": "boolean"
+                      },
+                      "filtro_5": {
+                        "type": "boolean"
+                      },
+                      "filtro_6": {
+                        "type": "boolean"
                       }
                     }
                   }
@@ -4526,6 +4605,12 @@
                     "type": "number",
                     "description": "Longitude do local de partida"
                   },
+                  "complemento_partida": {
+                    "type": "string"
+                  },
+                  "referencia_partida": {
+                    "type": "string"
+                  },
                   "endereco_desejado": {
                     "type": "string",
                     "description": "Endereço do local desejado"
@@ -4644,6 +4729,12 @@
                   "lng_partida": {
                     "type": "number",
                     "description": "Longitude do local de partida"
+                  },
+                  "complemento_partida": {
+                    "type": "string"
+                  },
+                  "referencia_partida": {
+                    "type": "string"
                   },
                   "endereco_desejado": {
                     "type": "string",
@@ -4782,6 +4873,12 @@
                   "lng_partida": {
                     "type": "number",
                     "description": "Longitude do local de partida"
+                  },
+                  "complemento_partida": {
+                    "type": "string"
+                  },
+                  "referencia_partida": {
+                    "type": "string"
                   },
                   "endereco_desejado": {
                     "type": "string",
@@ -5124,6 +5221,18 @@
                     "type": "string",
                     "description": "As formas de pagamento possíveis são: Dinheiro (`D`), Débito (`B`), Crédito (`C`), Pix (`X`), Picpay (`P`), Whatsapp (`H`), Faturado (`F`), Carteira de créditos (`R`)"
                   },
+                  "taxista_id": {
+                    "type": "integer"
+                  },
+                  "info_antes_aceite": {
+                    "type": "string"
+                  },
+                  "info_apos_aceite": {
+                    "type": "string"
+                  },
+                  "aguarda_liberacao": {
+                    "type": "boolean"
+                  },
                   "partida": {
                     "type": "object",
                     "properties": {
@@ -5150,6 +5259,29 @@
                       },
                       "lng": {
                         "type": "string"
+                      }
+                    }
+                  },
+                  "desejado": {
+                    "type": "object",
+                    "properties": {
+                      "endereco": {
+                        "type": "string"
+                      },
+                      "bairro": {
+                        "type": "string"
+                      },
+                      "cidade": {
+                        "type": "string"
+                      },
+                      "estado": {
+                        "type": "string"
+                      },
+                      "lat": {
+                        "type": "number"
+                      },
+                      "lng": {
+                        "type": "number"
                       }
                     }
                   },
@@ -5202,6 +5334,50 @@
                         "valor_cobrar": {
                           "type": "number"
                         }
+                      }
+                    }
+                  },
+                  "extras": {
+                    "type": "object",
+                    "properties": {
+                      "porta_malas_grande": {
+                        "type": "boolean"
+                      },
+                      "veiculo_a_disposicao": {
+                        "type": "boolean"
+                      },
+                      "adaptado_cadeirante": {
+                        "type": "boolean"
+                      },
+                      "motorista_mulher": {
+                        "type": "boolean"
+                      },
+                      "aceita_animais": {
+                        "type": "boolean"
+                      },
+                      "aceita_encomendas": {
+                        "type": "boolean"
+                      },
+                      "com_retorno": {
+                        "type": "boolean"
+                      },
+                      "filtro_1": {
+                        "type": "boolean"
+                      },
+                      "filtro_2": {
+                        "type": "boolean"
+                      },
+                      "filtro_3": {
+                        "type": "boolean"
+                      },
+                      "filtro_4": {
+                        "type": "boolean"
+                      },
+                      "filtro_5": {
+                        "type": "boolean"
+                      },
+                      "filtro_6": {
+                        "type": "boolean"
                       }
                     }
                   },
@@ -5335,6 +5511,18 @@
                     "type": "string",
                     "description": "As formas de pagamento possíveis são: Dinheiro (`D`), Débito (`B`), Crédito (`C`), Pix (`X`), Picpay (`P`), Whatsapp (`H`), Faturado (`F`), Carteira de créditos (`R`)"
                   },
+                  "taxista_id": {
+                    "type": "integer"
+                  },
+                  "info_antes_aceite": {
+                    "type": "string"
+                  },
+                  "info_apos_aceite": {
+                    "type": "string"
+                  },
+                  "aguarda_liberacao": {
+                    "type": "boolean"
+                  },
                   "partida": {
                     "type": "object",
                     "properties": {
@@ -5361,6 +5549,29 @@
                       },
                       "lng": {
                         "type": "string"
+                      }
+                    }
+                  },
+                  "desejado": {
+                    "type": "object",
+                    "properties": {
+                      "endereco": {
+                        "type": "string"
+                      },
+                      "bairro": {
+                        "type": "string"
+                      },
+                      "cidade": {
+                        "type": "string"
+                      },
+                      "estado": {
+                        "type": "string"
+                      },
+                      "lat": {
+                        "type": "number"
+                      },
+                      "lng": {
+                        "type": "number"
                       }
                     }
                   },
@@ -5413,6 +5624,50 @@
                         "id_externo": {
                           "type": "string"
                         }
+                      }
+                    }
+                  },
+                  "extras": {
+                    "type": "object",
+                    "properties": {
+                      "porta_malas_grande": {
+                        "type": "boolean"
+                      },
+                      "veiculo_a_disposicao": {
+                        "type": "boolean"
+                      },
+                      "adaptado_cadeirante": {
+                        "type": "boolean"
+                      },
+                      "motorista_mulher": {
+                        "type": "boolean"
+                      },
+                      "aceita_animais": {
+                        "type": "boolean"
+                      },
+                      "aceita_encomendas": {
+                        "type": "boolean"
+                      },
+                      "com_retorno": {
+                        "type": "boolean"
+                      },
+                      "filtro_1": {
+                        "type": "boolean"
+                      },
+                      "filtro_2": {
+                        "type": "boolean"
+                      },
+                      "filtro_3": {
+                        "type": "boolean"
+                      },
+                      "filtro_4": {
+                        "type": "boolean"
+                      },
+                      "filtro_5": {
+                        "type": "boolean"
+                      },
+                      "filtro_6": {
+                        "type": "boolean"
                       }
                     }
                   }
