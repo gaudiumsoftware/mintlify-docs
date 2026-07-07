@@ -4698,22 +4698,22 @@
                       "com_retorno": {
                         "type": "boolean"
                       },
-                      "usa_filtro_1": {
+                      "filtro_1": {
                         "type": "boolean"
                       },
-                      "usa_filtro_2": {
+                      "filtro_2": {
                         "type": "boolean"
                       },
-                      "usa_filtro_3": {
+                      "filtro_3": {
                         "type": "boolean"
                       },
-                      "usa_filtro_4": {
+                      "filtro_4": {
                         "type": "boolean"
                       },
-                      "usa_filtro_5": {
+                      "filtro_5": {
                         "type": "boolean"
                       },
-                      "usa_filtro_6": {
+                      "filtro_6": {
                         "type": "boolean"
                       }
                     }
