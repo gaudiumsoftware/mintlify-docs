@@ -1336,6 +1336,12 @@
                       "cpf": "879.213.930-20",
                       "chave_pix": null,
                       "pagamentos": [],
+                      "categorias": [
+                        {
+                          "id": 1,
+                          "nome": "Categoria 1"
+                        }
+                      ],
                       "avaliacao_media": null,
                       "data_hora_situacao_cadastral": "2024-03-27 09:54:53",
                       "data_hora_ultima_corrida": null,
