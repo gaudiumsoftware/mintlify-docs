@@ -154,6 +154,39 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="16 jul 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="consultar-status-webhook" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Consulta de status de entrega do webhook
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novo endpoint para verificar se um webhook está entregando eventos normalmente ou se foi
+      bloqueado por falhas de entrega, com detalhes do bloqueio e da próxima tentativa de reenvio.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/webhooks/{id}/status" href="/pages/v2/entregas/webhooks/endpoint/get-status" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Campos retornados na consulta:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="situacao" /> — <code>ativo</code>, <code>bloqueado_temporariamente</code> (falhas consecutivas de entrega) ou <code>bloqueado_definitivamente</code> (tentativas de reenvio esgotadas).</li>
+        <li><ParamBadge name="bloqueio_temporario" /> — estado do bloqueio temporário: <code>ativo</code>, <code>falhas_consecutivas</code>, <code>desde</code> e <code>proxima_tentativa</code> (datas em ISO-8601, UTC).</li>
+        <li><ParamBadge name="bloqueio_definitivo" /> — estado do bloqueio definitivo: <code>ativo</code> e <code>desde</code>.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> durante um bloqueio temporário as entregas ficam suspensas até <code>proxima_tentativa</code>. No bloqueio definitivo os eventos deixam de ser entregues ao webhook.
+    </div>
+  </Entry>
+
   <Entry date="30 jun 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="editar-entrega" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Editar paradas de uma entrega em andamento ou programada
