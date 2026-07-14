@@ -87,7 +87,8 @@
                       "email": "exemplo@email.com.br",
                       "telefone": "(11) 97772-3133",
                       "status_cliente": "A",
-                      "cpf": null
+                      "cpf": null,
+                      "foto_url": "https://s3.amazonaws.com/exemplo-bucket/fotos/cliente-1.jpg?X-Amz-Expires=..."
                     }
                   ]
                 }
@@ -1544,26 +1545,31 @@
                     "estimativa_km": 14,
                     "categorias": [
                       {
+                        "categoria_id": 3,
                         "estimativa_valor": null,
                         "categoria_nome": "Mercado",
                         "tarifa_nome": "Tarifa padrão"
                       },
                       {
+                        "categoria_id": 1,
                         "estimativa_valor": 32.1,
                         "categoria_nome": "Comum",
                         "tarifa_nome": "Tarifa padrão"
                       },
                       {
+                        "categoria_id": 6,
                         "estimativa_valor": 19.1,
                         "categoria_nome": "Porta-malas grande",
                         "tarifa_nome": "Tarifa padrão"
                       },
                       {
+                        "categoria_id": 9,
                         "estimativa_valor": 64.8,
                         "categoria_nome": "Táxi PcD",
                         "tarifa_nome": "Tarifa padrão"
                       },
                       {
+                        "categoria_id": 4,
                         "estimativa_valor": 19.2,
                         "categoria_nome": "Elite",
                         "tarifa_nome": "Tarifa padrão"
@@ -1679,7 +1685,8 @@
                       "cep": "99999-999",
                       "pais_nome": "Ethiopia",
                       "referencia_endereco": null,
-                      "dados_extras": ""
+                      "dados_extras": "",
+                      "foto_url": "https://s3.amazonaws.com/exemplo-bucket/fotos/condutor-5574.jpg?X-Amz-Expires=..."
                     },
                     {
                       "id": "5575",
@@ -1706,7 +1713,8 @@
                       "cep": "99999-999",
                       "pais_nome": "Belize",
                       "referencia_endereco": null,
-                      "dados_extras": ""
+                      "dados_extras": "",
+                      "foto_url": "https://s3.amazonaws.com/exemplo-bucket/fotos/condutor-5574.jpg?X-Amz-Expires=..."
                     },
                     {
                       "id": "712",
@@ -1735,7 +1743,8 @@
                       "cep": "99999-999",
                       "pais_nome": "Nigeria",
                       "referencia_endereco": null,
-                      "dados_extras": ""
+                      "dados_extras": "",
+                      "foto_url": "https://s3.amazonaws.com/exemplo-bucket/fotos/condutor-5574.jpg?X-Amz-Expires=..."
                     }
                   ]
                 }
