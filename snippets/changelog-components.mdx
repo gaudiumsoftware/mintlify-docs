@@ -69,11 +69,14 @@ export const ParamBadge = ({ name }) => (
   }}>{name}</code>
 );
 
-export const EndpointBadge = ({ method, path, href }) => (
-  <a href={href} className="cl-endpoint" style={{ cursor: href ? "pointer" : "default" }}>
-    <span className="cl-endpoint-method" style={{
-      background: method === "GET" ? "#3b82f6" : method === "POST" ? "#16A34A" : method === "DELETE" ? "#ef4444" : method === "PUT" ? "#f59e0b" : method === "PATCH" ? "#8b5cf6" : "#6b7280",
-    }}>{method}</span>
-    <span className="cl-endpoint-path">{path}</span>
-  </a>
-);
+export const EndpointBadge = ({ method, path, href }) => {
+  const Tag = href ? 'a' : 'div';
+  return (
+    <Tag {...(href ? { href } : {})} className="cl-endpoint">
+      <span className="cl-endpoint-method" style={{
+        background: method === "GET" ? "#3b82f6" : method === "POST" ? "#16A34A" : method === "DELETE" ? "#ef4444" : method === "PUT" ? "#f59e0b" : method === "PATCH" ? "#8b5cf6" : "#6b7280",
+      }}>{method}</span>
+      <span className="cl-endpoint-path">{path}</span>
+    </Tag>
+  );
+};

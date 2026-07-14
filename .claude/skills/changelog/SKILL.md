@@ -262,7 +262,7 @@ O `EndpointBadge` suporta os métodos: `GET` (azul), `POST` (verde), `DELETE` (v
 - **Nunca redefinir componentes** — eles vivem em `snippets/changelog-components.mdx` e são importados; edições estruturais de layout vão para as classes `cl-*` no `custom.css`
 - **Sempre incluir `href`** no `EndpointBadge` — buscar em `docs.json` antes de deixar vazio
 - **Ordem cronológica decrescente sempre** — comparar datas numericamente antes de inserir; nunca prependar cegamente no topo nem appendar no final sem verificar
-- **Sem `href` em `<a>` nulo** — se `href` não foi encontrado, usar `<div>` em vez de `<a>`
+- **Sem `href` em `<a>` nulo** — o próprio `EndpointBadge` renderiza `<div>` quando `href` está ausente; basta omitir a prop (e deixar o comentário `{/* TODO: href */}`)
 - **Data sempre em português** — `jan`, `fev`, `mar`, `abr`, `mai`, `jun`, `jul`, `ago`, `set`, `out`, `nov`, `dez`
 - **Modalidade pelo arquivo openapi** — se `openapi.json` mudou → Corridas; se `openapi-entregas.json` mudou → Entregas; ambos → os dois changelogs
 - **Não commitar** — a skill entrega apenas a edição no(s) arquivo(s); o commit é responsabilidade do autor
