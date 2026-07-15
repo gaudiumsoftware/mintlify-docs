@@ -1358,7 +1358,8 @@
                       "cep": "99999-999",
                       "pais_nome": "Guinea",
                       "referencia_endereco": null,
-                      "dados_extras": ""
+                      "dados_extras": "",
+                      "foto_url": "https://s3.amazonaws.com/exemplo-bucket/fotos/condutor-5574.jpg?X-Amz-Expires=..."
                     }
                   ]
                 }

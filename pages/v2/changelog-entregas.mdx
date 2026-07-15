@@ -187,6 +187,24 @@ export const EndpointBadge = ({ method, path, href }) => (
     </div>
   </Entry>
 
+  <Entry date="14 jul 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="foto-condutor" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Foto do condutor na consulta por ID
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      O endpoint de consulta de condutor por ID agora retorna a foto de rosto cadastrada,
+      permitindo exibi-la na interface do integrador.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/condutores/{id}" href="/pages/v2/entregas/condutores/endpoint/get-by-id" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="foto_url" /> — link temporário (presigned, expira em 30 minutos) da foto de rosto do condutor. <code>null</code> quando não há foto cadastrada.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="30 jun 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="editar-entrega" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Editar paradas de uma entrega em andamento ou programada

@@ -187,6 +187,70 @@ export const EndpointBadge = ({ method, path, href }) => (
     </div>
   </Entry>
 
+  <Entry date="14 jul 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="categoria-id-estimativa-multicategorias" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Identificador da categoria na estimativa multicategorias
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Cada item de <code>categorias</code> na estimativa de múltiplas categorias agora inclui o ID da categoria,
+      permitindo casar o retorno com a categoria configurada sem depender do nome.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/corridas/estimativas" href="/pages/v2/referencia/corridas/endpoint/post-estimativas" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="categoria_id" /> — identificador da categoria, presente em cada item de <code>categorias</code> quando <ParamBadge name="multicategorias" /> é <code>true</code>.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
+  <Entry date="14 jul 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="foto-cliente" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Foto do passageiro na consulta de clientes
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Os endpoints de consulta de clientes agora retornam a foto de cadastro do passageiro,
+      permitindo exibi-la na interface do integrador.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/clientes" href="/pages/v2/referencia/clientes/endpoint/get" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="foto_url" /> — link temporário (presigned, expira em 30 minutos) da foto de cadastro do cliente. <code>null</code> quando não há foto cadastrada.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/v2/integracao/clientes/{clienteId}" href="/pages/v2/referencia/clientes/endpoint/get-by-id" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="foto_url" /> — link temporário (presigned, expira em 30 minutos) da foto de cadastro do cliente. <code>null</code> quando não há foto cadastrada.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+  </Entry>
+
+  <Entry date="14 jul 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="foto-condutor" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Foto do condutor na consulta por ID
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      O endpoint de consulta de condutor por ID agora retorna a foto de rosto cadastrada,
+      permitindo exibi-la na interface do integrador.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/condutores/{id}" href="/pages/v2/referencia/condutores/endpoint/get-by-id" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="foto_url" /> — link temporário (presigned, expira em 30 minutos) da foto de rosto do condutor. <code>null</code> quando não há foto cadastrada.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="25 jun 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="filtros-busca-clientes-condutores" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Novos filtros de busca em Clientes e Condutores

@@ -101,7 +101,8 @@
                       "email": "exemplo@email.com.br",
                       "telefone": "(11) 97772-3133",
                       "status_cliente": "A",
-                      "cpf": null
+                      "cpf": null,
+                      "foto_url": "https://s3.amazonaws.com/exemplo-bucket/fotos/cliente-1.jpg?X-Amz-Expires=..."
                     }
                   ]
                 }
@@ -143,7 +144,8 @@
                       "email": "exemplo@email.com.br",
                       "telefone": "(11) 97772-3133",
                       "status_cliente": "A",
-                      "cpf": null
+                      "cpf": null,
+                      "foto_url": "https://s3.amazonaws.com/exemplo-bucket/fotos/cliente-1.jpg?X-Amz-Expires=..."
                     }
                   ]
                 }
@@ -900,7 +902,8 @@
                       "cep": "99999-999",
                       "pais_nome": "Guinea",
                       "referencia_endereco": null,
-                      "dados_extras": ""
+                      "dados_extras": "",
+                      "foto_url": "https://s3.amazonaws.com/exemplo-bucket/fotos/condutor-5574.jpg?X-Amz-Expires=..."
                     }
                   ]
                 }
@@ -3009,11 +3012,13 @@
                     "estimativa_km": 13.99,
                     "categorias": [
                       {
+                        "categoria_id": 3,
                         "estimativa_valor": 40,
                         "categoria_nome": "Comum",
                         "tarifa_nome": "Tarifa padrão"
                       },
                       {
+                        "categoria_id": 1,
                         "estimativa_valor": 22,
                         "categoria_nome": "15 Reais",
                         "tarifa_nome": "Tarifa padrão"
