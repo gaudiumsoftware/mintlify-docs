@@ -268,22 +268,24 @@ Quando a requisição excede o limite de bloqueio, a API retorna `429`.
 
 Os limites são aplicados por `api-key`, exceto no grupo de integrador externo, que usa `int-key`.
 Os grupos mais específicos têm prioridade sobre o grupo padrão.
-Os valores da tabela são limites base e podem variar por fatores multiplicadores configurados para cada chave e categoria.
-O limite efetivo é calculado como `limite base * fator multiplicador`.
-Quando não há fator específico, o fator padrão é `1`.
+
+O limite é contado **por grupo de endpoints**, e não por endpoint isolado: todas as chamadas às rotas de um mesmo grupo somam no mesmo contador. Por exemplo, chamar `/api/integracao/solicitacao` e `/api/integracao/solicitacaoStatus` com a mesma chave em menos de um minuto consome 2 requisições do grupo "Crítico", e não 1 de cada endpoint.
+
+Os valores da tabela são **limites base**. O limite efetivo de cada grupo é o limite base multiplicado por um **fator**, calculado levando em conta o tamanho da operação da central. Por isso, na coluna Limite, os valores aparecem como `limite base * fator`. Quando a central não possui um fator específico configurado, o fator padrão é `1`.
 
 | Grupo | Paths | Agrupamento | Limite |
 | -------- | -------- | -------- | -------- |
-| Crítico | `/api/integracao/solicitacao`<br />`/api/integracao/solicitacaoStatus` | `api-key` | 800 requisições por minuto |
-| Crítico por integrador externo | `/api/integracao/solicitacao`<br />`/api/integracao/solicitacaoStatus` | `int-key` | 800 requisições por minuto |
-| Condutores e créditos | `/api/integracao/saldoCreditosCondutor`<br />`/api/integracao/saldoCreditosCondutor/`<br />`/api/integracao/condutor`<br />`/api/integracao/taxista` | `api-key` | 80 requisições por minuto |
-| Posição do condutor | `/api/integracao/posicaoCondutor` | `api-key` | 1000 requisições por minuto |
-| Categorias | `/integracao/v1/categoria*` | `api-key` | Sem bloqueio configurado. O gateway registra log a partir de 10 requisições por minuto. |
-| Bandeiras | `/integracao/v1/bandeira*` | `api-key` | Sem bloqueio configurado. O gateway registra log a partir de 10 requisições por minuto. |
-| Saque automático | `/integracao/v1/saqueAutomatico*` | `api-key` | 50 requisições por minuto |
-| Programadas | `/api/integracao/consultarProgramada` | `api-key` | 200 requisições por minuto |
-| Dinâmica | `/integracao/v1/dinamica*` | `api-key` | 200 requisições por minuto |
-| Padrão | `/api/integracao/*` | `api-key` | 1000 requisições por minuto |
+| Crítico | `/api/integracao/solicitacao`<br />`/api/integracao/solicitacaoStatus` | `api-key` | 800 * fator requisições por minuto |
+| Crítico por integrador externo | `/api/integracao/solicitacao`<br />`/api/integracao/solicitacaoStatus` | `int-key` | 800 * fator requisições por minuto |
+| Condutores e créditos | `/api/integracao/saldoCreditosCondutor`<br />`/api/integracao/saldoCreditosCondutor/`<br />`/api/integracao/condutor`<br />`/api/integracao/taxista` | `api-key` | 80 * fator requisições por minuto |
+| Posição do condutor | `/api/integracao/posicaoCondutor` | `api-key` | 1000 * fator requisições por minuto |
+| Categorias | `/integracao/v1/categoria*` | `api-key` | Sem bloqueio configurado. O gateway registra log a partir de 10 * fator requisições por minuto. |
+| Bandeiras | `/integracao/v1/bandeira*` | `api-key` | Sem bloqueio configurado. O gateway registra log a partir de 10 * fator requisições por minuto. |
+| Saque automático | `/integracao/v1/saqueAutomatico*` | `api-key` | 50 * fator requisições por minuto |
+| Programadas | `/api/integracao/consultarProgramada` | `api-key` | 200 * fator requisições por minuto |
+| Dinâmica | `/integracao/v1/dinamica*` | `api-key` | 200 * fator requisições por minuto |
+| In-app messaging | `/integracao/v1/notificacao/inAppMessaging` | `api-key` | 100 * fator requisições por minuto |
+| Padrão | `/api/integracao/*` | `api-key` | 1000 * fator requisições por minuto |
 
 
 ---
