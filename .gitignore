@@ -20,3 +20,9 @@ build/
 .env
 .env.local
 .env.*.local
+
+# Specs internas (não versionar)
+docs/specs/
+
+# Planejamento local (não versionar)
+tasks/
