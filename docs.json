@@ -130,7 +130,8 @@
                       "pages/v2/referencia/webhooks/endpoint/get",
                       "pages/v2/referencia/webhooks/endpoint/post",
                       "pages/v2/referencia/webhooks/endpoint/put",
-                      "pages/v2/referencia/webhooks/endpoint/delete"
+                      "pages/v2/referencia/webhooks/endpoint/delete",
+                      "pages/v2/referencia/webhooks/endpoint/get-status"
                     ]
                   },
                   {
@@ -427,7 +428,8 @@
                       "pages/v2/entregas/webhooks/endpoint/get",
                       "pages/v2/entregas/webhooks/endpoint/post",
                       "pages/v2/entregas/webhooks/endpoint/put",
-                      "pages/v2/entregas/webhooks/endpoint/delete"
+                      "pages/v2/entregas/webhooks/endpoint/delete",
+                      "pages/v2/entregas/webhooks/endpoint/get-status"
                     ]
                   },
                   {
