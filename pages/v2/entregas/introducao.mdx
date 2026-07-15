@@ -250,32 +250,29 @@ Para garantir uma integração eficiente e segura, a API oferece integração co
 O gateway aplica rate limit por janela deslizante de 60 segundos.
 Quando a requisição excede o limite de bloqueio, a API retorna `429`.
 
-Os limites são aplicados por `api-key`, exceto nos grupos de integrador externo, que usam `int-key`.
+Os limites são aplicados por `api-key`.
 A avaliação segue a prioridade das regras: grupos específicos são avaliados antes dos prefixos mais genéricos (`corridas/*`, `entregas/*` e, por fim, `/api/v2/integracao/*`).
 
 O limite é contado **por grupo de endpoints**, e não por endpoint isolado: todas as chamadas às rotas de um mesmo grupo somam no mesmo contador. Por exemplo, chamar `/api/v2/integracao/corridas/estimativas`, `/api/v2/integracao/corridas/programadas/estimativas` e `/api/v2/integracao/corridas/empresas` com a mesma chave em menos de um minuto consome 3 requisições do grupo "Estimativas e empresas — Corridas", e não 1 de cada endpoint.
 
 Os valores da tabela são **limites base**. O limite efetivo de cada grupo é o limite base multiplicado por um **fator**, calculado levando em conta o tamanho da operação da central. Por isso, na coluna Limite, os valores aparecem como `limite base * fator`. Quando a central não possui um fator específico configurado, o fator padrão é `1`.
 
-| Grupo | Paths | Agrupamento | Limite |
-| -------- | -------- | -------- | -------- |
-| Crítico Corridas | `/api/v2/integracao/corridas/*` | `api-key` | 800 * fator requisições por minuto |
-| Crítico Corridas (integrador externo) | `/api/v2/integracao/corridas/*` | `int-key` | 800 * fator requisições por minuto |
-| Crítico Entregas | `/api/v2/integracao/entregas/*` | `api-key` | 800 * fator requisições por minuto |
-| Crítico Entregas (integrador externo) | `/api/v2/integracao/entregas/*` | `int-key` | 800 * fator requisições por minuto |
-| Consumidores (integrador externo) | `/api/v2/integracao/consumidores`<br />`/api/v2/integracao/consumidores/*` | `int-key` | 800 * fator requisições por minuto |
-| Estimativas e empresas — Corridas | `/api/v2/integracao/corridas/estimativas`<br />`/api/v2/integracao/corridas/programadas/estimativas`<br />`/api/v2/integracao/corridas/empresas/*` | `api-key` | 1000 * fator requisições por minuto |
-| Estimativas e empresas — Entregas | `/api/v2/integracao/entregas/estimativas`<br />`/api/v2/integracao/entregas/programadas/estimativas`<br />`/api/v2/integracao/entregas/empresas/*`<br />`/api/v2/integracao/entregas/bandeiras/areas-atuacao` | `api-key` | 1000 * fator requisições por minuto |
-| Créditos e documentos de condutores | `/api/v2/integracao/condutores/creditos/recargas`<br />`/api/v2/integracao/condutores/creditos/saques`<br />`/api/v2/integracao/condutores/documentos`<br />`/api/v2/integracao/condutores/requisitos-cadastro/documentos`<br />`/api/v2/integracao/condutores/areas-bloqueio/batch` | `api-key` | 1000 * fator requisições por minuto |
-| Condutores | `/api/v2/integracao/condutores`<br />`/api/v2/integracao/condutores/*` | `api-key` | 80 * fator requisições por minuto |
-| Programadas — Corridas | `/api/v2/integracao/corridas/programadas`<br />`/api/v2/integracao/corridas/programadas/*` | `api-key` | 200 * fator requisições por minuto |
-| Programadas — Entregas | `/api/v2/integracao/entregas/programadas`<br />`/api/v2/integracao/entregas/programadas/*` | `api-key` | 200 * fator requisições por minuto |
-| Categorias | `/api/v2/integracao/configuracoes/categorias/*` | `api-key` | Sem bloqueio configurado. O gateway registra log a partir de 10 * fator requisições por minuto. |
-| Configurações (bandeira) | `/api/v2/integracao/configuracoes` | `api-key` | Sem bloqueio configurado. O gateway registra log a partir de 10 * fator requisições por minuto. |
-| Saque automático | `/api/v2/integracao/configuracoes/saque-automatico/ativacao` | `api-key` | 50 * fator requisições por minuto |
-| Dinâmica | `/api/v2/integracao/dinamicas*` | `api-key` | 200 * fator requisições por minuto |
-| In-app messaging | `/api/v2/integracao/notificacoes/in-app-messaging` | `api-key` | 100 * fator requisições por minuto |
-| Padrão | `/api/v2/integracao/*` | `api-key` | 1000 * fator requisições por minuto |
+| Grupo | Paths | Limite |
+| -------- | -------- | -------- |
+| Crítico Corridas | `/api/v2/integracao/corridas/*` | 800 * fator requisições por minuto |
+| Crítico Entregas | `/api/v2/integracao/entregas/*` | 800 * fator requisições por minuto |
+| Estimativas e empresas — Corridas | `/api/v2/integracao/corridas/estimativas`<br />`/api/v2/integracao/corridas/programadas/estimativas`<br />`/api/v2/integracao/corridas/empresas/*` | 1000 * fator requisições por minuto |
+| Estimativas e empresas — Entregas | `/api/v2/integracao/entregas/estimativas`<br />`/api/v2/integracao/entregas/programadas/estimativas`<br />`/api/v2/integracao/entregas/empresas/*`<br />`/api/v2/integracao/entregas/bandeiras/areas-atuacao` | 1000 * fator requisições por minuto |
+| Créditos e documentos de condutores | `/api/v2/integracao/condutores/creditos/recargas`<br />`/api/v2/integracao/condutores/creditos/saques`<br />`/api/v2/integracao/condutores/documentos`<br />`/api/v2/integracao/condutores/requisitos-cadastro/documentos`<br />`/api/v2/integracao/condutores/areas-bloqueio/batch` | 1000 * fator requisições por minuto |
+| Condutores | `/api/v2/integracao/condutores`<br />`/api/v2/integracao/condutores/*` | 80 * fator requisições por minuto |
+| Programadas — Corridas | `/api/v2/integracao/corridas/programadas`<br />`/api/v2/integracao/corridas/programadas/*` | 200 * fator requisições por minuto |
+| Programadas — Entregas | `/api/v2/integracao/entregas/programadas`<br />`/api/v2/integracao/entregas/programadas/*` | 200 * fator requisições por minuto |
+| Categorias | `/api/v2/integracao/configuracoes/categorias/*` | Sem bloqueio configurado. O gateway registra log a partir de 10 * fator requisições por minuto. |
+| Configurações (bandeira) | `/api/v2/integracao/configuracoes` | Sem bloqueio configurado. O gateway registra log a partir de 10 * fator requisições por minuto. |
+| Saque automático | `/api/v2/integracao/configuracoes/saque-automatico/ativacao` | 50 * fator requisições por minuto |
+| Dinâmica | `/api/v2/integracao/dinamicas*` | 200 * fator requisições por minuto |
+| In-app messaging | `/api/v2/integracao/notificacoes/in-app-messaging` | 100 * fator requisições por minuto |
+| Padrão | `/api/v2/integracao/*` | 1000 * fator requisições por minuto |
 
 
 ---
