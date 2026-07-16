@@ -266,7 +266,26 @@ Para garantir uma integração eficiente e segura, a API oferece integração co
 O gateway aplica rate limit por janela deslizante de 60 segundos.
 Quando a requisição excede o limite de bloqueio, a API retorna `429`.
 
-As políticas e limites específicos de rate limit para os endpoints da v2 estão atualmente em desenvolvimento (*Work in Progress*). Esta seção será atualizada assim que as regras definitivas forem estabelecidas.
+Os limites são aplicados por `api-key`.
+A avaliação segue a prioridade das regras: grupos específicos são avaliados antes dos prefixos mais genéricos (`corridas/*` e, por fim, `/api/v2/integracao/*`).
+
+O limite é contado **por grupo de endpoints**, e não por endpoint isolado: todas as chamadas às rotas de um mesmo grupo somam no mesmo contador. Por exemplo, chamar `/api/v2/integracao/corridas/estimativas`, `/api/v2/integracao/corridas/programadas/estimativas` e `/api/v2/integracao/corridas/empresas` com a mesma chave em menos de um minuto consome 3 requisições do grupo "Estimativas e empresas", e não 1 de cada endpoint.
+
+Os valores da tabela são **limites base**. O limite efetivo de cada grupo é o limite base multiplicado por um **fator**, calculado levando em conta o tamanho da operação da central. Por isso, na coluna Limite, os valores aparecem como `limite base * fator`. Quando a central não possui um fator específico configurado, o fator padrão é `1`.
+
+| Grupo | Paths | Limite |
+| -------- | -------- | -------- |
+| Estimativas e empresas | `/api/v2/integracao/corridas/estimativas`<br />`/api/v2/integracao/corridas/programadas/estimativas`<br />`/api/v2/integracao/corridas/empresas/*` | 1000 * fator requisições por minuto |
+| Créditos e documentos de condutores | `/api/v2/integracao/condutores/creditos/recargas`<br />`/api/v2/integracao/condutores/creditos/saques`<br />`/api/v2/integracao/condutores/documentos`<br />`/api/v2/integracao/condutores/requisitos-cadastro/documentos`<br />`/api/v2/integracao/condutores/areas-bloqueio/batch` | 1000 * fator requisições por minuto |
+| Condutores | `/api/v2/integracao/condutores`<br />`/api/v2/integracao/condutores/*` | 80 * fator requisições por minuto |
+| Programadas | `/api/v2/integracao/corridas/programadas`<br />`/api/v2/integracao/corridas/programadas/*` | 200 * fator requisições por minuto |
+| Crítico | `/api/v2/integracao/corridas/*` | 800 * fator requisições por minuto |
+| Categorias | `/api/v2/integracao/configuracoes/categorias/*` | Sem bloqueio configurado. O gateway registra log a partir de 10 * fator requisições por minuto. |
+| Configurações (bandeira) | `/api/v2/integracao/configuracoes` | Sem bloqueio configurado. O gateway registra log a partir de 10 * fator requisições por minuto. |
+| Saque automático | `/api/v2/integracao/configuracoes/saque-automatico/ativacao` | 50 * fator requisições por minuto |
+| Dinâmica | `/api/v2/integracao/dinamicas*` | 200 * fator requisições por minuto |
+| In-app messaging | `/api/v2/integracao/notificacoes/in-app-messaging` | 100 * fator requisições por minuto |
+| Padrão | `/api/v2/integracao/*` | 1000 * fator requisições por minuto |
 
 
 ---
