@@ -5498,7 +5498,7 @@
     "/mensagens/condutor/{id}": {
       "post": {
         "summary": "Enviar mensagem privada para condutor",
-        "description": "Envia uma mensagem privada para um condutor específico. Para a mensagem ser corretamente enviada, é necessário que o condutor tenha o status de ativo.",
+        "description": "Envia uma mensagem privada para um condutor específico. A mensagem pode ser enviada para condutores com os seguintes status:\n\n- Ativo\n- Aguardando ativação\n  - Em análise\n  - Fila de espera\n- Suspenso\n- Rejeitado\n\nNão é possível enviar mensagem para condutores inativos ou deletados.",
         "parameters": [
           {
             "name": "id",
