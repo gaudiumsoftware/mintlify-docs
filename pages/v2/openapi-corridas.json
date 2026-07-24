@@ -6032,6 +6032,243 @@
         }
       }
     },
+    "/notificacoes/push/unico": {
+      "post": {
+        "summary": "Enviar notificação push para um passageiro",
+        "description": "Envia notificação push para um único passageiro identificado pelo `passageiro_id`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "passageiro_id",
+                  "mensagem"
+                ],
+                "properties": {
+                  "passageiro_id": {
+                    "type": "integer",
+                    "description": "Identificador do passageiro que receberá a notificação. Deve ser numérico."
+                  },
+                  "titulo": {
+                    "type": "string",
+                    "description": "Título da notificação.",
+                    "maxLength": 40
+                  },
+                  "mensagem": {
+                    "type": "string",
+                    "description": "Mensagem da notificação.",
+                    "maxLength": 255
+                  }
+                }
+              },
+              "example": {
+                "passageiro_id": 123,
+                "titulo": "Aviso de corrida",
+                "mensagem": "Seu veículo está a caminho."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Notificação enviada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "status": "OK"
+                  },
+                  "message": "Notificação enviada com sucesso."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "passageiro_invalido": {
+                    "summary": "passageiro_id não é numérico",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "field": "passageiro_id",
+                          "message": "Deve ser numérico."
+                        }
+                      ]
+                    }
+                  },
+                  "mensagem_obrigatoria": {
+                    "summary": "Campo mensagem ausente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "field": "mensagem",
+                          "message": "Campo obrigatório."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notificacoes/in-app-messaging/unico": {
+      "post": {
+        "summary": "Enviar notificação in-app para um passageiro",
+        "description": "Envia notificação via in-app messaging para um único passageiro identificado pelo `passageiro_id`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "passageiro_id",
+                  "body"
+                ],
+                "properties": {
+                  "passageiro_id": {
+                    "type": "integer",
+                    "description": "Identificador do passageiro que receberá a notificação. Deve ser numérico."
+                  },
+                  "titulo": {
+                    "type": "string",
+                    "description": "Título da notificação.",
+                    "maxLength": 40
+                  },
+                  "body": {
+                    "type": "string",
+                    "description": "Conteúdo principal da notificação.",
+                    "maxLength": 255
+                  },
+                  "url_imagem": {
+                    "type": "string",
+                    "description": "URL de imagem da notificação."
+                  },
+                  "solicitacao_id": {
+                    "type": "integer",
+                    "description": "Identificador da solicitação vinculada. Deve ser numérico quando informado."
+                  },
+                  "titulo_botao_redirecionamento": {
+                    "type": "string",
+                    "description": "Título do botão de redirecionamento.",
+                    "maxLength": 20
+                  },
+                  "link_redirecionamento": {
+                    "type": "string",
+                    "description": "Link de redirecionamento do botão."
+                  }
+                }
+              },
+              "example": {
+                "passageiro_id": 123,
+                "titulo": "Motorista a caminho",
+                "body": "Acompanhe a solicitação pelo aplicativo.",
+                "url_imagem": "https://cdn.exemplo.com/notificacoes/motorista.png",
+                "solicitacao_id": 98765,
+                "titulo_botao_redirecionamento": "Acompanhar",
+                "link_redirecionamento": "app://solicitacoes/98765"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Notificação enviada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "status": "OK"
+                  },
+                  "message": "Notificação enviada com sucesso."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "passageiro_invalido": {
+                    "summary": "passageiro_id não é numérico",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "field": "passageiro_id",
+                          "message": "Deve ser numérico."
+                        }
+                      ]
+                    }
+                  },
+                  "body_obrigatorio": {
+                    "summary": "Campo body ausente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "field": "body",
+                          "message": "Campo obrigatório."
+                        }
+                      ]
+                    }
+                  },
+                  "link_obrigatorio": {
+                    "summary": "Link de redirecionamento ausente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "field": "link_redirecionamento",
+                          "message": "Campo obrigatório."
+                        }
+                      ]
+                    }
+                  },
+                  "solicitacao_id_invalido": {
+                    "summary": "Solicitação com valor não numérico",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "field": "solicitacao_id",
+                          "message": "Deve ser numérico."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/webhooks": {
       "get": {
         "summary": "Listar webhooks",
