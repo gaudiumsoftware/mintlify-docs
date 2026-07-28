@@ -6045,7 +6045,7 @@
         }
       }
     },
-    "/notificacoes/push/unico": {
+    "/notificacoes/push/individual": {
       "post": {
         "summary": "Enviar notificação push para um passageiro",
         "description": "Envia notificação push para um único passageiro identificado pelo `passageiro_id`.",
@@ -6141,7 +6141,7 @@
         }
       }
     },
-    "/notificacoes/in-app-messaging/unico": {
+    "/notificacoes/in-app-messaging/individual": {
       "post": {
         "summary": "Enviar notificação in-app para um passageiro",
         "description": "Envia notificação via in-app messaging para um único passageiro identificado pelo `passageiro_id`.",
