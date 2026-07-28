@@ -765,7 +765,7 @@
                   "titulo": {
                     "type": "string",
                     "maxLength": 40,
-                    "description": "Opcional. Título da notificação. Limite de 40 caracteres."
+                    "description": "Obrigatório. Título da notificação. Limite de 40 caracteres."
                   },
                   "body": {
                     "type": "string",
