@@ -284,7 +284,7 @@ Os valores da tabela são **limites base**. O limite efetivo de cada grupo é o 
 | Configurações (bandeira) | `/api/v2/integracao/configuracoes` | Sem bloqueio configurado. O gateway registra log a partir de 10 * fator requisições por minuto. |
 | Saque automático | `/api/v2/integracao/configuracoes/saque-automatico/ativacao` | 50 * fator requisições por minuto |
 | Dinâmica | `/api/v2/integracao/dinamicas*` | 200 * fator requisições por minuto |
-| In-app messaging | `/api/v2/integracao/notificacoes/in-app-messaging` | 100 * fator requisições por minuto |
+| Notificações (in-app e push) | `/api/v2/integracao/notificacoes/in-app-messaging`<br />`/api/v2/integracao/notificacoes/push` | 20 * fator requisições por minuto |
 | In-app messaging (único) | `/api/v2/integracao/notificacoes/in-app-messaging/unico` | 200 * fator requisições por minuto |
 | Push (único) | `/api/v2/integracao/notificacoes/push/unico` | 200 * fator requisições por minuto |
 | Padrão | `/api/v2/integracao/*` | 1000 * fator requisições por minuto |
