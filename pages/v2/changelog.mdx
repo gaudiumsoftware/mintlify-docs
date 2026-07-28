@@ -154,6 +154,56 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="28 jul 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="notificacoes-passageiro-unico" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Envio de notificação para um único passageiro
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novos endpoints para enviar notificação push e in-app messaging para um passageiro específico,
+      sem precisar montar a lista de destinatários dos endpoints existentes.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/notificacoes/push/unico" href="/pages/v2/referencia/notificacao/endpoint/post-push-unico" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Campos aceitos no corpo da requisição:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="passageiro_id" /> — obrigatório. Identificador numérico do passageiro que receberá a notificação.</li>
+        <li><ParamBadge name="titulo" /> — opcional. Título da notificação.</li>
+        <li><ParamBadge name="mensagem" /> — obrigatório. Mensagem da notificação.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/notificacoes/in-app-messaging/unico" href="/pages/v2/referencia/notificacao/endpoint/post-in-app-messaging-unico" />
+
+      <ChangeSection type="added">
+        <p style={{ marginBottom: "10px" }}>Campos aceitos no corpo da requisição:</p>
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="passageiro_id" /> — obrigatório. Identificador numérico do passageiro que receberá a notificação.</li>
+          <li><ParamBadge name="titulo" /> — obrigatório. Título da notificação, limite de 40 caracteres.</li>
+          <li><ParamBadge name="body" /> — obrigatório. Conteúdo principal da notificação, limite de 255 caracteres.</li>
+          <li><ParamBadge name="url_imagem" /> — opcional. URL de imagem exibida na notificação.</li>
+          <li><ParamBadge name="solicitacao_id" /> — opcional. Vincula a notificação a uma solicitação; quando informado, só é exibida se a solicitação estiver em andamento.</li>
+          <li><ParamBadge name="titulo_botao_redirecionamento" /> — opcional. Título do botão de redirecionamento, limite de 20 caracteres.</li>
+          <li><ParamBadge name="link_redirecionamento" /> — opcional. Link acionado pelo botão de redirecionamento.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> os endpoints existentes de envio em lote (<code>/notificacoes/push</code> e <code>/notificacoes/in-app-messaging</code>) continuam disponíveis e não sofreram alteração de comportamento.
+    </div>
+  </Entry>
+
   <Entry date="16 jul 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="consultar-status-webhook" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Consulta de status de entrega do webhook
