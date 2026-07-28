@@ -43,6 +43,14 @@ html[data-current-path="/pages/v2/changelog-entregas"] .nav-tabs > a:nth-child(4
   margin-left: 0.25rem;
 }
 
+/* A tag da página guarda a data de publicação (ex: data-nav-tag="2026-07-24"). Ela fica
+   escondida até o custom.js trocar o texto por "Novo"; se o script não rodar, o leitor
+   não vê uma data crua na navegação. */
+#sidebar-content div:has(> .nav-tag-pill > [data-nav-tag^="20"]:not([data-tag-nova])) {
+  display: none !important;
+  margin-left: 0 !important;
+}
+
 /* Pill um pouco mais compacta para caber ao lado do título */
 #sidebar-content .nav-tag-pill-text {
   white-space: nowrap;
