@@ -138,3 +138,182 @@ html[data-current-path="/pages/v2/changelog-entregas"] .nav-tabs > a:nth-child(4
   --cta-color: #e02020;
   --cta-tint: rgba(241, 48, 48, 0.1);
 }
+
+/* ============================================================
+   Changelog (Corridas e Entregas) — layout da timeline
+   Componentes em snippets/changelog-components.mdx
+   ============================================================ */
+
+.cl-container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+}
+
+.cl-page-header {
+  margin-bottom: 56px;
+}
+
+.cl-page-title {
+  font-size: clamp(28px, 6vw, 40px);
+  font-weight: 800;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.cl-page-subtitle {
+  font-size: 17px;
+  opacity: 0.65;
+  line-height: 1.6;
+}
+
+.cl-entry {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 56px;
+  position: relative;
+}
+
+/* Coluna de data + label */
+.cl-entry-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 140px;
+  padding-top: 4px;
+}
+
+.cl-entry-date {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tw-prose-body);
+  opacity: 0.55;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+.cl-entry-label {
+  margin-top: 8px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Barra vertical da timeline com o ponto */
+.cl-entry-line {
+  width: 2px;
+  background: rgba(22, 163, 74, 0.15);
+  border-radius: 2px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.cl-entry-dot {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #16a34a;
+  border: 2px solid var(--tw-prose-bg, #fff);
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.27);
+}
+
+/* min-width: 0 permite o conteúdo encolher dentro do flex sem estourar */
+.cl-entry-body {
+  flex: 1;
+  min-width: 0;
+  padding-bottom: 8px;
+}
+
+.cl-entry-body code {
+  overflow-wrap: anywhere;
+}
+
+/* Badge de endpoint (método + path) */
+.cl-endpoint {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 6px 12px;
+  margin-bottom: 16px;
+  margin-right: 8px;
+  font-family: monospace;
+  font-size: 13px;
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+a.cl-endpoint[href]:hover {
+  border-color: rgba(22, 163, 74, 0.5);
+  background: rgba(22, 163, 74, 0.06);
+}
+
+.cl-endpoint-method {
+  color: #fff;
+  border-radius: 4px;
+  padding: 1px 7px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.cl-endpoint-path {
+  opacity: 0.8;
+  overflow-wrap: anywhere;
+}
+
+/* Mobile: empilha a entry em coluna, data + label lado a lado no topo,
+   oculta a barra vertical e libera 100% da largura para o conteúdo */
+@media (max-width: 640px) {
+  .cl-container {
+    padding: 24px 16px 64px;
+  }
+
+  .cl-page-header {
+    margin-bottom: 40px;
+  }
+
+  .cl-entry {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 44px;
+  }
+
+  .cl-entry-meta {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding-top: 0;
+  }
+
+  .cl-entry-label {
+    margin-top: 0;
+  }
+
+  .cl-entry-line {
+    display: none;
+  }
+
+  .cl-entry-body {
+    padding-bottom: 0;
+  }
+
+  /* h2 das entries usa fontSize inline de 22px — !important necessário */
+  .cl-entry-body h2 {
+    font-size: 19px !important;
+  }
+}
