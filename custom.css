@@ -30,6 +30,35 @@ html[data-current-path="/pages/v2/changelog-entregas"] .nav-tabs > a:nth-child(4
   display: none !important;
 }
 
+/* Navegação lateral: a tag da página (ex: "Novo") é um item flex e vai para a linha
+   seguinte quando o título é longo. Tornando o container um bloco, a tag passa a fluir
+   inline, logo depois da última palavra do título. */
+#sidebar-content div:has(> span + div > .nav-tag-pill) {
+  display: block !important;
+}
+
+#sidebar-content div:has(> .nav-tag-pill) {
+  display: inline-flex !important;
+  vertical-align: middle;
+  margin-left: 0.25rem;
+}
+
+/* A tag da página guarda a data de publicação (ex: data-nav-tag="2026-07-24"). Ela fica
+   escondida até o custom.js trocar o texto por "Novo"; se o script não rodar, o leitor
+   não vê uma data crua na navegação. */
+#sidebar-content div:has(> .nav-tag-pill > [data-nav-tag^="20"]:not([data-tag-nova])) {
+  display: none !important;
+  margin-left: 0 !important;
+}
+
+/* Pill um pouco mais compacta para caber ao lado do título */
+#sidebar-content .nav-tag-pill-text {
+  white-space: nowrap;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  font-size: 0.6rem;
+}
+
 /* Botões de acesso rápido na página inicial */
 .home-cta {
   --cta-color: #16a34a;
