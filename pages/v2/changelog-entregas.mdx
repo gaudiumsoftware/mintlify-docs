@@ -160,7 +160,8 @@ export const EndpointBadge = ({ method, path, href }) => (
     </h2>
     <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
       Agora é possível definir, por solicitação, se o condutor é obrigado a informar o código de
-      confirmação para concluir a entrega — independente do que está configurado no cadastro da empresa.
+      confirmação para concluir a entrega, sobrepondo a configuração de obrigatoriedade do cadastro
+      da empresa.
     </p>
 
     <EndpointBadge method="POST" path="/api/v2/integracao/entregas" href="/pages/v2/entregas/endpoint/post" />
@@ -190,7 +191,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       fontSize: "13px",
       lineHeight: "1.6",
     }}>
-      <strong>Nota:</strong> o parâmetro só tem efeito nas paradas cujo pedido tem código de confirmação — o que depende de a empresa ter <em>Solicitar código de confirmação de entrega</em> habilitado. Pedidos do iFood continuam exigindo o código independente do valor enviado, por ser regra da própria integração.
+      <strong>Nota:</strong> são duas configurações distintas no cadastro da empresa. O parâmetro sobrepõe apenas <em>Tornar os códigos de confirmação de entrega obrigatórios</em>; a geração do código continua dependendo de <em>Solicitar código de confirmação de entrega dos pedidos</em> — em paradas sem código o parâmetro não tem efeito. Pedidos do iFood continuam exigindo o código independente do valor enviado, por ser regra da própria integração.
     </div>
   </Entry>
 
