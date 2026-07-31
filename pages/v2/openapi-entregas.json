@@ -5492,8 +5492,7 @@
                     "nome_cliente_parada": "Maria Souza",
                     "telefone_cliente_parada": "(11) 99999-0002"
                   }
-                ],
-                "exigir_codigo_confirmacao": true
+                ]
               },
               "schema": {
                 "type": "object",
@@ -5597,10 +5596,6 @@
                         }
                       }
                     }
-                  },
-                  "exigir_codigo_confirmacao": {
-                    "type": "boolean",
-                    "description": "Define se a inserção do código de confirmação de entrega pelo condutor é obrigatória, independente do que está configurado no cadastro da empresa. Quando omitido, a solicitação segue a configuração da empresa (ou da central). Só tem efeito nas paradas cujo pedido tem código de confirmação; não relaxa a exigência de pedidos do iFood, onde o código é exigência da própria integração."
                   }
                 }
               }
