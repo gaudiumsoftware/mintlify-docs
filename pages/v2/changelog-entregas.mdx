@@ -154,6 +154,46 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="31 jul 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="exigir-codigo-confirmacao" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Exigir o código de confirmação de entrega pela API
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Agora é possível definir, por solicitação, se o condutor é obrigado a informar o código de
+      confirmação para concluir a entrega — independente do que está configurado no cadastro da empresa.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/entregas" href="/pages/v2/entregas/endpoint/post" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="exigir_codigo_confirmacao" /> — define se a inserção do código de confirmação é obrigatória. Opcional; se omitido, a solicitação segue a configuração da empresa (ou da central).</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/entregas/programadas" href="/pages/v2/entregas/endpoint/post-programadas" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="exigir_codigo_confirmacao" /> — mesmo comportamento da criação de entrega. O valor informado é aplicado à solicitação gerada quando a programada dispara.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Pré-condições:</strong> o parâmetro só tem efeito nas paradas cujo pedido tem código de confirmação — o que depende de a empresa ter <em>Solicitar código de confirmação de entrega</em> habilitado. Pedidos do iFood continuam exigindo o código independente do valor enviado, por ser regra da própria integração.
+    </div>
+  </Entry>
+
   <Entry date="16 jul 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="consultar-status-webhook" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Consulta de status de entrega do webhook
