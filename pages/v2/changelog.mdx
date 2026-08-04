@@ -154,7 +154,7 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
-  <Entry date="04 ago 2026" label="Novo" labelColor="#3b82f6">
+  <Entry date="04 ago 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="detalhes-corridas-programadas" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Detalhes da solicitação na consulta de corridas programadas
     </h2>
@@ -196,7 +196,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       fontSize: "13px",
       lineHeight: "1.6",
     }}>
-      <strong>Nota:</strong> os campos são apenas adicionados — nenhum campo existente mudou de nome, tipo ou posição. Em corridas, <code>numero_pedido</code>, <code>nome_cliente</code> e <code>telefone_cliente</code> das paradas vêm vazios, por serem dados de entrega.
+      <strong>Nota:</strong> os campos são apenas adicionados — nenhum campo existente mudou de nome, tipo ou posição. Em corridas, <code>nome_cliente</code>, <code>telefone_cliente</code> e a <code>observacao</code> da parada vêm nulos, por serem dados de pedido. Já o <code>numero_pedido</code> pode vir preenchido: quando a parada não tem pedido vinculado, ele cai no identificador externo informado na própria parada.
     </div>
   </Entry>
 
