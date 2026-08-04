@@ -5023,7 +5023,7 @@
     "/consultarProgramada": {
       "get": {
         "summary": "Consultar solicitações programadas",
-        "description": "Ao acionar, são retornadas todas as solicitações programadas da central conforme os parâmetros informados.",
+        "description": "Ao acionar, são retornadas todas as solicitações programadas da central conforme os parâmetros informados. O endereço de origem vem em `coleta` para centrais que fazem somente entregas e em `partida` quando a central também faz corridas.",
         "parameters": [
           {
             "name": "id_mch_programada",
@@ -5066,39 +5066,166 @@
                   "response": [
                     {
                       "id_mch_programada": "1394",
-                      "situacao": "Aguardando Distribuição",
-                      "situacao_formatada": "12/12/2023 17:32:18",
+                      "situacao": "A",
+                      "situacao_formatada": "Aguardando Distribuição",
                       "data_previsao_disparo": "12/12/2023",
                       "hora_previsao_disparo": "17:32:18",
                       "id_mch": null,
+                      "observacao": "Retirar no balcão",
                       "empresa": {
                         "id": "427",
                         "nome": "empresa_nome"
-                      }
+                      },
+                      "categoria": {
+                        "id": "3",
+                        "nome": "Entrega Moto"
+                      },
+                      "valor": {
+                        "estimado": "12.50",
+                        "prefixado": null
+                      },
+                      "coleta": {
+                        "endereco": "Rua da Coleta, 10",
+                        "complemento": "Loja 2",
+                        "referencia": "Em frente à praça",
+                        "bairro": "Centro",
+                        "cidade": "João Pessoa",
+                        "estado": "PB",
+                        "lat": "-7.115000000",
+                        "lng": "-34.834000000"
+                      },
+                      "paradas": [
+                        {
+                          "id": "900",
+                          "ordem": 0,
+                          "endereco": "Rua das Palmeiras, 200",
+                          "complemento": "Apto 31",
+                          "referencia": "Ao lado do mercado",
+                          "bairro": "Centro",
+                          "cidade": "João Pessoa",
+                          "uf": "PB",
+                          "lat": "-7.209233800",
+                          "lng": "-34.878063100",
+                          "numero_pedido": "PED-123",
+                          "nome_cliente": "Maria Souza",
+                          "telefone_cliente": "+5583999990000",
+                          "observacao": "Entregar na portaria"
+                        },
+                        {
+                          "id": "901",
+                          "ordem": 1,
+                          "endereco": "Avenida Epitácio Pessoa, 1500",
+                          "complemento": null,
+                          "referencia": null,
+                          "bairro": "Tambaú",
+                          "cidade": "João Pessoa",
+                          "uf": "PB",
+                          "lat": "-7.115000000",
+                          "lng": "-34.834000000",
+                          "numero_pedido": "PED-124",
+                          "nome_cliente": "João Lima",
+                          "telefone_cliente": "+5583988887777",
+                          "observacao": null
+                        }
+                      ]
                     },
                     {
                       "id_mch_programada": "1393",
-                      "situacao": "Cancelada",
-                      "situacao_formatada": "26/01/2021 01:50:00",
+                      "situacao": "C",
+                      "situacao_formatada": "Cancelada",
                       "data_previsao_disparo": "26/01/2021",
                       "hora_previsao_disparo": "01:50:00",
                       "id_mch": null,
+                      "observacao": null,
                       "empresa": {
                         "id": null,
                         "nome": null
-                      }
+                      },
+                      "categoria": {
+                        "id": "3",
+                        "nome": "Entrega Moto"
+                      },
+                      "valor": {
+                        "estimado": "12.50",
+                        "prefixado": null
+                      },
+                      "coleta": {
+                        "endereco": "Rua da Coleta, 10",
+                        "complemento": "Loja 2",
+                        "referencia": "Em frente à praça",
+                        "bairro": "Centro",
+                        "cidade": "João Pessoa",
+                        "estado": "PB",
+                        "lat": "-7.115000000",
+                        "lng": "-34.834000000"
+                      },
+                      "paradas": [
+                        {
+                          "id": "900",
+                          "ordem": 0,
+                          "endereco": "Rua das Palmeiras, 200",
+                          "complemento": "Apto 31",
+                          "referencia": "Ao lado do mercado",
+                          "bairro": "Centro",
+                          "cidade": "João Pessoa",
+                          "uf": "PB",
+                          "lat": "-7.209233800",
+                          "lng": "-34.878063100",
+                          "numero_pedido": "PED-123",
+                          "nome_cliente": "Maria Souza",
+                          "telefone_cliente": "+5583999990000",
+                          "observacao": "Entregar na portaria"
+                        }
+                      ]
                     },
                     {
                       "id_mch_programada": "1392",
-                      "situacao": "Distribuída",
-                      "situacao_formatada": "21/01/2021 00:55:00",
+                      "situacao": "D",
+                      "situacao_formatada": "Distribuída",
                       "data_previsao_disparo": "21/01/2021",
                       "hora_previsao_disparo": "00:55:00",
                       "id_mch": "100003594",
+                      "observacao": null,
                       "empresa": {
                         "id": "726",
                         "nome": "empresa_nome"
-                      }
+                      },
+                      "categoria": {
+                        "id": "3",
+                        "nome": "Entrega Moto"
+                      },
+                      "valor": {
+                        "estimado": "12.50",
+                        "prefixado": null
+                      },
+                      "coleta": {
+                        "endereco": "Rua da Coleta, 10",
+                        "complemento": "Loja 2",
+                        "referencia": "Em frente à praça",
+                        "bairro": "Centro",
+                        "cidade": "João Pessoa",
+                        "estado": "PB",
+                        "lat": "-7.115000000",
+                        "lng": "-34.834000000"
+                      },
+                      "paradas": [
+                        {
+                          "id": "900",
+                          "ordem": 0,
+                          "endereco": "Rua das Palmeiras, 200",
+                          "complemento": "Apto 31",
+                          "referencia": "Ao lado do mercado",
+                          "bairro": "Centro",
+                          "cidade": "João Pessoa",
+                          "uf": "PB",
+                          "lat": "-7.209233800",
+                          "lng": "-34.878063100",
+                          "numero_pedido": "PED-123",
+                          "nome_cliente": "Maria Souza",
+                          "telefone_cliente": "+5583999990000",
+                          "observacao": "Entregar na portaria"
+                        }
+                      ]
                     }
                   ]
                 }
