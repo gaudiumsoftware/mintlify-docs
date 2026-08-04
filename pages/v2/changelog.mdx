@@ -154,6 +154,52 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="04 ago 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="detalhes-corridas-programadas" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Detalhes da solicitação na consulta de corridas programadas
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      A consulta de corridas programadas passa a devolver categoria, valor, observação, endereço de
+      partida e a lista de paradas — antes era necessário consultar outro endpoint para saber
+      qualquer um desses dados.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/corridas/programadas" href="/pages/v2/referencia/corridas/endpoint/get-programadas" />
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/v2/integracao/corridas/programadas/{id}" href="/pages/v2/referencia/corridas/endpoint/get-programada-by-id" />
+    </div>
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Campos novos na resposta dos dois endpoints:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="categoria" /> — <code>id</code> e <code>nome</code> da categoria da solicitação.</li>
+        <li><ParamBadge name="valor" /> — <code>estimado</code> (estimativa no momento da criação) e <code>prefixado</code> (valor fechado, quando houver).</li>
+        <li><ParamBadge name="observacao" /> — observação da solicitação.</li>
+        <li><ParamBadge name="partida" /> — endereço de partida completo: <code>endereco</code>, <code>complemento</code>, <code>referencia</code>, <code>bairro</code>, <code>cidade</code>, <code>estado</code>, <code>lat</code> e <code>lng</code>.</li>
+        <li><ParamBadge name="paradas" /> — lista de paradas na ordem da corrida, cada uma com <code>id</code>, <code>ordem</code>, endereço completo, <code>numero_pedido</code>, <code>nome_cliente</code>, <code>telefone_cliente</code> e <code>observacao</code>.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="changed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>A consulta por id passa a devolver <ParamBadge name="id_mch_programada" />, que antes só aparecia na listagem.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> os campos são apenas adicionados — nenhum campo existente mudou de nome, tipo ou posição. Em corridas, <code>numero_pedido</code>, <code>nome_cliente</code> e <code>telefone_cliente</code> das paradas vêm vazios, por serem dados de entrega.
+    </div>
+  </Entry>
+
   <Entry date="28 jul 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="notificacoes-passageiro-unico" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Envio de notificação para um único passageiro
