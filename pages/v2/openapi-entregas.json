@@ -4027,7 +4027,7 @@
                   },
                   "exigir_codigo_confirmacao": {
                     "type": "boolean",
-                    "description": "Define se a inserção do código de confirmação pelo condutor é obrigatória, sobrepondo a configuração \"Tornar os códigos de confirmação de entrega obrigatórios\" do cadastro da empresa (ou da central). Quando omitido, a solicitação segue essa configuração. O código só é gerado quando \"Solicitar código de confirmação de entrega dos pedidos\" está habilitado — em paradas sem código o parâmetro não tem efeito. Pedidos do iFood continuam exigindo o código, por ser regra da própria integração."
+                    "description": "Torna obrigatória a inserção do código de confirmação pelo condutor nesta solicitação, mesmo que a configuração \"Tornar os códigos de confirmação de entrega obrigatórios\" do cadastro da empresa (ou da central) não exija. Envie `true` para exigir; omitir o campo ou enviar `false` mantém o que está configurado — o parâmetro nunca dispensa uma exigência já configurada. O código só é gerado quando \"Solicitar código de confirmação de entrega dos pedidos\" está habilitado — em paradas sem código o parâmetro não tem efeito. Pedidos do iFood continuam exigindo o código, por ser regra da própria integração."
                   }
                 }
               }
@@ -5392,7 +5392,7 @@
                   },
                   "exigir_codigo_confirmacao": {
                     "type": "boolean",
-                    "description": "Define se a inserção do código de confirmação pelo condutor é obrigatória, sobrepondo a configuração \"Tornar os códigos de confirmação de entrega obrigatórios\" do cadastro da empresa (ou da central). Quando omitido, a solicitação segue essa configuração. O código só é gerado quando \"Solicitar código de confirmação de entrega dos pedidos\" está habilitado — em paradas sem código o parâmetro não tem efeito. Pedidos do iFood continuam exigindo o código, por ser regra da própria integração. Em entregas programadas, o valor informado é aplicado à solicitação gerada no momento do disparo."
+                    "description": "Torna obrigatória a inserção do código de confirmação pelo condutor nesta solicitação, mesmo que a configuração \"Tornar os códigos de confirmação de entrega obrigatórios\" do cadastro da empresa (ou da central) não exija. Envie `true` para exigir; omitir o campo ou enviar `false` mantém o que está configurado — o parâmetro nunca dispensa uma exigência já configurada. O código só é gerado quando \"Solicitar código de confirmação de entrega dos pedidos\" está habilitado — em paradas sem código o parâmetro não tem efeito. Pedidos do iFood continuam exigindo o código, por ser regra da própria integração. Em entregas programadas, o valor informado é aplicado à solicitação gerada no momento do disparo."
                   }
                 }
               }

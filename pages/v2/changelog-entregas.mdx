@@ -159,16 +159,15 @@ export const EndpointBadge = ({ method, path, href }) => (
       Exigir o código de confirmação de entrega pela API
     </h2>
     <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
-      Agora é possível definir, por solicitação, se o condutor é obrigado a informar o código de
-      confirmação para concluir a entrega, sobrepondo a configuração de obrigatoriedade do cadastro
-      da empresa.
+      Agora é possível exigir, por solicitação, que o condutor informe o código de confirmação
+      para concluir a entrega — mesmo quando o cadastro da empresa não torna o código obrigatório.
     </p>
 
     <EndpointBadge method="POST" path="/api/v2/integracao/entregas" href="/pages/v2/entregas/endpoint/post" />
 
     <ChangeSection type="added">
       <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-        <li><ParamBadge name="exigir_codigo_confirmacao" /> — define se a inserção do código de confirmação é obrigatória. Opcional; se omitido, a solicitação segue a configuração da empresa (ou da central).</li>
+        <li><ParamBadge name="exigir_codigo_confirmacao" /> — opcional. Envie <code>true</code> para tornar o código obrigatório nesta solicitação; omitir o campo ou enviar <code>false</code> mantém o que está configurado no cadastro da empresa (ou da central).</li>
       </ul>
     </ChangeSection>
 
@@ -177,7 +176,7 @@ export const EndpointBadge = ({ method, path, href }) => (
 
       <ChangeSection type="added">
         <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-          <li><ParamBadge name="exigir_codigo_confirmacao" /> — mesmo comportamento da criação de entrega. O valor informado é aplicado à solicitação gerada quando a programada dispara.</li>
+          <li><ParamBadge name="exigir_codigo_confirmacao" /> — mesmo comportamento da criação de entrega. Quando <code>true</code>, a exigência é aplicada à solicitação gerada no disparo da programada.</li>
         </ul>
       </ChangeSection>
     </div>
@@ -191,7 +190,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       fontSize: "13px",
       lineHeight: "1.6",
     }}>
-      <strong>Nota:</strong> são duas configurações distintas no cadastro da empresa. O parâmetro sobrepõe apenas <em>Tornar os códigos de confirmação de entrega obrigatórios</em>; a geração do código continua dependendo de <em>Solicitar código de confirmação de entrega dos pedidos</em> — em paradas sem código o parâmetro não tem efeito. Pedidos do iFood continuam exigindo o código independente do valor enviado, por ser regra da própria integração.
+      <strong>Nota:</strong> são duas configurações distintas no cadastro da empresa. O parâmetro soma exigência sobre <em>Tornar os códigos de confirmação de entrega obrigatórios</em> — nunca a remove; a geração do código continua dependendo de <em>Solicitar código de confirmação de entrega dos pedidos</em> — em paradas sem código o parâmetro não tem efeito. Pedidos do iFood continuam exigindo o código independente do valor enviado, por ser regra da própria integração.
     </div>
   </Entry>
 
