@@ -154,6 +154,80 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="05 ago 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="notificacoes-condutor" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Envio de notificação para condutores
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novos endpoints para notificar condutores, em lote ou individualmente, com push comum e in-app messaging.
+      Recebem a notificação os condutores da bandeira da sua chave de API (ou de suas filiais) que tenham
+      aplicativo com token de notificação registrado.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/notificacoes/condutor/push" href="/pages/v2/referencia/notificacao/endpoint/post-condutor-push" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Campos aceitos no corpo da requisição:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="condutores" /> — obrigatório. Lista de identificadores dos condutores, limite de 1000 itens.</li>
+        <li><ParamBadge name="titulo" /> — opcional. Título da notificação, limite de 40 caracteres.</li>
+        <li><ParamBadge name="mensagem" /> — obrigatório. Mensagem da notificação, limite de 255 caracteres.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/notificacoes/condutor/push/individual" href="/pages/v2/referencia/notificacao/endpoint/post-condutor-push-individual" />
+
+      <ChangeSection type="added">
+        <p style={{ marginBottom: "10px" }}>Campos aceitos no corpo da requisição:</p>
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="condutor_id" /> — obrigatório. Identificador numérico do condutor que receberá a notificação.</li>
+          <li><ParamBadge name="titulo" /> — opcional. Título da notificação, limite de 40 caracteres.</li>
+          <li><ParamBadge name="mensagem" /> — obrigatório. Mensagem da notificação, limite de 255 caracteres.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/notificacoes/condutor/in-app-messaging" href="/pages/v2/referencia/notificacao/endpoint/post-condutor-in-app-messaging" />
+
+      <ChangeSection type="added">
+        <p style={{ marginBottom: "10px" }}>Campos aceitos no corpo da requisição:</p>
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="condutores" /> — obrigatório. Lista de identificadores dos condutores, limite de 1000 itens.</li>
+          <li><ParamBadge name="titulo" /> — obrigatório. Título da notificação, limite de 40 caracteres.</li>
+          <li><ParamBadge name="body" /> — obrigatório. Conteúdo principal da notificação, limite de 255 caracteres.</li>
+          <li><ParamBadge name="url_imagem" /> — opcional. URL de imagem exibida na notificação.</li>
+          <li><ParamBadge name="solicitacao_id" /> — opcional. Vincula a notificação a uma solicitação; quando informado, só é exibida se a solicitação estiver em andamento.</li>
+          <li><ParamBadge name="titulo_botao_redirecionamento" /> — opcional. Título do botão de redirecionamento, limite de 20 caracteres.</li>
+          <li><ParamBadge name="link_redirecionamento" /> — opcional. Link acionado pelo botão de redirecionamento.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/notificacoes/condutor/in-app-messaging/individual" href="/pages/v2/referencia/notificacao/endpoint/post-condutor-in-app-messaging-individual" />
+
+      <ChangeSection type="added">
+        <p style={{ marginBottom: "10px" }}>
+          Mesmos campos do envio em lote, trocando <ParamBadge name="condutores" /> por <ParamBadge name="condutor_id" />.
+        </p>
+      </ChangeSection>
+    </div>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> informar <ParamBadge name="titulo_botao_redirecionamento" /> ou <ParamBadge name="link_redirecionamento" /> torna os dois obrigatórios. Quando nenhum condutor informado tem token de notificação registrado, a resposta é <code>404</code> e nada é enviado. Uma falha ao resolver o projeto de notificação do app do condutor devolve <code>503</code>.
+    </div>
+  </Entry>
+
   <Entry date="28 jul 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="notificacoes-passageiro-unico" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Envio de notificação para um único passageiro
