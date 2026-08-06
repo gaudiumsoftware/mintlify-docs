@@ -198,7 +198,7 @@ export const EndpointBadge = ({ method, path, href }) => (
           <li><ParamBadge name="titulo" /> — obrigatório. Título da notificação, limite de 40 caracteres.</li>
           <li><ParamBadge name="body" /> — obrigatório. Conteúdo principal da notificação, limite de 255 caracteres.</li>
           <li><ParamBadge name="url_imagem" /> — opcional. URL de imagem exibida na notificação.</li>
-          <li><ParamBadge name="solicitacao_id" /> — opcional. Vincula a notificação a uma solicitação.</li>
+          <li><ParamBadge name="solicitacao_id" /> — opcional. Vincula a notificação a uma solicitação; quando informado, só é exibida se a solicitação estiver em andamento.</li>
           <li><ParamBadge name="titulo_botao_redirecionamento" /> — opcional. Título do botão de redirecionamento, limite de 20 caracteres.</li>
           <li><ParamBadge name="link_redirecionamento" /> — opcional. Link acionado pelo botão de redirecionamento.</li>
         </ul>
@@ -224,7 +224,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       fontSize: "13px",
       lineHeight: "1.6",
     }}>
-      <strong>Nota:</strong> informar <ParamBadge name="titulo_botao_redirecionamento" /> ou <ParamBadge name="link_redirecionamento" /> torna os dois obrigatórios. Quando nenhum condutor informado tem token de notificação registrado, a resposta é <code>404</code> e nada é enviado.
+      <strong>Nota:</strong> informar <ParamBadge name="titulo_botao_redirecionamento" /> ou <ParamBadge name="link_redirecionamento" /> torna os dois obrigatórios. Quando nenhum condutor informado tem token de notificação registrado, a resposta é <code>404</code> e nada é enviado. Uma falha ao resolver o projeto de notificação do app do condutor devolve <code>503</code>.
     </div>
   </Entry>
 

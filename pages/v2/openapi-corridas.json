@@ -6688,7 +6688,7 @@
                   },
                   "solicitacao_id": {
                     "type": "integer",
-                    "description": "Vincula a notificação a uma solicitação."
+                    "description": "Vincula a notificação a uma solicitação. Quando informado, a notificação só é exibida se a solicitação estiver em andamento."
                   },
                   "titulo_botao_redirecionamento": {
                     "type": "string",
@@ -6890,7 +6890,7 @@
                   },
                   "solicitacao_id": {
                     "type": "integer",
-                    "description": "Vincula a notificação a uma solicitação."
+                    "description": "Vincula a notificação a uma solicitação. Quando informado, a notificação só é exibida se a solicitação estiver em andamento."
                   },
                   "titulo_botao_redirecionamento": {
                     "type": "string",
@@ -6988,6 +6988,30 @@
                         {
                           "code": 2,
                           "message": "'body': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "url_imagem_invalida": {
+                    "summary": "url_imagem não é uma URL",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'url_imagem': URL inválida."
+                        }
+                      ]
+                    }
+                  },
+                  "redirecionamento_incompleto": {
+                    "summary": "Par de redirecionamento incompleto",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'titulo_botao_redirecionamento': Preenchimento obrigatório"
                         }
                       ]
                     }
