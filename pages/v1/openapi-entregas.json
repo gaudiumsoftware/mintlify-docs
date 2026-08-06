@@ -5067,7 +5067,7 @@
                     {
                       "id_mch_programada": "1394",
                       "situacao": "A",
-                      "situacao_formatada": "Aguardando Distribuição",
+                      "situacao_formatada": "Aguardando distribuição",
                       "data_previsao_disparo": "12/12/2023",
                       "hora_previsao_disparo": "17:32:18",
                       "id_mch": null,
