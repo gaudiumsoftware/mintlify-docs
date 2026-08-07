@@ -3934,7 +3934,8 @@
                     "codigo_confirmacao": "9999",
                     "valor_cobrar": 852.37
                   }
-                ]
+                ],
+                "exigir_codigo_confirmacao": true
               },
               "schema": {
                 "type": "object",
@@ -4023,6 +4024,10 @@
                         }
                       }
                     }
+                  },
+                  "exigir_codigo_confirmacao": {
+                    "type": "boolean",
+                    "description": "Torna obrigatória a inserção do código de confirmação pelo condutor nesta solicitação, mesmo que a configuração \"Tornar os códigos de confirmação de entrega obrigatórios\" do cadastro da empresa (ou da central) não exija. Envie `true` para exigir; omitir o campo ou enviar `false` mantém o que está configurado — o parâmetro nunca dispensa uma exigência já configurada. O código só é gerado quando \"Solicitar código de confirmação de entrega dos pedidos\" está habilitado — em paradas sem código o parâmetro não tem efeito. Pedidos do iFood continuam exigindo o código, por ser regra da própria integração."
                   }
                 }
               }
@@ -5286,7 +5291,8 @@
                   }
                 ],
                 "data": "31/12/2026",
-                "hora": "14:30:00"
+                "hora": "14:30:00",
+                "exigir_codigo_confirmacao": true
               },
               "schema": {
                 "type": "object",
@@ -5383,6 +5389,10 @@
                   "hora": {
                     "type": "string",
                     "description": "Hora da entrega programada. Formato HH:MM:SS"
+                  },
+                  "exigir_codigo_confirmacao": {
+                    "type": "boolean",
+                    "description": "Torna obrigatória a inserção do código de confirmação pelo condutor nesta solicitação, mesmo que a configuração \"Tornar os códigos de confirmação de entrega obrigatórios\" do cadastro da empresa (ou da central) não exija. Envie `true` para exigir; omitir o campo ou enviar `false` mantém o que está configurado — o parâmetro nunca dispensa uma exigência já configurada. O código só é gerado quando \"Solicitar código de confirmação de entrega dos pedidos\" está habilitado — em paradas sem código o parâmetro não tem efeito. Pedidos do iFood continuam exigindo o código, por ser regra da própria integração. Em entregas programadas, o valor informado é aplicado à solicitação gerada no momento do disparo."
                   }
                 }
               }
