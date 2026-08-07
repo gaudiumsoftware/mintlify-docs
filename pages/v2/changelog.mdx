@@ -177,8 +177,9 @@ export const EndpointBadge = ({ method, path, href }) => (
         <li><ParamBadge name="valor" /> — <code>estimado</code> (estimativa no momento da criação) e <code>prefixado</code> (valor fechado, quando houver).</li>
         <li><ParamBadge name="observacao" /> — observação da solicitação.</li>
         <li><ParamBadge name="partida" /> — endereço de partida completo: <code>endereco</code>, <code>complemento</code>, <code>referencia</code>, <code>bairro</code>, <code>cidade</code>, <code>estado</code>, <code>lat</code> e <code>lng</code>.</li>
-        <li><ParamBadge name="desejado" /> — endereço de destino: <code>endereco</code>, <code>bairro</code>, <code>cidade</code>, <code>estado</code>, <code>lat</code> e <code>lng</code>. É onde fica o destino do passageiro nas corridas.</li>
-        <li><ParamBadge name="paradas" /> — lista de paradas na ordem da corrida, cada uma com <code>id</code>, <code>ordem</code>, endereço completo, <code>numero_pedido</code>, <code>nome_cliente</code>, <code>telefone_cliente</code> e <code>observacao</code>.</li>
+        <li><ParamBadge name="desejado" /> — endereço de destino do passageiro: <code>endereco</code>, <code>bairro</code>, <code>cidade</code>, <code>estado</code>, <code>lat</code> e <code>lng</code>.</li>
+        <li><ParamBadge name="nome_passageiro" /> — nome do passageiro, já devolvido na consulta de solicitação.</li>
+        <li><ParamBadge name="paradas" /> — lista de paradas na ordem da corrida, cada uma com <code>id</code>, <code>ordem</code> e endereço completo.</li>
       </ul>
     </ChangeSection>
 
@@ -197,7 +198,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       fontSize: "13px",
       lineHeight: "1.6",
     }}>
-      <strong>Nota:</strong> os campos são apenas adicionados — nenhum campo existente mudou de nome, tipo ou posição. Em corridas, <code>nome_cliente</code>, <code>telefone_cliente</code> e a <code>observacao</code> da parada vêm nulos, por serem dados de pedido. Já o <code>numero_pedido</code> pode vir preenchido: quando a parada não tem pedido vinculado, ele cai no identificador externo informado na própria parada.
+      <strong>Nota:</strong> os campos são apenas adicionados — nenhum campo existente mudou de nome, tipo ou posição. As paradas de corrida trazem somente os dados de endereço: <code>numero_pedido</code>, <code>nome_cliente</code>, <code>telefone_cliente</code> e <code>observacao</code> são dados de pedido e não existem em corridas, por isso não vêm na resposta.
     </div>
   </Entry>
 

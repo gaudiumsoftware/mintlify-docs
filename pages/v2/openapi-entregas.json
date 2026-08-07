@@ -5225,6 +5225,7 @@
                       "hora_previsao_disparo": "11:44:00",
                       "id_mch": "90976",
                       "observacao": "Retirar no balcão",
+                      "nome_passageiro": "Padaria Central",
                       "empresa": {
                         "id": null,
                         "nome": null
@@ -5246,14 +5247,6 @@
                         "estado": "PB",
                         "lat": "-7.115000000",
                         "lng": "-34.834000000"
-                      },
-                      "desejado": {
-                        "endereco": null,
-                        "bairro": null,
-                        "cidade": null,
-                        "estado": null,
-                        "lat": null,
-                        "lng": null
                       },
                       "paradas": [
                         {
@@ -5298,6 +5291,7 @@
                       "hora_previsao_disparo": "19:29:00",
                       "id_mch": "90961",
                       "observacao": null,
+                      "nome_passageiro": "Padaria Central",
                       "empresa": {
                         "id": null,
                         "nome": null
@@ -5319,14 +5313,6 @@
                         "estado": "PB",
                         "lat": "-7.115000000",
                         "lng": "-34.834000000"
-                      },
-                      "desejado": {
-                        "endereco": null,
-                        "bairro": null,
-                        "cidade": null,
-                        "estado": null,
-                        "lat": null,
-                        "lng": null
                       },
                       "paradas": [
                         {
@@ -5542,6 +5528,7 @@
                     "hora_previsao_disparo": "11:44:00",
                     "id_mch": "90976",
                     "observacao": "Retirar no balcão",
+                    "nome_passageiro": "Padaria Central",
                     "empresa": {
                       "id": null,
                       "nome": null
@@ -5563,14 +5550,6 @@
                       "estado": "PB",
                       "lat": "-7.115000000",
                       "lng": "-34.834000000"
-                    },
-                    "desejado": {
-                      "endereco": null,
-                      "bairro": null,
-                      "cidade": null,
-                      "estado": null,
-                      "lat": null,
-                      "lng": null
                     },
                     "paradas": [
                       {

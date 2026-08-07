@@ -4997,6 +4997,7 @@
                       "hora_previsao_disparo": "01:50:00",
                       "id_mch": null,
                       "observacao": "Passageiro com bagagem",
+                      "nome_passageiro": "Rogério Barreto",
                       "empresa": {
                         "id": "917",
                         "nome": "empresa_nome"
@@ -5038,11 +5039,7 @@
                           "cidade": "João Pessoa",
                           "uf": "PB",
                           "lat": "-7.115000000",
-                          "lng": "-34.834000000",
-                          "numero_pedido": null,
-                          "nome_cliente": null,
-                          "telefone_cliente": null,
-                          "observacao": null
+                          "lng": "-34.834000000"
                         }
                       ]
                     },
@@ -5054,6 +5051,7 @@
                       "hora_previsao_disparo": "00:55:00",
                       "id_mch": "100003594",
                       "observacao": null,
+                      "nome_passageiro": "Rogério Barreto",
                       "empresa": {
                         "id": null,
                         "nome": null
@@ -5094,6 +5092,7 @@
                       "hora_previsao_disparo": "22:50:00",
                       "id_mch": "100003593",
                       "observacao": null,
+                      "nome_passageiro": "Rogério Barreto",
                       "empresa": {
                         "id": "876",
                         "nome": "empresa_nome"

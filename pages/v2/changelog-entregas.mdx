@@ -177,7 +177,7 @@ export const EndpointBadge = ({ method, path, href }) => (
         <li><ParamBadge name="valor" /> — <code>estimado</code> (estimativa no momento da criação) e <code>prefixado</code> (valor fechado, quando houver).</li>
         <li><ParamBadge name="observacao" /> — observação da solicitação.</li>
         <li><ParamBadge name="coleta" /> — endereço de coleta completo: <code>endereco</code>, <code>complemento</code>, <code>referencia</code>, <code>bairro</code>, <code>cidade</code>, <code>estado</code>, <code>lat</code> e <code>lng</code>.</li>
-        <li><ParamBadge name="desejado" /> — endereço de destino: <code>endereco</code>, <code>bairro</code>, <code>cidade</code>, <code>estado</code>, <code>lat</code> e <code>lng</code>. Em entregas só vem preenchido quando há retorno; o destino de cada entrega fica nas paradas.</li>
+        <li><ParamBadge name="nome_passageiro" /> — nome de quem solicitou, já devolvido na consulta de solicitação.</li>
         <li><ParamBadge name="paradas" /> — lista de paradas na ordem da entrega, cada uma com <code>id</code>, <code>ordem</code>, endereço completo, <code>numero_pedido</code>, <code>nome_cliente</code>, <code>telefone_cliente</code> e <code>observacao</code>.</li>
       </ul>
     </ChangeSection>
@@ -197,7 +197,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       fontSize: "13px",
       lineHeight: "1.6",
     }}>
-      <strong>Nota:</strong> os campos são apenas adicionados — nenhum campo existente mudou de nome, tipo ou posição. O endereço de origem vem em <code>coleta</code> para centrais que fazem somente entregas e em <code>partida</code> quando a central também faz corridas.
+      <strong>Nota:</strong> os campos são apenas adicionados — nenhum campo existente mudou de nome, tipo ou posição. O endereço de origem vem em <code>coleta</code> para centrais que fazem somente entregas e em <code>partida</code> nas de corridas. O destino de cada entrega fica na respectiva parada, por isso a resposta de entregas não traz um endereço de destino da solicitação.
     </div>
   </Entry>
 
