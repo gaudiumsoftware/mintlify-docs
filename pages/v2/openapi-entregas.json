@@ -5225,7 +5225,6 @@
                       "hora_previsao_disparo": "11:44:00",
                       "id_mch": "90976",
                       "observacao": "Retirar no balcão",
-                      "nome_passageiro": "Padaria Central",
                       "empresa": {
                         "id": null,
                         "nome": null
@@ -5291,7 +5290,6 @@
                       "hora_previsao_disparo": "19:29:00",
                       "id_mch": "90961",
                       "observacao": null,
-                      "nome_passageiro": "Padaria Central",
                       "empresa": {
                         "id": null,
                         "nome": null
@@ -5528,7 +5526,6 @@
                     "hora_previsao_disparo": "11:44:00",
                     "id_mch": "90976",
                     "observacao": "Retirar no balcão",
-                    "nome_passageiro": "Padaria Central",
                     "empresa": {
                       "id": null,
                       "nome": null
