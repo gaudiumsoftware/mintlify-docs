@@ -5247,6 +5247,14 @@
                         "lat": "-7.115000000",
                         "lng": "-34.834000000"
                       },
+                      "desejado": {
+                        "endereco": null,
+                        "bairro": null,
+                        "cidade": null,
+                        "estado": null,
+                        "lat": null,
+                        "lng": null
+                      },
                       "paradas": [
                         {
                           "id": "900",
@@ -5311,6 +5319,14 @@
                         "estado": "PB",
                         "lat": "-7.115000000",
                         "lng": "-34.834000000"
+                      },
+                      "desejado": {
+                        "endereco": null,
+                        "bairro": null,
+                        "cidade": null,
+                        "estado": null,
+                        "lat": null,
+                        "lng": null
                       },
                       "paradas": [
                         {
@@ -5547,6 +5563,14 @@
                       "estado": "PB",
                       "lat": "-7.115000000",
                       "lng": "-34.834000000"
+                    },
+                    "desejado": {
+                      "endereco": null,
+                      "bairro": null,
+                      "cidade": null,
+                      "estado": null,
+                      "lat": null,
+                      "lng": null
                     },
                     "paradas": [
                       {

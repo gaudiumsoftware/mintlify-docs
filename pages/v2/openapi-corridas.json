@@ -3298,6 +3298,14 @@
                         "lat": "-7.115000000",
                         "lng": "-34.834000000"
                       },
+                      "desejado": {
+                        "endereco": "Rua Quinze de Novembro, 8",
+                        "bairro": "Centro",
+                        "cidade": "Niterói",
+                        "estado": "RJ",
+                        "lat": "-22.896461500",
+                        "lng": "-43.123927100"
+                      },
                       "paradas": [
                         {
                           "id": "900",
@@ -3346,6 +3354,14 @@
                         "estado": "PB",
                         "lat": "-7.115000000",
                         "lng": "-34.834000000"
+                      },
+                      "desejado": {
+                        "endereco": "Rua Quinze de Novembro, 8",
+                        "bairro": "Centro",
+                        "cidade": "Niterói",
+                        "estado": "RJ",
+                        "lat": "-22.896461500",
+                        "lng": "-43.123927100"
                       },
                       "paradas": []
                     }
@@ -3536,6 +3552,14 @@
                       "estado": "PB",
                       "lat": "-7.115000000",
                       "lng": "-34.834000000"
+                    },
+                    "desejado": {
+                      "endereco": "Rua Quinze de Novembro, 8",
+                      "bairro": "Centro",
+                      "cidade": "Niterói",
+                      "estado": "RJ",
+                      "lat": "-22.896461500",
+                      "lng": "-43.123927100"
                     },
                     "paradas": [
                       {
