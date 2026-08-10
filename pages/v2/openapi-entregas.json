@@ -2758,7 +2758,7 @@
       },
       "post": {
         "summary": "Cadastrar webhook",
-        "description": "Permite cadastrar um webhook, sendo possível cadastrar até 5 webhooks por tipo.",
+        "description": "Permite cadastrar um webhook, sendo possível cadastrar até 5 webhooks por tipo. O webhook do tipo mensagem continua limitado a 1 cadastro.",
         "requestBody": {
           "content": {
             "application/json": {
