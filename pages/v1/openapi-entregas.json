@@ -5023,7 +5023,7 @@
     "/consultarProgramada": {
       "get": {
         "summary": "Consultar solicitações programadas",
-        "description": "Ao acionar, são retornadas todas as solicitações programadas da central conforme os parâmetros informados. O endereço de origem vem em `coleta` para centrais que fazem somente entregas e em `partida` quando a central também faz corridas.",
+        "description": "Ao acionar, são retornadas todas as solicitações programadas da central conforme os parâmetros informados. O endereço de origem vem em `coleta`.",
         "parameters": [
           {
             "name": "id_mch_programada",

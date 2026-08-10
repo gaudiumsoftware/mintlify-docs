@@ -5187,7 +5187,7 @@
     "/entregas/programadas": {
       "get": {
         "summary": "Listar entregas programadas",
-        "description": "Permite listar todas as entregas programadas de uma central. O endereço de origem vem em `coleta` para centrais que fazem somente entregas e em `partida` quando a central também faz corridas.",
+        "description": "Permite listar todas as entregas programadas de uma central. O endereço de origem vem em `coleta`.",
         "parameters": [
           {
             "name": "pagina",
@@ -5499,7 +5499,7 @@
     "/entregas/programadas/{id}": {
       "get": {
         "summary": "Consultar entrega programada",
-        "description": "Permite obter uma única entrega programada através de seu id. O endereço de origem vem em `coleta` para centrais que fazem somente entregas e em `partida` quando a central também faz corridas.",
+        "description": "Permite obter uma única entrega programada através de seu id. O endereço de origem vem em `coleta`.",
         "parameters": [
           {
             "name": "id",
