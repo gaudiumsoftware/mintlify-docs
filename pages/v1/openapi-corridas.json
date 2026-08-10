@@ -517,7 +517,7 @@
     "/cadastrarWebhook": {
       "post": {
         "summary": "Cadastrar webhook",
-        "description": "Permite cadastrar um webhook.",
+        "description": "Permite cadastrar um webhook, sendo possível cadastrar até 5 webhooks por tipo.",
         "requestBody": {
           "content": {
             "application/json": {
