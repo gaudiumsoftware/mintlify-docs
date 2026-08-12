@@ -6456,7 +6456,12 @@
                 "properties": {
                   "tipo": {
                     "type": "string",
-                    "description": "Indica o tipo de webhook. Valores aceitos: posicao, status ou mensagens"
+                    "description": "Indica o tipo de webhook. Valores aceitos: posicao, status ou mensagens",
+                    "enum": [
+                      "posicao",
+                      "status",
+                      "mensagens"
+                    ]
                   },
                   "url": {
                     "type": "string",
