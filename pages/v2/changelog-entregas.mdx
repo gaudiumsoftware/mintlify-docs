@@ -200,6 +200,24 @@ export const EndpointBadge = ({ method, path, href }) => (
     </div>
   </Entry>
 
+  <Entry date="10 ago 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="limite-webhooks-por-tipo" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Aumento do limite de webhooks por tipo
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Limite de cadastro de webhooks atualizado: até 5 webhooks por tipo. O webhook do tipo mensagem é limitado a 1 cadastro.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/webhooks" href="/pages/v2/entregas/webhooks/endpoint/post" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "6px" }}>
+        <li>Aumentou o limite de webhooks cadastrados para até 5 webhooks por tipo.</li>
+        <li>O webhook do tipo mensagem é limitado a 1 cadastro.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="16 jul 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="consultar-status-webhook" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Consulta de status de entrega do webhook

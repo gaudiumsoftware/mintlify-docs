@@ -517,7 +517,7 @@
     "/cadastrarWebhook": {
       "post": {
         "summary": "Cadastrar webhook",
-        "description": "Permite cadastrar um webhook.",
+        "description": "Permite cadastrar um webhook, sendo possível cadastrar até 5 webhooks por tipo. O webhook do tipo mensagem é limitado a 1 cadastro.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -526,10 +526,11 @@
                 "properties": {
                   "tipo": {
                     "type": "string",
-                    "description": "Indica o tipo de webhook. Valores aceitos: posicao ou status",
+                    "description": "Indica o tipo de webhook. Valores aceitos: posicao, status ou mensagens",
                     "enum": [
                       "posicao",
-                      "status"
+                      "status",
+                      "mensagens"
                     ]
                   },
                   "url": {
