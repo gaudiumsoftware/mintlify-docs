@@ -526,10 +526,11 @@
                 "properties": {
                   "tipo": {
                     "type": "string",
-                    "description": "Indica o tipo de webhook. Valores aceitos: posicao ou status",
+                    "description": "Indica o tipo de webhook. Valores aceitos: posicao, status ou mensagens",
                     "enum": [
                       "posicao",
-                      "status"
+                      "status",
+                      "mensagens"
                     ]
                   },
                   "url": {
