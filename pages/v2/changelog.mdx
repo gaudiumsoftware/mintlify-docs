@@ -154,6 +154,72 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="13 ago 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 id="detalhes-corridas-programadas" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Detalhes da solicitação na consulta de corridas programadas
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      A consulta de corridas programadas passa a devolver categoria, valor, observação, endereço de
+      partida e a lista de paradas — antes era necessário consultar outro endpoint para saber
+      qualquer um desses dados.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/corridas/programadas" href="/pages/v2/referencia/corridas/endpoint/get-programadas" />
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/v2/integracao/corridas/programadas/{id}" href="/pages/v2/referencia/corridas/endpoint/get-programada-by-id" />
+    </div>
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Campos novos na resposta dos dois endpoints:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="categoria" /> — <code>id</code> e <code>nome</code> da categoria da solicitação.</li>
+        <li><ParamBadge name="valor" /> — <code>estimado</code> (estimativa no momento da criação) e <code>prefixado</code> (valor fechado, quando houver).</li>
+        <li><ParamBadge name="observacao" /> — observação da solicitação.</li>
+        <li><ParamBadge name="partida" /> — endereço de partida completo: <code>endereco</code>, <code>complemento</code>, <code>referencia</code>, <code>bairro</code>, <code>cidade</code>, <code>estado</code>, <code>lat</code> e <code>lng</code>.</li>
+        <li><ParamBadge name="desejado" /> — endereço de destino do passageiro: <code>endereco</code>, <code>bairro</code>, <code>cidade</code>, <code>estado</code>, <code>lat</code> e <code>lng</code>.</li>
+        <li><ParamBadge name="nome_passageiro" /> — nome do passageiro, já devolvido na consulta de solicitação.</li>
+        <li><ParamBadge name="paradas" /> — lista de paradas intermediárias na ordem da corrida, cada uma com <code>id</code>, <code>ordem</code> e endereço completo. A chave só aparece quando há paradas: numa corrida direta ela não vem na resposta.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="changed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>A consulta por id passa a devolver <ParamBadge name="id_mch_programada" />, que antes só aparecia na listagem.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> os campos são apenas adicionados — nenhum campo existente mudou de nome, tipo ou posição. As paradas de corrida trazem somente os dados de endereço: <code>numero_pedido</code>, <code>nome_cliente</code>, <code>telefone_cliente</code> e <code>observacao</code> são dados de pedido e não existem em corridas, por isso não vêm na resposta.
+    </div>
+  </Entry>
+
+  <Entry date="10 ago 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="limite-webhooks-por-tipo" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Aumento do limite de webhooks por tipo
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Limite de cadastro de webhooks atualizado: até 5 webhooks por tipo. O webhook do tipo mensagem é limitado a 1 cadastro.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/webhooks" href="/pages/v2/referencia/webhooks/endpoint/post" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "6px" }}>
+        <li>Aumentou o limite de webhooks cadastrados para até 5 webhooks por tipo.</li>
+        <li>O webhook do tipo mensagem é limitado a 1 cadastro.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="05 ago 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="notificacoes-condutor" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Envio de notificação para condutores
