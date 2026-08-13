@@ -122,7 +122,11 @@
                       "pages/v2/referencia/notificacao/endpoint/post-push",
                       "pages/v2/referencia/notificacao/endpoint/post-push-individual",
                       "pages/v2/referencia/notificacao/endpoint/post-in-app-messaging",
-                      "pages/v2/referencia/notificacao/endpoint/post-in-app-messaging-individual"
+                      "pages/v2/referencia/notificacao/endpoint/post-in-app-messaging-individual",
+                      "pages/v2/referencia/notificacao/endpoint/post-condutor-push",
+                      "pages/v2/referencia/notificacao/endpoint/post-condutor-push-individual",
+                      "pages/v2/referencia/notificacao/endpoint/post-condutor-in-app-messaging",
+                      "pages/v2/referencia/notificacao/endpoint/post-condutor-in-app-messaging-individual"
                     ]
                   },
                   {
