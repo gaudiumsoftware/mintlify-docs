@@ -287,7 +287,12 @@ Os valores da tabela são **limites base**. O limite efetivo de cada grupo é o 
 | Notificações (in-app e push) | `/api/v2/integracao/notificacoes/in-app-messaging`<br />`/api/v2/integracao/notificacoes/push` | 20 * fator requisições por minuto |
 | In-app messaging (individual) | `/api/v2/integracao/notificacoes/in-app-messaging/individual` | 200 * fator requisições por minuto |
 | Push (individual) | `/api/v2/integracao/notificacoes/push/individual` | 200 * fator requisições por minuto |
+| In-app messaging para condutores | `/api/v2/integracao/notificacoes/condutor/in-app-messaging` | 100 * fator requisições por minuto |
+| In-app messaging para condutores (individual) | `/api/v2/integracao/notificacoes/condutor/in-app-messaging/individual` | 200 * fator requisições por minuto |
+| Push para condutores (individual) | `/api/v2/integracao/notificacoes/condutor/push/individual` | 200 * fator requisições por minuto |
 | Padrão | `/api/v2/integracao/*` | 1000 * fator requisições por minuto |
+
+O envio em massa de push para condutores (`/api/v2/integracao/notificacoes/condutor/push`) não possui regra dedicada e segue o limite do grupo Padrão.
 
 
 ---
