@@ -270,6 +270,20 @@ Os valores da tabela são **limites base**. O limite efetivo de cada grupo é o 
 | Dinâmica | `/api/v2/integracao/dinamicas*` | 200 * fator requisições por minuto |
 | Padrão | `/api/v2/integracao/*` | 1000 * fator requisições por minuto |
 
+### Headers de rate limit
+
+Nas respostas dos endpoints com limite de bloqueio configurado, o gateway informa o consumo da janela atual. Use esses headers para se auto-regular antes de receber `429`.
+
+| Header | Descrição |
+| -------- | -------- |
+| `X-RateLimit-Limit` | Limite efetivo do grupo na janela (limite base * fator). |
+| `X-RateLimit-Remaining` | Requisições ainda disponíveis na janela atual. Vale `0` na resposta `429`. |
+| `X-Total-Period` | Duração da janela em segundos (hoje sempre `60`). A taxa permitida é `X-RateLimit-Limit / X-Total-Period`. |
+
+Quando o grupo tem mais de um limite de bloqueio, os headers refletem o mais restritivo (o de menor saldo). Grupos sem bloqueio configurado (apenas log) não retornam esses headers.
+
+Não existe header de reset: como a contagem usa janela deslizante, não há um instante único de zeragem do contador. Na resposta `429`, o tempo de espera continua sendo indicado pelo header `Retry-After`, em segundos.
+
 
 ---
 
