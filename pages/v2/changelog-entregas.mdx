@@ -167,7 +167,7 @@ export const EndpointBadge = ({ method, path, href }) => (
 
     <ChangeSection type="added">
       <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-        <li><ParamBadge name="exigir_codigo_confirmacao" /> — opcional. Envie <code>true</code> para tornar o código obrigatório nesta solicitação; omitir o campo ou enviar <code>false</code> mantém o que está configurado no cadastro da empresa (ou da central).</li>
+        <li><ParamBadge name="exigir_codigo_confirmacao" /> — opcional. Envie <code>true</code> para tornar o código obrigatório nesta solicitação, independente das configurações do cadastro da empresa (ou da central); omitir o campo ou enviar <code>false</code> mantém o que está configurado. Com <code>true</code>, o <code>codigo_confirmacao</code> passa a ser obrigatório em todas as paradas.</li>
       </ul>
     </ChangeSection>
 
@@ -190,7 +190,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       fontSize: "13px",
       lineHeight: "1.6",
     }}>
-      <strong>Nota:</strong> são duas configurações distintas no cadastro da empresa. O parâmetro soma exigência sobre <em>Tornar os códigos de confirmação de entrega obrigatórios</em> — nunca a remove; a geração do código continua dependendo de <em>Solicitar código de confirmação de entrega dos pedidos</em> — em paradas sem código o parâmetro não tem efeito. Pedidos do iFood continuam exigindo o código independente do valor enviado, por ser regra da própria integração.
+      <strong>Nota:</strong> o parâmetro é absoluto sobre as duas configurações do cadastro da empresa — vale mesmo com <em>Solicitar código de confirmação de entrega dos pedidos</em> e <em>Tornar os códigos de confirmação de entrega obrigatórios</em> desabilitadas. Ele só soma exigência: nunca dispensa a que já está configurada. Em contrapartida, o <code>codigo_confirmacao</code> de cada parada passa a ser obrigatório — sem ele o condutor não teria o que informar para concluir a entrega, e a solicitação é recusada com <code>400 CODIGO_CONFIRMACAO_OBRIGATORIO</code> (código 136). Pedidos do iFood continuam exigindo o código independente do valor enviado, por ser regra da própria integração.
     </div>
   </Entry>
 
