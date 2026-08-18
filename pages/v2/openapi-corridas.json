@@ -3275,10 +3275,52 @@
                       "data_previsao_disparo": "26/01/2021",
                       "hora_previsao_disparo": "01:50:00",
                       "id_mch": null,
+                      "observacao": "Passageiro com bagagem",
+                      "nome_passageiro": "Rogério Barreto",
                       "empresa": {
                         "id": "404",
                         "nome": "empresa_nome"
-                      }
+                      },
+                      "categoria": {
+                        "id": "1",
+                        "nome": "Executivo"
+                      },
+                      "valor": {
+                        "estimado": "12.50",
+                        "prefixado": null
+                      },
+                      "partida": {
+                        "endereco": "Rua da Coleta, 10",
+                        "complemento": "Loja 2",
+                        "referencia": "Em frente à praça",
+                        "bairro": "Centro",
+                        "cidade": "João Pessoa",
+                        "estado": "PB",
+                        "lat": "-7.115000000",
+                        "lng": "-34.834000000"
+                      },
+                      "desejado": {
+                        "endereco": "Rua Quinze de Novembro, 8",
+                        "bairro": "Centro",
+                        "cidade": "Niterói",
+                        "estado": "RJ",
+                        "lat": "-22.896461500",
+                        "lng": "-43.123927100"
+                      },
+                      "paradas": [
+                        {
+                          "id": "900",
+                          "ordem": 0,
+                          "endereco": "Avenida Epitácio Pessoa, 1500",
+                          "complemento": null,
+                          "referencia": null,
+                          "bairro": "Tambaú",
+                          "cidade": "João Pessoa",
+                          "uf": "PB",
+                          "lat": "-7.115000000",
+                          "lng": "-34.834000000"
+                        }
+                      ]
                     },
                     {
                       "id_mch_programada": "1392",
@@ -3287,9 +3329,37 @@
                       "data_previsao_disparo": "21/01/2021",
                       "hora_previsao_disparo": "00:55:00",
                       "id_mch": "100003594",
+                      "observacao": null,
+                      "nome_passageiro": "Rogério Barreto",
                       "empresa": {
                         "id": null,
                         "nome": null
+                      },
+                      "categoria": {
+                        "id": "1",
+                        "nome": "Executivo"
+                      },
+                      "valor": {
+                        "estimado": "12.50",
+                        "prefixado": null
+                      },
+                      "partida": {
+                        "endereco": "Rua da Coleta, 10",
+                        "complemento": "Loja 2",
+                        "referencia": "Em frente à praça",
+                        "bairro": "Centro",
+                        "cidade": "João Pessoa",
+                        "estado": "PB",
+                        "lat": "-7.115000000",
+                        "lng": "-34.834000000"
+                      },
+                      "desejado": {
+                        "endereco": "Rua Quinze de Novembro, 8",
+                        "bairro": "Centro",
+                        "cidade": "Niterói",
+                        "estado": "RJ",
+                        "lat": "-22.896461500",
+                        "lng": "-43.123927100"
                       }
                     }
                   ]
@@ -3451,15 +3521,58 @@
                 "example": {
                   "success": true,
                   "data": {
+                    "id_mch_programada": "1390",
                     "situacao": "D",
                     "situacao_formatada": "Distribuída",
                     "data_previsao_disparo": "10/03/2017",
                     "hora_previsao_disparo": "11:50:00",
                     "id_mch": "6450",
+                    "observacao": "Passageiro com bagagem",
+                    "nome_passageiro": "Rogério Barreto",
                     "empresa": {
                       "id": null,
                       "nome": null
-                    }
+                    },
+                    "categoria": {
+                      "id": "1",
+                      "nome": "Executivo"
+                    },
+                    "valor": {
+                      "estimado": "12.50",
+                      "prefixado": null
+                    },
+                    "partida": {
+                      "endereco": "Rua da Coleta, 10",
+                      "complemento": "Loja 2",
+                      "referencia": "Em frente à praça",
+                      "bairro": "Centro",
+                      "cidade": "João Pessoa",
+                      "estado": "PB",
+                      "lat": "-7.115000000",
+                      "lng": "-34.834000000"
+                    },
+                    "desejado": {
+                      "endereco": "Rua Quinze de Novembro, 8",
+                      "bairro": "Centro",
+                      "cidade": "Niterói",
+                      "estado": "RJ",
+                      "lat": "-22.896461500",
+                      "lng": "-43.123927100"
+                    },
+                    "paradas": [
+                      {
+                        "id": "900",
+                        "ordem": 0,
+                        "endereco": "Avenida Epitácio Pessoa, 1500",
+                        "complemento": null,
+                        "referencia": null,
+                        "bairro": "Tambaú",
+                        "cidade": "João Pessoa",
+                        "uf": "PB",
+                        "lat": "-7.115000000",
+                        "lng": "-34.834000000"
+                      }
+                    ]
                   }
                 }
               }
@@ -6334,7 +6447,7 @@
       },
       "post": {
         "summary": "Cadastrar webhook",
-        "description": "Permite cadastrar um webhook.",
+        "description": "Permite cadastrar um webhook, sendo possível cadastrar até 5 webhooks por tipo. O webhook do tipo mensagem é limitado a 1 cadastro.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -6343,7 +6456,12 @@
                 "properties": {
                   "tipo": {
                     "type": "string",
-                    "description": "Indica o tipo de webhook. Valores aceitos: posicao ou status"
+                    "description": "Indica o tipo de webhook. Valores aceitos: posicao, status ou mensagens",
+                    "enum": [
+                      "posicao",
+                      "status",
+                      "mensagens"
+                    ]
                   },
                   "url": {
                     "type": "string",
