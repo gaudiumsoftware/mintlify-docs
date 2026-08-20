@@ -3939,7 +3939,8 @@
                     "codigo_confirmacao": "9999",
                     "valor_cobrar": 852.37
                   }
-                ]
+                ],
+                "info_antes_aceite": "Portaria fecha às 18h"
               },
               "schema": {
                 "type": "object",
@@ -4028,6 +4029,10 @@
                         }
                       }
                     }
+                  },
+                  "info_antes_aceite": {
+                    "type": "string",
+                    "description": "Informação exibida ao condutor antes do aceite da entrega. Textos com mais de 70 caracteres são truncados."
                   }
                 }
               }
@@ -5380,6 +5385,7 @@
                     "valor_cobrar": 852.37
                   }
                 ],
+                "info_antes_aceite": "Portaria fecha às 18h",
                 "data": "31/12/2026",
                 "hora": "14:30:00"
               },
@@ -5470,6 +5476,10 @@
                         }
                       }
                     }
+                  },
+                  "info_antes_aceite": {
+                    "type": "string",
+                    "description": "Informação exibida ao condutor antes do aceite da entrega. Textos com mais de 70 caracteres são truncados."
                   },
                   "data": {
                     "type": "string",
