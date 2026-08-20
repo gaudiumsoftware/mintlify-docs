@@ -154,6 +154,41 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="19 ago 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="info-antes-aceite-entregas" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Informação para o condutor antes do aceite da entrega
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      A abertura de entrega passa a aceitar <ParamBadge name="info_antes_aceite" />, um texto que o
+      condutor vê na tela de aceite, antes de decidir se pega a entrega. O campo já existia em
+      corridas e agora tem o mesmo comportamento em entregas.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/entregas" href="/pages/v2/entregas/endpoint/post" />
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/entregas/programadas" href="/pages/v2/entregas/endpoint/post-programadas" />
+    </div>
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="info_antes_aceite" /> — texto opcional exibido ao condutor antes do aceite.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> o campo é opcional e não altera nenhum comportamento existente. Textos com mais de 70 caracteres são truncados, não recusados. Não confunda com <ParamBadge name="observacao_parada" />, que continua sendo por parada e só aparece para o condutor depois do aceite.
+    </div>
+  </Entry>
+
   <Entry date="13 ago 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="detalhes-entregas-programadas" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Detalhes da solicitação e das entregas na consulta de programadas
