@@ -154,6 +154,40 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="20 ago 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="agrupar-programadas-em-programada" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Agrupamento de entregas programadas entre si
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Agora é possível agrupar entregas programadas em outra entrega programada. Antes o agrupamento
+      só era possível quando a entrega agrupadora estava em andamento — programadas só podiam ser
+      agrupadas a uma entrega já despachada.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/entregas/programadas/{id}/agrupar" href="/pages/v2/entregas/endpoint/post-programadas-agrupar-programadas" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>A programada informada em <code>{"{id}"}</code> é a agrupadora: ela <strong>mantém o seu identificador</strong> e passa a conter as paradas de todas as programadas do corpo, que assumem a situação <code>agrupado</code>.</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="programadas_agrupadas" /> — lista dos IDs das programadas a agrupar. É o único campo do corpo.</li>
+        <li>Empresa, categoria, tipo de pagamento, retorno e data/hora do disparo são obtidos da programada agrupadora.</li>
+        <li>A estimativa da corrida e a ordenação das paradas são calculadas pelo servidor, com otimização de rota.</li>
+        <li>A resposta segue o contrato dos outros endpoints de agrupamento. O valor recalculado sai em <code>GET /entregas/programadas/{"{id}"}</code>.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Requisitos:</strong> todas as programadas precisam estar aguardando disparo, pertencer à mesma empresa, partir do mesmo ponto de coleta e estar a mais de 60 segundos do disparo. Programadas em uso pela junção automática não podem ser agrupadas.
+    </div>
+  </Entry>
   <Entry date="13 ago 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="detalhes-entregas-programadas" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Detalhes da solicitação e das entregas na consulta de programadas
