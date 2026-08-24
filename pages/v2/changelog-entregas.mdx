@@ -154,6 +154,46 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="13 ago 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="exigir-codigo-confirmacao" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Exigir o código de confirmação de entrega pela API
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Agora é possível exigir, por solicitação, que o condutor informe o código de confirmação
+      para concluir a entrega — mesmo quando o cadastro da empresa não torna o código obrigatório.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/entregas" href="/pages/v2/entregas/endpoint/post" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="exigir_codigo_confirmacao" /> — opcional. Envie <code>true</code> para tornar o código obrigatório nesta solicitação, independente das configurações do cadastro da empresa (ou da central); omitir o campo ou enviar <code>false</code> mantém o que está configurado. Com <code>true</code>, o <code>codigo_confirmacao</code> passa a ser obrigatório em todas as paradas.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/entregas/programadas" href="/pages/v2/entregas/endpoint/post-programadas" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="exigir_codigo_confirmacao" /> — mesmo comportamento da criação de entrega. Quando <code>true</code>, a exigência é aplicada à solicitação gerada no disparo da programada.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> o parâmetro é absoluto sobre as duas configurações do cadastro da empresa — vale mesmo com <em>Solicitar código de confirmação de entrega dos pedidos</em> e <em>Tornar os códigos de confirmação de entrega obrigatórios</em> desabilitadas. Ele só soma exigência: nunca dispensa a que já está configurada. Em contrapartida, o <code>codigo_confirmacao</code> de cada parada passa a ser obrigatório — sem ele o condutor não teria o que informar para concluir a entrega, e a solicitação é recusada com <code>400 CODIGO_CONFIRMACAO_OBRIGATORIO</code> (código 136). Pedidos do iFood continuam exigindo o código independente do valor enviado, por ser regra da própria integração. A exigência criada pelo parâmetro não é removível depois: o <em>prosseguir sem código</em> da plataforma atende só pedidos do iFood, e a edição da entrega não altera o parâmetro. O código fica visível no painel da empresa, no link de acompanhamento e em <code>GET /entregas/{id}/links-rastreio</code>.
+    </div>
+  </Entry>
+
   <Entry date="13 ago 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="detalhes-entregas-programadas" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Detalhes da solicitação e das entregas na consulta de programadas
