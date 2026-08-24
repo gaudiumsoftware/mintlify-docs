@@ -154,6 +154,43 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="25 ago 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 id="filtros-engajamento-clientes" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Filtros de engajamento na consulta de clientes
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novos parâmetros para segmentar clientes pelo último acesso ao app, além de novos campos de acesso e token na resposta.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/clientes" href="/pages/v2/referencia/clientes/endpoint/get" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Novos parâmetros de query disponíveis:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="ultimo_acesso_apos" /> — filtra clientes com último acesso ao app a partir desta data (ISO-8601 UTC, inclusive).</li>
+        <li><ParamBadge name="ultimo_acesso_antes_de" /> — filtra clientes com último acesso ao app antes desta data (ISO-8601 UTC, exclusive).</li>
+        <li><ParamBadge name="nunca_acessou" /> — quando <code>true</code> ou <code>1</code>, retorna somente clientes que nunca acessaram o app.</li>
+      </ul>
+      <p style={{ marginTop: "14px", marginBottom: "10px" }}>Novos campos no retorno de cada cliente:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="token_atualizado_em" /> — data da última atualização do token de acesso do cliente.</li>
+        <li><ParamBadge name="ultimo_acesso_em" /> — data do último acesso do cliente ao app.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> <ParamBadge name="ultimo_acesso_apos" /> e <ParamBadge name="ultimo_acesso_antes_de" /> comparam contra o último acesso registrado e por isso excluem clientes sem nenhum acesso — para esses, use <ParamBadge name="nunca_acessou" />. Esses filtros preservam a paginação e são combináveis com <ParamBadge name="status_cliente" />, que é independente (status administrativo do cadastro, não uso do app).
+    </div>
+  </Entry>
+
   <Entry date="13 ago 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="detalhes-corridas-programadas" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Detalhes da solicitação na consulta de corridas programadas

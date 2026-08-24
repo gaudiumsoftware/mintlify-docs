@@ -82,6 +82,32 @@
               "type": "integer",
               "default": 1
             }
+          },
+          {
+            "name": "ultimo_acesso_apos",
+            "in": "query",
+            "description": "Filtra clientes com último acesso ao app a partir desta data (inclusive). Formato ISO-8601 UTC. É um filtro de segmento: preserva a paginação e é combinável com `status_cliente`. Exclui clientes com último acesso nulo — para buscar quem nunca acessou o app, use `nunca_acessou`.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "ultimo_acesso_antes_de",
+            "in": "query",
+            "description": "Filtra clientes com último acesso ao app antes desta data (exclusive). Formato ISO-8601 UTC. É um filtro de segmento: preserva a paginação e é combinável com `status_cliente`. Exclui clientes com último acesso nulo — para buscar quem nunca acessou o app, use `nunca_acessou`.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "nunca_acessou",
+            "in": "query",
+            "description": "Quando `true` ou `1`, retorna somente os clientes que nunca acessaram o app (último acesso nulo).",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -102,7 +128,9 @@
                       "telefone": "(11) 97772-3133",
                       "status_cliente": "A",
                       "cpf": null,
-                      "foto_url": "https://s3.amazonaws.com/exemplo-bucket/fotos/cliente-1.jpg?X-Amz-Expires=..."
+                      "foto_url": "https://s3.amazonaws.com/exemplo-bucket/fotos/cliente-1.jpg?X-Amz-Expires=...",
+                      "token_atualizado_em": "2026-08-20T13:45:00Z",
+                      "ultimo_acesso_em": "2026-08-19T22:10:00Z"
                     }
                   ]
                 }
@@ -145,7 +173,9 @@
                       "telefone": "(11) 97772-3133",
                       "status_cliente": "A",
                       "cpf": null,
-                      "foto_url": "https://s3.amazonaws.com/exemplo-bucket/fotos/cliente-1.jpg?X-Amz-Expires=..."
+                      "foto_url": "https://s3.amazonaws.com/exemplo-bucket/fotos/cliente-1.jpg?X-Amz-Expires=...",
+                      "token_atualizado_em": "2026-08-20T13:45:00Z",
+                      "ultimo_acesso_em": "2026-08-19T22:10:00Z"
                     }
                   ]
                 }
