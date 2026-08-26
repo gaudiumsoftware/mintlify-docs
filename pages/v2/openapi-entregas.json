@@ -3939,7 +3939,8 @@
                     "codigo_confirmacao": "9999",
                     "valor_cobrar": 852.37
                   }
-                ]
+                ],
+                "exigir_codigo_confirmacao": true
               },
               "schema": {
                 "type": "object",
@@ -4028,6 +4029,10 @@
                         }
                       }
                     }
+                  },
+                  "exigir_codigo_confirmacao": {
+                    "type": "boolean",
+                    "description": "Torna obrigatória a inserção do código de confirmação pelo condutor nesta solicitação, independente das configurações do cadastro da empresa (ou da central) — vale tanto sobre \"Tornar os códigos de confirmação de entrega obrigatórios\" quanto sobre \"Solicitar código de confirmação de entrega dos pedidos\". Envie `true` para exigir; omitir o campo ou enviar `false` mantém o que está configurado — o parâmetro nunca dispensa uma exigência já configurada. Ao enviar `true`, o `codigo_confirmacao` passa a ser obrigatório em todas as paradas: sem ele o condutor não teria o que informar para concluir a entrega, e a solicitação é recusada com `400 CODIGO_CONFIRMACAO_OBRIGATORIO` (código 136). Pedidos do iFood continuam exigindo o código, por ser regra da própria integração. Uma vez criada com `true`, a exigência não é removível: não há ação de operador que a dispense (o \"prosseguir sem código\" da plataforma existe apenas para pedidos do iFood) e a edição da entrega não altera o parâmetro. O código fica visível no painel da empresa, no link de acompanhamento do cliente e em `GET /entregas/{id}/links-rastreio`; se for preciso concluir sem ele, resta cancelar a entrega."
                   }
                 }
               }
@@ -5677,7 +5682,8 @@
                   }
                 ],
                 "data": "31/12/2026",
-                "hora": "14:30:00"
+                "hora": "14:30:00",
+                "exigir_codigo_confirmacao": true
               },
               "schema": {
                 "type": "object",
@@ -5774,6 +5780,10 @@
                   "hora": {
                     "type": "string",
                     "description": "Hora da entrega programada. Formato HH:MM:SS"
+                  },
+                  "exigir_codigo_confirmacao": {
+                    "type": "boolean",
+                    "description": "Torna obrigatória a inserção do código de confirmação pelo condutor nesta solicitação, independente das configurações do cadastro da empresa (ou da central) — vale tanto sobre \"Tornar os códigos de confirmação de entrega obrigatórios\" quanto sobre \"Solicitar código de confirmação de entrega dos pedidos\". Envie `true` para exigir; omitir o campo ou enviar `false` mantém o que está configurado — o parâmetro nunca dispensa uma exigência já configurada. Ao enviar `true`, o `codigo_confirmacao` passa a ser obrigatório em todas as paradas: sem ele o condutor não teria o que informar para concluir a entrega, e a solicitação é recusada com `400 CODIGO_CONFIRMACAO_OBRIGATORIO` (código 136). Pedidos do iFood continuam exigindo o código, por ser regra da própria integração. Uma vez criada com `true`, a exigência não é removível: não há ação de operador que a dispense (o \"prosseguir sem código\" da plataforma existe apenas para pedidos do iFood) e a edição da entrega não altera o parâmetro. O código fica visível no painel da empresa, no link de acompanhamento do cliente e em `GET /entregas/{id}/links-rastreio`; se for preciso concluir sem ele, resta cancelar a entrega. Em entregas programadas, o valor informado é aplicado à solicitação gerada no momento do disparo."
                   }
                 }
               }
