@@ -138,3 +138,13 @@ html[data-current-path="/pages/v2/changelog-entregas"] .nav-tabs > a:nth-child(4
   --cta-color: #e02020;
   --cta-tint: rgba(241, 48, 48, 0.1);
 }
+
+/* Link "Envie uma sugestão" no menu superior (navbar) */
+a[href*="forms.monday.com"] {
+  color: #4ADE80;
+  font-family: Inter;
+  font-size: var(--bodyMd, 14px);
+  font-style: normal;
+  font-weight: 500;
+  line-height: var(--bodyMd, 20px); /* 142.857% */
+}
