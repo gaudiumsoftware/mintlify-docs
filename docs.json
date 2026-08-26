@@ -361,6 +361,7 @@
                           "pages/v2/entregas/endpoint/post-programadas-cancelar",
                           "pages/v2/entregas/endpoint/post-programadas-estimativas",
                           "pages/v2/entregas/endpoint/post-programadas-agrupar",
+                          "pages/v2/entregas/endpoint/post-programadas-agrupar-programadas",
                           "pages/v2/entregas/endpoint/delete-entrega-programada-by-id"
                         ]
                       },
