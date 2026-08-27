@@ -65,6 +65,7 @@
                     "group": "Dinâmicas",
                     "pages": [
                       "pages/v2/referencia/dinamicas/endpoint/get-area",
+                      "pages/v2/referencia/dinamicas/endpoint/get-vertices",
                       "pages/v2/referencia/dinamicas/endpoint/get-sem-area",
                       "pages/v2/referencia/dinamicas/endpoint/patch-area",
                       "pages/v2/referencia/dinamicas/endpoint/patch-sem-area"
