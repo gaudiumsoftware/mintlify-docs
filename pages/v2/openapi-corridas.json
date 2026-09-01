@@ -2369,6 +2369,10 @@
                   },
                   "retorno": {
                     "type": "boolean"
+                  },
+                  "codigo_cupom": {
+                    "type": "string",
+                    "description": "Código do cupom de desconto a ser aplicado na corrida."
                   }
                 }
               },
@@ -2879,6 +2883,10 @@
                   },
                   "latlng_paradas": {
                     "type": "string"
+                  },
+                  "codigo_cupom": {
+                    "type": "string",
+                    "description": "Código do cupom de desconto a ser aplicado na corrida."
                   }
                 }
               },
@@ -3005,6 +3013,10 @@
                   "multicategorias": {
                     "type": "boolean",
                     "description": "Quando multicategorias é true, a API calcula a estimativa de múltiplas categorias."
+                  },
+                  "codigo_cupom": {
+                    "type": "string",
+                    "description": "Código do cupom de desconto a ser aplicado na corrida."
                   }
                 }
               },
@@ -3154,6 +3166,10 @@
                   },
                   "retorno": {
                     "type": "boolean"
+                  },
+                  "codigo_cupom": {
+                    "type": "string",
+                    "description": "Código do cupom de desconto a ser aplicado na corrida."
                   }
                 }
               },
@@ -3468,6 +3484,10 @@
                   },
                   "latlng_paradas": {
                     "type": "string"
+                  },
+                  "codigo_cupom": {
+                    "type": "string",
+                    "description": "Código do cupom de desconto a ser aplicado na corrida."
                   }
                 }
               },
