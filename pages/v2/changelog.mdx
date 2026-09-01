@@ -174,6 +174,64 @@ export const EndpointBadge = ({ method, path, href }) => (
     </ChangeSection>
   </Entry>
 
+  <Entry date="01 set 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="cupom-desconto-corridas" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Cupom de desconto na criação e estimativa de corridas
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Agora é possível aplicar um cupom de desconto via API, no mesmo fluxo já disponível no
+      app do passageiro.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/corridas" href="/pages/v2/referencia/corridas/endpoint/post-criar" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="codigo_cupom" /> — opcional. Código do cupom de desconto a ser aplicado na corrida.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/corridas/programadas" href="/pages/v2/referencia/corridas/endpoint/post-criar-programada" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="codigo_cupom" /> — opcional. Código do cupom de desconto a ser aplicado na corrida.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/corridas/estimativas" href="/pages/v2/referencia/corridas/endpoint/post-estimativas" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="codigo_cupom" /> — opcional. Código do cupom de desconto; quando informado, <code>estimativa_valor</code> retorna o valor já líquido, com o desconto aplicado.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/corridas/empresas/{id}/estimativas" href="/pages/v2/referencia/corridas/endpoint/post-empresa-estimativas" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="codigo_cupom" /> — opcional. Código do cupom de desconto; quando informado, <code>estimativa_valor</code> retorna o valor já líquido, com o desconto aplicado.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/corridas/programadas/estimativas" href="/pages/v2/referencia/corridas/endpoint/post-programada-estimativas" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="codigo_cupom" /> — opcional. Código do cupom de desconto; quando informado, <code>estimativa_valor</code> retorna o valor já líquido, com o desconto aplicado.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+  </Entry>
+
   <Entry date="25 ago 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="filtros-engajamento-clientes" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Filtros de engajamento na consulta de clientes
