@@ -14,7 +14,7 @@ Gera automaticamente uma entrada no changelog da documentação Mintlify com bas
 | `pages/v2/changelog.mdx`                 | Corridas   |
 | `pages/v2/changelog-entregas.mdx`        | Entregas   |
 
-Cada arquivo define seus próprios componentes (`Entry`, `ChangeSection`, `ParamBadge`, `EndpointBadge`) no topo via `export const`. As entradas `<Entry>` são inseridas diretamente no arquivo, dentro do `<div>` principal, em ordem cronológica decrescente.
+Os componentes (`Entry`, `ChangeSection`, `ParamBadge`, `EndpointBadge`) são compartilhados e vivem em `snippets/changelog-components.mdx`; cada arquivo de changelog os importa no topo via `import { Entry, ChangeSection, ParamBadge, EndpointBadge } from '/snippets/changelog-components.mdx';`. O layout responsivo fica nas classes `cl-*` do `custom.css` da raiz. As entradas `<Entry>` são inseridas diretamente no arquivo, dentro do `<div className="cl-container">`, em ordem cronológica decrescente.
 
 ## Arquivos OpenAPI da v2
 
@@ -224,9 +224,9 @@ Repetir os passos abaixo para **cada arquivo** determinado na etapa 4:
 4. Se a nova entrada for a **mais recente** de todas, inserir logo após o bloco de cabeçalho:
 
    ```mdx
-   <div style={{ maxWidth: "860px", margin: "0 auto", padding: "40px 20px 80px" }}>
+   <div className="cl-container">
 
-     <div style={{ marginBottom: "56px" }}>
+     <div className="cl-page-header">
        ...
      </div>
 
@@ -244,7 +244,9 @@ Após inserir, informar ao usuário:
 
 ## Componentes disponíveis nos arquivos
 
-Ambos os arquivos de changelog definem os mesmos componentes no topo via `export const`. Nunca redefinir.
+Os componentes são definidos uma única vez em `snippets/changelog-components.mdx` e importados pelos dois arquivos de changelog. Nunca redefinir componentes dentro dos changelogs nem remover o `import` do topo.
+
+O layout responsivo (timeline em coluna no mobile, quebra de linha nos badges de endpoint) é controlado pelas classes `cl-*` (`cl-container`, `cl-entry`, `cl-endpoint` etc.) definidas no `custom.css` da raiz — qualquer ajuste visual estrutural deve ser feito lá, não com estilo inline nos componentes.
 
 | Componente       | Props                                | Descrição                                      |
 |------------------|--------------------------------------|------------------------------------------------|
@@ -257,10 +259,10 @@ O `EndpointBadge` suporta os métodos: `GET` (azul), `POST` (verde), `DELETE` (v
 
 ## Regras de qualidade
 
-- **Nunca redefinir componentes** que já existem nos arquivos
+- **Nunca redefinir componentes** — eles vivem em `snippets/changelog-components.mdx` e são importados; edições estruturais de layout vão para as classes `cl-*` no `custom.css`
 - **Sempre incluir `href`** no `EndpointBadge` — buscar em `docs.json` antes de deixar vazio
 - **Ordem cronológica decrescente sempre** — comparar datas numericamente antes de inserir; nunca prependar cegamente no topo nem appendar no final sem verificar
-- **Sem `href` em `<a>` nulo** — se `href` não foi encontrado, usar `<div>` em vez de `<a>`
+- **Sem `href` em `<a>` nulo** — o próprio `EndpointBadge` renderiza `<div>` quando `href` está ausente; basta omitir a prop (e deixar o comentário `{/* TODO: href */}`)
 - **Data sempre em português** — `jan`, `fev`, `mar`, `abr`, `mai`, `jun`, `jul`, `ago`, `set`, `out`, `nov`, `dez`
 - **Modalidade pelo arquivo openapi** — se `openapi.json` mudou → Corridas; se `openapi-entregas.json` mudou → Entregas; ambos → os dois changelogs
 - **Não commitar** — a skill entrega apenas a edição no(s) arquivo(s); o commit é responsabilidade do autor
