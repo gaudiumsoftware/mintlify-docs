@@ -154,6 +154,71 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="1 set 2026" label="Alteração" labelColor="#F59E0B">
+    <h2 id="calculo-individual-por-entrega" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Categorias com cálculo individual por entrega
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      A central passou a oferecer um modo de tarifação em que cada entrega é cobrada pelo trecho
+      coleta &rarr; entrega, e o valor do pedido é a soma dessas entregas — em vez da tarifa aplicada
+      uma vez sobre a rota otimizada. Esse modo depende de valores que só a tela de gestão de pedidos
+      calcula, então <strong>a API de integração não o suporta</strong>. Os endpoints abaixo mudam de
+      comportamento apenas quando a categoria está configurada assim.
+    </p>
+
+    <EndpointBadge method="POST" path="/abrirSolicitacao" href="/pages/v1/entregas/solicitacao/endpoint/post-abrirSolicitacao" />
+
+    <ChangeSection type="changed">
+      <p style={{ marginBottom: "10px" }}>Abrir entrega em categoria com cálculo individual passa a ser recusado com <code>139 CATEGORIA_CALCULO_INDIVIDUAL_NAO_SUPORTADA</code>.</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>Vale tanto para a categoria informada no corpo quanto para a que vem da configuração da integração.</li>
+        <li>Corridas de passageiro <strong>não</strong> são afetadas: o modo é exclusivo de entregas.</li>
+      </ul>
+    </ChangeSection>
+
+    <EndpointBadge method="GET" path="/estimarSolicitacao" href="/pages/v1/entregas/solicitacao/endpoint/get-estimarSolicitacao" />
+
+    <ChangeSection type="changed">
+      <p style={{ margin: 0 }}>Estimativa de entrega nessas categorias devolve o mesmo <code>139</code>. O valor calculado aqui seria menor que o cobrado, então a estimativa é recusada em vez de responder um número que não se confirma no disparo.</p>
+    </ChangeSection>
+
+    <EndpointBadge method="GET" path="/estimarSolicitacaoMulticategorias" />
+
+    <ChangeSection type="changed">
+      <p style={{ margin: 0 }}>Categorias com cálculo individual são <strong>omitidas da resposta</strong>, pelo mesmo motivo. A chamada continua devolvendo <code>200</code> com as demais categorias.</p>
+    </ChangeSection>
+
+    <EndpointBadge method="DELETE" path="/api/v2/integracao/entregas/{id}/paradas/{parada_id}" />
+
+    <ChangeSection type="added">
+      <p style={{ margin: 0 }}>Novo erro <code>139</code> quando a entrega a excluir não tem estimativa individual gravada. Sem ela o valor restante não pode ser recalculado, e a exclusão é recusada em vez de gravar um total errado.</p>
+    </ChangeSection>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/entregas/{id}/agrupar" href="/pages/v2/entregas/endpoint/post-agrupar" />
+
+    <ChangeSection type="changed">
+      <p style={{ marginBottom: "10px" }}>Quando as entregas do grupo usam cálculo individual, o valor do grupo passa a ser a <strong>soma das estimativas de cada entrega</strong>, e não a tarifa sobre a rota mesclada. Retorno, dinâmica e desconto continuam incidindo uma única vez sobre o total.</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>Novo motivo de <code>422</code>: alguma entrega do grupo sem estimativa individual gravada. Somar apenas as que têm cobraria menos que o total real.</li>
+        <li>Vale também para <code>/entregas/{"{id}"}/agrupar/programadas</code> e <code>/entregas/programadas/{"{id}"}/agrupar</code>.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(245, 158, 11, 0.08)",
+      border: "1px solid rgba(245, 158, 11, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nada muda para quem não usa o modo.</strong> Categorias com a tarifação de sempre seguem
+      com o comportamento atual em todos os endpoints. A configuração é feita pela central, por
+      categoria de tarifa — consulte o time da Gaudium antes de ativá-la em uma integração.
+    </div>
+  </Entry>
+
   <Entry date="20 ago 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="agrupar-programadas-em-programada" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Agrupamento de entregas programadas entre si
