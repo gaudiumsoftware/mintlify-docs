@@ -4112,6 +4112,18 @@
                         }
                       ]
                     }
+                  },
+                  "estimativa_entrega_ausente": {
+                    "summary": "Entrega sem estimativa individual gravada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 139,
+                          "message": "A entrega não possui estimativa individual gravada; não é possível excluir a parada."
+                        }
+                      ]
+                    }
                   }
                 }
               }
@@ -4657,6 +4669,18 @@
                         }
                       ]
                     }
+                  },
+                  "estimativa_entrega_ausente": {
+                    "summary": "Entrega sem estimativa individual gravada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Os valores das entregas não conferem com as paradas informadas."
+                        }
+                      ]
+                    }
                   }
                 }
               }
@@ -4900,6 +4924,18 @@
                         {
                           "code": 0,
                           "message": "Não foi possível calcular a estimativa."
+                        }
+                      ]
+                    }
+                  },
+                  "estimativa_entrega_ausente": {
+                    "summary": "Entrega sem estimativa individual gravada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Os valores das entregas não conferem com as paradas informadas."
                         }
                       ]
                     }
@@ -5196,6 +5232,18 @@
                         {
                           "code": 0,
                           "message": "Não foi possível calcular a estimativa."
+                        }
+                      ]
+                    }
+                  },
+                  "estimativa_entrega_ausente": {
+                    "summary": "Entrega sem estimativa individual gravada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Os valores das entregas não conferem com as paradas informadas."
                         }
                       ]
                     }
@@ -6407,6 +6455,18 @@
                         {
                           "code": 33,
                           "message": "Não é possível excluir a última entrega da solicitação."
+                        }
+                      ]
+                    }
+                  },
+                  "estimativa_entrega_ausente": {
+                    "summary": "Entrega sem estimativa individual gravada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 139,
+                          "message": "A entrega não possui estimativa individual gravada; não é possível excluir a parada."
                         }
                       ]
                     }

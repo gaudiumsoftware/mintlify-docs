@@ -1180,7 +1180,7 @@
     "/estimarSolicitacao": {
       "get": {
         "summary": "Estimar solicitação",
-        "description": "Permite obter a estimativa do valor da solicitação em uma única categoria. Para acessar esta endpoint, o usuário precisa ter a permissão `API - Corrida`.",
+        "description": "Permite obter a estimativa do valor da solicitação em uma única categoria. Para acessar esta endpoint, o usuário precisa ter a permissão `API - Corrida`.\n\nQuando a solicitação é de entrega e a categoria usa **cálculo individual por entrega**, a estimativa é recusada com o erro `139 CATEGORIA_CALCULO_INDIVIDUAL_NAO_SUPORTADA` — o valor devolvido seria menor que o cobrado.",
         "parameters": [
           {
             "name": "endereco_partida",
@@ -1374,7 +1374,7 @@
     "/estimarSolicitacaoMulticategorias": {
       "get": {
         "summary": "Estimar solicitação multicategorias",
-        "description": "Permite obter a estimativa do valor da solicitação de todas as categorias da central que possuem uma tarifa associada. Para acessar esta endpoint, o usuário precisa ter a permissão `API - Corrida`.",
+        "description": "Permite obter a estimativa do valor da solicitação de todas as categorias da central que possuem uma tarifa associada. Para acessar esta endpoint, o usuário precisa ter a permissão `API - Corrida`.\n\nCategorias com **cálculo individual por entrega** são omitidas da resposta, porque o valor estimado por elas nesta API seria menor que o cobrado.",
         "parameters": [
           {
             "name": "empresa_id",
@@ -4724,7 +4724,7 @@
     "/abrirSolicitacao": {
       "post": {
         "summary": "Abrir solicitação",
-        "description": "Por meio dessa endpoint, é permitido abrir novas solicitações. Caso seja informado a data e a hora em que a solicitação deve ser aberta, é criada uma solicitação programada.",
+        "description": "Por meio dessa endpoint, é permitido abrir novas solicitações. Caso seja informado a data e a hora em que a solicitação deve ser aberta, é criada uma solicitação programada.\n\nCategorias com **cálculo individual por entrega** não são aceitas nesta API: o valor de cada entrega depende de dados que só a tela de gestão de pedidos envia. Informar uma dessas categorias — direta ou pela configuração da integração — devolve o erro `139 CATEGORIA_CALCULO_INDIVIDUAL_NAO_SUPORTADA`. A restrição vale apenas para entregas; corridas de passageiro não são afetadas.",
         "requestBody": {
           "required": true,
           "content": {
