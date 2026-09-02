@@ -2082,7 +2082,7 @@
     "/corridas": {
       "post": {
         "summary": "Criar corrida",
-        "description": "Cria uma corrida avulsa, aceitando dados de cadastro, passageiro, origem, destino, empresa, filtros extras e paradas.",
+        "description": "Cria uma corrida avulsa, aceitando dados de cadastro, passageiro, origem, destino, empresa, filtros extras, paradas e cupom de desconto (`codigo_cupom`). Quando a bandeira usa cálculo pré-fixo ou pré-variável, o valor calculado da corrida — já líquido do desconto do cupom, se houver — volta no response em `valor_corrida`, `valor_desconto` e `valor_cupom`.",
         "requestBody": {
           "required": true,
           "content": {
@@ -2457,14 +2457,15 @@
                     "lat_parada": -22.903965,
                     "lng_parada": -43.180185
                   }
-                ]
+                ],
+                "codigo_cupom": "PROMO10"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Corrida criada com sucesso",
+            "description": "Corrida criada com sucesso. Os campos `valor_corrida`, `valor_desconto` e `valor_cupom` só vêm presentes quando a bandeira usa cálculo pré-fixo ou pré-variável (valor pré-calculado).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2474,7 +2475,10 @@
                   "success": true,
                   "data": {
                     "id_mch": "100018556",
-                    "tipo": "normal"
+                    "tipo": "normal",
+                    "valor_corrida": 32,
+                    "valor_desconto": 10,
+                    "valor_cupom": 8
                   }
                 }
               }
@@ -2945,7 +2949,7 @@
     "/corridas/estimativas": {
       "post": {
         "summary": "Estimar corrida",
-        "description": "Calcula estimativa de corrida simples ou multicategorias a partir de coordenadas ou endereço. Quando `multicategorias` é `true`, a API calcula a estimativa de múltiplas categorias.",
+        "description": "Calcula estimativa de corrida simples ou multicategorias a partir de coordenadas ou endereço. Quando `multicategorias` é `true`, a API calcula a estimativa de múltiplas categorias. Quando `codigo_cupom` é informado, `estimativa_valor` retorna o valor já líquido, com o desconto do cupom aplicado.",
         "requestBody": {
           "required": true,
           "content": {
@@ -3034,7 +3038,8 @@
                 "cidade_desejado": "Rio de Janeiro",
                 "estado_desejado": "RJ",
                 "multicategorias": true,
-                "latlng_paradas": "-22.904434,-43.175555|-22.912385,-43.226663"
+                "latlng_paradas": "-22.904434,-43.175555|-22.912385,-43.226663",
+                "codigo_cupom": "PROMO10"
               }
             }
           }
@@ -3055,7 +3060,7 @@
                     "categorias": [
                       {
                         "categoria_id": 3,
-                        "estimativa_valor": 40,
+                        "estimativa_valor": 32,
                         "categoria_nome": "Comum",
                         "tarifa_nome": "Tarifa padrão"
                       },
