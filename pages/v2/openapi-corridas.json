@@ -2369,6 +2369,10 @@
                   },
                   "retorno": {
                     "type": "boolean"
+                  },
+                  "codigo_cupom": {
+                    "type": "string",
+                    "description": "Código do cupom de desconto a ser aplicado na corrida."
                   }
                 }
               },
@@ -2879,6 +2883,10 @@
                   },
                   "latlng_paradas": {
                     "type": "string"
+                  },
+                  "codigo_cupom": {
+                    "type": "string",
+                    "description": "Código do cupom de desconto a ser aplicado na corrida."
                   }
                 }
               },
@@ -3005,6 +3013,10 @@
                   "multicategorias": {
                     "type": "boolean",
                     "description": "Quando multicategorias é true, a API calcula a estimativa de múltiplas categorias."
+                  },
+                  "codigo_cupom": {
+                    "type": "string",
+                    "description": "Código do cupom de desconto a ser aplicado na corrida."
                   }
                 }
               },
@@ -3154,6 +3166,10 @@
                   },
                   "retorno": {
                     "type": "boolean"
+                  },
+                  "codigo_cupom": {
+                    "type": "string",
+                    "description": "Código do cupom de desconto a ser aplicado na corrida."
                   }
                 }
               },
@@ -3468,6 +3484,10 @@
                   },
                   "latlng_paradas": {
                     "type": "string"
+                  },
+                  "codigo_cupom": {
+                    "type": "string",
+                    "description": "Código do cupom de desconto a ser aplicado na corrida."
                   }
                 }
               },
@@ -4507,6 +4527,87 @@
                     {
                       "code": 0,
                       "message": "Dinâmica não encontrada."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dinamicas/area/{id}/vertices": {
+      "get": {
+        "summary": "Obter vértices da área da dinâmica",
+        "description": "Obtém os vértices da área da dinâmica em formato GeoJSON Polygon.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador da área da dinâmica.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "type": "Polygon",
+                    "coordinates": [
+                      [
+                        [-46.633309, -23.55052],
+                        [-46.634309, -23.55152],
+                        [-46.632309, -23.55152],
+                        [-46.633309, -23.55052]
+                      ]
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Dinâmica não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Dinâmica não encontrada."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Ocorreu um erro interno no servidor. Por favor, tente novamente mais tarde."
                     }
                   ]
                 }
