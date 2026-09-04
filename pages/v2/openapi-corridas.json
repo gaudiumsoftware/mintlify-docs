@@ -4374,7 +4374,7 @@
     "/dinamicas/area/{id}": {
       "patch": {
         "summary": "Atualizar dinâmica por área",
-        "description": "Atualiza o cadastro da dinâmica associada a uma área específica. Todos os campos são opcionais, mas ao menos um deve ser informado.",
+        "description": "Atualiza o cadastro da dinâmica associada a uma área específica. Todos os campos são opcionais, mas ao menos um deve ser informado. Como a área é imutável após criada, alterar `nome` cria internamente uma NOVA área — a resposta pode trazer um `id` diferente do informado na URL, que deve ser usado nas próximas requisições sobre essa área.",
         "parameters": [
           {
             "name": "id",
@@ -4400,11 +4400,11 @@
                   },
                   "fator": {
                     "type": "number",
-                    "description": "Novo valor do fator aplicado pela dinâmica (numérico)."
+                    "description": "Novo valor do fator aplicado pela dinâmica (numérico). O significado depende de `tipo_calculo`: com `M`, é o multiplicador aplicado ao preço da corrida (entre 1.1 e 5); com `F`, é o valor fixo em R$ somado ao preço da corrida (entre 0.5 e 99.9)."
                   },
                   "tipo_calculo": {
                     "type": "string",
-                    "description": "Forma de cálculo do fator: `F` (valor adicional fixo) ou `M` (multiplicador).",
+                    "description": "Forma de cálculo do fator: `F` — Valor adicional, soma um valor fixo em R$ ao preço da corrida; `M` — Fator multiplicador, multiplica o preço da corrida pelo fator informado.",
                     "enum": [
                       "F",
                       "M"
@@ -4412,7 +4412,7 @@
                   },
                   "tipo_fator": {
                     "type": "string",
-                    "description": "Momento em que o fator é aplicado: `P` (partida) ou `R` (parada).",
+                    "description": "Momento em que o fator é aplicado: `P` — Partida, aplicado na origem/embarque da corrida; `R` — Parada, aplicado no destino/parada da corrida.",
                     "enum": [
                       "P",
                       "R"
@@ -4459,10 +4459,9 @@
                     "id": 10,
                     "nome": "Área Central",
                     "fator": 1.8,
-                    "tipo_calculo": "Fator multiplicador",
-                    "tipo_fator": "Partida",
-                    "ativo": true,
-                    "tipo": "No embarque"
+                    "tipo_calculo": "M",
+                    "tipo_fator": "P",
+                    "ativo": true
                   }
                 }
               }
@@ -4654,19 +4653,16 @@
                   "success": true,
                   "data": {
                     "id": 27,
-                    "nome": "Área Central",
-                    "geometria": {
-                      "type": "Polygon",
-                      "coordinates": [
-                        [
-                          [-46.6558, -23.5615],
-                          [-46.6500, -23.5615],
-                          [-46.6500, -23.5570],
-                          [-46.6558, -23.5570],
-                          [-46.6558, -23.5615]
-                        ]
+                    "type": "Polygon",
+                    "coordinates": [
+                      [
+                        [-46.6558, -23.5615],
+                        [-46.6500, -23.5615],
+                        [-46.6500, -23.5570],
+                        [-46.6558, -23.5570],
+                        [-46.6558, -23.5615]
                       ]
-                    }
+                    ]
                   }
                 }
               }
