@@ -4398,8 +4398,8 @@
     },
     "/dinamicas/area/{id}": {
       "patch": {
-        "summary": "Ativar/Desativar dinâmica por área",
-        "description": "Ativa ou desativa a dinâmica associada a uma área específica.",
+        "summary": "Atualizar dinâmica por área",
+        "description": "Atualiza o cadastro da dinâmica associada a uma área específica. Todos os campos são opcionais, mas ao menos um deve ser informado. Como a área é imutável após criada, alterar `nome` cria internamente uma NOVA área — a resposta pode trazer um `id` diferente do informado na URL, que deve ser usado nas próximas requisições sobre essa área.",
         "parameters": [
           {
             "name": "id",
@@ -4417,10 +4417,32 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "ativo"
-                ],
+                "description": "Ao menos um dos campos abaixo deve ser informado.",
                 "properties": {
+                  "nome": {
+                    "type": "string",
+                    "description": "Novo nome da área."
+                  },
+                  "fator": {
+                    "type": "number",
+                    "description": "Novo valor do fator aplicado pela dinâmica (numérico). O significado depende de `tipo_calculo`: com `M`, é o multiplicador aplicado ao preço da corrida (entre 1.1 e 5); com `F`, é o valor fixo em R$ somado ao preço da corrida (entre 0.5 e 99.9)."
+                  },
+                  "tipo_calculo": {
+                    "type": "string",
+                    "description": "Forma de cálculo do fator: `F` — Valor adicional, soma um valor fixo em R$ ao preço da corrida; `M` — Fator multiplicador, multiplica o preço da corrida pelo fator informado.",
+                    "enum": [
+                      "F",
+                      "M"
+                    ]
+                  },
+                  "tipo_fator": {
+                    "type": "string",
+                    "description": "Momento em que o fator é aplicado: `P` — Partida, aplicado na origem/embarque da corrida; `R` — Parada, aplicado no destino/parada da corrida.",
+                    "enum": [
+                      "P",
+                      "R"
+                    ]
+                  },
                   "ativo": {
                     "description": "Indica se a dinâmica da área ficará ativa ou inativa. Também aceita `1` e `0`.",
                     "oneOf": [
@@ -4439,6 +4461,10 @@
                 }
               },
               "example": {
+                "nome": "Área Central",
+                "fator": 1.8,
+                "tipo_calculo": "M",
+                "tipo_fator": "P",
                 "ativo": true
               }
             }
@@ -4454,7 +4480,14 @@
                 },
                 "example": {
                   "success": true,
-                  "message": "Dinâmica atualizada com sucesso."
+                  "data": {
+                    "id": 10,
+                    "nome": "Área Central",
+                    "fator": 1.8,
+                    "tipo_calculo": "M",
+                    "tipo_fator": "P",
+                    "ativo": true
+                  }
                 }
               }
             }
@@ -4467,14 +4500,50 @@
                   "type": "object"
                 },
                 "examples": {
-                  "campo_obrigatorio": {
-                    "summary": "Campo ativo ausente",
+                  "nenhum_campo_informado": {
+                    "summary": "Nenhum campo informado",
                     "value": {
                       "success": false,
                       "errors": [
                         {
-                          "code": 2,
-                          "message": "'ativo': Preenchimento obrigatório"
+                          "code": 0,
+                          "message": "Informe ao menos um dos campos: 'nome', 'fator', 'tipo_calculo', 'tipo_fator' ou 'ativo'"
+                        }
+                      ]
+                    }
+                  },
+                  "fator_invalido": {
+                    "summary": "Campo fator inválido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O campo 'fator' deve ser numérico"
+                        }
+                      ]
+                    }
+                  },
+                  "fator_fora_do_limite": {
+                    "summary": "Fator fora do limite permitido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O campo 'fator' está fora do limite permitido"
+                        }
+                      ]
+                    }
+                  },
+                  "fator_obrigatorio_na_troca_tipo_calculo": {
+                    "summary": "Fator obrigatório ao trocar o tipo de cálculo",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O campo 'fator' é obrigatório ao alterar o 'tipo_calculo'"
                         }
                       ]
                     }
@@ -4487,18 +4556,6 @@
                         {
                           "code": 0,
                           "message": "'ativo': Deve ser um valor booleano (true ou false)."
-                        }
-                      ]
-                    }
-                  },
-                  "nenhuma_alteracao": {
-                    "summary": "Nenhuma alteração detectada",
-                    "value": {
-                      "success": false,
-                      "errors": [
-                        {
-                          "code": 0,
-                          "message": "Nenhuma alteração detectada."
                         }
                       ]
                     }
@@ -4613,6 +4670,181 @@
                     {
                       "code": 0,
                       "message": "Ocorreu um erro interno no servidor. Por favor, tente novamente mais tarde."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Atualizar vértices da área da dinâmica",
+        "description": "Substitui todos os vértices do polígono de uma área de dinâmica, a partir de um objeto GeoJSON do tipo `Polygon` (RFC 7946). Como a área é imutável após criada, a alteração de geometria cria internamente uma NOVA área (copiando os demais atributos da área original) — a resposta traz um `id` de área diferente do informado na URL, que deve ser usado nas próximas requisições.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador da área cujos vértices serão atualizados.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "type",
+                  "coordinates"
+                ],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "Tipo de geometria GeoJSON. Deve ser `Polygon`.",
+                    "enum": [
+                      "Polygon"
+                    ]
+                  },
+                  "coordinates": {
+                    "type": "array",
+                    "description": "Array com exatamente um anel de coordenadas (`coordinates[0]`), com ao menos 4 posições (mínimo de 3 vértices distintos mais o fechamento do anel, ou seja, a primeira posição igual à última). Cada posição é um par `[lng, lat]`, com `lng` entre -180 e 180 e `lat` entre -90 e 90.",
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "number"
+                        },
+                        "minItems": 2,
+                        "maxItems": 2
+                      },
+                      "minItems": 4
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  }
+                }
+              },
+              "example": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [-46.6558, -23.5615],
+                    [-46.6500, -23.5615],
+                    [-46.6500, -23.5570],
+                    [-46.6558, -23.5570],
+                    [-46.6558, -23.5615]
+                  ]
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Vértices atualizados com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": 27,
+                    "type": "Polygon",
+                    "coordinates": [
+                      [
+                        [-46.6558, -23.5615],
+                        [-46.6500, -23.5615],
+                        [-46.6500, -23.5570],
+                        [-46.6558, -23.5570],
+                        [-46.6558, -23.5615]
+                      ]
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "tipo_invalido": {
+                    "summary": "Tipo de geometria inválido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O campo 'type' deve ser 'Polygon'"
+                        }
+                      ]
+                    }
+                  },
+                  "coordinates_insuficientes": {
+                    "summary": "Vértices insuficientes",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O polígono deve conter ao menos 3 vértices distintos"
+                        }
+                      ]
+                    }
+                  },
+                  "posicao_invalida": {
+                    "summary": "Coordenada fora do intervalo permitido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "As coordenadas devem ser numéricas, com 'lng' entre -180 e 180 e 'lat' entre -90 e 90"
+                        }
+                      ]
+                    }
+                  },
+                  "json_malformado": {
+                    "summary": "JSON malformado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "JSON_INVALIDO"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Dinâmica não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Dinâmica não encontrada."
                     }
                   ]
                 }

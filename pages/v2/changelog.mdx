@@ -154,6 +154,48 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="3 set 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 id="patch-area-vertices-dinamica" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Atualização de área e vértices da dinâmica
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      O endpoint de atualização da dinâmica por área agora aceita outros campos além de <ParamBadge name="ativo" />, e um novo endpoint permite substituir os vértices do polígono de uma área.
+    </p>
+
+    <EndpointBadge method="PATCH" path="/api/v2/integracao/dinamicas/area/{id}" href="/pages/v2/referencia/dinamicas/endpoint/patch-area" />
+
+    <ChangeSection type="changed">
+      <p style={{ marginBottom: "10px" }}>Novos campos opcionais no corpo da requisição (ao menos um deve ser informado):</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="nome" /> — novo nome da área.</li>
+        <li><ParamBadge name="fator" /> — novo valor do fator aplicado pela dinâmica.</li>
+        <li><ParamBadge name="tipo_calculo" /> — forma de cálculo do fator: <code>F</code> (valor adicional, soma um valor fixo em R$) ou <code>M</code> (fator multiplicador, multiplica o preço da corrida).</li>
+        <li><ParamBadge name="tipo_fator" /> — momento de aplicação do fator: <code>P</code> (partida, na origem/embarque) ou <code>R</code> (parada, no destino).</li>
+        <li><ParamBadge name="ativo" /> — comportamento inalterado, ativa ou desativa a dinâmica da área.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="PATCH" path="/api/v2/integracao/dinamicas/area/{id}/vertices" href="/pages/v2/referencia/dinamicas/endpoint/patch-vertices" />
+    </div>
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Novo endpoint para substituir todos os vértices do polígono de uma área, a partir de um objeto GeoJSON <code>Polygon</code> (RFC 7946) com um único anel de coordenadas.</p>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> a área é imutável depois de criada — alterar a geometria (endpoint de vértices) ou o <ParamBadge name="nome" /> (endpoint de área) cria internamente uma NOVA área, copiando os demais atributos da original. Em ambos os casos a resposta pode trazer um <code>id</code> de área diferente do informado na URL, que deve ser usado nas próximas requisições sobre essa área.
+    </div>
+  </Entry>
+
   <Entry date="1 set 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="vertices-area-dinamica" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Vértices da área da dinâmica
