@@ -3756,7 +3756,7 @@
     "/corridas/{id}/cancelar": {
       "post": {
         "summary": "Cancelar corrida",
-        "description": "Cancela uma corrida existente pelo motivo informado.",
+        "description": "Cancela uma corrida existente pelo motivo informado.\n\nA corrida **não pode** estar em um status final: `C` (Cancelada), `F` (Finalizada) ou `N` (Não atendida). Nesses casos o cancelamento é rejeitado.",
         "parameters": [
           {
             "name": "id",
@@ -3780,7 +3780,8 @@
                 "properties": {
                   "motivo_id": {
                     "type": "integer",
-                    "description": "Motivo de cancelamento."
+                    "description": "ID do motivo do cancelamento:\n- `1`: Tempo de espera\n- `2`: Mudança de planos\n- `3`: Acidente/veículo quebrado\n- `4`: Difícil acesso\n- `5`: Passageiro não entrou\n- `6`: Outros\n- `7`: Endereço errado\n- `8`: Corrida em andamento há mais de 24 horas\n- `9`: Falha no sistema\n- `10`: Outros casos\n- `11`: Rejeitada\n- `12`: Motorista não está vindo\n- `13`: Transação rejeitada\n- `16`: Despachado na plataforma parceira\n- `17`: Cancelado na plataforma parceira\n- `18`: Não foi possível realizar o pagamento\n- `19`: Pagamento não realizado",
+                    "enum": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19]
                   }
                 }
               },

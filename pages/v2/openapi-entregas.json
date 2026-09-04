@@ -4407,7 +4407,7 @@
     "/entregas/{id}/cancelar": {
       "post": {
         "summary": "Cancelar entrega",
-        "description": "Cancela a solicitação de entrega, modificando seu status para `C`. A solicitação não pode ter sido finalizada, cancelada ou não atendida anteriormente.",
+        "description": "Cancela a solicitação de entrega, modificando seu status para `C`. A solicitação não pode ter sido finalizada, cancelada ou não atendida anteriormente (status `F`, `C` ou `N`).\n\n**O motivo aceito depende do status atual da entrega e de quem cancela.**\n\n**Cancelamento pela empresa:**\n\n| Status atual | Motivo aceito |\n|---|---|\n| `D` Distribuindo, `T` Redistribuindo, `P` Pendente, `G` Aguardando aceite (em despacho) | Somente `10` (Outros casos) |\n| `A` Aceita, `E` Em andamento, `S` Em espera (com condutor) | Somente motivos de empresa: `12` (Motorista não está vindo) |\n\nEnviar um motivo fora do permitido para o status atual retorna erro `102` (motivo inválido para a empresa). Um `motivo_id` inexistente retorna erro `26` (motivo de cancelamento não encontrado).\n\n**Cancelamento pela central:** quando a entrega é cancelada pela central, o motivo é definido automaticamente conforme o status, não sendo necessário informar `motivo_id`:\n\n| Status atual | Motivo aplicado |\n|---|---|\n| `L` Aguardando liberação | `11` (Rejeitada) |\n| `D` Distribuindo, `T` Redistribuindo, `G` Aguardando aceite, `P` Pendente, `A` Aceita, `S` Em espera, `R` Aguardando pagamento | `10` (Outros casos) |",
         "parameters": [
           {
             "name": "id",
@@ -4427,7 +4427,9 @@
                 "type": "object",
                 "properties": {
                   "motivo_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "description": "ID do motivo do cancelamento. O motivo permitido varia conforme o status atual da entrega (ver descrição do endpoint):\n- `10`: Outros casos (único aceito enquanto a entrega está em despacho)\n- `12`: Motorista não está vindo (motivo de empresa)",
+                    "enum": [10, 12]
                   }
                 }
               }
