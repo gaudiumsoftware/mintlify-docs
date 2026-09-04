@@ -2082,7 +2082,7 @@
     "/corridas": {
       "post": {
         "summary": "Criar corrida",
-        "description": "Cria uma corrida avulsa, aceitando dados de cadastro, passageiro, origem, destino, empresa, filtros extras e paradas.",
+        "description": "Cria uma corrida avulsa, aceitando dados de cadastro, passageiro, origem, destino, empresa, filtros extras, paradas e cupom de desconto (`codigo_cupom`). Quando a bandeira usa cálculo pré-fixo ou pré-variável, o valor calculado da corrida — já líquido do desconto do cupom, se houver — volta no response em `valor_corrida`, `valor_desconto` e `valor_cupom`.",
         "requestBody": {
           "required": true,
           "content": {
@@ -2369,6 +2369,10 @@
                   },
                   "retorno": {
                     "type": "boolean"
+                  },
+                  "codigo_cupom": {
+                    "type": "string",
+                    "description": "Código do cupom de desconto a ser aplicado na corrida."
                   }
                 }
               },
@@ -2453,14 +2457,15 @@
                     "lat_parada": -22.903965,
                     "lng_parada": -43.180185
                   }
-                ]
+                ],
+                "codigo_cupom": "PROMO10"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Corrida criada com sucesso",
+            "description": "Corrida criada com sucesso. Os campos `valor_corrida`, `valor_desconto` e `valor_cupom` só vêm presentes quando a bandeira usa cálculo pré-fixo ou pré-variável (valor pré-calculado).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2470,7 +2475,10 @@
                   "success": true,
                   "data": {
                     "id_mch": "100018556",
-                    "tipo": "normal"
+                    "tipo": "normal",
+                    "valor_corrida": 32,
+                    "valor_desconto": 10,
+                    "valor_cupom": 8
                   }
                 }
               }
@@ -2879,6 +2887,10 @@
                   },
                   "latlng_paradas": {
                     "type": "string"
+                  },
+                  "codigo_cupom": {
+                    "type": "string",
+                    "description": "Código do cupom de desconto a ser aplicado na corrida."
                   }
                 }
               },
@@ -2937,7 +2949,7 @@
     "/corridas/estimativas": {
       "post": {
         "summary": "Estimar corrida",
-        "description": "Calcula estimativa de corrida simples ou multicategorias a partir de coordenadas ou endereço. Quando `multicategorias` é `true`, a API calcula a estimativa de múltiplas categorias.",
+        "description": "Calcula estimativa de corrida simples ou multicategorias a partir de coordenadas ou endereço. Quando `multicategorias` é `true`, a API calcula a estimativa de múltiplas categorias. Quando `codigo_cupom` é informado, `estimativa_valor` retorna o valor já líquido, com o desconto do cupom aplicado.",
         "requestBody": {
           "required": true,
           "content": {
@@ -3005,6 +3017,10 @@
                   "multicategorias": {
                     "type": "boolean",
                     "description": "Quando multicategorias é true, a API calcula a estimativa de múltiplas categorias."
+                  },
+                  "codigo_cupom": {
+                    "type": "string",
+                    "description": "Código do cupom de desconto a ser aplicado na corrida."
                   }
                 }
               },
@@ -3022,7 +3038,8 @@
                 "cidade_desejado": "Rio de Janeiro",
                 "estado_desejado": "RJ",
                 "multicategorias": true,
-                "latlng_paradas": "-22.904434,-43.175555|-22.912385,-43.226663"
+                "latlng_paradas": "-22.904434,-43.175555|-22.912385,-43.226663",
+                "codigo_cupom": "PROMO10"
               }
             }
           }
@@ -3043,7 +3060,7 @@
                     "categorias": [
                       {
                         "categoria_id": 3,
-                        "estimativa_valor": 40,
+                        "estimativa_valor": 32,
                         "categoria_nome": "Comum",
                         "tarifa_nome": "Tarifa padrão"
                       },
@@ -3154,6 +3171,10 @@
                   },
                   "retorno": {
                     "type": "boolean"
+                  },
+                  "codigo_cupom": {
+                    "type": "string",
+                    "description": "Código do cupom de desconto a ser aplicado na corrida."
                   }
                 }
               },
@@ -3468,6 +3489,10 @@
                   },
                   "latlng_paradas": {
                     "type": "string"
+                  },
+                  "codigo_cupom": {
+                    "type": "string",
+                    "description": "Código do cupom de desconto a ser aplicado na corrida."
                   }
                 }
               },
@@ -4574,6 +4599,85 @@
       }
     },
     "/dinamicas/area/{id}/vertices": {
+      "get": {
+        "summary": "Obter vértices da área da dinâmica",
+        "description": "Obtém os vértices da área da dinâmica em formato GeoJSON Polygon.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador da área da dinâmica.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "type": "Polygon",
+                    "coordinates": [
+                      [
+                        [-46.633309, -23.55052],
+                        [-46.634309, -23.55152],
+                        [-46.632309, -23.55152],
+                        [-46.633309, -23.55052]
+                      ]
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Dinâmica não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Dinâmica não encontrada."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Ocorreu um erro interno no servidor. Por favor, tente novamente mais tarde."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
       "patch": {
         "summary": "Atualizar vértices da área da dinâmica",
         "description": "Substitui todos os vértices do polígono de uma área de dinâmica, a partir de um objeto GeoJSON do tipo `Polygon` (RFC 7946). Como a área é imutável após criada, a alteração de geometria cria internamente uma NOVA área (copiando os demais atributos da área original) — a resposta traz um `id` de área diferente do informado na URL, que deve ser usado nas próximas requisições.",

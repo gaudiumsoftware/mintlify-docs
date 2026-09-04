@@ -65,6 +65,7 @@
                     "group": "Dinâmicas",
                     "pages": [
                       "pages/v2/referencia/dinamicas/endpoint/get-area",
+                      "pages/v2/referencia/dinamicas/endpoint/get-vertices",
                       "pages/v2/referencia/dinamicas/endpoint/get-sem-area",
                       "pages/v2/referencia/dinamicas/endpoint/patch-area",
                       "pages/v2/referencia/dinamicas/endpoint/patch-vertices",
@@ -608,6 +609,10 @@
       {
         "label": "Suporte",
         "href": "https://suporte.machine.global/hc/pt-br"
+      },
+      {
+        "label": "Envie uma sugestão",
+        "href": "https://forms.monday.com/forms/e31336bc5a756ce39f08628243720155?r=use1"
       }
     ],
     "primary": {
