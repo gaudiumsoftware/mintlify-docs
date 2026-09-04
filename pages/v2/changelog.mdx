@@ -154,6 +154,38 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="4 set 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 id="webhook-posicao-lote" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Novo formato do Webhook de Posição
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      O Webhook de Posição passou a entregar as posições dos condutores em lote, a cada 10 segundos, em um envelope com o array <ParamBadge name="data" />. O contrato completo está em <a href="/pages/v2/referencia/webhooks/sobre">Webhooks &gt; Sobre</a>.
+    </p>
+
+    <ChangeSection type="changed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>O corpo da requisição virou um envelope <ParamBadge name="event_id" /> / <ParamBadge name="datetime" /> / <ParamBadge name="data" />, com até 500 posições por envio. Uma janela com mais posições é dividida em várias requisições, cada uma com o seu próprio <ParamBadge name="event_id" />.</li>
+        <li>As coordenadas passaram a ser enviadas dentro do objeto <ParamBadge name="coordinates" />, com <ParamBadge name="latitude" /> e <ParamBadge name="longitude" /> sempre juntas e com 6 casas decimais.</li>
+        <li>Cada par condutor/solicitação aparece no máximo uma vez por janela, sempre com a leitura mais recente.</li>
+        <li>Não há reenvio: se a URL cadastrada responder erro, o lote não é reentregue — a janela seguinte já traz uma posição mais nova. Leituras com mais de 15 segundos não são entregues.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="timestamp" /> — momento em que a posição foi gerada pelo condutor, em milissegundos desde 1970-01-01 UTC. É distinto do <ParamBadge name="datetime" /> do envelope, que marca o envio do lote.</li>
+        <li><ParamBadge name="enterprise_id" /> — identificador da empresa, presente apenas quando o webhook é cadastrado com o responsável <code>empresa</code>.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="removed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="links" /> — o objeto com as URLs de solicitação, condutor e empresa não é mais enviado.</li>
+        <li><ParamBadge name="latitude" /> e <ParamBadge name="longitude" /> na raiz do item, substituídas pelo objeto <ParamBadge name="coordinates" />.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="3 set 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="patch-area-vertices-dinamica" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Atualização de área e vértices da dinâmica
