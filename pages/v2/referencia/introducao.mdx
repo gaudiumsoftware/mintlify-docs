@@ -279,14 +279,16 @@ Os valores da tabela são **limites base**. O limite efetivo de cada grupo é o 
 | Créditos e documentos de condutores | `/api/v2/integracao/condutores/creditos/recargas`<br />`/api/v2/integracao/condutores/creditos/saques`<br />`/api/v2/integracao/condutores/documentos`<br />`/api/v2/integracao/condutores/requisitos-cadastro/documentos`<br />`/api/v2/integracao/condutores/areas-bloqueio/batch` | 1000 * fator requisições por minuto |
 | Condutores | `/api/v2/integracao/condutores`<br />`/api/v2/integracao/condutores/*` | 80 * fator requisições por minuto |
 | Programadas | `/api/v2/integracao/corridas/programadas`<br />`/api/v2/integracao/corridas/programadas/*` | 200 * fator requisições por minuto |
-| Crítico | `/api/v2/integracao/corridas/*` | 800 * fator requisições por minuto |
-| Categorias | `/api/v2/integracao/configuracoes/categorias/*` | Sem bloqueio configurado. O gateway registra log a partir de 10 * fator requisições por minuto. |
-| Configurações (bandeira) | `/api/v2/integracao/configuracoes` | Sem bloqueio configurado. O gateway registra log a partir de 10 * fator requisições por minuto. |
+| Crítico | `/api/v2/integracao/corridas`<br />`/api/v2/integracao/corridas/*` | 800 * fator requisições por minuto |
+| Categorias | `/api/v2/integracao/configuracoes/categorias/*` | 200 * fator requisições por minuto |
+| Configurações (bandeira) | `/api/v2/integracao/configuracoes` | 200 * fator requisições por minuto |
 | Saque automático | `/api/v2/integracao/configuracoes/saque-automatico/ativacao` | 50 * fator requisições por minuto |
 | Dinâmica | `/api/v2/integracao/dinamicas*` | 200 * fator requisições por minuto |
-| Notificações (in-app e push) | `/api/v2/integracao/notificacoes/in-app-messaging`<br />`/api/v2/integracao/notificacoes/push` | 20 * fator requisições por minuto |
+| Notificações (in-app e push) | `/api/v2/integracao/notificacoes/in-app-messaging`<br />`/api/v2/integracao/notificacoes/push` | 100 * fator requisições por minuto |
 | In-app messaging (individual) | `/api/v2/integracao/notificacoes/in-app-messaging/individual` | 200 * fator requisições por minuto |
 | Push (individual) | `/api/v2/integracao/notificacoes/push/individual` | 200 * fator requisições por minuto |
+| Cupons | `/api/v2/integracao/cupons` | 60 * fator requisições por minuto |
+| Webhooks | `/api/v2/integracao/webhooks`<br />`/api/v2/integracao/webhooks/*` | 60 * fator requisições por minuto |
 | Padrão | `/api/v2/integracao/*` | 1000 * fator requisições por minuto |
 
 ### Headers de rate limit
@@ -299,7 +301,7 @@ Nas respostas dos endpoints com limite de bloqueio configurado, o gateway inform
 | `X-RateLimit-Remaining` | Requisições ainda disponíveis na janela atual. Vale `0` na resposta `429`. |
 | `X-Total-Period` | Duração da janela em segundos (hoje sempre `60`). A taxa permitida é `X-RateLimit-Limit / X-Total-Period`. |
 
-Quando o grupo tem mais de um limite de bloqueio, os headers refletem o mais restritivo (o de menor saldo). Grupos sem bloqueio configurado (apenas log) não retornam esses headers.
+Quando o grupo tem mais de um limite de bloqueio, os headers refletem o mais restritivo (o de menor saldo).
 
 Não existe header de reset: como a contagem usa janela deslizante, não há um instante único de zeragem do contador. Na resposta `429`, o tempo de espera continua sendo indicado pelo header `Retry-After`, em segundos.
 

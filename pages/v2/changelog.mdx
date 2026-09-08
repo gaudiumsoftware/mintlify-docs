@@ -154,6 +154,195 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="4 set 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 id="webhook-posicao-lote" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Novo formato do Webhook de Posição
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      O Webhook de Posição passou a entregar as posições dos condutores em lote, a cada 10 segundos, em um envelope com o array <ParamBadge name="data" />. O contrato completo está em <a href="/pages/v2/referencia/webhooks/sobre">Webhooks &gt; Sobre</a>.
+    </p>
+
+    <ChangeSection type="changed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>O corpo da requisição virou um envelope <ParamBadge name="event_id" /> / <ParamBadge name="datetime" /> / <ParamBadge name="data" />, com até 500 posições por envio. Uma janela com mais posições é dividida em várias requisições, cada uma com o seu próprio <ParamBadge name="event_id" />.</li>
+        <li>As coordenadas passaram a ser enviadas dentro do objeto <ParamBadge name="coordinates" />, com <ParamBadge name="latitude" /> e <ParamBadge name="longitude" /> sempre juntas e com 6 casas decimais.</li>
+        <li>Cada par condutor/solicitação aparece no máximo uma vez por janela, sempre com a leitura mais recente.</li>
+        <li>Não há reenvio: se a URL cadastrada responder erro, o lote não é reentregue — a janela seguinte já traz uma posição mais nova. Leituras com mais de 15 segundos não são entregues.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="timestamp" /> — momento em que a posição foi gerada pelo condutor, em milissegundos desde 1970-01-01 UTC. É distinto do <ParamBadge name="datetime" /> do envelope, que marca o envio do lote.</li>
+        <li><ParamBadge name="enterprise_id" /> — identificador da empresa, presente apenas quando o webhook é cadastrado com o responsável <code>empresa</code>.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="removed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="links" /> — o objeto com as URLs de solicitação, condutor e empresa não é mais enviado.</li>
+        <li><ParamBadge name="latitude" /> e <ParamBadge name="longitude" /> na raiz do item, substituídas pelo objeto <ParamBadge name="coordinates" />.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
+  <Entry date="3 set 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 id="patch-area-vertices-dinamica" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Atualização de área e vértices da dinâmica
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      O endpoint de atualização da dinâmica por área agora aceita outros campos além de <ParamBadge name="ativo" />, e um novo endpoint permite substituir os vértices do polígono de uma área.
+    </p>
+
+    <EndpointBadge method="PATCH" path="/api/v2/integracao/dinamicas/area/{id}" href="/pages/v2/referencia/dinamicas/endpoint/patch-area" />
+
+    <ChangeSection type="changed">
+      <p style={{ marginBottom: "10px" }}>Novos campos opcionais no corpo da requisição (ao menos um deve ser informado):</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="nome" /> — novo nome da área.</li>
+        <li><ParamBadge name="fator" /> — novo valor do fator aplicado pela dinâmica.</li>
+        <li><ParamBadge name="tipo_calculo" /> — forma de cálculo do fator: <code>F</code> (valor adicional, soma um valor fixo em R$) ou <code>M</code> (fator multiplicador, multiplica o preço da corrida).</li>
+        <li><ParamBadge name="tipo_fator" /> — momento de aplicação do fator: <code>P</code> (partida, na origem/embarque) ou <code>R</code> (parada, no destino).</li>
+        <li><ParamBadge name="ativo" /> — comportamento inalterado, ativa ou desativa a dinâmica da área.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="PATCH" path="/api/v2/integracao/dinamicas/area/{id}/vertices" href="/pages/v2/referencia/dinamicas/endpoint/patch-vertices" />
+    </div>
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Novo endpoint para substituir todos os vértices do polígono de uma área, a partir de um objeto GeoJSON <code>Polygon</code> (RFC 7946) com um único anel de coordenadas.</p>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> a área é imutável depois de criada — alterar a geometria (endpoint de vértices) ou o <ParamBadge name="nome" /> (endpoint de área) cria internamente uma NOVA área, copiando os demais atributos da original. Em ambos os casos a resposta pode trazer um <code>id</code> de área diferente do informado na URL, que deve ser usado nas próximas requisições sobre essa área.
+    </div>
+  </Entry>
+
+  <Entry date="1 set 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="vertices-area-dinamica" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Vértices da área da dinâmica
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novo endpoint para consultar os vértices que delimitam a área de uma dinâmica, no formato GeoJSON Polygon.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/dinamicas/area/{id}/vertices" href="/pages/v2/referencia/dinamicas/endpoint/get-vertices" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Retorna os vértices da área da dinâmica em formato GeoJSON Polygon, com o anel fechado (primeira coordenada igual à última):</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="type" /> — sempre <code>"Polygon"</code>.</li>
+        <li><ParamBadge name="coordinates" /> — array de anéis, cada um com pares <code>[lng, lat]</code> descrevendo o polígono da área.</li>
+      </ul>
+      <p style={{ marginTop: "14px" }}>Retorna erro 404 quando a dinâmica/área não existe, está excluída ou inativa.</p>
+    </ChangeSection>
+  </Entry>
+
+  <Entry date="01 set 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="cupom-desconto-corridas" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Cupom de desconto na criação e estimativa de corridas
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Agora é possível aplicar um cupom de desconto via API, no mesmo fluxo já disponível no
+      app do passageiro.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/corridas" href="/pages/v2/referencia/corridas/endpoint/post-criar" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="codigo_cupom" /> — opcional. Código do cupom de desconto a ser aplicado na corrida.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/corridas/programadas" href="/pages/v2/referencia/corridas/endpoint/post-criar-programada" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="codigo_cupom" /> — opcional. Código do cupom de desconto a ser aplicado na corrida.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/corridas/estimativas" href="/pages/v2/referencia/corridas/endpoint/post-estimativas" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="codigo_cupom" /> — opcional. Código do cupom de desconto; quando informado, <code>estimativa_valor</code> retorna o valor já líquido, com o desconto aplicado.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/corridas/empresas/{id}/estimativas" href="/pages/v2/referencia/corridas/endpoint/post-empresa-estimativas" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="codigo_cupom" /> — opcional. Código do cupom de desconto; quando informado, <code>estimativa_valor</code> retorna o valor já líquido, com o desconto aplicado.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/corridas/programadas/estimativas" href="/pages/v2/referencia/corridas/endpoint/post-programada-estimativas" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="codigo_cupom" /> — opcional. Código do cupom de desconto; quando informado, <code>estimativa_valor</code> retorna o valor já líquido, com o desconto aplicado.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+  </Entry>
+
+  <Entry date="25 ago 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 id="filtros-engajamento-clientes" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Filtros de engajamento na consulta de clientes
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novos parâmetros para segmentar clientes pelo último acesso ao app, além de novos campos de acesso e token na resposta.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/clientes" href="/pages/v2/referencia/clientes/endpoint/get" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Novos parâmetros de query disponíveis:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="ultimo_acesso_apos" /> — filtra clientes com último acesso ao app a partir desta data (ISO-8601 UTC, inclusive).</li>
+        <li><ParamBadge name="ultimo_acesso_antes_de" /> — filtra clientes com último acesso ao app antes desta data (ISO-8601 UTC, exclusive).</li>
+        <li><ParamBadge name="nunca_acessou" /> — quando <code>true</code> ou <code>1</code>, retorna somente clientes que nunca acessaram o app.</li>
+      </ul>
+      <p style={{ marginTop: "14px", marginBottom: "10px" }}>Novos campos no retorno de cada cliente:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="token_atualizado_em" /> — data da última atualização do token de acesso do cliente.</li>
+        <li><ParamBadge name="ultimo_acesso_em" /> — data do último acesso do cliente ao app.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> <ParamBadge name="ultimo_acesso_apos" /> e <ParamBadge name="ultimo_acesso_antes_de" /> comparam contra o último acesso registrado e por isso excluem clientes sem nenhum acesso — para esses, use <ParamBadge name="nunca_acessou" />. Esses filtros preservam a paginação e são combináveis com <ParamBadge name="status_cliente" />, que é independente (status administrativo do cadastro, não uso do app).
+    </div>
+  </Entry>
+
   <Entry date="13 ago 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="detalhes-corridas-programadas" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Detalhes da solicitação na consulta de corridas programadas

@@ -267,7 +267,7 @@ O gateway aplica rate limit por janela deslizante de 60 segundos.
 Quando a requisição excede o limite de bloqueio, a API retorna `429`.
 
 Os limites são aplicados por `api-key`.
-Os grupos mais específicos têm prioridade sobre o grupo padrão.
+A avaliação segue a prioridade das regras: grupos específicos são avaliados antes dos prefixos mais genéricos (`/integracao/v1/*`, `/api/v1/*` e `/api/integracao/*`).
 
 O limite é contado **por grupo de endpoints**, e não por endpoint isolado: todas as chamadas às rotas de um mesmo grupo somam no mesmo contador. Por exemplo, chamar `/api/integracao/solicitacao` e `/api/integracao/solicitacaoStatus` com a mesma chave em menos de um minuto consome 2 requisições do grupo "Crítico", e não 1 de cada endpoint.
 
@@ -275,16 +275,26 @@ Os valores da tabela são **limites base**. O limite efetivo de cada grupo é o 
 
 | Grupo | Paths | Limite |
 | -------- | -------- | -------- |
-| Crítico | `/api/integracao/solicitacao`<br />`/api/integracao/solicitacaoStatus` | 800 * fator requisições por minuto |
+| Crítico | `/api/integracao/solicitacao`<br />`/api/integracao/solicitacaoStatus` | 500 * fator requisições por minuto, mais o limite por solicitação descrito abaixo |
 | Condutores e créditos | `/api/integracao/saldoCreditosCondutor`<br />`/api/integracao/saldoCreditosCondutor/`<br />`/api/integracao/condutor`<br />`/api/integracao/taxista` | 80 * fator requisições por minuto |
 | Posição do condutor | `/api/integracao/posicaoCondutor` | 1000 * fator requisições por minuto |
-| Categorias | `/integracao/v1/categoria*` | Sem bloqueio configurado. O gateway registra log a partir de 10 * fator requisições por minuto. |
-| Bandeiras | `/integracao/v1/bandeira*` | Sem bloqueio configurado. O gateway registra log a partir de 10 * fator requisições por minuto. |
+| Categorias | `/integracao/v1/categoria*` | 200 * fator requisições por minuto |
+| Bandeiras | `/integracao/v1/bandeira*` | 200 * fator requisições por minuto |
 | Saque automático | `/integracao/v1/saqueAutomatico*` | 50 * fator requisições por minuto |
 | Programadas | `/api/integracao/consultarProgramada` | 200 * fator requisições por minuto |
 | Dinâmica | `/integracao/v1/dinamica*` | 200 * fator requisições por minuto |
-| Notificações (in-app e push) | `/integracao/v1/notificacao/inAppMessaging`<br />`/integracao/v1/notificacao/push` | 20 * fator requisições por minuto |
+| Notificações (in-app e push) | `/integracao/v1/notificacao/inAppMessaging`<br />`/integracao/v1/notificacao/push` | 100 * fator requisições por minuto |
+| Padrão (`/integracao/v1`) | `/integracao/v1/*` | 200 * fator requisições por minuto |
+| Padrão (`/api/v1`) | `/api/v1/*` | 200 * fator requisições por minuto |
 | Padrão | `/api/integracao/*` | 1000 * fator requisições por minuto |
+
+### Limite por solicitação
+
+Além do limite do grupo Crítico, os endpoints `/api/integracao/solicitacao` e `/api/integracao/solicitacaoStatus` têm um limite adicional **por solicitação consultada**: a mesma `api-key` pode consultar a mesma solicitação no máximo **3 vezes por minuto**. Esse limite é fixo e não é multiplicado pelo fator.
+
+A solicitação é identificada pelo `id_mch` (ou `id`) informado na requisição. Em `/api/integracao/solicitacao`, quando a requisição tem body, o identificador é lido do body e a query string é ignorada; sem body, é lido da query string. Em `/api/integracao/solicitacaoStatus`, é lido do `id_mch` da query string. Requisições sem identificador (por exemplo, listagens por filtro) contam apenas no limite do grupo Crítico.
+
+Os dois limites valem ao mesmo tempo: exceder qualquer um deles retorna `429`. O contador por solicitação é separado para cada `api-key`, então o consumo de um integrador não afeta o de outro.
 
 ### Headers de rate limit
 
@@ -296,7 +306,7 @@ Nas respostas dos endpoints com limite de bloqueio configurado, o gateway inform
 | `X-RateLimit-Remaining` | Requisições ainda disponíveis na janela atual. Vale `0` na resposta `429`. |
 | `X-Total-Period` | Duração da janela em segundos (hoje sempre `60`). A taxa permitida é `X-RateLimit-Limit / X-Total-Period`. |
 
-Quando o grupo tem mais de um limite de bloqueio, os headers refletem o mais restritivo (o de menor saldo). Grupos sem bloqueio configurado (apenas log) não retornam esses headers.
+Quando mais de um limite de bloqueio se aplica à requisição (por exemplo, o do grupo Crítico e o limite por solicitação), os headers refletem o mais restritivo (o de menor saldo).
 
 Não existe header de reset: como a contagem usa janela deslizante, não há um instante único de zeragem do contador. Na resposta `429`, o tempo de espera continua sendo indicado pelo header `Retry-After`, em segundos.
 
