@@ -3961,7 +3961,8 @@
                           "type": "string"
                         },
                         "codigo_confirmacao": {
-                          "type": "string"
+                          "type": "string",
+                          "description": "Código de confirmação da entrega, com **4 dígitos** (de `0001` a `9999`). É informado pelo condutor no app no momento da entrega e não é gerado por nós — chega sempre por este campo. Zeros à esquerda são preservados na exibição, então `0042` é um código válido; `0000` não é. Enviar o código com \"Solicitar código de confirmação de entrega dos pedidos\" desabilitada é recusado com `400 CODIGO_CONFIRMACAO_NAO_PERMITIDO` (código 118), salvo quando `exigir_codigo_confirmacao` é `true`. Não envie este campo junto de `url_confirmacao`: quando há URL, quem valida o código é o parceiro, e o valor gravado aqui é ignorado."
                         },
                         "id_externo": {
                           "type": "string"
@@ -4256,17 +4257,22 @@
                           "type": "string"
                         },
                         "codigo_confirmacao": {
-                          "type": "string"
+                          "type": "string",
+                          "description": "Código de confirmação da entrega, com **4 dígitos** (de `0001` a `9999`). É informado pelo condutor no app no momento da entrega e não é gerado por nós — chega sempre por este campo. Zeros à esquerda são preservados na exibição, então `0042` é um código válido; `0000` não é. Enviar o código com \"Solicitar código de confirmação de entrega dos pedidos\" desabilitada é recusado com `400 CODIGO_CONFIRMACAO_NAO_PERMITIDO` (código 118), salvo quando `exigir_codigo_confirmacao` é `true`. Não envie este campo junto de `url_confirmacao`: quando há URL, quem valida o código é o parceiro, e o valor gravado aqui é ignorado."
                         },
                         "valor_cobrar": {
                           "type": "number"
+                        },
+                        "url_confirmacao": {
+                          "type": "string",
+                          "description": "URL do seu sistema que valida o código de confirmação desta parada. Use quando o código vive no seu lado (por exemplo, um PDV integrado ao iFood) e não pode ser enviado na abertura da entrega. Ao informá-la, o app passa a pedir os 4 dígitos ao condutor e, no momento da confirmação, chamamos esta URL com `POST` e corpo JSON contendo `codigo_confirmacao`, `solicitacao_id`, `solicitacao_parada_id` e `id_externo`. Responda `2xx` para confirmar a entrega e `4xx` para recusar o código. Requisitos: `https` obrigatório, no máximo 500 caracteres, e o destino não pode resolver para endereço interno (loopback, faixa privada ou link-local) — fora disso a entrega é recusada com `400 URL_CONFIRMACAO_INVALIDA` (código 139). Não seguimos redirecionamento: a URL precisa responder no primeiro salto, e o tempo limite da chamada é de 10 segundos. A URL pode carregar o seu próprio segredo de autenticação (por exemplo, um token assinado por pedido): ela é tratada como dado sensível, não aparece nas consultas da entrega nem em log. Se o seu sistema estiver indisponível, a entrega **não** é confirmada — a central ou a empresa pode liberar a finalização sem o código pelo cadeado, nos detalhes da solicitação e na gestão de pedidos. Este campo é aceito apenas na criação da entrega; a edição não o altera."
                         }
                       }
                     }
                   },
                   "exigir_codigo_confirmacao": {
                     "type": "boolean",
-                    "description": "Torna obrigatória a inserção do código de confirmação pelo condutor nesta solicitação, independente das configurações do cadastro da empresa (ou da central) — vale tanto sobre \"Tornar os códigos de confirmação de entrega obrigatórios\" quanto sobre \"Solicitar código de confirmação de entrega dos pedidos\". Envie `true` para exigir; omitir o campo ou enviar `false` mantém o que está configurado — o parâmetro nunca dispensa uma exigência já configurada. Ao enviar `true`, o `codigo_confirmacao` passa a ser obrigatório em todas as paradas: sem ele o condutor não teria o que informar para concluir a entrega, e a solicitação é recusada com `400 CODIGO_CONFIRMACAO_OBRIGATORIO` (código 136). Pedidos do iFood continuam exigindo o código, por ser regra da própria integração. Uma vez criada com `true`, a exigência não é removível: não há ação de operador que a dispense (o \"prosseguir sem código\" da plataforma existe apenas para pedidos do iFood) e a edição da entrega não altera o parâmetro. O código fica visível no painel da empresa, no link de acompanhamento do cliente e em `GET /entregas/{id}/links-rastreio`; se for preciso concluir sem ele, resta cancelar a entrega."
+                    "description": "Torna obrigatória a inserção do código de confirmação pelo condutor nesta solicitação, independente das configurações do cadastro da empresa (ou da central) — vale tanto sobre \"Tornar os códigos de confirmação de entrega obrigatórios\" quanto sobre \"Solicitar código de confirmação de entrega dos pedidos\". Envie `true` para exigir; omitir o campo ou enviar `false` mantém o que está configurado — o parâmetro nunca dispensa uma exigência já configurada. Ao enviar `true`, o `codigo_confirmacao` passa a ser obrigatório em todas as paradas: sem ele o condutor não teria o que informar para concluir a entrega, e a solicitação é recusada com `400 CODIGO_CONFIRMACAO_OBRIGATORIO` (código 136). Pedidos do iFood continuam exigindo o código, por ser regra da própria integração. Uma vez criada com `true`, a exigência não é removível: não há ação de operador que a dispense (o \"prosseguir sem código\" da plataforma atende os pedidos do iFood e os abertos com `url_confirmacao`, não uma entrega que apenas enviou `exigir_codigo_confirmacao`) e a edição da entrega não altera o parâmetro. O código fica visível no painel da empresa, no link de acompanhamento do cliente e em `GET /entregas/{id}/links-rastreio`; se for preciso concluir sem ele, resta cancelar a entrega."
                   }
                 }
               }
@@ -5999,10 +6005,15 @@
                           "type": "string"
                         },
                         "codigo_confirmacao": {
-                          "type": "string"
+                          "type": "string",
+                          "description": "Código de confirmação da entrega, com **4 dígitos** (de `0001` a `9999`). É informado pelo condutor no app no momento da entrega e não é gerado por nós — chega sempre por este campo. Zeros à esquerda são preservados na exibição, então `0042` é um código válido; `0000` não é. Enviar o código com \"Solicitar código de confirmação de entrega dos pedidos\" desabilitada é recusado com `400 CODIGO_CONFIRMACAO_NAO_PERMITIDO` (código 118), salvo quando `exigir_codigo_confirmacao` é `true`. Não envie este campo junto de `url_confirmacao`: quando há URL, quem valida o código é o parceiro, e o valor gravado aqui é ignorado."
                         },
                         "valor_cobrar": {
                           "type": "number"
+                        },
+                        "url_confirmacao": {
+                          "type": "string",
+                          "description": "URL do seu sistema que valida o código de confirmação desta parada. Use quando o código vive no seu lado (por exemplo, um PDV integrado ao iFood) e não pode ser enviado na abertura da entrega. Ao informá-la, o app passa a pedir os 4 dígitos ao condutor e, no momento da confirmação, chamamos esta URL com `POST` e corpo JSON contendo `codigo_confirmacao`, `solicitacao_id`, `solicitacao_parada_id` e `id_externo`. Responda `2xx` para confirmar a entrega e `4xx` para recusar o código. Requisitos: `https` obrigatório, no máximo 500 caracteres, e o destino não pode resolver para endereço interno (loopback, faixa privada ou link-local) — fora disso a entrega é recusada com `400 URL_CONFIRMACAO_INVALIDA` (código 139). Não seguimos redirecionamento: a URL precisa responder no primeiro salto, e o tempo limite da chamada é de 10 segundos. A URL pode carregar o seu próprio segredo de autenticação (por exemplo, um token assinado por pedido): ela é tratada como dado sensível, não aparece nas consultas da entrega nem em log. Se o seu sistema estiver indisponível, a entrega **não** é confirmada — a central ou a empresa pode liberar a finalização sem o código pelo cadeado, nos detalhes da solicitação e na gestão de pedidos. Este campo é aceito apenas na criação da entrega; a edição não o altera."
                         }
                       }
                     }
@@ -6017,7 +6028,7 @@
                   },
                   "exigir_codigo_confirmacao": {
                     "type": "boolean",
-                    "description": "Torna obrigatória a inserção do código de confirmação pelo condutor nesta solicitação, independente das configurações do cadastro da empresa (ou da central) — vale tanto sobre \"Tornar os códigos de confirmação de entrega obrigatórios\" quanto sobre \"Solicitar código de confirmação de entrega dos pedidos\". Envie `true` para exigir; omitir o campo ou enviar `false` mantém o que está configurado — o parâmetro nunca dispensa uma exigência já configurada. Ao enviar `true`, o `codigo_confirmacao` passa a ser obrigatório em todas as paradas: sem ele o condutor não teria o que informar para concluir a entrega, e a solicitação é recusada com `400 CODIGO_CONFIRMACAO_OBRIGATORIO` (código 136). Pedidos do iFood continuam exigindo o código, por ser regra da própria integração. Uma vez criada com `true`, a exigência não é removível: não há ação de operador que a dispense (o \"prosseguir sem código\" da plataforma existe apenas para pedidos do iFood) e a edição da entrega não altera o parâmetro. O código fica visível no painel da empresa, no link de acompanhamento do cliente e em `GET /entregas/{id}/links-rastreio`; se for preciso concluir sem ele, resta cancelar a entrega. Em entregas programadas, o valor informado é aplicado à solicitação gerada no momento do disparo."
+                    "description": "Torna obrigatória a inserção do código de confirmação pelo condutor nesta solicitação, independente das configurações do cadastro da empresa (ou da central) — vale tanto sobre \"Tornar os códigos de confirmação de entrega obrigatórios\" quanto sobre \"Solicitar código de confirmação de entrega dos pedidos\". Envie `true` para exigir; omitir o campo ou enviar `false` mantém o que está configurado — o parâmetro nunca dispensa uma exigência já configurada. Ao enviar `true`, o `codigo_confirmacao` passa a ser obrigatório em todas as paradas: sem ele o condutor não teria o que informar para concluir a entrega, e a solicitação é recusada com `400 CODIGO_CONFIRMACAO_OBRIGATORIO` (código 136). Pedidos do iFood continuam exigindo o código, por ser regra da própria integração. Uma vez criada com `true`, a exigência não é removível: não há ação de operador que a dispense (o \"prosseguir sem código\" da plataforma atende os pedidos do iFood e os abertos com `url_confirmacao`, não uma entrega que apenas enviou `exigir_codigo_confirmacao`) e a edição da entrega não altera o parâmetro. O código fica visível no painel da empresa, no link de acompanhamento do cliente e em `GET /entregas/{id}/links-rastreio`; se for preciso concluir sem ele, resta cancelar a entrega. Em entregas programadas, o valor informado é aplicado à solicitação gerada no momento do disparo."
                   }
                 }
               }
@@ -6268,7 +6279,8 @@
                           "type": "string"
                         },
                         "codigo_confirmacao": {
-                          "type": "string"
+                          "type": "string",
+                          "description": "Código de confirmação da entrega, com **4 dígitos** (de `0001` a `9999`). É informado pelo condutor no app no momento da entrega e não é gerado por nós — chega sempre por este campo. Zeros à esquerda são preservados na exibição, então `0042` é um código válido; `0000` não é. Enviar o código com \"Solicitar código de confirmação de entrega dos pedidos\" desabilitada é recusado com `400 CODIGO_CONFIRMACAO_NAO_PERMITIDO` (código 118), salvo quando `exigir_codigo_confirmacao` é `true`. Não envie este campo junto de `url_confirmacao`: quando há URL, quem valida o código é o parceiro, e o valor gravado aqui é ignorado."
                         },
                         "id_externo": {
                           "type": "string"
