@@ -1240,11 +1240,26 @@
                 "type": "Polygon",
                 "coordinates": [
                   [
-                    [-46.6558, -23.5615],
-                    [-46.6500, -23.5615],
-                    [-46.6500, -23.5570],
-                    [-46.6558, -23.5570],
-                    [-46.6558, -23.5615]
+                    [
+                      -46.6558,
+                      -23.5615
+                    ],
+                    [
+                      -46.65,
+                      -23.5615
+                    ],
+                    [
+                      -46.65,
+                      -23.557
+                    ],
+                    [
+                      -46.6558,
+                      -23.557
+                    ],
+                    [
+                      -46.6558,
+                      -23.5615
+                    ]
                   ]
                 ]
               }
@@ -1266,11 +1281,26 @@
                     "type": "Polygon",
                     "coordinates": [
                       [
-                        [-46.6558, -23.5615],
-                        [-46.6500, -23.5615],
-                        [-46.6500, -23.5570],
-                        [-46.6558, -23.5570],
-                        [-46.6558, -23.5615]
+                        [
+                          -46.6558,
+                          -23.5615
+                        ],
+                        [
+                          -46.65,
+                          -23.5615
+                        ],
+                        [
+                          -46.65,
+                          -23.557
+                        ],
+                        [
+                          -46.6558,
+                          -23.557
+                        ],
+                        [
+                          -46.6558,
+                          -23.5615
+                        ]
                       ]
                     ]
                   }
@@ -3962,7 +3992,7 @@
                         },
                         "codigo_confirmacao": {
                           "type": "string",
-                          "description": "Código de confirmação da entrega, com **4 dígitos** (de `0001` a `9999`). É informado pelo condutor no app no momento da entrega e não é gerado por nós — chega sempre por este campo. Zeros à esquerda são preservados na exibição, então `0042` é um código válido; `0000` não é. Enviar o código com \"Solicitar código de confirmação de entrega dos pedidos\" desabilitada é recusado com `400 CODIGO_CONFIRMACAO_NAO_PERMITIDO` (código 118), salvo quando `exigir_codigo_confirmacao` é `true`. Não envie este campo junto de `url_confirmacao`: quando há URL, quem valida o código é o parceiro, e o valor gravado aqui é ignorado."
+                          "description": "Código de confirmação da entrega, com **4 dígitos** (de `0001` a `9999`). É informado pelo condutor no app no momento da entrega e não é gerado por nós — chega sempre por este campo. Zeros à esquerda são preservados na exibição, então `0042` é um código válido; `0000` não é. Enviar o código com \"Solicitar código de confirmação de entrega dos pedidos\" desabilitada é recusado com `400 CODIGO_CONFIRMACAO_NAO_PERMITIDO` (código 118), salvo quando `exigir_codigo_confirmacao` é `true`. Este endpoint não aceita `url_confirmacao`, que só é informada na criação da entrega. Se a entrega foi criada com uma URL de confirmação, ela permanece em uso e este campo continua sendo ignorado também na edição: quem valida o código é o parceiro."
                         },
                         "id_externo": {
                           "type": "string"
@@ -6280,7 +6310,7 @@
                         },
                         "codigo_confirmacao": {
                           "type": "string",
-                          "description": "Código de confirmação da entrega, com **4 dígitos** (de `0001` a `9999`). É informado pelo condutor no app no momento da entrega e não é gerado por nós — chega sempre por este campo. Zeros à esquerda são preservados na exibição, então `0042` é um código válido; `0000` não é. Enviar o código com \"Solicitar código de confirmação de entrega dos pedidos\" desabilitada é recusado com `400 CODIGO_CONFIRMACAO_NAO_PERMITIDO` (código 118), salvo quando `exigir_codigo_confirmacao` é `true`. Não envie este campo junto de `url_confirmacao`: quando há URL, quem valida o código é o parceiro, e o valor gravado aqui é ignorado."
+                          "description": "Código de confirmação da entrega, com **4 dígitos** (de `0001` a `9999`). É informado pelo condutor no app no momento da entrega e não é gerado por nós — chega sempre por este campo. Zeros à esquerda são preservados na exibição, então `0042` é um código válido; `0000` não é. Enviar o código com \"Solicitar código de confirmação de entrega dos pedidos\" desabilitada é recusado com `400 CODIGO_CONFIRMACAO_NAO_PERMITIDO` (código 118), salvo quando `exigir_codigo_confirmacao` é `true`. Este endpoint não aceita `url_confirmacao`, que só é informada na criação da entrega. Se a entrega foi criada com uma URL de confirmação, ela permanece em uso e este campo continua sendo ignorado também na edição: quem valida o código é o parceiro."
                         },
                         "id_externo": {
                           "type": "string"
