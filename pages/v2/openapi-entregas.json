@@ -1240,11 +1240,26 @@
                 "type": "Polygon",
                 "coordinates": [
                   [
-                    [-46.6558, -23.5615],
-                    [-46.6500, -23.5615],
-                    [-46.6500, -23.5570],
-                    [-46.6558, -23.5570],
-                    [-46.6558, -23.5615]
+                    [
+                      -46.6558,
+                      -23.5615
+                    ],
+                    [
+                      -46.65,
+                      -23.5615
+                    ],
+                    [
+                      -46.65,
+                      -23.557
+                    ],
+                    [
+                      -46.6558,
+                      -23.557
+                    ],
+                    [
+                      -46.6558,
+                      -23.5615
+                    ]
                   ]
                 ]
               }
@@ -1266,11 +1281,26 @@
                     "type": "Polygon",
                     "coordinates": [
                       [
-                        [-46.6558, -23.5615],
-                        [-46.6500, -23.5615],
-                        [-46.6500, -23.5570],
-                        [-46.6558, -23.5570],
-                        [-46.6558, -23.5615]
+                        [
+                          -46.6558,
+                          -23.5615
+                        ],
+                        [
+                          -46.65,
+                          -23.5615
+                        ],
+                        [
+                          -46.65,
+                          -23.557
+                        ],
+                        [
+                          -46.6558,
+                          -23.557
+                        ],
+                        [
+                          -46.6558,
+                          -23.5615
+                        ]
                       ]
                     ]
                   }
@@ -4291,6 +4321,25 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Requisição inválida — inclui categoria com cálculo individual por entrega",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 139,
+                      "message": "A categoria informada usa cálculo individual por entrega, que não é suportado nesta API."
+                    }
+                  ]
+                }
+              }
+            }
           }
         }
       }
@@ -4657,6 +4706,18 @@
                         }
                       ]
                     }
+                  },
+                  "estimativa_entrega_ausente": {
+                    "summary": "Entrega do grupo sem estimativa individual gravada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 141,
+                          "message": "Os valores das entregas não conferem com as paradas informadas."
+                        }
+                      ]
+                    }
                   }
                 }
               }
@@ -4900,6 +4961,18 @@
                         {
                           "code": 0,
                           "message": "Não foi possível calcular a estimativa."
+                        }
+                      ]
+                    }
+                  },
+                  "estimativa_entrega_ausente": {
+                    "summary": "Entrega do grupo sem estimativa individual gravada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 141,
+                          "message": "Os valores das entregas não conferem com as paradas informadas."
                         }
                       ]
                     }
@@ -5199,6 +5272,18 @@
                         }
                       ]
                     }
+                  },
+                  "estimativa_entrega_ausente": {
+                    "summary": "Entrega do grupo sem estimativa individual gravada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 141,
+                          "message": "Os valores das entregas não conferem com as paradas informadas."
+                        }
+                      ]
+                    }
                   }
                 }
               }
@@ -5319,6 +5404,25 @@
                       "lng": -43.8199862
                     }
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida — inclui categoria com cálculo individual por entrega",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 139,
+                      "message": "A categoria informada usa cálculo individual por entrega, que não é suportado nesta API."
+                    }
+                  ]
                 }
               }
             }
@@ -5449,6 +5553,25 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Requisição inválida — inclui categoria com cálculo individual por entrega",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 139,
+                      "message": "A categoria informada usa cálculo individual por entrega, que não é suportado nesta API."
+                    }
+                  ]
+                }
+              }
+            }
           }
         }
       }
@@ -5576,6 +5699,25 @@
                       "lng": -43.8199862
                     }
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida — inclui categoria com cálculo individual por entrega",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 139,
+                      "message": "A categoria informada usa cálculo individual por entrega, que não é suportado nesta API."
+                    }
+                  ]
                 }
               }
             }
@@ -6047,6 +6189,25 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Requisição inválida — inclui categoria com cálculo individual por entrega",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 139,
+                      "message": "A categoria informada usa cálculo individual por entrega, que não é suportado nesta API."
+                    }
+                  ]
+                }
+              }
+            }
           }
         }
       }
@@ -6307,14 +6468,31 @@
             "description": "Requisição inválida",
             "content": {
               "application/json": {
-                "example": {
-                  "success": false,
-                  "errors": [
-                    {
-                      "code": 0,
-                      "message": "Descrição do erro"
+                "examples": {
+                  "requisicao_invalida": {
+                    "summary": "Erro de validação",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Descrição do erro"
+                        }
+                      ]
                     }
-                  ]
+                  },
+                  "categoria_calculo_individual": {
+                    "summary": "Categoria com cálculo individual por entrega",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 139,
+                          "message": "A categoria informada usa cálculo individual por entrega, que não é suportado nesta API."
+                        }
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -6407,6 +6585,18 @@
                         {
                           "code": 33,
                           "message": "Não é possível excluir a última entrega da solicitação."
+                        }
+                      ]
+                    }
+                  },
+                  "estimativa_entrega_ausente": {
+                    "summary": "Entrega sem estimativa individual gravada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 140,
+                          "message": "A entrega não possui estimativa individual gravada; não é possível excluir a parada."
                         }
                       ]
                     }
