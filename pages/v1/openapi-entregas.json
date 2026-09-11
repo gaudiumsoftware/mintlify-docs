@@ -1367,6 +1367,25 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Requisição inválida — inclui categoria com cálculo individual por entrega",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 139,
+                      "message": "A categoria informada usa cálculo individual por entrega, que não é suportado nesta API."
+                    }
+                  ]
+                }
+              }
+            }
           }
         }
       }
@@ -1554,6 +1573,25 @@
                       }
                     ]
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida — inclui categoria com cálculo individual por entrega",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 139,
+                      "message": "A categoria informada usa cálculo individual por entrega, que não é suportado nesta API."
+                    }
+                  ]
                 }
               }
             }
@@ -4885,6 +4923,25 @@
                   "response": {
                     "id_mch": "160"
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida — inclui categoria com cálculo individual por entrega",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 139,
+                      "message": "A categoria informada usa cálculo individual por entrega, que não é suportado nesta API."
+                    }
+                  ]
                 }
               }
             }
