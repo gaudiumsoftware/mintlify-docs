@@ -4175,6 +4175,7 @@
                     "valor_cobrar": 852.37
                   }
                 ],
+                "info_antes_aceite": "Portaria fecha às 18h",
                 "exigir_codigo_confirmacao": true
               },
               "schema": {
@@ -4269,6 +4270,10 @@
                         }
                       }
                     }
+                  },
+                  "info_antes_aceite": {
+                    "type": "string",
+                    "description": "Informação exibida ao condutor antes do aceite da entrega. Textos com mais de 70 caracteres são truncados."
                   },
                   "exigir_codigo_confirmacao": {
                     "type": "boolean",
@@ -5923,6 +5928,7 @@
                 ],
                 "data": "31/12/2026",
                 "hora": "14:30:00",
+                "info_antes_aceite": "Portaria fecha às 18h",
                 "exigir_codigo_confirmacao": true
               },
               "schema": {
@@ -6025,6 +6031,10 @@
                   "hora": {
                     "type": "string",
                     "description": "Hora da entrega programada. Formato HH:MM:SS"
+                  },
+                  "info_antes_aceite": {
+                    "type": "string",
+                    "description": "Informação exibida ao condutor antes do aceite da entrega. Textos com mais de 70 caracteres são truncados."
                   },
                   "exigir_codigo_confirmacao": {
                     "type": "boolean",
