@@ -154,6 +154,56 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="15 set 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="in-app-messaging-condutor" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Envio de notificação in-app para condutores
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novos endpoints para exibir uma mensagem dentro do aplicativo dos condutores da central, em lote ou
+      para um condutor específico. A mensagem aparece como um modal com título, conteúdo, imagem opcional e
+      botão de redirecionamento opcional.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/notificacoes/condutor/in-app-messaging" href="/pages/v2/referencia/notificacao/endpoint/post-condutor-in-app-messaging" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Campos aceitos no corpo da requisição:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="condutores" /> — obrigatório. Lista de identificadores numéricos dos condutores que receberão a mensagem, com ao menos um item e no máximo 1000. IDs repetidos são considerados uma única vez.</li>
+        <li><ParamBadge name="titulo" /> — obrigatório. Título exibido no topo da mensagem, limite de 40 caracteres.</li>
+        <li><ParamBadge name="body" /> — obrigatório. Conteúdo principal da mensagem, limite de 255 caracteres.</li>
+        <li><ParamBadge name="url_imagem" /> — opcional. URL válida da imagem exibida no topo da mensagem, limite de 2048 caracteres. Sem imagem, ou se ela não carregar, o aplicativo exibe a logo da central.</li>
+        <li><ParamBadge name="solicitacao_id" /> — opcional. Identificador numérico da corrida vinculada. Quando informado, a mensagem só é exibida se a corrida for a corrida em andamento do condutor.</li>
+        <li><ParamBadge name="titulo_botao_redirecionamento" /> — opcional. Texto do botão de redirecionamento, limite de 20 caracteres. Obrigatório quando <ParamBadge name="link_redirecionamento" /> for informado.</li>
+        <li><ParamBadge name="link_redirecionamento" /> — opcional. URL válida aberta ao tocar no botão, limite de 2048 caracteres. Obrigatório quando <ParamBadge name="titulo_botao_redirecionamento" /> for informado.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/notificacoes/condutor/in-app-messaging/individual" href="/pages/v2/referencia/notificacao/endpoint/post-condutor-in-app-messaging-individual" />
+
+      <ChangeSection type="added">
+        <p style={{ marginBottom: "10px" }}>Campos aceitos no corpo da requisição:</p>
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="condutor_id" /> — obrigatório. Identificador numérico do condutor que receberá a mensagem.</li>
+          <li>Os demais campos são os mesmos do envio em lote: <ParamBadge name="titulo" />, <ParamBadge name="body" />, <ParamBadge name="url_imagem" />, <ParamBadge name="solicitacao_id" />, <ParamBadge name="titulo_botao_redirecionamento" /> e <ParamBadge name="link_redirecionamento" />.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> só recebem a mensagem os condutores da bandeira da chave de API (ou de suas filiais) com aplicativo instalado e token de notificação registrado. No envio em lote, condutores fora desse escopo são ignorados sem erro — o retorno é <code>404</code> apenas quando nenhum dos condutores informados pode ser notificado. Mensagem recebida com o aplicativo fechado fica guardada e aparece na próxima abertura.
+    </div>
+  </Entry>
+
   <Entry date="9 set 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="push-condutor" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Envio de notificação push para condutores
