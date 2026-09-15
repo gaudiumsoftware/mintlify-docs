@@ -7201,6 +7201,18 @@
                       ]
                     }
                   },
+                  "titulo_muito_longo": {
+                    "summary": "Título acima do limite de caracteres",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'titulo': Deve ter no máximo 40 caracteres."
+                        }
+                      ]
+                    }
+                  },
                   "body_obrigatorio": {
                     "summary": "Campo body ausente",
                     "value": {
@@ -7476,6 +7488,18 @@
                         {
                           "code": 2,
                           "message": "'titulo': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "titulo_muito_longo": {
+                    "summary": "Título acima do limite de caracteres",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'titulo': Deve ter no máximo 40 caracteres."
                         }
                       ]
                     }
