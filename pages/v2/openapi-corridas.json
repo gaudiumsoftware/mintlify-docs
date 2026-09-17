@@ -3930,7 +3930,7 @@
                     },
                     "dados_solicitacao": {
                       "valor": "4.00",
-                      "valor_original": "5.00",
+                      "valor_original": "4.00",
                       "duracao": "0",
                       "distancia": "0.001",
                       "tarifa": "Tarifa padrão",

@@ -5683,14 +5683,14 @@
                     },
                     "dados_solicitacao": {
                       "valor": "739.67",
-                      "valor_original": "800.00",
+                      "valor_original": "739.67",
                       "duracao": "8",
                       "distancia": "4.05",
                       "tarifa": "explicabo",
                       "id_categoria": "407",
                       "categoria": "qui",
                       "descricao_categoria": "ut",
-                      "desconto": 96.83,
+                      "desconto": 0,
                       "tipo_pagamento": "D"
                     },
                     "empresa": {
