@@ -154,6 +154,39 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="16 set 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 id="cupom-area-destino" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Cupom com restrição por área de destino
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      O endpoint de criação de cupom passou a aceitar o campo <ParamBadge name="local_aplicacao" />,
+      permitindo restringir o cupom pela área de <strong>destino</strong> da corrida, além da área de
+      partida já suportada.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/cupons" href="/pages/v2/referencia/cupons/endpoint/post" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Campo aceito no corpo da requisição:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="local_aplicacao" /> — opcional. Indica se a restrição de <ParamBadge name="area_id" /> se aplica ao local de partida (<code>P</code>) ou de destino (<code>D</code>) da corrida. Só é considerado quando <ParamBadge name="area_id" /> é informado; padrão <code>P</code>.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> cupom de área de destino exige que a central esteja habilitada para essa 
+      funcionalidade e não está disponível para centrais que fazem somente entregas.
+    </div>
+  </Entry>
+
   <Entry date="15 set 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="in-app-messaging-condutor" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Envio de notificação in-app para condutores

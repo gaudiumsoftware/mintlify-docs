@@ -4114,6 +4114,15 @@
                     "type": "integer",
                     "description": "Opcional. Indica a área a qual o cupom será restrito.",
                     "example": 239
+                  },
+                  "local_aplicacao": {
+                    "type": "string",
+                    "description": "Opcional. Indica se a restrição de area_id se aplica ao local de partida (P) ou de destino (D) da corrida. Só é considerado quando area_id é enviado; padrão P.",
+                    "enum": [
+                      "P",
+                      "D"
+                    ],
+                    "example": "D"
                   }
                 }
               },
@@ -4135,7 +4144,8 @@
                       83992,
                       83959
                     ],
-                    "area_id": 239
+                    "area_id": 239,
+                    "local_aplicacao": "D"
                   }
                 },
                 "cupom_porcentagem_individual": {
