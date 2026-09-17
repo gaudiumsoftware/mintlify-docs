@@ -4330,6 +4330,167 @@
         }
       }
     },
+    "/cupons/cliente/{cliente_id}/disponiveis": {
+      "get": {
+        "summary": "Consultar cupons disponíveis do cliente",
+        "description": "Lista os cupons que um cliente pode aplicar em uma corrida — a mesma vitrine exibida no aplicativo do passageiro.\n\nO retorno reúne os cupons cadastrados e vigentes da bandeira que o cliente já resgatou ou que estão publicados para exibição no aplicativo, mais o cupom automático de primeira viagem ou de inatividade quando o cliente é elegível. Cupons já esgotados para o cliente, fora da vigência ou indisponíveis para a bandeira não entram na lista.\n\nCupons restritos a uma área só aparecem quando as coordenadas da ponta correspondente são informadas: `lat_partida`/`lng_partida` liberam os cupons aplicados na partida e `lat_destino`/`lng_destino` os cupons aplicados no destino. Sem o par de coordenadas, o cupom daquela ponta fica fora da lista, porque não há como avaliar a área.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "parameters": [
+          {
+            "name": "cliente_id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador interno do cliente. O cliente precisa pertencer à bandeira autenticada.",
+            "schema": {
+              "type": "integer",
+              "example": 83605
+            }
+          },
+          {
+            "name": "lat_partida",
+            "in": "query",
+            "required": false,
+            "description": "Latitude do local de partida da corrida. Usada para avaliar os cupons restritos a uma área de partida.",
+            "schema": {
+              "type": "number",
+              "example": -22.8743056
+            }
+          },
+          {
+            "name": "lng_partida",
+            "in": "query",
+            "required": false,
+            "description": "Longitude do local de partida da corrida. Usada para avaliar os cupons restritos a uma área de partida.",
+            "schema": {
+              "type": "number",
+              "example": -43.5626744
+            }
+          },
+          {
+            "name": "lat_destino",
+            "in": "query",
+            "required": false,
+            "description": "Latitude do destino da corrida. Usada para avaliar os cupons restritos a uma área de destino.",
+            "schema": {
+              "type": "number",
+              "example": -22.9884209
+            }
+          },
+          {
+            "name": "lng_destino",
+            "in": "query",
+            "required": false,
+            "description": "Longitude do destino da corrida. Usada para avaliar os cupons restritos a uma área de destino.",
+            "schema": {
+              "type": "number",
+              "example": -43.1934916
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "cupons": [
+                      {
+                        "id": "1042",
+                        "area_id": null,
+                        "local_aplicacao": "P",
+                        "codigo": "DESCONTO10",
+                        "valor_maximo": "20.00",
+                        "valor_maximo_corrida": "50.00",
+                        "validade": "2026-10-01 23:59:59",
+                        "limite_uso_individual": "3",
+                        "uso_unico": "0",
+                        "uso_apenas_novo_cliente": "0",
+                        "qtd_usos_cupom": "1",
+                        "perc_desconto": "10.00",
+                        "valor_desconto": null,
+                        "expirado": "0",
+                        "tipos_pagamento": [
+                          {
+                            "id": "1",
+                            "nome": "Dinheiro",
+                            "tipo": "D"
+                          }
+                        ],
+                        "nome_area": null
+                      },
+                      {
+                        "id": "1050",
+                        "area_id": "7",
+                        "codigo": "PRIMEIRAVIAGEM",
+                        "perc_desconto": null,
+                        "valor_desconto": "15.00",
+                        "valor_maximo": "15.00",
+                        "limite_uso_individual": null,
+                        "uso_unico": "1",
+                        "uso_apenas_novo_cliente": "1",
+                        "criado_automaticamente": "1",
+                        "qtd_usos_cupom": 0,
+                        "primeira_viagem": "1",
+                        "tipos_pagamento": [
+                          {
+                            "id": "1",
+                            "nome": "Dinheiro",
+                            "tipo": "D"
+                          }
+                        ],
+                        "nome_area": "Centro"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "'lat_partida': Deve ser numérico."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cliente não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Cliente não encontrado ou não pertence à bandeira autenticada."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/dinamicas/area": {
       "get": {
         "summary": "Obter dinâmicas por área",

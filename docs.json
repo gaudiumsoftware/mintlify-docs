@@ -104,6 +104,7 @@
                     "group": "Cupons",
                     "pages": [
                       "pages/v2/referencia/cupons/endpoint/post",
+                      "pages/v2/referencia/cupons/endpoint/get-cliente-disponiveis",
                       "pages/v2/referencia/cupons/endpoint/get-geradores"
                     ]
                   },
