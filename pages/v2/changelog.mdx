@@ -154,6 +154,54 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="17 set 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="consulta-cupons" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Consulta e listagem de cupons
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novo endpoint para consultar os cupons de desconto da central. É possível buscar um cupom
+      específico por <ParamBadge name="id" /> ou por <ParamBadge name="codigo" />, ou listar todos
+      os cupons da bandeira quando nenhum dos dois é informado.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/cupons" href="/pages/v2/referencia/cupons/endpoint/get" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Parâmetros aceitos na query string:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="id" /> — opcional. Identificador interno do cupom. Não pode ser combinado com <ParamBadge name="codigo" />.</li>
+        <li><ParamBadge name="codigo" /> — opcional. Código do cupom, com até 21 caracteres e sem emojis. Não pode ser combinado com <ParamBadge name="id" />. Pode retornar mais de um cupom, porque o mesmo código pode ter sido cadastrado em cupons diferentes.</li>
+        <li><ParamBadge name="status" /> — opcional. Filtra os cupons pela vigência: <code>ativo</code>, <code>inativo</code> ou <code>aguardo</code>.</li>
+        <li><ParamBadge name="pagina" /> — opcional. Página da listagem, com 10 cupons por página. Padrão <code>1</code>.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Campos retornados para cada cupom:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="status" /> — vigência do cupom no momento da consulta: <code>aguardo</code> antes de <ParamBadge name="data_hora_inicio" />, <code>ativo</code> durante a vigência e <code>inativo</code> a partir de <ParamBadge name="data_hora_fim" />.</li>
+        <li><ParamBadge name="tipo_desconto" /> e <ParamBadge name="desconto" /> — desconto do cupom como <code>percentual</code> ou <code>valor_fixo</code>.</li>
+        <li><ParamBadge name="tipo_limite_cupom" /> e <ParamBadge name="limite_uso_individual" /> — regra de limite de utilização do cupom.</li>
+        <li><ParamBadge name="valor_maximo" /> e <ParamBadge name="valor_maximo_corrida" /> — teto de desconto e valor máximo da corrida em que o cupom se aplica.</li>
+        <li><ParamBadge name="quantidade_usuarios_utilizaram" /> — número de passageiros distintos que já usaram o cupom.</li>
+        <li><ParamBadge name="vezes_utilizado" /> — número total de usos do cupom.</li>
+        <li><ParamBadge name="gerador_cupom_desconto_id" /> — gerador de cupom ao qual o cupom está vinculado.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> a busca por <ParamBadge name="id" /> retorna no máximo um cupom e ignora a paginação. A busca por <ParamBadge name="codigo" /> e a listagem geral são paginadas em 10 cupons por página. Além da chave de API, o endpoint exige autenticação HTTP Basic de um gestor ativo da bandeira.
+    </div>
+  </Entry>
+
   <Entry date="15 set 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="in-app-messaging-condutor" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Envio de notificação in-app para condutores
