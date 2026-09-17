@@ -2490,7 +2490,7 @@
     "/corridas/consultar": {
       "post": {
         "summary": "Consultar corridas",
-        "description": "Retorna as solicitações da central conforme os filtros informados. O intervalo máximo aceito entre `data_hora_solicitacao_min` e `data_hora_solicitacao_max` é de 30 dias. Para acessar este endpoint, o usuário precisa ter a permissão `API - Corrida`.",
+        "description": "Retorna as solicitações da central conforme os filtros informados. O intervalo máximo aceito entre `data_hora_solicitacao_min` e `data_hora_solicitacao_max` é de 30 dias. Para acessar este endpoint, o usuário precisa ter a permissão `API - Corrida`.\n\nO campo `valor_corrida` traz o valor já líquido, com o desconto do cupom aplicado, e `valor_corrida_integral` traz o valor bruto da corrida, antes do desconto. Sem cupom aplicado, os dois campos são iguais.",
         "requestBody": {
           "required": false,
           "content": {
@@ -2599,6 +2599,7 @@
                       "data_hora_pendencia": "2024-05-02 08:53:49",
                       "distancia_coleta_km": null,
                       "valor_corrida": "7.00",
+                      "valor_corrida_integral": "10.00",
                       "condutor_especificado": false,
                       "com_retorno": false,
                       "condutor_id": "",
@@ -2626,6 +2627,7 @@
                       "data_hora_pendencia": "2024-05-03 09:36:45",
                       "distancia_coleta_km": null,
                       "valor_corrida": "10.50",
+                      "valor_corrida_integral": "10.50",
                       "condutor_especificado": false,
                       "com_retorno": false,
                       "condutor_id": "",
@@ -3672,7 +3674,7 @@
     "/corridas/{id}": {
       "get": {
         "summary": "Consultar corrida",
-        "description": "Consulta uma corrida específica pelo identificador interno da corrida.",
+        "description": "Consulta uma corrida específica pelo identificador interno da corrida.\n\nO campo `valor_corrida` traz o valor já líquido, com o desconto do cupom aplicado, e `valor_corrida_integral` traz o valor bruto da corrida, antes do desconto. Sem cupom aplicado, os dois campos são iguais.",
         "parameters": [
           {
             "name": "id",
@@ -3709,6 +3711,7 @@
                     "data_hora_pendencia": "2024-05-02 08:53:49",
                     "distancia_coleta_km": null,
                     "valor_corrida": "7.00",
+                    "valor_corrida_integral": "10.00",
                     "condutor_especificado": false,
                     "com_retorno": false,
                     "condutor_id": "",
@@ -3894,7 +3897,7 @@
     "/corridas/{id}/recibo": {
       "get": {
         "summary": "Consultar recibo da corrida",
-        "description": "Consulta o recibo de uma corrida.",
+        "description": "Consulta o recibo de uma corrida.\n\nEm `dados_solicitacao`, o campo `valor` traz o valor já líquido, com o desconto do cupom aplicado, e `valor_original` traz o valor bruto da corrida, antes do desconto. Sem cupom aplicado, os dois campos são iguais.",
         "parameters": [
           {
             "name": "id",
@@ -3927,6 +3930,7 @@
                     },
                     "dados_solicitacao": {
                       "valor": "4.00",
+                      "valor_original": "5.00",
                       "duracao": "0",
                       "distancia": "0.001",
                       "tarifa": "Tarifa padrão",

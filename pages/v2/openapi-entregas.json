@@ -5654,7 +5654,7 @@
     "/entregas/{id}/recibo": {
       "get": {
         "summary": "Obter recibo",
-        "description": "Retorna as informações necessárias para a construção do recibo da solicitação de entrega. A entrega deve pertencer a bandeira e ter seu status como finalizada (F).",
+        "description": "Retorna as informações necessárias para a construção do recibo da solicitação de entrega. A entrega deve pertencer a bandeira e ter seu status como finalizada (F).\n\nEm `dados_solicitacao`, o campo `valor` traz o valor já líquido, com o desconto do cupom aplicado, e `valor_original` traz o valor bruto da entrega, antes do desconto. Sem cupom aplicado, os dois campos são iguais.",
         "parameters": [
           {
             "name": "id",
@@ -5683,6 +5683,7 @@
                     },
                     "dados_solicitacao": {
                       "valor": "739.67",
+                      "valor_original": "800.00",
                       "duracao": "8",
                       "distancia": "4.05",
                       "tarifa": "explicabo",
