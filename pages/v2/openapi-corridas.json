@@ -376,6 +376,199 @@
         }
       }
     },
+    "/condutores/posicoes": {
+      "get": {
+        "summary": "Listar posição dos condutores livres",
+        "description": "Retorna a posição atual dos condutores livres da central — os que estão disponíveis, sem corrida em andamento.\n\nA posição vem do serviço de localização em tempo real, a mesma fonte do mapa de condutores do painel. Condutor sem posição publicada recentemente não aparece na lista, ainda que esteja livre.\n\nO retorno não é paginado: traz todos os condutores que atendem aos filtros.\n\nPara acessar este endpoint, o usuário autenticado deve ter a permissão `API - Corrida`.",
+        "parameters": [
+          {
+            "name": "incluir_parceiras",
+            "in": "query",
+            "description": "Inclui também os condutores das centrais parceiras. Por padrão a consulta traz apenas os condutores da central autenticada.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "raio_km",
+            "in": "query",
+            "description": "Limita o resultado aos condutores dentro deste raio, em quilômetros. Deve ser maior que zero. Sem `lat` e `lng`, o raio é medido a partir do centro de atuação da central.",
+            "schema": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          },
+          {
+            "name": "lat",
+            "in": "query",
+            "description": "Latitude do ponto central do raio. Deve ser enviada junto com `lng` e `raio_km`.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "lng",
+            "in": "query",
+            "description": "Longitude do ponto central do raio. Deve ser enviada junto com `lat` e `raio_km`.",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "condutores": [
+                      {
+                        "id": 5574,
+                        "nome": "Lara",
+                        "bandeira_id": 3,
+                        "lat": -23.321443,
+                        "lng": -51.161412,
+                        "ultima_atividade": "2026-09-18T12:55:58Z",
+                        "inativo": false
+                      },
+                      {
+                        "id": 5590,
+                        "nome": "Marcos",
+                        "bandeira_id": 3,
+                        "lat": -23.318907,
+                        "lng": -51.170224,
+                        "ultima_atividade": "2026-09-18T12:41:02Z",
+                        "inativo": true
+                      }
+                    ]
+                  },
+                  "__links": {
+                    "self": {
+                      "href": "api/v2/integracao/condutores/posicoes",
+                      "metodo": "get"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "raio_nao_positivo": {
+                    "summary": "Raio menor ou igual a zero",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'raio_km': Deve ser maior que zero."
+                        }
+                      ]
+                    }
+                  },
+                  "raio_nao_numerico": {
+                    "summary": "Raio não numérico",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'raio_km': Deve ser numérico."
+                        }
+                      ]
+                    }
+                  },
+                  "coordenada_incompleta": {
+                    "summary": "Apenas uma das coordenadas informada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'lng': Deve ser informado junto com o par de coordenadas (lat e lng)."
+                        }
+                      ]
+                    }
+                  },
+                  "raio_ausente": {
+                    "summary": "Coordenadas informadas sem o raio",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'raio_km': Obrigatório quando lat e lng são informados."
+                        }
+                      ]
+                    }
+                  },
+                  "parceiras_invalido": {
+                    "summary": "incluir_parceiras com valor não booleano",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'incluir_parceiras': Deve ser um valor booleano (true ou false)."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço de localização indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "localizacao_indisponivel": {
+                    "summary": "Serviço de localização não respondeu",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 503,
+                          "message": "Não foi possível consultar a posição dos condutores no momento. Tente novamente em instantes."
+                        }
+                      ]
+                    }
+                  },
+                  "sem_marca_aplicativo": {
+                    "summary": "Central sem marca de aplicativo configurada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 503,
+                          "message": "A central não possui marca de aplicativo configurada, necessária para consultar a posição dos condutores."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/condutores/areas-bloqueio/batch": {
       "put": {
         "summary": "Atualizar áreas de bloqueio em lote",

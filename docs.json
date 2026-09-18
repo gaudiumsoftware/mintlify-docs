@@ -76,6 +76,7 @@
                     "group": "Condutores",
                     "pages": [
                       "pages/v2/referencia/condutores/endpoint/get",
+                      "pages/v2/referencia/condutores/endpoint/get-posicoes",
                       "pages/v2/referencia/condutores/endpoint/get-by-id",
                       "pages/v2/referencia/condutores/endpoint/patch-by-id",
                       "pages/v2/referencia/condutores/endpoint/put-by-id",
