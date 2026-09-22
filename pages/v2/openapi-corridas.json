@@ -71,7 +71,7 @@
           "errors": [
             {
               "code": 0,
-              "message": "'partida.bairro': Preenchimento obrigatório."
+              "message": "'campo': Preenchimento obrigatório."
             }
           ]
         }
@@ -546,7 +546,23 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Erro400"
+            "description": "Formato de email inválido ou outro erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro400"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "'email': Email inválido."
+                    }
+                  ]
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
@@ -834,7 +850,23 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Erro400"
+            "description": "Validação de parâmetros de filtro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro400"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 2,
+                      "message": "'nome': Deve ter ao menos 3 caracteres."
+                    }
+                  ]
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
@@ -1012,7 +1044,23 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Erro400"
+            "description": "Campo obrigatório ausente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro400"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 2,
+                      "message": "'valor': Preenchimento obrigatório"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
@@ -1217,7 +1265,23 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Erro400"
+            "description": "Campo obrigatório ausente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro400"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 2,
+                      "message": "'valor': Preenchimento obrigatório"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
@@ -2398,7 +2462,23 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Erro400"
+            "description": "Campo obrigatório ausente ou arquivo inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro400"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 2,
+                      "message": "'tipo': Preenchimento obrigatório"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
@@ -2619,7 +2699,37 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Erro400"
+            "description": "Erro de validação de parâmetro",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "pagina_invalida": {
+                    "summary": "Parâmetro pagina não é numérico",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'pagina': Deve ser numérico."
+                        }
+                      ]
+                    }
+                  },
+                  "limite_invalido": {
+                    "summary": "Parâmetro limite não é numérico",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'limite': Deve ser numérico."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
@@ -3217,7 +3327,23 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Erro400"
+            "description": "Campo obrigatório ausente ou com tipo inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro400"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "'forma_pagamento': Preenchimento obrigatório."
+                    }
+                  ]
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
@@ -3406,7 +3532,23 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Erro400"
+            "description": "Parâmetro numérico inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro400"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "'pagina': Deve ser numérico."
+                    }
+                  ]
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
@@ -3499,7 +3641,23 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Erro400"
+            "description": "Campo obrigatório ausente quando centro_custo_id não é informado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro400"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "'empresa_id': Preenchimento obrigatório."
+                    }
+                  ]
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
@@ -3568,7 +3726,23 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Erro400"
+            "description": "Parâmetro numérico inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro400"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "'pagina': Deve ser numérico."
+                    }
+                  ]
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
@@ -3717,7 +3891,23 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Erro400"
+            "description": "Campo de localização incompleto ou parâmetro inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro400"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Informe ('lat_desejado' e 'lng_desejado') ou ('endereco_desejado', 'bairro_desejado', 'cidade_desejado')"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
@@ -3867,7 +4057,23 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Erro400"
+            "description": "Campo de localização incompleto ou inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro400"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Informe ('lat_partida' e 'lng_partida') ou ('endereco_partida', 'bairro_partida', 'cidade_partida')"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
@@ -4111,7 +4317,23 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Erro400"
+            "description": "Campo obrigatório ausente ou com tipo inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro400"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "'data': Preenchimento obrigatório."
+                    }
+                  ]
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
@@ -4250,7 +4472,23 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Erro400"
+            "description": "Parâmetro de paginação com tipo inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro400"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "'limite': Deve ser numérico."
+                    }
+                  ]
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
@@ -4399,7 +4637,23 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Erro400"
+            "description": "Campo obrigatório ausente ou com tipo inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro400"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "'data': Preenchimento obrigatório."
+                    }
+                  ]
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
@@ -4508,7 +4762,7 @@
     "/corridas/programadas/{id}/cancelar": {
       "post": {
         "summary": "Cancelar corrida programada",
-        "description": "Cancela uma corrida programada que ainda não disparou (ainda não gerou uma corrida em `id_mch`). Uma corrida programada já disparada deve ser cancelada via `POST /corridas/{id}/cancelar`, usando o `id_mch` gerado.",
+        "description": "Cancela uma corrida programada que ainda não disparou (ainda não gerou uma corrida em `id_mch`). Uma corrida programada já disparada deve ser cancelada via `POST /corridas/{id}/cancelar`, usando o `id_mch` gerado.\n\nRetorna 404 (`code` 72, mensagem \"Corrida programada não encontrada\") quando a corrida programada não existe.",
         "parameters": [
           {
             "name": "id",
@@ -4540,6 +4794,9 @@
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
+          },
+          "404": {
+            "$ref": "#/components/responses/Erro404"
           }
         }
       }
@@ -4656,7 +4913,7 @@
     "/corridas/{id}/cancelar": {
       "post": {
         "summary": "Cancelar corrida",
-        "description": "Cancela uma corrida existente pelo motivo informado em `motivo_id` (catálogo de motivos de cancelamento da bandeira). Corridas já finalizadas ou já canceladas retornam erro de validação.",
+        "description": "Cancela uma corrida existente pelo motivo informado em `motivo_id` (catálogo de motivos de cancelamento da bandeira). Corridas já finalizadas ou já canceladas retornam erro de validação.\n\nRetorna 404 (`code` 25) quando a corrida não é encontrada.",
         "parameters": [
           {
             "name": "id",
@@ -4706,10 +4963,29 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Erro400"
+            "description": "Campo obrigatório ausente ou com tipo inválido. O campo `motivo_id` é obrigatório e deve ser numérico.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro400"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "'motivo_id': Preenchimento obrigatório"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
+          },
+          "404": {
+            "$ref": "#/components/responses/Erro404"
           }
         }
       }
@@ -4762,7 +5038,7 @@
     "/corridas/{id}/detalhes": {
       "get": {
         "summary": "Consultar detalhes da corrida",
-        "description": "Consulta o payload detalhado de uma corrida, incluindo progresso, motorista, empresa e paradas.",
+        "description": "Consulta o payload detalhado de uma corrida, incluindo progresso, motorista, empresa e paradas.\n\nRetorna 404 (`code` 25) quando a corrida não é encontrada.",
         "parameters": [
           {
             "name": "id",
@@ -4808,6 +5084,9 @@
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
+          },
+          "404": {
+            "$ref": "#/components/responses/Erro404"
           }
         }
       }
@@ -6327,7 +6606,23 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Erro400"
+            "description": "Parâmetro numérico inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro400"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "'empresa_id': Deve ser numérico."
+                    }
+                  ]
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
@@ -7818,7 +8113,49 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Erro400"
+            "description": "Erro de validação do payload",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "bandeiras_obrigatorio": {
+                    "summary": "Campo bandeiras ausente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'bandeiras': Preenchimento obrigatório."
+                        }
+                      ]
+                    }
+                  },
+                  "bandeiras_tipo_invalido": {
+                    "summary": "Campo bandeiras não é um array",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'bandeiras': Deve ser um array."
+                        }
+                      ]
+                    }
+                  },
+                  "bandeiras_acima_limite": {
+                    "summary": "Array bandeiras excede 1000 itens",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'bandeiras': Deve ter no máximo 1000 itens."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "description": "Erro interno",
@@ -8358,7 +8695,7 @@
     "/notificacoes/in-app-messaging": {
       "post": {
         "summary": "Enviar notificação in-app",
-        "description": "Envia notificação via in-app messaging para uma lista de passageiros.",
+        "description": "Envia notificação via in-app messaging para uma lista de passageiros.\n\nSó recebem a notificação os passageiros com aplicativo com token de notificação registrado; os demais são ignorados sem erro — o retorno é `404` apenas quando nenhum dos passageiros informados pode ser notificado. Retorna `503` quando o envio está temporariamente desativado ou a fila de notificações está indisponível.",
         "requestBody": {
           "required": true,
           "content": {
@@ -8549,6 +8886,61 @@
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
+          },
+          "404": {
+            "description": "Nenhum dos passageiros informados possui token de notificação registrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Nenhum token FCM encontrado para os passageiros informados"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Envio indisponível no momento: envio desativado por configuração ou fila de notificações inacessível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "envio_desativado": {
+                    "summary": "Envio de notificações temporariamente desativado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Envio de notificações temporariamente desativado"
+                        }
+                      ]
+                    }
+                  },
+                  "fila_indisponivel": {
+                    "summary": "Fila de notificações indisponível",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível enfileirar as notificações"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -8556,7 +8948,7 @@
     "/notificacoes/push": {
       "post": {
         "summary": "Enviar notificação push",
-        "description": "Envia notificação push para uma lista de passageiros.",
+        "description": "Envia notificação push para uma lista de passageiros.\n\nSó recebem a notificação os passageiros com aplicativo com token de notificação registrado; os demais são ignorados sem erro — o retorno é `404` apenas quando nenhum dos passageiros informados pode ser notificado. Retorna `503` quando o envio está temporariamente desativado ou a fila de notificações está indisponível.",
         "requestBody": {
           "required": true,
           "content": {
@@ -8678,6 +9070,61 @@
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
+          },
+          "404": {
+            "description": "Nenhum dos passageiros informados possui token de notificação registrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Nenhum token FCM encontrado para os passageiros informados"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Envio indisponível no momento: envio desativado por configuração ou fila de notificações inacessível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "envio_desativado": {
+                    "summary": "Envio de notificações temporariamente desativado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Envio de notificações temporariamente desativado"
+                        }
+                      ]
+                    }
+                  },
+                  "fila_indisponivel": {
+                    "summary": "Fila de notificações indisponível",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível enfileirar as notificações"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -8685,7 +9132,7 @@
     "/notificacoes/push/individual": {
       "post": {
         "summary": "Enviar notificação push para um passageiro",
-        "description": "Envia notificação push para um único passageiro identificado pelo `passageiro_id`.",
+        "description": "Envia notificação push para um único passageiro identificado pelo `passageiro_id`.\n\nSó recebe a notificação se o passageiro tiver aplicativo com token de notificação registrado — o retorno é `404` quando não tem. Retorna `503` quando o envio está temporariamente desativado ou a fila de notificações está indisponível.",
         "requestBody": {
           "required": true,
           "content": {
@@ -8774,6 +9221,61 @@
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
+          },
+          "404": {
+            "description": "O passageiro informado não possui token de notificação registrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Nenhum token FCM encontrado para os passageiros informados"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Envio indisponível no momento: envio desativado por configuração ou fila de notificações inacessível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "envio_desativado": {
+                    "summary": "Envio de notificações temporariamente desativado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Envio de notificações temporariamente desativado"
+                        }
+                      ]
+                    }
+                  },
+                  "fila_indisponivel": {
+                    "summary": "Fila de notificações indisponível",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível enfileirar as notificações"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -9961,7 +10463,7 @@
     "/notificacoes/in-app-messaging/individual": {
       "post": {
         "summary": "Enviar notificação in-app para um passageiro",
-        "description": "Envia notificação via in-app messaging para um único passageiro identificado pelo `passageiro_id`.",
+        "description": "Envia notificação via in-app messaging para um único passageiro identificado pelo `passageiro_id`.\n\nSó recebe a notificação se o passageiro tiver aplicativo com token de notificação registrado — o retorno é `404` quando não tem. Retorna `503` quando o envio está temporariamente desativado ou a fila de notificações está indisponível.",
         "requestBody": {
           "required": true,
           "content": {
@@ -10132,6 +10634,61 @@
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
+          },
+          "404": {
+            "description": "O passageiro informado não possui token de notificação registrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Nenhum token FCM encontrado para os passageiros informados"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Envio indisponível no momento: envio desativado por configuração ou fila de notificações inacessível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "envio_desativado": {
+                    "summary": "Envio de notificações temporariamente desativado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Envio de notificações temporariamente desativado"
+                        }
+                      ]
+                    }
+                  },
+                  "fila_indisponivel": {
+                    "summary": "Fila de notificações indisponível",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível enfileirar as notificações"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -10884,7 +11441,23 @@
             }
           },
           "400": {
-            "$ref": "#/components/responses/Erro400"
+            "description": "Campo obrigatório ausente ou valor inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro400"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 2,
+                      "message": "'taxa': Preenchimento obrigatório"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
