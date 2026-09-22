@@ -87,7 +87,9 @@
                       "pages/v2/referencia/condutores/endpoint/post-creditos-saques",
                       "pages/v2/referencia/condutores/endpoint/put-areas-bloqueio-batch",
                       "pages/v2/referencia/condutores/endpoint/post-areas-permissao",
-                      "pages/v2/referencia/condutores/endpoint/delete-areas-permissao"
+                      "pages/v2/referencia/condutores/endpoint/delete-areas-permissao",
+                      "pages/v2/referencia/condutores/endpoint/get-taxa",
+                      "pages/v2/referencia/condutores/endpoint/post-taxa"
                     ]
                   },
                   {
@@ -103,9 +105,10 @@
                   {
                     "group": "Cupons",
                     "pages": [
-                      "pages/v2/referencia/cupons/endpoint/post",
                       "pages/v2/referencia/cupons/endpoint/get",
-                      "pages/v2/referencia/cupons/endpoint/get-geradores"
+                      "pages/v2/referencia/cupons/endpoint/post",
+                      "pages/v2/referencia/cupons/endpoint/get-geradores",
+                      "pages/v2/referencia/cupons/endpoint/get-areas"
                     ]
                   },
                   {
