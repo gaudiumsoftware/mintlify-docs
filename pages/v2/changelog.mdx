@@ -154,6 +154,45 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="22 set 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 id="valor-original-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Valor da corrida antes do desconto do cupom
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      A consulta e o recibo da corrida passaram a informar também o valor bruto, antes do desconto
+      do cupom, ao lado do valor já líquido que era retornado. Sem cupom aplicado, os dois valores
+      são iguais.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/corridas/{id}" href="/pages/v2/referencia/corridas/endpoint/get-by-id" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="valor_corrida_integral" /> — valor bruto da corrida, antes do desconto do cupom. O campo <ParamBadge name="valor_corrida" /> continua trazendo o valor já líquido.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/corridas/consultar" href="/pages/v2/referencia/corridas/endpoint/post-consultar" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="valor_corrida_integral" /> — mesmo campo, em cada corrida da lista retornada.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/v2/integracao/corridas/{id}/recibo" href="/pages/v2/referencia/corridas/endpoint/get-recibo" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="valor_original" /> — dentro de <ParamBadge name="dados_solicitacao" />, traz o valor bruto da corrida, antes do desconto do cupom. O campo <ParamBadge name="valor" /> continua trazendo o valor já líquido.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+  </Entry>
+
   <Entry date="22 set 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="cupons-disponiveis-cliente" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Cupons disponíveis do cliente
