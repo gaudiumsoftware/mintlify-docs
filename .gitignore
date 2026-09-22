@@ -26,3 +26,6 @@ docs/specs/
 
 # Planejamento local (não versionar)
 tasks/
+
+# Estado de sessão do fluxo SDD (não versionar)
+HANDOFF.md
