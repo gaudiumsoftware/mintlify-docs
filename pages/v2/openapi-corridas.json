@@ -82,6 +82,32 @@
               "type": "integer",
               "default": 1
             }
+          },
+          {
+            "name": "ultimo_acesso_apos",
+            "in": "query",
+            "description": "Filtra clientes com último acesso ao app a partir desta data (inclusive). Formato ISO-8601 UTC. É um filtro de segmento: preserva a paginação e é combinável com `status_cliente`. Exclui clientes com último acesso nulo — para buscar quem nunca acessou o app, use `nunca_acessou`.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "ultimo_acesso_antes_de",
+            "in": "query",
+            "description": "Filtra clientes com último acesso ao app antes desta data (exclusive). Formato ISO-8601 UTC. É um filtro de segmento: preserva a paginação e é combinável com `status_cliente`. Exclui clientes com último acesso nulo — para buscar quem nunca acessou o app, use `nunca_acessou`.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "nunca_acessou",
+            "in": "query",
+            "description": "Quando `true` ou `1`, retorna somente os clientes que nunca acessaram o app (último acesso nulo).",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -102,7 +128,9 @@
                       "telefone": "(11) 97772-3133",
                       "status_cliente": "A",
                       "cpf": null,
-                      "foto_url": "https://s3.amazonaws.com/exemplo-bucket/fotos/cliente-1.jpg?X-Amz-Expires=..."
+                      "foto_url": "https://s3.amazonaws.com/exemplo-bucket/fotos/cliente-1.jpg?X-Amz-Expires=...",
+                      "token_atualizado_em": "2026-08-20T13:45:00Z",
+                      "ultimo_acesso_em": "2026-08-19T22:10:00Z"
                     }
                   ]
                 }
@@ -145,7 +173,9 @@
                       "telefone": "(11) 97772-3133",
                       "status_cliente": "A",
                       "cpf": null,
-                      "foto_url": "https://s3.amazonaws.com/exemplo-bucket/fotos/cliente-1.jpg?X-Amz-Expires=..."
+                      "foto_url": "https://s3.amazonaws.com/exemplo-bucket/fotos/cliente-1.jpg?X-Amz-Expires=...",
+                      "token_atualizado_em": "2026-08-20T13:45:00Z",
+                      "ultimo_acesso_em": "2026-08-19T22:10:00Z"
                     }
                   ]
                 }
@@ -339,6 +369,199 @@
                       "dados_extras": ""
                     }
                   ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/condutores/posicoes": {
+      "get": {
+        "summary": "Listar posição dos condutores livres",
+        "description": "Retorna a posição atual dos condutores livres da central — os que estão disponíveis, sem corrida em andamento.\n\nA posição vem do serviço de localização em tempo real, a mesma fonte do mapa de condutores do painel. Condutor sem posição publicada recentemente não aparece na lista, ainda que esteja livre.\n\nO retorno não é paginado: traz todos os condutores que atendem aos filtros.\n\nPara acessar este endpoint, o usuário autenticado deve ter a permissão `API - Corrida`.",
+        "parameters": [
+          {
+            "name": "incluir_parceiras",
+            "in": "query",
+            "description": "Inclui também os condutores das centrais parceiras. Por padrão a consulta traz apenas os condutores da central autenticada.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          {
+            "name": "raio_km",
+            "in": "query",
+            "description": "Limita o resultado aos condutores dentro deste raio, em quilômetros. Deve ser maior que zero. Sem `lat` e `lng`, o raio é medido a partir do centro de atuação da central.",
+            "schema": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          },
+          {
+            "name": "lat",
+            "in": "query",
+            "description": "Latitude do ponto central do raio. Deve ser enviada junto com `lng` e `raio_km`.",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "lng",
+            "in": "query",
+            "description": "Longitude do ponto central do raio. Deve ser enviada junto com `lat` e `raio_km`.",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "condutores": [
+                      {
+                        "id": 5574,
+                        "nome": "Lara",
+                        "bandeira_id": 3,
+                        "lat": -23.321443,
+                        "lng": -51.161412,
+                        "ultima_atividade": "2026-09-18T12:55:58Z",
+                        "inativo": false
+                      },
+                      {
+                        "id": 5590,
+                        "nome": "Marcos",
+                        "bandeira_id": 3,
+                        "lat": -23.318907,
+                        "lng": -51.170224,
+                        "ultima_atividade": "2026-09-18T12:41:02Z",
+                        "inativo": true
+                      }
+                    ]
+                  },
+                  "__links": {
+                    "self": {
+                      "href": "api/v2/integracao/condutores/posicoes",
+                      "metodo": "get"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "raio_nao_positivo": {
+                    "summary": "Raio menor ou igual a zero",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'raio_km': Deve ser maior que zero."
+                        }
+                      ]
+                    }
+                  },
+                  "raio_nao_numerico": {
+                    "summary": "Raio não numérico",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'raio_km': Deve ser numérico."
+                        }
+                      ]
+                    }
+                  },
+                  "coordenada_incompleta": {
+                    "summary": "Apenas uma das coordenadas informada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'lng': Deve ser informado junto com o par de coordenadas (lat e lng)."
+                        }
+                      ]
+                    }
+                  },
+                  "raio_ausente": {
+                    "summary": "Coordenadas informadas sem o raio",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'raio_km': Obrigatório quando lat e lng são informados."
+                        }
+                      ]
+                    }
+                  },
+                  "parceiras_invalido": {
+                    "summary": "incluir_parceiras com valor não booleano",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'incluir_parceiras': Deve ser um valor booleano (true ou false)."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Serviço de localização indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "localizacao_indisponivel": {
+                    "summary": "Serviço de localização não respondeu",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 503,
+                          "message": "Não foi possível consultar a posição dos condutores no momento. Tente novamente em instantes."
+                        }
+                      ]
+                    }
+                  },
+                  "sem_marca_aplicativo": {
+                    "summary": "Central sem marca de aplicativo configurada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 503,
+                          "message": "A central não possui marca de aplicativo configurada, necessária para consultar a posição dos condutores."
+                        }
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -2052,7 +2275,7 @@
     "/corridas": {
       "post": {
         "summary": "Criar corrida",
-        "description": "Cria uma corrida avulsa, aceitando dados de cadastro, passageiro, origem, destino, empresa, filtros extras e paradas.",
+        "description": "Cria uma corrida avulsa, aceitando dados de cadastro, passageiro, origem, destino, empresa, filtros extras, paradas e cupom de desconto (`codigo_cupom`). Quando a bandeira usa cálculo pré-fixo ou pré-variável, o valor calculado da corrida — já líquido do desconto do cupom, se houver — volta no response em `valor_corrida`, `valor_desconto` e `valor_cupom`.",
         "requestBody": {
           "required": true,
           "content": {
@@ -2344,6 +2567,10 @@
                   },
                   "retorno": {
                     "type": "boolean"
+                  },
+                  "codigo_cupom": {
+                    "type": "string",
+                    "description": "Código do cupom de desconto a ser aplicado na corrida."
                   }
                 }
               },
@@ -2429,14 +2656,15 @@
                     "lat_parada": -22.903965,
                     "lng_parada": -43.180185
                   }
-                ]
+                ],
+                "codigo_cupom": "PROMO10"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Corrida criada com sucesso",
+            "description": "Corrida criada com sucesso. Os campos `valor_corrida`, `valor_desconto` e `valor_cupom` só vêm presentes quando a bandeira usa cálculo pré-fixo ou pré-variável (valor pré-calculado).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2446,7 +2674,10 @@
                   "success": true,
                   "data": {
                     "id_mch": "100018556",
-                    "tipo": "normal"
+                    "tipo": "normal",
+                    "valor_corrida": 32,
+                    "valor_desconto": 10,
+                    "valor_cupom": 8
                   }
                 }
               }
@@ -2458,7 +2689,7 @@
     "/corridas/consultar": {
       "post": {
         "summary": "Consultar corridas",
-        "description": "Retorna as solicitações da central conforme os filtros informados. O intervalo máximo aceito entre `data_hora_solicitacao_min` e `data_hora_solicitacao_max` é de 30 dias. Para acessar este endpoint, o usuário precisa ter a permissão `API - Corrida`.",
+        "description": "Retorna as solicitações da central conforme os filtros informados. O intervalo máximo aceito entre `data_hora_solicitacao_min` e `data_hora_solicitacao_max` é de 30 dias. Para acessar este endpoint, o usuário precisa ter a permissão `API - Corrida`.\n\nO campo `valor_corrida` traz o valor já líquido, com o desconto do cupom aplicado, e `valor_corrida_integral` traz o valor bruto da corrida, antes do desconto. Sem cupom aplicado, os dois campos são iguais.",
         "requestBody": {
           "required": false,
           "content": {
@@ -2567,6 +2798,7 @@
                       "data_hora_pendencia": "2024-05-02 08:53:49",
                       "distancia_coleta_km": null,
                       "valor_corrida": "7.00",
+                      "valor_corrida_integral": "10.00",
                       "condutor_especificado": false,
                       "com_retorno": false,
                       "condutor_id": "",
@@ -2594,6 +2826,7 @@
                       "data_hora_pendencia": "2024-05-03 09:36:45",
                       "distancia_coleta_km": null,
                       "valor_corrida": "10.50",
+                      "valor_corrida_integral": "10.50",
                       "condutor_especificado": false,
                       "com_retorno": false,
                       "condutor_id": "",
@@ -2855,6 +3088,10 @@
                   },
                   "latlng_paradas": {
                     "type": "string"
+                  },
+                  "codigo_cupom": {
+                    "type": "string",
+                    "description": "Código do cupom de desconto a ser aplicado na corrida."
                   }
                 }
               },
@@ -2913,7 +3150,7 @@
     "/corridas/estimativas": {
       "post": {
         "summary": "Estimar corrida",
-        "description": "Calcula estimativa de corrida simples ou multicategorias a partir de coordenadas ou endereço. Quando `multicategorias` é `true`, a API calcula a estimativa de múltiplas categorias.",
+        "description": "Calcula estimativa de corrida simples ou multicategorias a partir de coordenadas ou endereço. Quando `multicategorias` é `true`, a API calcula a estimativa de múltiplas categorias. Quando `codigo_cupom` é informado, `estimativa_valor` retorna o valor já líquido, com o desconto do cupom aplicado.",
         "requestBody": {
           "required": true,
           "content": {
@@ -2981,6 +3218,10 @@
                   "multicategorias": {
                     "type": "boolean",
                     "description": "Quando multicategorias é true, a API calcula a estimativa de múltiplas categorias."
+                  },
+                  "codigo_cupom": {
+                    "type": "string",
+                    "description": "Código do cupom de desconto a ser aplicado na corrida."
                   }
                 }
               },
@@ -2998,7 +3239,8 @@
                 "cidade_desejado": "Rio de Janeiro",
                 "estado_desejado": "RJ",
                 "multicategorias": true,
-                "latlng_paradas": "-22.904434,-43.175555|-22.912385,-43.226663"
+                "latlng_paradas": "-22.904434,-43.175555|-22.912385,-43.226663",
+                "codigo_cupom": "PROMO10"
               }
             }
           }
@@ -3019,7 +3261,7 @@
                     "categorias": [
                       {
                         "categoria_id": 3,
-                        "estimativa_valor": 40,
+                        "estimativa_valor": 32,
                         "categoria_nome": "Comum",
                         "tarifa_nome": "Tarifa padrão"
                       },
@@ -3130,6 +3372,10 @@
                   },
                   "retorno": {
                     "type": "boolean"
+                  },
+                  "codigo_cupom": {
+                    "type": "string",
+                    "description": "Código do cupom de desconto a ser aplicado na corrida."
                   }
                 }
               },
@@ -3444,6 +3690,10 @@
                   },
                   "latlng_paradas": {
                     "type": "string"
+                  },
+                  "codigo_cupom": {
+                    "type": "string",
+                    "description": "Código do cupom de desconto a ser aplicado na corrida."
                   }
                 }
               },
@@ -3623,7 +3873,7 @@
     "/corridas/{id}": {
       "get": {
         "summary": "Consultar corrida",
-        "description": "Consulta uma corrida específica pelo identificador interno da corrida.",
+        "description": "Consulta uma corrida específica pelo identificador interno da corrida.\n\nO campo `valor_corrida` traz o valor já líquido, com o desconto do cupom aplicado, e `valor_corrida_integral` traz o valor bruto da corrida, antes do desconto. Sem cupom aplicado, os dois campos são iguais.",
         "parameters": [
           {
             "name": "id",
@@ -3660,6 +3910,7 @@
                     "data_hora_pendencia": "2024-05-02 08:53:49",
                     "distancia_coleta_km": null,
                     "valor_corrida": "7.00",
+                    "valor_corrida_integral": "10.00",
                     "condutor_especificado": false,
                     "com_retorno": false,
                     "condutor_id": "",
@@ -3845,7 +4096,7 @@
     "/corridas/{id}/recibo": {
       "get": {
         "summary": "Consultar recibo da corrida",
-        "description": "Consulta o recibo de uma corrida.",
+        "description": "Consulta o recibo de uma corrida.\n\nEm `dados_solicitacao`, o campo `valor` traz o valor já líquido, com o desconto do cupom aplicado, e `valor_original` traz o valor bruto da corrida, antes do desconto. Sem cupom aplicado, os dois campos são iguais.",
         "parameters": [
           {
             "name": "id",
@@ -3878,6 +4129,7 @@
                     },
                     "dados_solicitacao": {
                       "valor": "4.00",
+                      "valor_original": "4.00",
                       "duracao": "0",
                       "distancia": "0.001",
                       "tarifa": "Tarifa padrão",
@@ -3950,6 +4202,127 @@
       }
     },
     "/cupons": {
+      "get": {
+        "summary": "Consultar cupons",
+        "description": "Consulta os cupons de desconto da bandeira autenticada.\n\nInforme `id` ou `codigo` para buscar um cupom específico — os dois parâmetros são mutuamente exclusivos. Quando nenhum dos dois é informado, o endpoint lista todos os cupons da bandeira. A busca por `codigo` e a listagem geral retornam até 10 cupons por página, navegados pelo parâmetro `pagina`; a busca por `id` retorna no máximo um cupom e ignora a paginação.\n\nO campo `status` do retorno é derivado da vigência do cupom: `aguardo` antes de `data_hora_inicio`, `ativo` durante a vigência e `inativo` a partir de `data_hora_fim`. `quantidade_usuarios_utilizaram` conta passageiros distintos e `vezes_utilizado` conta todos os usos do cupom.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "description": "Identificador interno do cupom. Não pode ser combinado com `codigo`.",
+            "schema": {
+              "type": "integer",
+              "example": 1042
+            }
+          },
+          {
+            "name": "codigo",
+            "in": "query",
+            "required": false,
+            "description": "Código do cupom, com até 21 caracteres e sem emojis. Não pode ser combinado com `id`. Pode retornar mais de um cupom, porque o mesmo código pode ter sido cadastrado em cupons diferentes.",
+            "schema": {
+              "type": "string",
+              "example": "DESCONTO10"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "Filtra os cupons pela vigência.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ativo",
+                "inativo",
+                "aguardo"
+              ],
+              "example": "ativo"
+            }
+          },
+          {
+            "name": "pagina",
+            "in": "query",
+            "required": false,
+            "description": "Página da listagem, com 10 cupons por página. Padrão 1.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": [
+                    {
+                      "id": 1042,
+                      "codigo": "DESCONTO10",
+                      "status": "ativo",
+                      "data_hora_inicio": "2026-09-01 00:00:00",
+                      "data_hora_fim": "2026-10-01 23:59:59",
+                      "tipo_desconto": "percentual",
+                      "desconto": "10.00",
+                      "tipo_limite_cupom": "ate_n_vezes_por_passageiro",
+                      "limite_uso_individual": 3,
+                      "valor_maximo": "20.00",
+                      "valor_maximo_corrida": "50.00",
+                      "gerador_cupom_desconto_id": 17,
+                      "quantidade_usuarios_utilizaram": 12,
+                      "vezes_utilizado": 27
+                    },
+                    {
+                      "id": 1043,
+                      "codigo": "BEMVINDO",
+                      "status": "aguardo",
+                      "data_hora_inicio": "2026-10-05 00:00:00",
+                      "data_hora_fim": "2026-11-05 23:59:59",
+                      "tipo_desconto": "valor_fixo",
+                      "desconto": "5.00",
+                      "tipo_limite_cupom": "apenas_primeira_corrida",
+                      "limite_uso_individual": null,
+                      "valor_maximo": null,
+                      "valor_maximo_corrida": null,
+                      "gerador_cupom_desconto_id": 18,
+                      "quantidade_usuarios_utilizaram": 0,
+                      "vezes_utilizado": 0
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "'id': Informe exatamente um dos parâmetros: id ou codigo."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "summary": "Criar cupom",
         "description": "Cria um novo cupom de desconto vinculado a um gerador de cupom.",
@@ -4065,6 +4438,15 @@
                     "type": "integer",
                     "description": "Opcional. Indica a área a qual o cupom será restrito.",
                     "example": 239
+                  },
+                  "local_aplicacao": {
+                    "type": "string",
+                    "description": "Opcional. Indica se a restrição de area_id se aplica ao local de partida (P) ou de destino (D) da corrida. Só é considerado quando area_id é enviado; padrão P.",
+                    "enum": [
+                      "P",
+                      "D"
+                    ],
+                    "example": "D"
                   }
                 }
               },
@@ -4086,7 +4468,8 @@
                       83992,
                       83959
                     ],
-                    "area_id": 239
+                    "area_id": 239,
+                    "local_aplicacao": "D"
                   }
                 },
                 "cupom_porcentagem_individual": {
@@ -4281,6 +4664,167 @@
         }
       }
     },
+    "/cupons/cliente/{cliente_id}/disponiveis": {
+      "get": {
+        "summary": "Consultar cupons disponíveis do cliente",
+        "description": "Lista os cupons que um cliente pode aplicar em uma corrida — a mesma vitrine exibida no aplicativo do passageiro.\n\nO retorno reúne os cupons cadastrados e vigentes da bandeira que o cliente já resgatou ou que estão publicados para exibição no aplicativo, mais o cupom automático de primeira viagem ou de inatividade quando o cliente é elegível. Cupons já esgotados para o cliente, fora da vigência ou indisponíveis para a bandeira não entram na lista.\n\nCupons restritos a uma área só aparecem quando as coordenadas da ponta correspondente são informadas: `lat_partida`/`lng_partida` liberam os cupons aplicados na partida e `lat_destino`/`lng_destino` os cupons aplicados no destino. Sem o par de coordenadas, o cupom daquela ponta fica fora da lista, porque não há como avaliar a área.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "parameters": [
+          {
+            "name": "cliente_id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador interno do cliente. O cliente precisa pertencer à bandeira autenticada.",
+            "schema": {
+              "type": "integer",
+              "example": 83605
+            }
+          },
+          {
+            "name": "lat_partida",
+            "in": "query",
+            "required": false,
+            "description": "Latitude do local de partida da corrida. Usada para avaliar os cupons restritos a uma área de partida.",
+            "schema": {
+              "type": "number",
+              "example": -22.8743056
+            }
+          },
+          {
+            "name": "lng_partida",
+            "in": "query",
+            "required": false,
+            "description": "Longitude do local de partida da corrida. Usada para avaliar os cupons restritos a uma área de partida.",
+            "schema": {
+              "type": "number",
+              "example": -43.5626744
+            }
+          },
+          {
+            "name": "lat_destino",
+            "in": "query",
+            "required": false,
+            "description": "Latitude do destino da corrida. Usada para avaliar os cupons restritos a uma área de destino.",
+            "schema": {
+              "type": "number",
+              "example": -22.9884209
+            }
+          },
+          {
+            "name": "lng_destino",
+            "in": "query",
+            "required": false,
+            "description": "Longitude do destino da corrida. Usada para avaliar os cupons restritos a uma área de destino.",
+            "schema": {
+              "type": "number",
+              "example": -43.1934916
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "cupons": [
+                      {
+                        "id": "1042",
+                        "area_id": null,
+                        "local_aplicacao": "P",
+                        "codigo": "DESCONTO10",
+                        "valor_maximo": "20.00",
+                        "valor_maximo_corrida": "50.00",
+                        "validade": "2026-10-01 23:59:59",
+                        "limite_uso_individual": "3",
+                        "uso_unico": "0",
+                        "uso_apenas_novo_cliente": "0",
+                        "qtd_usos_cupom": "1",
+                        "perc_desconto": "10.00",
+                        "valor_desconto": null,
+                        "expirado": "0",
+                        "tipos_pagamento": [
+                          {
+                            "id": "1",
+                            "nome": "Dinheiro",
+                            "tipo": "D"
+                          }
+                        ],
+                        "nome_area": null
+                      },
+                      {
+                        "id": "1050",
+                        "area_id": "7",
+                        "codigo": "PRIMEIRAVIAGEM",
+                        "perc_desconto": null,
+                        "valor_desconto": "15.00",
+                        "valor_maximo": "15.00",
+                        "limite_uso_individual": null,
+                        "uso_unico": "1",
+                        "uso_apenas_novo_cliente": "1",
+                        "criado_automaticamente": "1",
+                        "qtd_usos_cupom": 0,
+                        "primeira_viagem": "1",
+                        "tipos_pagamento": [
+                          {
+                            "id": "1",
+                            "nome": "Dinheiro",
+                            "tipo": "D"
+                          }
+                        ],
+                        "nome_area": "Centro"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "'lat_partida': Deve ser numérico."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cliente não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Cliente não encontrado ou não pertence à bandeira autenticada."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/dinamicas/area": {
       "get": {
         "summary": "Obter dinâmicas por área",
@@ -4349,8 +4893,8 @@
     },
     "/dinamicas/area/{id}": {
       "patch": {
-        "summary": "Ativar/Desativar dinâmica por área",
-        "description": "Ativa ou desativa a dinâmica associada a uma área específica.",
+        "summary": "Atualizar dinâmica por área",
+        "description": "Atualiza o cadastro da dinâmica associada a uma área específica. Todos os campos são opcionais, mas ao menos um deve ser informado. Como a área é imutável após criada, alterar `nome` cria internamente uma NOVA área — a resposta pode trazer um `id` diferente do informado na URL, que deve ser usado nas próximas requisições sobre essa área.",
         "parameters": [
           {
             "name": "id",
@@ -4368,10 +4912,32 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "ativo"
-                ],
+                "description": "Ao menos um dos campos abaixo deve ser informado.",
                 "properties": {
+                  "nome": {
+                    "type": "string",
+                    "description": "Novo nome da área."
+                  },
+                  "fator": {
+                    "type": "number",
+                    "description": "Novo valor do fator aplicado pela dinâmica (numérico). O significado depende de `tipo_calculo`: com `M`, é o multiplicador aplicado ao preço da corrida (entre 1.1 e 5); com `F`, é o valor fixo em R$ somado ao preço da corrida (entre 0.5 e 99.9)."
+                  },
+                  "tipo_calculo": {
+                    "type": "string",
+                    "description": "Forma de cálculo do fator: `F` — Valor adicional, soma um valor fixo em R$ ao preço da corrida; `M` — Fator multiplicador, multiplica o preço da corrida pelo fator informado.",
+                    "enum": [
+                      "F",
+                      "M"
+                    ]
+                  },
+                  "tipo_fator": {
+                    "type": "string",
+                    "description": "Momento em que o fator é aplicado: `P` — Partida, aplicado na origem/embarque da corrida; `R` — Parada, aplicado no destino/parada da corrida.",
+                    "enum": [
+                      "P",
+                      "R"
+                    ]
+                  },
                   "ativo": {
                     "description": "Indica se a dinâmica da área ficará ativa ou inativa. Também aceita `1` e `0`.",
                     "oneOf": [
@@ -4390,6 +4956,10 @@
                 }
               },
               "example": {
+                "nome": "Área Central",
+                "fator": 1.8,
+                "tipo_calculo": "M",
+                "tipo_fator": "P",
                 "ativo": true
               }
             }
@@ -4405,7 +4975,14 @@
                 },
                 "example": {
                   "success": true,
-                  "message": "Dinâmica atualizada com sucesso."
+                  "data": {
+                    "id": 10,
+                    "nome": "Área Central",
+                    "fator": 1.8,
+                    "tipo_calculo": "M",
+                    "tipo_fator": "P",
+                    "ativo": true
+                  }
                 }
               }
             }
@@ -4418,14 +4995,50 @@
                   "type": "object"
                 },
                 "examples": {
-                  "campo_obrigatorio": {
-                    "summary": "Campo ativo ausente",
+                  "nenhum_campo_informado": {
+                    "summary": "Nenhum campo informado",
                     "value": {
                       "success": false,
                       "errors": [
                         {
-                          "code": 2,
-                          "message": "'ativo': Preenchimento obrigatório"
+                          "code": 0,
+                          "message": "Informe ao menos um dos campos: 'nome', 'fator', 'tipo_calculo', 'tipo_fator' ou 'ativo'"
+                        }
+                      ]
+                    }
+                  },
+                  "fator_invalido": {
+                    "summary": "Campo fator inválido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O campo 'fator' deve ser numérico"
+                        }
+                      ]
+                    }
+                  },
+                  "fator_fora_do_limite": {
+                    "summary": "Fator fora do limite permitido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O campo 'fator' está fora do limite permitido"
+                        }
+                      ]
+                    }
+                  },
+                  "fator_obrigatorio_na_troca_tipo_calculo": {
+                    "summary": "Fator obrigatório ao trocar o tipo de cálculo",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O campo 'fator' é obrigatório ao alterar o 'tipo_calculo'"
                         }
                       ]
                     }
@@ -4442,14 +5055,258 @@
                       ]
                     }
                   },
-                  "nenhuma_alteracao": {
-                    "summary": "Nenhuma alteração detectada",
+                  "json_malformado": {
+                    "summary": "JSON malformado",
                     "value": {
                       "success": false,
                       "errors": [
                         {
                           "code": 0,
-                          "message": "Nenhuma alteração detectada."
+                          "message": "JSON_INVALIDO"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Dinâmica não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Dinâmica não encontrada."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dinamicas/area/{id}/vertices": {
+      "get": {
+        "summary": "Obter vértices da área da dinâmica",
+        "description": "Obtém os vértices da área da dinâmica em formato GeoJSON Polygon.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador da área da dinâmica.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "type": "Polygon",
+                    "coordinates": [
+                      [
+                        [-46.633309, -23.55052],
+                        [-46.634309, -23.55152],
+                        [-46.632309, -23.55152],
+                        [-46.633309, -23.55052]
+                      ]
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Dinâmica não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Dinâmica não encontrada."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Ocorreu um erro interno no servidor. Por favor, tente novamente mais tarde."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Atualizar vértices da área da dinâmica",
+        "description": "Substitui todos os vértices do polígono de uma área de dinâmica, a partir de um objeto GeoJSON do tipo `Polygon` (RFC 7946). Como a área é imutável após criada, a alteração de geometria cria internamente uma NOVA área (copiando os demais atributos da área original) — a resposta traz um `id` de área diferente do informado na URL, que deve ser usado nas próximas requisições.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador da área cujos vértices serão atualizados.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "type",
+                  "coordinates"
+                ],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "Tipo de geometria GeoJSON. Deve ser `Polygon`.",
+                    "enum": [
+                      "Polygon"
+                    ]
+                  },
+                  "coordinates": {
+                    "type": "array",
+                    "description": "Array com exatamente um anel de coordenadas (`coordinates[0]`), com ao menos 4 posições (mínimo de 3 vértices distintos mais o fechamento do anel, ou seja, a primeira posição igual à última). Cada posição é um par `[lng, lat]`, com `lng` entre -180 e 180 e `lat` entre -90 e 90.",
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "number"
+                        },
+                        "minItems": 2,
+                        "maxItems": 2
+                      },
+                      "minItems": 4
+                    },
+                    "minItems": 1,
+                    "maxItems": 1
+                  }
+                }
+              },
+              "example": {
+                "type": "Polygon",
+                "coordinates": [
+                  [
+                    [-46.6558, -23.5615],
+                    [-46.6500, -23.5615],
+                    [-46.6500, -23.5570],
+                    [-46.6558, -23.5570],
+                    [-46.6558, -23.5615]
+                  ]
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Vértices atualizados com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": 27,
+                    "type": "Polygon",
+                    "coordinates": [
+                      [
+                        [-46.6558, -23.5615],
+                        [-46.6500, -23.5615],
+                        [-46.6500, -23.5570],
+                        [-46.6558, -23.5570],
+                        [-46.6558, -23.5615]
+                      ]
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "tipo_invalido": {
+                    "summary": "Tipo de geometria inválido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O campo 'type' deve ser 'Polygon'"
+                        }
+                      ]
+                    }
+                  },
+                  "coordinates_insuficientes": {
+                    "summary": "Vértices insuficientes",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O polígono deve conter ao menos 3 vértices distintos"
+                        }
+                      ]
+                    }
+                  },
+                  "posicao_invalida": {
+                    "summary": "Coordenada fora do intervalo permitido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "As coordenadas devem ser numéricas, com 'lng' entre -180 e 180 e 'lat' entre -90 e 90"
                         }
                       ]
                     }
@@ -6864,6 +7721,1022 @@
                         {
                           "field": "mensagem",
                           "message": "Campo obrigatório."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notificacoes/condutor/push": {
+      "post": {
+        "summary": "Enviar notificação push para condutores",
+        "description": "Envia notificação push para uma lista de condutores.\n\nSó recebem a notificação os condutores da bandeira da chave de API (ou de suas filiais) que tenham aplicativo com token de notificação registrado. Condutores inexistentes, de outra bandeira ou sem token são ignorados sem erro — o retorno é `404` apenas quando nenhum dos condutores informados pode ser notificado.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "condutores",
+                  "mensagem"
+                ],
+                "properties": {
+                  "condutores": {
+                    "type": "array",
+                    "description": "Lista de condutores que receberão a notificação. Deve conter ao menos um item e todos os itens devem ser numéricos. IDs repetidos são considerados uma única vez. Limite máximo de 1000 itens.",
+                    "minItems": 1,
+                    "maxItems": 1000,
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "titulo": {
+                    "type": "string",
+                    "description": "Título da notificação.",
+                    "maxLength": 40
+                  },
+                  "mensagem": {
+                    "type": "string",
+                    "description": "Mensagem da notificação.",
+                    "maxLength": 255
+                  }
+                }
+              },
+              "example": {
+                "condutores": [
+                  123,
+                  456,
+                  789
+                ],
+                "titulo": "Aviso da central",
+                "mensagem": "Nova regra de escala a partir de segunda."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Notificação enviada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Push enviado com sucesso",
+                  "__links": [
+                    {
+                      "rel": "self",
+                      "href": "api/v2/integracao/notificacoes/condutor/push",
+                      "metodo": "post"
+                    },
+                    {
+                      "rel": "enviar-push-condutor-individual",
+                      "href": "api/v2/integracao/notificacoes/condutor/push/individual",
+                      "metodo": "post"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "condutores_obrigatorio": {
+                    "summary": "Lista de condutores ausente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'condutores': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "condutores_vazio": {
+                    "summary": "Lista de condutores vazia",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'condutores': Informe ao menos um condutor."
+                        }
+                      ]
+                    }
+                  },
+                  "condutor_invalido": {
+                    "summary": "Item da lista não é numérico",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'condutores.1': Deve ser numérico."
+                        }
+                      ]
+                    }
+                  },
+                  "mensagem_obrigatoria": {
+                    "summary": "Campo mensagem ausente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'mensagem': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "mensagem_muito_longa": {
+                    "summary": "Mensagem acima do limite de caracteres",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'mensagem': Deve ter no máximo 255 caracteres."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Nenhum dos condutores informados possui token de notificação registrado na bandeira da chave de API",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Nenhum token FCM encontrado para os condutores informados"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Envio indisponível no momento: projeto de notificação do aplicativo do condutor não resolvido, envio desativado por configuração ou fila de notificações inacessível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "projeto_nao_resolvido": {
+                    "summary": "Projeto de notificação do aplicativo do condutor não resolvido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível resolver o projeto Firebase do aplicativo do condutor"
+                        }
+                      ]
+                    }
+                  },
+                  "envio_desativado": {
+                    "summary": "Envio de notificações temporariamente desativado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Envio de notificações temporariamente desativado"
+                        }
+                      ]
+                    }
+                  },
+                  "fila_indisponivel": {
+                    "summary": "Fila de notificações indisponível",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível enfileirar as notificações"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notificacoes/condutor/push/individual": {
+      "post": {
+        "summary": "Enviar notificação push para um condutor",
+        "description": "Envia notificação push para um único condutor identificado pelo `condutor_id`.\n\nO condutor precisa pertencer à bandeira da chave de API (ou a uma de suas filiais) e ter aplicativo com token de notificação registrado; caso contrário o retorno é `404`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "condutor_id",
+                  "mensagem"
+                ],
+                "properties": {
+                  "condutor_id": {
+                    "type": "integer",
+                    "description": "Identificador do condutor que receberá a notificação. Deve ser numérico."
+                  },
+                  "titulo": {
+                    "type": "string",
+                    "description": "Título da notificação.",
+                    "maxLength": 40
+                  },
+                  "mensagem": {
+                    "type": "string",
+                    "description": "Mensagem da notificação.",
+                    "maxLength": 255
+                  }
+                }
+              },
+              "example": {
+                "condutor_id": 123,
+                "titulo": "Aviso da central",
+                "mensagem": "Nova regra de escala a partir de segunda."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Notificação enviada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "message": "Push enviado com sucesso",
+                  "__links": [
+                    {
+                      "rel": "self",
+                      "href": "api/v2/integracao/notificacoes/condutor/push/individual",
+                      "metodo": "post"
+                    },
+                    {
+                      "rel": "enviar-push-condutores",
+                      "href": "api/v2/integracao/notificacoes/condutor/push",
+                      "metodo": "post"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "condutor_id_obrigatorio": {
+                    "summary": "Campo condutor_id ausente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'condutor_id': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "condutor_invalido": {
+                    "summary": "condutor_id não é numérico",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'condutor_id': Deve ser numérico."
+                        }
+                      ]
+                    }
+                  },
+                  "mensagem_obrigatoria": {
+                    "summary": "Campo mensagem ausente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'mensagem': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "titulo_muito_longo": {
+                    "summary": "Título acima do limite de caracteres",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'titulo': Deve ter no máximo 40 caracteres."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "O condutor informado não possui token de notificação registrado na bandeira da chave de API",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Nenhum token FCM encontrado para os condutores informados"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Envio indisponível no momento: projeto de notificação do aplicativo do condutor não resolvido, envio desativado por configuração ou fila de notificações inacessível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "projeto_nao_resolvido": {
+                    "summary": "Projeto de notificação do aplicativo do condutor não resolvido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível resolver o projeto Firebase do aplicativo do condutor"
+                        }
+                      ]
+                    }
+                  },
+                  "envio_desativado": {
+                    "summary": "Envio de notificações temporariamente desativado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Envio de notificações temporariamente desativado"
+                        }
+                      ]
+                    }
+                  },
+                  "fila_indisponivel": {
+                    "summary": "Fila de notificações indisponível",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível enfileirar as notificações"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notificacoes/condutor/in-app-messaging": {
+      "post": {
+        "summary": "Enviar notificação in-app para condutores",
+        "description": "Envia notificação via in-app messaging para uma lista de condutores.\n\nA mensagem é exibida como um modal dentro do aplicativo do condutor, com título, conteúdo, imagem opcional e um botão de redirecionamento opcional. Mensagem recebida com o aplicativo fechado fica guardada e aparece na próxima abertura; enquanto o condutor não a fechar, ela volta a aparecer a cada troca de tela.\n\nSó recebem a notificação os condutores da bandeira da chave de API (ou de suas filiais) que tenham aplicativo com token de notificação registrado. Condutores inexistentes, de outra bandeira ou sem token são ignorados sem erro — o retorno é `404` apenas quando nenhum dos condutores informados pode ser notificado.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "condutores",
+                  "titulo",
+                  "body"
+                ],
+                "properties": {
+                  "condutores": {
+                    "type": "array",
+                    "description": "Lista de condutores que receberão a notificação. Deve conter ao menos um item e todos os itens devem ser numéricos. IDs repetidos são considerados uma única vez. Limite máximo de 1000 itens.",
+                    "minItems": 1,
+                    "maxItems": 1000,
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "titulo": {
+                    "type": "string",
+                    "description": "Título exibido no topo da mensagem.",
+                    "maxLength": 40
+                  },
+                  "body": {
+                    "type": "string",
+                    "description": "Conteúdo principal da mensagem.",
+                    "maxLength": 255
+                  },
+                  "url_imagem": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URL da imagem exibida no topo da mensagem. Deve ser uma URL válida. Quando omitida, ou quando a imagem não puder ser carregada, o aplicativo exibe a logo da central no lugar.",
+                    "maxLength": 2048
+                  },
+                  "solicitacao_id": {
+                    "type": "integer",
+                    "description": "Identificador da corrida vinculada à mensagem. Deve ser numérico quando informado. Quando presente, o aplicativo só exibe a mensagem se a corrida for a corrida em andamento do condutor."
+                  },
+                  "titulo_botao_redirecionamento": {
+                    "type": "string",
+                    "description": "Texto do botão de redirecionamento. Obrigatório quando `link_redirecionamento` for informado; o botão só aparece quando os dois campos vêm preenchidos.",
+                    "maxLength": 20
+                  },
+                  "link_redirecionamento": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URL aberta ao tocar no botão de redirecionamento. Deve ser uma URL válida. Obrigatório quando `titulo_botao_redirecionamento` for informado.",
+                    "maxLength": 2048
+                  }
+                }
+              },
+              "example": {
+                "condutores": [
+                  123,
+                  456,
+                  789
+                ],
+                "titulo": "Bônus de fim de semana",
+                "body": "Complete 10 corridas até domingo e ganhe R$ 50 de bônus.",
+                "url_imagem": "https://cdn.exemplo.com/campanhas/bonus-fim-de-semana.png",
+                "titulo_botao_redirecionamento": "Ver regras",
+                "link_redirecionamento": "https://central.exemplo.com/campanhas/bonus"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Notificação enviada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "message": "In-App Messaging enviado com sucesso",
+                  "__links": [
+                    {
+                      "rel": "self",
+                      "href": "api/v2/integracao/notificacoes/condutor/in-app-messaging",
+                      "metodo": "post"
+                    },
+                    {
+                      "rel": "enviar-push-condutores",
+                      "href": "api/v2/integracao/notificacoes/condutor/push",
+                      "metodo": "post"
+                    },
+                    {
+                      "rel": "enviar-push-condutor-individual",
+                      "href": "api/v2/integracao/notificacoes/condutor/push/individual",
+                      "metodo": "post"
+                    },
+                    {
+                      "rel": "enviar-in-app-messaging-condutor-individual",
+                      "href": "api/v2/integracao/notificacoes/condutor/in-app-messaging/individual",
+                      "metodo": "post"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "condutores_obrigatorio": {
+                    "summary": "Lista de condutores ausente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'condutores': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "condutores_vazio": {
+                    "summary": "Lista de condutores vazia",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'condutores': Informe ao menos um condutor."
+                        }
+                      ]
+                    }
+                  },
+                  "condutor_invalido": {
+                    "summary": "Item da lista não é numérico",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'condutores.1': Deve ser numérico."
+                        }
+                      ]
+                    }
+                  },
+                  "titulo_obrigatorio": {
+                    "summary": "Campo titulo ausente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'titulo': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "titulo_muito_longo": {
+                    "summary": "Título acima do limite de caracteres",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'titulo': Deve ter no máximo 40 caracteres."
+                        }
+                      ]
+                    }
+                  },
+                  "body_obrigatorio": {
+                    "summary": "Campo body ausente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'body': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "body_muito_longo": {
+                    "summary": "Conteúdo acima do limite de caracteres",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'body': Deve ter no máximo 255 caracteres."
+                        }
+                      ]
+                    }
+                  },
+                  "botao_sem_link": {
+                    "summary": "Título do botão informado sem o link",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'link_redirecionamento': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "url_imagem_invalida": {
+                    "summary": "URL da imagem inválida",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'url_imagem': URL inválida."
+                        }
+                      ]
+                    }
+                  },
+                  "solicitacao_id_invalido": {
+                    "summary": "Solicitação com valor não numérico",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'solicitacao_id': Deve ser numérico."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Nenhum dos condutores informados possui token de notificação registrado na bandeira da chave de API",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Nenhum token FCM encontrado para os condutores informados"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Envio indisponível no momento: projeto de notificação do aplicativo do condutor não resolvido, envio desativado por configuração ou fila de notificações inacessível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "projeto_nao_resolvido": {
+                    "summary": "Projeto de notificação do aplicativo do condutor não resolvido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível resolver o projeto Firebase do aplicativo do condutor"
+                        }
+                      ]
+                    }
+                  },
+                  "envio_desativado": {
+                    "summary": "Envio de notificações temporariamente desativado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Envio de notificações temporariamente desativado"
+                        }
+                      ]
+                    }
+                  },
+                  "fila_indisponivel": {
+                    "summary": "Fila de notificações indisponível",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível enfileirar as notificações"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notificacoes/condutor/in-app-messaging/individual": {
+      "post": {
+        "summary": "Enviar notificação in-app para um condutor",
+        "description": "Envia notificação via in-app messaging para um único condutor identificado pelo `condutor_id`.\n\nA mensagem é exibida como um modal dentro do aplicativo do condutor, com título, conteúdo, imagem opcional e um botão de redirecionamento opcional. Mensagem recebida com o aplicativo fechado fica guardada e aparece na próxima abertura; enquanto o condutor não a fechar, ela volta a aparecer a cada troca de tela.\n\nO condutor precisa pertencer à bandeira da chave de API (ou a uma de suas filiais) e ter aplicativo com token de notificação registrado; caso contrário o retorno é `404`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "condutor_id",
+                  "titulo",
+                  "body"
+                ],
+                "properties": {
+                  "condutor_id": {
+                    "type": "integer",
+                    "description": "Identificador do condutor que receberá a notificação. Deve ser numérico."
+                  },
+                  "titulo": {
+                    "type": "string",
+                    "description": "Título exibido no topo da mensagem.",
+                    "maxLength": 40
+                  },
+                  "body": {
+                    "type": "string",
+                    "description": "Conteúdo principal da mensagem.",
+                    "maxLength": 255
+                  },
+                  "url_imagem": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URL da imagem exibida no topo da mensagem. Deve ser uma URL válida. Quando omitida, ou quando a imagem não puder ser carregada, o aplicativo exibe a logo da central no lugar.",
+                    "maxLength": 2048
+                  },
+                  "solicitacao_id": {
+                    "type": "integer",
+                    "description": "Identificador da corrida vinculada à mensagem. Deve ser numérico quando informado. Quando presente, o aplicativo só exibe a mensagem se a corrida for a corrida em andamento do condutor."
+                  },
+                  "titulo_botao_redirecionamento": {
+                    "type": "string",
+                    "description": "Texto do botão de redirecionamento. Obrigatório quando `link_redirecionamento` for informado; o botão só aparece quando os dois campos vêm preenchidos.",
+                    "maxLength": 20
+                  },
+                  "link_redirecionamento": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URL aberta ao tocar no botão de redirecionamento. Deve ser uma URL válida. Obrigatório quando `titulo_botao_redirecionamento` for informado.",
+                    "maxLength": 2048
+                  }
+                }
+              },
+              "example": {
+                "condutor_id": 123,
+                "titulo": "Bônus de fim de semana",
+                "body": "Complete 10 corridas até domingo e ganhe R$ 50 de bônus.",
+                "url_imagem": "https://cdn.exemplo.com/campanhas/bonus-fim-de-semana.png",
+                "titulo_botao_redirecionamento": "Ver regras",
+                "link_redirecionamento": "https://central.exemplo.com/campanhas/bonus"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Notificação enviada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "message": "In-App Messaging enviado com sucesso",
+                  "__links": [
+                    {
+                      "rel": "self",
+                      "href": "api/v2/integracao/notificacoes/condutor/in-app-messaging/individual",
+                      "metodo": "post"
+                    },
+                    {
+                      "rel": "enviar-push-condutores",
+                      "href": "api/v2/integracao/notificacoes/condutor/push",
+                      "metodo": "post"
+                    },
+                    {
+                      "rel": "enviar-push-condutor-individual",
+                      "href": "api/v2/integracao/notificacoes/condutor/push/individual",
+                      "metodo": "post"
+                    },
+                    {
+                      "rel": "enviar-in-app-messaging-condutores",
+                      "href": "api/v2/integracao/notificacoes/condutor/in-app-messaging",
+                      "metodo": "post"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "condutor_id_obrigatorio": {
+                    "summary": "Campo condutor_id ausente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'condutor_id': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "condutor_invalido": {
+                    "summary": "condutor_id não é numérico",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'condutor_id': Deve ser numérico."
+                        }
+                      ]
+                    }
+                  },
+                  "titulo_obrigatorio": {
+                    "summary": "Campo titulo ausente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'titulo': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "titulo_muito_longo": {
+                    "summary": "Título acima do limite de caracteres",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'titulo': Deve ter no máximo 40 caracteres."
+                        }
+                      ]
+                    }
+                  },
+                  "body_obrigatorio": {
+                    "summary": "Campo body ausente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'body': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "body_muito_longo": {
+                    "summary": "Conteúdo acima do limite de caracteres",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'body': Deve ter no máximo 255 caracteres."
+                        }
+                      ]
+                    }
+                  },
+                  "botao_sem_link": {
+                    "summary": "Título do botão informado sem o link",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'link_redirecionamento': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "url_imagem_invalida": {
+                    "summary": "URL da imagem inválida",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'url_imagem': URL inválida."
+                        }
+                      ]
+                    }
+                  },
+                  "solicitacao_id_invalido": {
+                    "summary": "Solicitação com valor não numérico",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'solicitacao_id': Deve ser numérico."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "O condutor informado não possui token de notificação registrado na bandeira da chave de API",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Nenhum token FCM encontrado para os condutores informados"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Envio indisponível no momento: projeto de notificação do aplicativo do condutor não resolvido, envio desativado por configuração ou fila de notificações inacessível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "projeto_nao_resolvido": {
+                    "summary": "Projeto de notificação do aplicativo do condutor não resolvido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível resolver o projeto Firebase do aplicativo do condutor"
+                        }
+                      ]
+                    }
+                  },
+                  "envio_desativado": {
+                    "summary": "Envio de notificações temporariamente desativado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Envio de notificações temporariamente desativado"
+                        }
+                      ]
+                    }
+                  },
+                  "fila_indisponivel": {
+                    "summary": "Fila de notificações indisponível",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível enfileirar as notificações"
                         }
                       ]
                     }

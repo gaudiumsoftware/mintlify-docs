@@ -65,8 +65,10 @@
                     "group": "Dinâmicas",
                     "pages": [
                       "pages/v2/referencia/dinamicas/endpoint/get-area",
+                      "pages/v2/referencia/dinamicas/endpoint/get-vertices",
                       "pages/v2/referencia/dinamicas/endpoint/get-sem-area",
                       "pages/v2/referencia/dinamicas/endpoint/patch-area",
+                      "pages/v2/referencia/dinamicas/endpoint/patch-vertices",
                       "pages/v2/referencia/dinamicas/endpoint/patch-sem-area"
                     ]
                   },
@@ -74,6 +76,7 @@
                     "group": "Condutores",
                     "pages": [
                       "pages/v2/referencia/condutores/endpoint/get",
+                      "pages/v2/referencia/condutores/endpoint/get-posicoes",
                       "pages/v2/referencia/condutores/endpoint/get-by-id",
                       "pages/v2/referencia/condutores/endpoint/patch-by-id",
                       "pages/v2/referencia/condutores/endpoint/put-by-id",
@@ -102,6 +105,8 @@
                     "group": "Cupons",
                     "pages": [
                       "pages/v2/referencia/cupons/endpoint/post",
+                      "pages/v2/referencia/cupons/endpoint/get",
+                      "pages/v2/referencia/cupons/endpoint/get-cliente-disponiveis",
                       "pages/v2/referencia/cupons/endpoint/get-geradores"
                     ]
                   },
@@ -122,7 +127,11 @@
                       "pages/v2/referencia/notificacao/endpoint/post-push",
                       "pages/v2/referencia/notificacao/endpoint/post-push-individual",
                       "pages/v2/referencia/notificacao/endpoint/post-in-app-messaging",
-                      "pages/v2/referencia/notificacao/endpoint/post-in-app-messaging-individual"
+                      "pages/v2/referencia/notificacao/endpoint/post-in-app-messaging-individual",
+                      "pages/v2/referencia/notificacao/endpoint/post-condutor-push",
+                      "pages/v2/referencia/notificacao/endpoint/post-condutor-push-individual",
+                      "pages/v2/referencia/notificacao/endpoint/post-condutor-in-app-messaging",
+                      "pages/v2/referencia/notificacao/endpoint/post-condutor-in-app-messaging-individual"
                     ]
                   },
                   {
@@ -363,6 +372,7 @@
                           "pages/v2/entregas/endpoint/post-programadas-cancelar",
                           "pages/v2/entregas/endpoint/post-programadas-estimativas",
                           "pages/v2/entregas/endpoint/post-programadas-agrupar",
+                          "pages/v2/entregas/endpoint/post-programadas-agrupar-programadas",
                           "pages/v2/entregas/endpoint/delete-entrega-programada-by-id"
                         ]
                       },
@@ -383,6 +393,7 @@
                       "pages/v2/entregas/dinamicas/endpoint/get-area",
                       "pages/v2/entregas/dinamicas/endpoint/get-sem-area",
                       "pages/v2/entregas/dinamicas/endpoint/patch-area",
+                      "pages/v2/entregas/dinamicas/endpoint/patch-vertices",
                       "pages/v2/entregas/dinamicas/endpoint/patch-sem-area"
                     ]
                   },
@@ -607,6 +618,10 @@
       {
         "label": "Suporte",
         "href": "https://suporte.machine.global/hc/pt-br"
+      },
+      {
+        "label": "Envie uma sugestão",
+        "href": "https://forms.monday.com/forms/e31336bc5a756ce39f08628243720155?r=use1"
       }
     ],
     "primary": {

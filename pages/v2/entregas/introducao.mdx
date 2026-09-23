@@ -255,20 +255,46 @@ A avaliação segue a prioridade das regras: grupos específicos são avaliados 
 
 O limite é contado **por grupo de endpoints**, e não por endpoint isolado: todas as chamadas às rotas de um mesmo grupo somam no mesmo contador. Por exemplo, chamar `/api/v2/integracao/entregas/estimativas`, `/api/v2/integracao/entregas/programadas/estimativas` e `/api/v2/integracao/entregas/empresas` com a mesma chave em menos de um minuto consome 3 requisições do grupo "Estimativas e empresas", e não 1 de cada endpoint.
 
-Os valores da tabela são **limites base**. O limite efetivo de cada grupo é o limite base multiplicado por um **fator**, calculado levando em conta o tamanho da operação da central. Por isso, na coluna Limite, os valores aparecem como `limite base * fator`. Quando a central não possui um fator específico configurado, o fator padrão é `1`.
+Os valores da tabela são **limites base**. O limite efetivo de cada grupo é o limite base multiplicado pela **faixa** da central. A faixa é um multiplicador inteiro, a partir de `1`, definido para cada central. Por isso, na coluna Limite, os valores aparecem como `limite base * faixa`. Quando a central não possui faixa definida, vale a faixa `1`.
 
 | Grupo | Paths | Limite |
 | -------- | -------- | -------- |
-| Estimativas e empresas | `/api/v2/integracao/entregas/estimativas`<br />`/api/v2/integracao/entregas/programadas/estimativas`<br />`/api/v2/integracao/entregas/empresas/*`<br />`/api/v2/integracao/entregas/bandeiras/areas-atuacao` | 1000 * fator requisições por minuto |
-| Créditos e documentos de condutores | `/api/v2/integracao/condutores/creditos/recargas`<br />`/api/v2/integracao/condutores/creditos/saques`<br />`/api/v2/integracao/condutores/documentos`<br />`/api/v2/integracao/condutores/requisitos-cadastro/documentos`<br />`/api/v2/integracao/condutores/areas-bloqueio/batch` | 1000 * fator requisições por minuto |
-| Condutores | `/api/v2/integracao/condutores`<br />`/api/v2/integracao/condutores/*` | 80 * fator requisições por minuto |
-| Programadas | `/api/v2/integracao/entregas/programadas`<br />`/api/v2/integracao/entregas/programadas/*` | 200 * fator requisições por minuto |
-| Crítico | `/api/v2/integracao/entregas/*` | 800 * fator requisições por minuto |
-| Categorias | `/api/v2/integracao/configuracoes/categorias/*` | Sem bloqueio configurado. O gateway registra log a partir de 10 * fator requisições por minuto. |
-| Configurações (bandeira) | `/api/v2/integracao/configuracoes` | Sem bloqueio configurado. O gateway registra log a partir de 10 * fator requisições por minuto. |
-| Saque automático | `/api/v2/integracao/configuracoes/saque-automatico/ativacao` | 50 * fator requisições por minuto |
-| Dinâmica | `/api/v2/integracao/dinamicas*` | 200 * fator requisições por minuto |
-| Padrão | `/api/v2/integracao/*` | 1000 * fator requisições por minuto |
+| Estimativas e empresas | `/api/v2/integracao/entregas/estimativas`<br />`/api/v2/integracao/entregas/programadas/estimativas`<br />`/api/v2/integracao/entregas/empresas/*`<br />`/api/v2/integracao/entregas/bandeiras/areas-atuacao` | 1000 * faixa requisições por minuto |
+| Créditos e documentos de condutores | `/api/v2/integracao/condutores/creditos/recargas`<br />`/api/v2/integracao/condutores/creditos/saques`<br />`/api/v2/integracao/condutores/documentos`<br />`/api/v2/integracao/condutores/requisitos-cadastro/documentos`<br />`/api/v2/integracao/condutores/areas-bloqueio/batch` | 1000 * faixa requisições por minuto |
+| Condutores | `/api/v2/integracao/condutores`<br />`/api/v2/integracao/condutores/*` | 750 * faixa requisições por minuto |
+| Programadas | `/api/v2/integracao/entregas/programadas`<br />`/api/v2/integracao/entregas/programadas/*` | 200 * faixa requisições por minuto |
+| Crítico | `/api/v2/integracao/entregas`<br />`/api/v2/integracao/entregas/*` | 800 * faixa requisições por minuto |
+| Categorias | `/api/v2/integracao/configuracoes/categorias/*` | 200 * faixa requisições por minuto |
+| Configurações (bandeira) | `/api/v2/integracao/configuracoes` | 200 * faixa requisições por minuto |
+| Saque automático | `/api/v2/integracao/configuracoes/saque-automatico/ativacao` | 50 * faixa requisições por minuto |
+| Dinâmica | `/api/v2/integracao/dinamicas*` | 200 * faixa requisições por minuto |
+| Webhooks | `/api/v2/integracao/webhooks`<br />`/api/v2/integracao/webhooks/*` | 60 * faixa requisições por minuto |
+| Padrão | `/api/v2/integracao/*` | 1000 * faixa requisições por minuto |
+
+### Limites por recurso
+
+Alguns endpoints têm, além do limite do grupo, um limite **por recurso informado na requisição**: a mesma `api-key` só pode operar o mesmo recurso, identificado na requisição, um número fixo de vezes por minuto. Esses limites são fixos e não são multiplicados pela faixa.
+
+| Recurso | Paths | Identificador | Limite |
+| -------- | -------- | -------- | -------- |
+| Créditos de condutor e empresa (recarga e saque) | `/api/v2/integracao/condutores/creditos/recargas`<br />`/api/v2/integracao/condutores/creditos/saques`<br />`/api/v2/integracao/entregas/empresas/creditos/recargas`<br />`/api/v2/integracao/entregas/empresas/creditos/saques` | `condutor.identificacao` ou `empresa.identificacao` no body | 5 por minuto por condutor ou empresa |
+| Saldo e documentos de condutor e empresa | `/api/v2/integracao/condutores/creditos/saldo`<br />`/api/v2/integracao/condutores/documentos`<br />`/api/v2/integracao/condutores/requisitos-cadastro/documentos`<br />`/api/v2/integracao/entregas/empresas/creditos/saldo` | `identificacao` na query string | 12 por minuto por condutor ou empresa |
+
+Requisições sem identificador (por exemplo, listagens por filtro) contam apenas no limite do grupo. Os limites valem ao mesmo tempo: exceder qualquer um deles retorna `429`. O contador por recurso é separado para cada `api-key`, então o consumo de um integrador não afeta o de outro.
+
+### Headers de rate limit
+
+Nas respostas dos endpoints com limite de bloqueio configurado, o gateway informa o consumo da janela atual. Use esses headers para se auto-regular antes de receber `429`.
+
+| Header | Descrição |
+| -------- | -------- |
+| `X-RateLimit-Limit` | Limite efetivo do grupo na janela (limite base * faixa). |
+| `X-RateLimit-Remaining` | Requisições ainda disponíveis na janela atual. Vale `0` na resposta `429`. |
+| `X-Total-Period` | Duração da janela em segundos (hoje sempre `60`). A taxa permitida é `X-RateLimit-Limit / X-Total-Period`. |
+
+Quando mais de um limite de bloqueio se aplica à requisição (por exemplo, o do grupo e um limite por recurso), os headers refletem o mais restritivo (o de menor saldo).
+
+Não existe header de reset: como a contagem usa janela deslizante, não há um instante único de zeragem do contador. Na resposta `429`, o tempo de espera continua sendo indicado pelo header `Retry-After`, em segundos.
 
 
 ---
