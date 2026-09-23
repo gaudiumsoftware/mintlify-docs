@@ -293,8 +293,10 @@ Os valores da tabela são **limites base**. O limite efetivo de cada grupo é o 
 | Push de condutor (individual) | `/api/v2/integracao/notificacoes/condutor/push/individual` | 200 * faixa requisições por minuto |
 | Cupons | `/api/v2/integracao/cupons` | 60 * faixa requisições por minuto |
 | Webhooks | `/api/v2/integracao/webhooks`<br />`/api/v2/integracao/webhooks/*` | 60 * faixa requisições por minuto |
-| Mensagens da corrida (envio) | `/api/v2/integracao/mensagens/corridas` | 900 * faixa requisições por minuto. A leitura (`/api/v2/integracao/mensagens/corridas/*`) segue o limite Padrão. |
+| Mensagens da corrida (envio) | `/api/v2/integracao/mensagens/corridas` | 900 * faixa requisições por minuto |
 | Padrão | `/api/v2/integracao/*` | 1000 * faixa requisições por minuto |
+
+O limite de mensagens da corrida vale para o envio; a leitura (`/api/v2/integracao/mensagens/corridas/*`) segue o limite Padrão.
 
 ### Limites por recurso
 

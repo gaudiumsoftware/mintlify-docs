@@ -156,7 +156,7 @@ export const EndpointBadge = ({ method, path, href }) => (
 
   <Entry date="23 set 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="chat-ativo-criar-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
-      Condutor pode abrir a conversa da corrida
+      Parâmetro para exibir o chat da corrida
     </h2>
     <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
       A criação de corrida aceita o campo <code>chat_ativo</code>. Para exibir o chat da corrida,
@@ -195,7 +195,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
         <li>O envio grava a mensagem como do passageiro da corrida e dispara o push de mensagem nova no aplicativo do condutor.</li>
         <li><ParamBadge name="solicitacao_id" />, <ParamBadge name="passageiro_id" /> e <ParamBadge name="mensagem" /> vão no corpo do <code>POST</code>; a rota é fixa.</li>
-        <li>A leitura devolve até 30 mensagens por chamada, em ordem crescente de <ParamBadge name="sequencial" />, com <ParamBadge name="texto" />, <ParamBadge name="data_hora" /> e o <ParamBadge name="remetente" /> identificado como passageiro, condutor ou central.</li>
+        <li>A leitura devolve as mensagens em ordem crescente de <ParamBadge name="sequencial" />, com <ParamBadge name="texto" />, <ParamBadge name="data_hora" /> e o <ParamBadge name="remetente" /> identificado como passageiro, condutor ou central.</li>
         <li>A leitura continua respondendo depois de a corrida encerrar; só o envio exige corrida em andamento.</li>
         <li>Corrida sem conversa responde <code>200</code> com lista vazia — ler não cria conversa.</li>
         <li>O texto é sanitizado — marcação HTML e emoji saem, o resto chega ao condutor como enviado.</li>

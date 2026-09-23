@@ -2463,7 +2463,7 @@
                   "chat_ativo": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Envie `true` para exibir o chat da corrida. As mensagens são enviadas por `POST /mensagens/corridas` e lidas por `GET /mensagens/corridas/{solicitacao_id}`."
+                    "description": "Envie `true` para exibir o chat da corrida. As mensagens são enviadas por `POST /mensagens/corridas` e lidas por `GET /mensagens/corridas/{solicitacao_id}`. Vale só para corrida imediata; na criação de corrida programada o campo é ignorado."
                   },
                   "extras": {
                     "type": "object",
@@ -6761,12 +6761,12 @@
                   "solicitacao_id": {
                     "type": "integer",
                     "description": "ID da corrida (solicitação) na qual a mensagem será enviada.",
-                    "example": 900
+                    "example": 639
                   },
                   "passageiro_id": {
                     "type": "integer",
                     "description": "ID do passageiro da corrida. Precisa corresponder ao passageiro da solicitação informada.",
-                    "example": 77
+                    "example": 543
                   },
                   "mensagem": {
                     "type": "string",
