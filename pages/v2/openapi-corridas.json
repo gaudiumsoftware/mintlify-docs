@@ -6238,7 +6238,7 @@
     "/mensagens/corridas/{solicitacao_id}": {
       "get": {
         "summary": "Listar mensagens da conversa da corrida",
-        "description": "Devolve as mensagens trocadas entre passageiro e condutor de uma corrida, em ordem crescente de `sequencial`, e marca como lidas as mensagens retornadas.\n\nSão no máximo 30 mensagens por chamada. A leitura continua respondendo depois de a corrida ser encerrada ou cancelada — a restrição de corrida em andamento vale só para o envio.\n\nUma corrida que ainda não teve mensagem alguma responde `200` com `mensagens` vazio e `conversa_id` nulo; a leitura não cria conversa.\n\nA resposta do condutor aparece aqui: é por este endpoint que você acompanha a conversa, já que não há webhook de mensagem.",
+        "description": "Devolve as mensagens trocadas entre passageiro e condutor de uma corrida, em ordem crescente de `sequencial`, e marca como lidas as mensagens retornadas.\n\nA resposta do condutor aparece aqui: é por este endpoint que você acompanha a conversa, já que não há webhook de mensagem.",
         "parameters": [
           {
             "name": "solicitacao_id",
