@@ -5924,19 +5924,50 @@
         },
         "responses": {
           "201": {
-            "description": "Mensagem enviada com sucesso",
+            "description": "Mensagem gravada como do passageiro e push enviado ao condutor",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "solicitacao_id": {
+                          "type": "integer"
+                        },
+                        "passageiro_id": {
+                          "type": "integer"
+                        },
+                        "conversa_id": {
+                          "type": "integer",
+                          "description": "Conversa da corrida em que a mensagem foi gravada."
+                        },
+                        "sequencial": {
+                          "type": "integer",
+                          "description": "Posição da mensagem gravada na conversa. É o mesmo `sequencial` que a leitura devolve."
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "__links": {
+                      "type": "object",
+                      "description": "Links HATEOAS do domínio, indexados pelo rel."
+                    }
+                  }
                 },
                 "example": {
                   "success": true,
                   "data": {
-                    "solicitacao_id": 900,
-                    "passageiro_id": 77,
-                    "conversa_id": 4321,
-                    "sequencial": 9
+                    "solicitacao_id": 639,
+                    "passageiro_id": 543,
+                    "conversa_id": 8,
+                    "sequencial": 3
                   },
                   "message": "Mensagem enviada com sucesso.",
                   "__links": {
@@ -5962,19 +5993,79 @@
                 },
                 "examples": {
                   "campo_obrigatorio": {
-                    "summary": "Campo mensagem ausente",
+                    "summary": "Campo obrigatório ausente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'mensagem': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "id_nao_numerico": {
+                    "summary": "Identificador que não é número",
                     "value": {
                       "success": false,
                       "errors": [
                         {
                           "code": 0,
-                          "message": "'mensagem': Preenchimento obrigatório."
+                          "message": "'passageiro_id': Deve ser numérico."
+                        }
+                      ]
+                    }
+                  },
+                  "id_nao_inteiro": {
+                    "summary": "Identificador com sinal, espaço, casa decimal ou zero à esquerda",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'solicitacao_id': Deve ser um número inteiro positivo, sem sinal, espaço ou casa decimal."
+                        }
+                      ]
+                    }
+                  },
+                  "mensagem_longa": {
+                    "summary": "Mensagem acima de 10.000 caracteres",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'mensagem': Deve ter no máximo 10000 caracteres."
+                        }
+                      ]
+                    }
+                  },
+                  "corpo_nao_json": {
+                    "summary": "Corpo que não é JSON",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "JSON inválido"
+                        }
+                      ]
+                    }
+                  },
+                  "texto_vazio": {
+                    "summary": "Texto vazio depois de remover HTML e emoji",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O texto da mensagem não pode ficar vazio."
                         }
                       ]
                     }
                   },
                   "corrida_repasse": {
-                    "summary": "Corrida de repasse",
+                    "summary": "Corrida de repasse (chamada por uma central e atendida por outra)",
                     "value": {
                       "success": false,
                       "errors": [
@@ -5986,7 +6077,7 @@
                     }
                   },
                   "fora_da_janela": {
-                    "summary": "Corrida não está em andamento",
+                    "summary": "Corrida fora dos status aceita, em espera e em andamento",
                     "value": {
                       "success": false,
                       "errors": [
@@ -6021,6 +6112,18 @@
                       ]
                     }
                   },
+                  "passageiro_sem_usuario": {
+                    "summary": "Passageiro da corrida sem usuário vinculado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível identificar o usuário do passageiro."
+                        }
+                      ]
+                    }
+                  },
                   "conversa_indisponivel": {
                     "summary": "Central não permite mensagem entre passageiro e condutor",
                     "value": {
@@ -6034,13 +6137,25 @@
                     }
                   },
                   "conversa_empresa_condutor": {
-                    "summary": "Conversa da corrida é entre empresa e condutor",
+                    "summary": "A conversa da corrida é entre empresa e condutor",
                     "value": {
                       "success": false,
                       "errors": [
                         {
                           "code": 0,
                           "message": "A conversa desta corrida é entre empresa e condutor."
+                        }
+                      ]
+                    }
+                  },
+                  "nao_enviada": {
+                    "summary": "Falha ao gravar a mensagem",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível enviar a mensagem."
                         }
                       ]
                     }
@@ -6056,14 +6171,31 @@
                 "schema": {
                   "type": "object"
                 },
-                "example": {
-                  "success": false,
-                  "errors": [
-                    {
-                      "code": 401,
-                      "message": "Usuário inválido."
+                "examples": {
+                  "gestor_invalido": {
+                    "summary": "Usuário ou senha do Basic Auth inválidos",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 401,
+                          "message": "Usuário e/ou senhas inválidos."
+                        }
+                      ]
                     }
-                  ]
+                  },
+                  "api_key_invalida": {
+                    "summary": "Api-Key ausente ou sem bandeira",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 401,
+                          "message": "Você não está autorizado a acessar este recurso."
+                        }
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -6093,6 +6225,9 @@
               "application/json": {
                 "schema": {
                   "type": "object"
+                },
+                "example": {
+                  "success": false
                 }
               }
             }
@@ -6117,7 +6252,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Mensagens da conversa",
+            "description": "Mensagens da conversa, em ordem crescente de sequencial",
             "content": {
               "application/json": {
                 "schema": {
@@ -6190,44 +6325,81 @@
                     }
                   }
                 },
-                "example": {
-                  "success": true,
-                  "data": {
-                    "solicitacao_id": 900,
-                    "conversa_id": 4321,
-                    "mensagens": [
-                      {
-                        "id": 5001,
-                        "sequencial": 1,
-                        "texto": "Estou na portaria.",
-                        "data_hora": "2026-09-22 14:02:11",
-                        "remetente": {
-                          "tipo": "passageiro",
-                          "id": 77,
-                          "nome": "Maria de Souza Andrade"
-                        }
+                "examples": {
+                  "conversa": {
+                    "summary": "Conversa com mensagens do condutor e do passageiro",
+                    "value": {
+                      "success": true,
+                      "data": {
+                        "solicitacao_id": 639,
+                        "conversa_id": 8,
+                        "mensagens": [
+                          {
+                            "id": 12045,
+                            "sequencial": 1,
+                            "texto": "Estou a caminho.",
+                            "data_hora": "2026-09-23 15:51:11",
+                            "remetente": {
+                              "tipo": "condutor",
+                              "id": 1,
+                              "nome": "Carlos Silva"
+                            }
+                          },
+                          {
+                            "id": 12046,
+                            "sequencial": 2,
+                            "texto": "Cheguei, estou na entrada principal.",
+                            "data_hora": "2026-09-23 15:52:04",
+                            "remetente": {
+                              "tipo": "condutor",
+                              "id": 1,
+                              "nome": "Carlos Silva"
+                            }
+                          },
+                          {
+                            "id": 12047,
+                            "sequencial": 3,
+                            "texto": "Desço em 2 minutos.",
+                            "data_hora": "2026-09-23 15:52:19",
+                            "remetente": {
+                              "tipo": "passageiro",
+                              "id": 543,
+                              "nome": "Felipe Nunes"
+                            }
+                          }
+                        ]
                       },
-                      {
-                        "id": 5002,
-                        "sequencial": 2,
-                        "texto": "Chegando em 2 minutos.",
-                        "data_hora": "2026-09-22 14:03:40",
-                        "remetente": {
-                          "tipo": "condutor",
-                          "id": 31,
-                          "nome": "Joao Pereira"
+                      "__links": {
+                        "self": {
+                          "href": "api/v2/integracao/mensagens/corridas/{id}",
+                          "metodo": "get"
+                        },
+                        "enviar-mensagem-corrida-passageiro": {
+                          "href": "api/v2/integracao/mensagens/corridas",
+                          "metodo": "post"
                         }
                       }
-                    ]
+                    }
                   },
-                  "__links": {
-                    "self": {
-                      "href": "api/v2/integracao/mensagens/corridas/{id}",
-                      "metodo": "get"
-                    },
-                    "enviar-mensagem-corrida-passageiro": {
-                      "href": "api/v2/integracao/mensagens/corridas",
-                      "metodo": "post"
+                  "sem_conversa": {
+                    "summary": "Corrida em que ninguém escreveu ainda",
+                    "value": {
+                      "success": true,
+                      "data": {
+                        "solicitacao_id": 642,
+                        "conversa_id": null,
+                        "mensagens": []
+                      },
+                      "__links": {
+                        "self": {
+                          "href": "api/v2/integracao/mensagens/corridas/{id}",
+                          "metodo": "get"
+                        },
+                        "enviar-mensagem-corrida-passageiro": {
+                          "href": "api/v2/integracao/mensagens/corridas",
+                          "metodo": "post"
+                        }
+                      }
                     }
                   }
                 }
@@ -6235,7 +6407,7 @@
             }
           },
           "400": {
-            "description": "Erro de validação ou de regra de negócio",
+            "description": "Erro de regra de negócio",
             "content": {
               "application/json": {
                 "schema": {
@@ -6243,7 +6415,7 @@
                 },
                 "examples": {
                   "corrida_repasse": {
-                    "summary": "Corrida de repasse",
+                    "summary": "Corrida de repasse (chamada por uma central e atendida por outra)",
                     "value": {
                       "success": false,
                       "errors": [
@@ -6255,7 +6427,7 @@
                     }
                   },
                   "conversa_empresa_condutor": {
-                    "summary": "Conversa da corrida é entre empresa e condutor",
+                    "summary": "A conversa da corrida é entre empresa e condutor",
                     "value": {
                       "success": false,
                       "errors": [
@@ -6277,14 +6449,31 @@
                 "schema": {
                   "type": "object"
                 },
-                "example": {
-                  "success": false,
-                  "errors": [
-                    {
-                      "code": 401,
-                      "message": "Usuário inválido."
+                "examples": {
+                  "gestor_invalido": {
+                    "summary": "Usuário ou senha do Basic Auth inválidos",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 401,
+                          "message": "Usuário e/ou senhas inválidos."
+                        }
+                      ]
                     }
-                  ]
+                  },
+                  "api_key_invalida": {
+                    "summary": "Api-Key ausente ou sem bandeira",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 401,
+                          "message": "Você não está autorizado a acessar este recurso."
+                        }
+                      ]
+                    }
+                  }
                 }
               }
             }
