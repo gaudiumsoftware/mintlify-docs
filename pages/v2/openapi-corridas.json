@@ -6750,7 +6750,7 @@
     "/mensagens/corridas": {
       "post": {
         "summary": "Enviar mensagem na conversa da corrida como passageiro",
-        "description": "Envia uma mensagem na conversa entre passageiro e condutor de uma corrida. A mensagem é gravada como sendo do **passageiro** da corrida — é essa a identidade que o condutor vê no app dele — e dispara o push de mensagem nova no aplicativo do condutor.\n\nPara exibir o chat da corrida, crie a corrida com o parâmetro `chat_ativo: true` (`POST /corridas`).\n\n**O texto é sanitizado:** marcação HTML é removida e emoji é descartado, mas os demais caracteres chegam ao condutor como você os enviou.",
+        "description": "Envia uma mensagem na conversa entre passageiro e condutor de uma corrida. A mensagem é gravada como sendo do **passageiro** da corrida — é essa a identidade que o condutor vê no app dele — e dispara o push de mensagem nova no aplicativo do condutor.\n\nSó a corrida criada pela API de Integração aceita mensagem por este endpoint. Para exibir o chat da corrida, crie a corrida com o parâmetro `chat_ativo: true` (`POST /corridas`).\n\n**O texto é sanitizado:** marcação HTML é removida e emoji é descartado, mas os demais caracteres chegam ao condutor como você os enviou.",
         "requestBody": {
           "required": true,
           "content": {
@@ -6938,6 +6938,18 @@
                       ]
                     }
                   },
+                  "corrida_fora_da_integracao": {
+                    "summary": "Corrida que não foi criada pela API de Integração",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A conversa da corrida não está disponível."
+                        }
+                      ]
+                    }
+                  },
                   "fora_da_janela": {
                     "summary": "Corrida fora dos status aceita, em espera e em andamento",
                     "value": {
@@ -7100,7 +7112,7 @@
     "/mensagens/corridas/{solicitacao_id}": {
       "get": {
         "summary": "Listar mensagens da conversa da corrida",
-        "description": "Devolve as mensagens trocadas entre passageiro e condutor de uma corrida, em ordem crescente de `sequencial`, e marca como lidas as mensagens retornadas.\n\nA resposta do condutor aparece aqui: é por este endpoint que você acompanha a conversa, já que não há webhook de mensagem.",
+        "description": "Devolve as mensagens trocadas entre passageiro e condutor de uma corrida, em ordem crescente de `sequencial`, e marca como lidas as mensagens retornadas. Só a corrida criada pela API de Integração pode ser lida por este endpoint.\n\nA resposta do condutor aparece aqui: é por este endpoint que você acompanha a conversa, já que não há webhook de mensagem.",
         "parameters": [
           {
             "name": "solicitacao_id",
@@ -7284,6 +7296,18 @@
                         {
                           "code": 0,
                           "message": "Não é possível trocar mensagens em corrida de repasse."
+                        }
+                      ]
+                    }
+                  },
+                  "corrida_fora_da_integracao": {
+                    "summary": "Corrida que não foi criada pela API de Integração",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A conversa da corrida não está disponível."
                         }
                       ]
                     }
