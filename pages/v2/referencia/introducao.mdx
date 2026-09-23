@@ -287,6 +287,7 @@ Os valores da tabela são **limites base**. O limite efetivo de cada grupo é o 
 | Notificações (in-app e push) | `/api/v2/integracao/notificacoes/in-app-messaging`<br />`/api/v2/integracao/notificacoes/push` | 20 * fator requisições por minuto |
 | In-app messaging (individual) | `/api/v2/integracao/notificacoes/in-app-messaging/individual` | 200 * fator requisições por minuto |
 | Push (individual) | `/api/v2/integracao/notificacoes/push/individual` | 200 * fator requisições por minuto |
+| Mensagens da corrida (envio) | `/api/v2/integracao/mensagens/corridas` | 900 * fator requisições por minuto, e no máximo 30 mensagens por corrida a cada 60 segundos. A leitura (`/api/v2/integracao/mensagens/corridas/*`) segue o limite Padrão. |
 | Padrão | `/api/v2/integracao/*` | 1000 * fator requisições por minuto |
 
 

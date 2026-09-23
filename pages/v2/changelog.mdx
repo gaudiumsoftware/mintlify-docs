@@ -159,10 +159,8 @@ export const EndpointBadge = ({ method, path, href }) => (
       Condutor pode abrir a conversa da corrida
     </h2>
     <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
-      A criação de corrida aceita o campo <code>chat_ativo</code>. Quem exibe o chat da corrida no
-      próprio sistema informa <code>true</code>, e o condutor passa a poder escrever primeiro, por
-      exemplo para avisar que chegou. Sem o campo, o condutor continua escrevendo só depois da
-      primeira mensagem do passageiro.
+      A criação de corrida aceita o campo <code>chat_ativo</code>. Para exibir o chat da corrida,
+      envie <code>true</code>.
     </p>
 
     <EndpointBadge method="POST" path="/api/v2/integracao/corridas" href="/pages/v2/referencia/corridas/endpoint/post-criar" />
@@ -200,7 +198,6 @@ export const EndpointBadge = ({ method, path, href }) => (
         <li>A leitura devolve até 30 mensagens por chamada, em ordem crescente de <ParamBadge name="sequencial" />, com <ParamBadge name="texto" />, <ParamBadge name="data_hora" /> e o <ParamBadge name="remetente" /> identificado como passageiro, condutor ou central.</li>
         <li>A leitura continua respondendo depois de a corrida encerrar; só o envio exige corrida em andamento.</li>
         <li>Corrida sem conversa responde <code>200</code> com lista vazia — ler não cria conversa.</li>
-        <li>Quem abre a conversa é o parceiro: até a primeira mensagem, o condutor não vê a caixa de texto no app.</li>
         <li>O texto é sanitizado — marcação HTML e emoji saem, o resto chega ao condutor como enviado.</li>
       </ul>
     </ChangeSection>
