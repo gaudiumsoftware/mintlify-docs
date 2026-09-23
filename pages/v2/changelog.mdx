@@ -165,10 +165,14 @@ export const EndpointBadge = ({ method, path, href }) => (
 
     <EndpointBadge method="POST" path="/api/v2/integracao/corridas" href="/pages/v2/referencia/corridas/endpoint/post-criar" />
 
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/corridas/programadas" href="/pages/v2/referencia/corridas/endpoint/post-criar-programada" />
+    </div>
+
     <ChangeSection type="added">
       <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
         <li><ParamBadge name="chat_ativo" /> opcional no corpo da criação de corrida, booleano, com padrão <code>false</code>.</li>
-        <li>Vale para corrida imediata; na criação de corrida programada o campo é ignorado.</li>
+        <li>Vale também na criação de corrida programada: a marca passa para a corrida quando ela é disparada.</li>
         <li>O envio de mensagem na conversa da corrida passa a aceitar também a corrida em espera.</li>
       </ul>
     </ChangeSection>

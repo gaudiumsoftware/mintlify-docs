@@ -2463,7 +2463,7 @@
                   "chat_ativo": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Envie `true` para exibir o chat da corrida. As mensagens são enviadas por `POST /mensagens/corridas` e lidas por `GET /mensagens/corridas/{solicitacao_id}`. Vale só para corrida imediata; na criação de corrida programada o campo é ignorado."
+                    "description": "Envie `true` para exibir o chat da corrida. As mensagens são enviadas por `POST /mensagens/corridas` e lidas por `GET /mensagens/corridas/{solicitacao_id}`."
                   },
                   "extras": {
                     "type": "object",
@@ -3349,6 +3349,11 @@
                   },
                   "ignorar_condutores_proximos": {
                     "type": "boolean"
+                  },
+                  "chat_ativo": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Envie `true` para exibir o chat da corrida. A marca vale para a corrida criada quando a programada for disparada. As mensagens são enviadas por `POST /mensagens/corridas` e lidas por `GET /mensagens/corridas/{solicitacao_id}`."
                   },
                   "extras": {
                     "type": "object"
