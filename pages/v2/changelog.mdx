@@ -178,6 +178,8 @@ export const EndpointBadge = ({ method, path, href }) => (
         <li>A leitura devolve até 30 mensagens por chamada, em ordem crescente de <ParamBadge name="sequencial" />, com <ParamBadge name="texto" />, <ParamBadge name="data_hora" /> e o <ParamBadge name="remetente" /> identificado como passageiro, condutor ou central.</li>
         <li>A leitura continua respondendo depois de a corrida encerrar; só o envio exige corrida em andamento.</li>
         <li>Corrida sem conversa responde <code>200</code> com lista vazia — ler não cria conversa.</li>
+        <li>Quem abre a conversa é o parceiro: até a primeira mensagem, o condutor não vê a caixa de texto no app.</li>
+        <li>O texto é sanitizado — marcação HTML e emoji saem, o resto chega ao condutor como enviado.</li>
       </ul>
     </ChangeSection>
 
