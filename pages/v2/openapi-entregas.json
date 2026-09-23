@@ -2735,6 +2735,175 @@
         }
       }
     },
+    "/configuracoes/categorias/{id}/tarifas": {
+      "get": {
+        "summary": "Listar tarifas da categoria",
+        "description": "Retorna as tarifas cadastradas para a categoria informada, com valores, método de cálculo, vigência e, quando houver calendário operacional, `horarios`: uma janela por dia (`dia_semana`, `hora_inicio`, `hora_fim`) — cada dia tem a própria hora e um mesmo dia pode ter mais de uma janela. Tarifa sem calendário retorna `horarios` vazio.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Id da categoria. Deve pertencer à central autenticada.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filtra pela vigência da tarifa. Default: todas.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "vigente",
+                "futura",
+                "expirada",
+                "todas"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "data": [
+                    {
+                      "id": 501,
+                      "nome": "Padrão",
+                      "status": "vigente",
+                      "metodo_calculo_tarifa": "D",
+                      "valor_bandeirada": "5.00",
+                      "valor_km": "2.10",
+                      "valor_minuto": "0.30",
+                      "valor_hora_parada": "15.00",
+                      "valor_minimo": "8.00",
+                      "valor_parada_adicional": null,
+                      "tipo_cobranca_retorno": "T",
+                      "valor_retorno_adicional": null,
+                      "taxa_retorno_porcentagem": null,
+                      "data_inicio": "2026-01-01 00:00:00",
+                      "data_fim": null,
+                      "horarios": [
+                        {
+                          "dia_semana": 2,
+                          "hora_inicio": "07:00:00",
+                          "hora_fim": "19:00:00"
+                        },
+                        {
+                          "dia_semana": 3,
+                          "hora_inicio": "07:00:00",
+                          "hora_fim": "19:00:00"
+                        },
+                        {
+                          "dia_semana": 4,
+                          "hora_inicio": "07:00:00",
+                          "hora_fim": "19:00:00"
+                        },
+                        {
+                          "dia_semana": 5,
+                          "hora_inicio": "07:00:00",
+                          "hora_fim": "19:00:00"
+                        },
+                        {
+                          "dia_semana": 6,
+                          "hora_inicio": "07:00:00",
+                          "hora_fim": "19:00:00"
+                        }
+                      ],
+                      "valores_tabelados": []
+                    },
+                    {
+                      "id": 502,
+                      "nome": "Tabelada",
+                      "status": "vigente",
+                      "metodo_calculo_tarifa": "T",
+                      "valor_bandeirada": "5.00",
+                      "valor_km": null,
+                      "valor_minuto": null,
+                      "valor_hora_parada": null,
+                      "valor_minimo": null,
+                      "valor_parada_adicional": null,
+                      "tipo_cobranca_retorno": "T",
+                      "valor_retorno_adicional": null,
+                      "taxa_retorno_porcentagem": null,
+                      "data_inicio": "2026-01-01 00:00:00",
+                      "data_fim": null,
+                      "horarios": [],
+                      "valores_tabelados": [
+                        {
+                          "distancia_km": "5.00",
+                          "valor": "12.00"
+                        },
+                        {
+                          "distancia_km": "10.00",
+                          "valor": "20.00"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "O campo 'status' deve ser um dos seguintes valores: vigente, futura, expirada, todas."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Categoria não encontrada",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Categoria informada não existe."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Ocorreu um erro interno no servidor. Por favor, tente novamente mais tarde."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/configuracoes": {
       "patch": {
         "summary": "Atualizar configurações",

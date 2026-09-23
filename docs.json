@@ -117,6 +117,7 @@
                       "pages/v2/referencia/configuracoes/endpoint/areas-geograficas",
                       "pages/v2/referencia/configuracoes/endpoint/categorias",
                       "pages/v2/referencia/configuracoes/endpoint/put-categorias",
+                      "pages/v2/referencia/configuracoes/endpoint/get-categorias-tarifas",
                       "pages/v2/referencia/configuracoes/endpoint/saque-automatico-ativacao"
                     ]
                   },
@@ -430,6 +431,7 @@
                       "pages/v2/entregas/configuracoes/endpoint/areas-geograficas",
                       "pages/v2/entregas/configuracoes/endpoint/categorias",
                       "pages/v2/entregas/configuracoes/endpoint/put-categorias",
+                      "pages/v2/entregas/configuracoes/endpoint/get-categorias-tarifas",
                       "pages/v2/entregas/configuracoes/endpoint/saque-automatico-ativacao"
                     ]
                   },
