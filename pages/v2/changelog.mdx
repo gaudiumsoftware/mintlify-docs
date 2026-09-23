@@ -154,6 +154,28 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="23 set 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 id="chat-ativo-criar-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Condutor pode abrir a conversa da corrida
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      A criação de corrida aceita o campo <code>chat_ativo</code>. Quem exibe o chat da corrida no
+      próprio sistema informa <code>true</code>, e o condutor passa a poder escrever primeiro, por
+      exemplo para avisar que chegou. Sem o campo, o condutor continua escrevendo só depois da
+      primeira mensagem do passageiro.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/corridas" href="/pages/v2/referencia/corridas/endpoint/post-criar" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="chat_ativo" /> opcional no corpo da criação de corrida, booleano, com padrão <code>false</code>.</li>
+        <li>Vale para corrida imediata; na criação de corrida programada o campo é ignorado.</li>
+        <li>O envio de mensagem na conversa da corrida passa a aceitar também a corrida em espera.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="22 set 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="mensagens-conversa-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Conversa da corrida entre passageiro e condutor
