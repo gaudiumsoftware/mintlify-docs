@@ -5888,7 +5888,7 @@
     "/mensagens/corridas": {
       "post": {
         "summary": "Enviar mensagem na conversa da corrida como passageiro",
-        "description": "Envia uma mensagem na conversa entre passageiro e condutor de uma corrida. A mensagem é gravada como sendo do **passageiro** da corrida — é essa a identidade que o condutor vê no app dele — e dispara o push de mensagem nova no aplicativo do condutor.\n\nPara exibir o chat da corrida, crie a corrida com o parâmetro `chat_ativo: true` (`POST /corridas`).\n\n**O texto é sanitizado:** marcação HTML é removida e emoji é descartado, mas os demais caracteres chegam ao condutor como você os enviou. O limite é de 10.000 caracteres.",
+        "description": "Envia uma mensagem na conversa entre passageiro e condutor de uma corrida. A mensagem é gravada como sendo do **passageiro** da corrida — é essa a identidade que o condutor vê no app dele — e dispara o push de mensagem nova no aplicativo do condutor.\n\nPara exibir o chat da corrida, crie a corrida com o parâmetro `chat_ativo: true` (`POST /corridas`).\n\n**O texto é sanitizado:** marcação HTML é removida e emoji é descartado, mas os demais caracteres chegam ao condutor como você os enviou.",
         "requestBody": {
           "required": true,
           "content": {
