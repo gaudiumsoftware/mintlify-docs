@@ -238,6 +238,53 @@ export const EndpointBadge = ({ method, path, href }) => (
     </div>
   </Entry>
 
+  <Entry date="18 set 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="posicao-condutores-livres" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Consulta da posição dos condutores livres
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novo endpoint para consultar onde estão os condutores livres da central — os que estão disponíveis, sem
+      corrida em andamento. Até agora a API só devolvia a posição de um condutor já vinculado a uma corrida, e
+      essa visão só existia no mapa de condutores do painel.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/condutores/posicoes" href="/pages/v2/referencia/condutores/endpoint/get-posicoes" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Parâmetros aceitos na consulta, todos opcionais:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="incluir_parceiras" /> — inclui também os condutores das centrais parceiras. Sem ele, a consulta traz apenas os condutores da central autenticada.</li>
+        <li><ParamBadge name="raio_km" /> — limita o resultado aos condutores dentro do raio informado, em quilômetros. Deve ser maior que zero.</li>
+        <li><ParamBadge name="lat" /> e <ParamBadge name="lng" /> — ponto central do raio. Devem ser enviados juntos e acompanhados de <ParamBadge name="raio_km" />. Sem eles, o raio é medido a partir do centro de atuação da central.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Campos devolvidos para cada condutor:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="id" />, <ParamBadge name="nome" /> e <ParamBadge name="bandeira_id" /> — identificação do condutor e da central a que ele pertence.</li>
+        <li><ParamBadge name="lat" /> e <ParamBadge name="lng" /> — última posição conhecida.</li>
+        <li><ParamBadge name="ultima_atividade" /> — data e hora da última atividade, em UTC, no formato ISO 8601 (por exemplo, <code>2026-09-18T12:55:58Z</code>).</li>
+        <li><ParamBadge name="inativo" /> — indica que o condutor está livre mas sem atividade recente, seguindo o limite de inatividade configurado na central.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "14px",
+      lineHeight: "1.6",
+    }}>
+      A posição vem do serviço de localização em tempo real, a mesma fonte do mapa de condutores do painel.
+      Condutor sem posição publicada recentemente não aparece na lista, mesmo estando livre. O retorno não é
+      paginado: traz todos os condutores que atendem aos filtros. O endpoint tem limite de 10
+      requisições por minuto por <code>api-key</code> — veja a seção <a href="/pages/v2/referencia/introducao#rate-limit">Rate limit</a>.
+    </div>
+  </Entry>
+
   <Entry date="17 set 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="consulta-cupons" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Consulta e listagem de cupons
