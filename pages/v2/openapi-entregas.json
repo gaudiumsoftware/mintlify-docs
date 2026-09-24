@@ -2738,7 +2738,7 @@
     "/configuracoes/categorias/{id}/tarifas": {
       "get": {
         "summary": "Listar tarifas da categoria",
-        "description": "Retorna as tarifas cadastradas para a categoria informada, com valores, método de cálculo, vigência e, quando houver calendário operacional, `horarios`: uma janela por dia (`dia_semana`, `hora_inicio`, `hora_fim`) — cada dia tem a própria hora e um mesmo dia pode ter mais de uma janela. Tarifa sem calendário retorna `horarios` vazio.",
+        "description": "Retorna as tarifas atuais da categoria informada (tarifas encerradas não são listadas), com valores, método de cálculo, data de início e, quando houver calendário operacional, `horarios`: uma janela por dia (`dia_semana`, `hora_inicio`, `hora_fim`) — cada dia tem a própria hora e um mesmo dia pode ter mais de uma janela. Tarifa sem calendário retorna `horarios` vazio.",
         "parameters": [
           {
             "name": "id",
@@ -2747,20 +2747,6 @@
             "description": "Id da categoria. Deve pertencer à central autenticada.",
             "schema": {
               "type": "integer"
-            }
-          },
-          {
-            "name": "status",
-            "in": "query",
-            "description": "Filtra pela vigência da tarifa. Default: todas.",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "vigente",
-                "futura",
-                "expirada",
-                "todas"
-              ]
             }
           }
         ],
@@ -2775,7 +2761,6 @@
                     {
                       "id": 501,
                       "nome": "Padrão",
-                      "status": "vigente",
                       "metodo_calculo_tarifa": "D",
                       "valor_bandeirada": "5.00",
                       "valor_km": "2.10",
@@ -2787,7 +2772,6 @@
                       "valor_retorno_adicional": null,
                       "taxa_retorno_porcentagem": null,
                       "data_inicio": "2026-01-01 00:00:00",
-                      "data_fim": null,
                       "horarios": [
                         {
                           "dia_semana": 2,
@@ -2820,7 +2804,6 @@
                     {
                       "id": 502,
                       "nome": "Tabelada",
-                      "status": "vigente",
                       "metodo_calculo_tarifa": "T",
                       "valor_bandeirada": "5.00",
                       "valor_km": null,
@@ -2832,7 +2815,6 @@
                       "valor_retorno_adicional": null,
                       "taxa_retorno_porcentagem": null,
                       "data_inicio": "2026-01-01 00:00:00",
-                      "data_fim": null,
                       "horarios": [],
                       "valores_tabelados": [
                         {
@@ -2844,22 +2826,6 @@
                           "valor": "20.00"
                         }
                       ]
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Erro de validação",
-            "content": {
-              "application/json": {
-                "example": {
-                  "success": false,
-                  "errors": [
-                    {
-                      "code": 0,
-                      "message": "O campo 'status' deve ser um dos seguintes valores: vigente, futura, expirada, todas."
                     }
                   ]
                 }
