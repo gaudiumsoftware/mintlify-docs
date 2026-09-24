@@ -154,6 +154,24 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="22 set 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 id="valor-original-recibo" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Valor da entrega antes do desconto do cupom
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      O recibo da entrega passou a informar também o valor bruto, antes do desconto do cupom, ao
+      lado do valor já líquido que era retornado. Sem cupom aplicado, os dois valores são iguais.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/entregas/{id}/recibo" href="/pages/v2/entregas/endpoint/get-recibo" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="valor_original" /> — dentro de <ParamBadge name="dados_solicitacao" />, traz o valor bruto da entrega, antes do desconto do cupom. O campo <ParamBadge name="valor" /> continua trazendo o valor já líquido.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="17 set 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="url-confirmacao" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Confirmação do código de entrega pelo seu sistema

@@ -3354,7 +3354,7 @@
     "/corridas/consultar": {
       "post": {
         "summary": "Consultar corridas",
-        "description": "Retorna as solicitações da central conforme os filtros informados. O intervalo máximo aceito entre `data_hora_solicitacao_min` e `data_hora_solicitacao_max` é de 30 dias. Para acessar este endpoint, o usuário precisa ter a permissão `API - Corrida`.",
+        "description": "Retorna as solicitações da central conforme os filtros informados. O intervalo máximo aceito entre `data_hora_solicitacao_min` e `data_hora_solicitacao_max` é de 30 dias. Para acessar este endpoint, o usuário precisa ter a permissão `API - Corrida`.\n\nO campo `valor_corrida` traz o valor já líquido, com o desconto do cupom aplicado, e `valor_corrida_integral` traz o valor bruto da corrida, antes do desconto. Sem cupom aplicado, os dois campos são iguais.",
         "requestBody": {
           "required": false,
           "content": {
@@ -3463,6 +3463,7 @@
                       "data_hora_pendencia": "2024-05-02 08:53:49",
                       "distancia_coleta_km": null,
                       "valor_corrida": "7.00",
+                      "valor_corrida_integral": "10.00",
                       "condutor_especificado": false,
                       "com_retorno": false,
                       "condutor_id": "",
@@ -3490,6 +3491,7 @@
                       "data_hora_pendencia": "2024-05-03 09:36:45",
                       "distancia_coleta_km": null,
                       "valor_corrida": "10.50",
+                      "valor_corrida_integral": "10.50",
                       "condutor_especificado": false,
                       "com_retorno": false,
                       "condutor_id": "",
@@ -4804,7 +4806,7 @@
     "/corridas/{id}": {
       "get": {
         "summary": "Consultar corrida",
-        "description": "Consulta uma corrida específica pelo identificador interno da corrida.\n\nRetorna 404 (`code` 0) quando a corrida não é encontrada.",
+        "description": "Consulta uma corrida específica pelo identificador interno da corrida.\n\nO campo `valor_corrida` traz o valor já líquido, com o desconto do cupom aplicado, e `valor_corrida_integral` traz o valor bruto da corrida, antes do desconto. Sem cupom aplicado, os dois campos são iguais.\n\nRetorna 404 (`code` 0) quando a corrida não é encontrada.",
         "parameters": [
           {
             "name": "id",
@@ -4841,6 +4843,7 @@
                     "data_hora_pendencia": "2024-05-02 08:53:49",
                     "distancia_coleta_km": null,
                     "valor_corrida": "7.00",
+                    "valor_corrida_integral": "10.00",
                     "condutor_especificado": false,
                     "com_retorno": false,
                     "condutor_id": "",
@@ -5094,7 +5097,7 @@
     "/corridas/{id}/recibo": {
       "get": {
         "summary": "Consultar recibo da corrida",
-        "description": "Consulta o recibo de uma corrida.\n\nRetorna 404 (`code` 25) quando a corrida não é encontrada.",
+        "description": "Consulta o recibo de uma corrida.\n\nEm `dados_solicitacao`, o campo `valor` traz o valor já líquido, com o desconto do cupom aplicado, e `valor_original` traz o valor bruto da corrida, antes do desconto. Sem cupom aplicado, os dois campos são iguais.\n\nRetorna 404 (`code` 25) quando a corrida não é encontrada.",
         "parameters": [
           {
             "name": "id",
@@ -5127,6 +5130,7 @@
                     },
                     "dados_solicitacao": {
                       "valor": "4.00",
+                      "valor_original": "4.00",
                       "duracao": "0",
                       "distancia": "0.001",
                       "tarifa": "Tarifa padrão",
@@ -5456,6 +5460,15 @@
                     "description": "Opcional. Indica a área a qual o cupom será restrito.",
                     "example": 239
                   },
+                  "local_aplicacao": {
+                    "type": "string",
+                    "description": "Opcional. Indica se a restrição de area_id se aplica ao local de partida (P) ou de destino (D) da corrida. Só é considerado quando area_id é enviado; padrão P.",
+                    "enum": [
+                      "P",
+                      "D"
+                    ],
+                    "example": "D"
+                  },
                   "valor_maximo": {
                     "type": "string",
                     "description": "Opcional. Teto do desconto por corrida quando `tipo_desconto` é `percentual`. Se omitido, herda o `valor_maximo` do gerador (`gerador_cupom_id`) e não pode exceder esse valor (erro 400 code 137). Ignorado quando `tipo_desconto` é `valor_fixo`.",
@@ -5486,7 +5499,8 @@
                       83992,
                       83959
                     ],
-                    "area_id": 239
+                    "area_id": 239,
+                    "local_aplicacao": "D"
                   }
                 },
                 "cupom_porcentagem_individual": {
@@ -5740,6 +5754,167 @@
           },
           "500": {
             "$ref": "#/components/responses/Erro500"
+          }
+        }
+      }
+    },
+    "/cupons/cliente/{cliente_id}/disponiveis": {
+      "get": {
+        "summary": "Consultar cupons disponíveis do cliente",
+        "description": "Lista os cupons que um cliente pode aplicar em uma corrida — a mesma vitrine exibida no aplicativo do passageiro.\n\nO retorno reúne os cupons cadastrados e vigentes da bandeira que o cliente já resgatou ou que estão publicados para exibição no aplicativo, mais o cupom automático de primeira viagem ou de inatividade quando o cliente é elegível. Cupons já esgotados para o cliente, fora da vigência ou indisponíveis para a bandeira não entram na lista.\n\nCupons restritos a uma área só aparecem quando as coordenadas da ponta correspondente são informadas: `lat_partida`/`lng_partida` liberam os cupons aplicados na partida e `lat_destino`/`lng_destino` os cupons aplicados no destino. Sem o par de coordenadas, o cupom daquela ponta fica fora da lista, porque não há como avaliar a área.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "parameters": [
+          {
+            "name": "cliente_id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador interno do cliente. O cliente precisa pertencer à bandeira autenticada.",
+            "schema": {
+              "type": "integer",
+              "example": 83605
+            }
+          },
+          {
+            "name": "lat_partida",
+            "in": "query",
+            "required": false,
+            "description": "Latitude do local de partida da corrida. Usada para avaliar os cupons restritos a uma área de partida.",
+            "schema": {
+              "type": "number",
+              "example": -22.8743056
+            }
+          },
+          {
+            "name": "lng_partida",
+            "in": "query",
+            "required": false,
+            "description": "Longitude do local de partida da corrida. Usada para avaliar os cupons restritos a uma área de partida.",
+            "schema": {
+              "type": "number",
+              "example": -43.5626744
+            }
+          },
+          {
+            "name": "lat_destino",
+            "in": "query",
+            "required": false,
+            "description": "Latitude do destino da corrida. Usada para avaliar os cupons restritos a uma área de destino.",
+            "schema": {
+              "type": "number",
+              "example": -22.9884209
+            }
+          },
+          {
+            "name": "lng_destino",
+            "in": "query",
+            "required": false,
+            "description": "Longitude do destino da corrida. Usada para avaliar os cupons restritos a uma área de destino.",
+            "schema": {
+              "type": "number",
+              "example": -43.1934916
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "cupons": [
+                      {
+                        "id": "1042",
+                        "area_id": null,
+                        "local_aplicacao": "P",
+                        "codigo": "DESCONTO10",
+                        "valor_maximo": "20.00",
+                        "valor_maximo_corrida": "50.00",
+                        "validade": "2026-10-01 23:59:59",
+                        "limite_uso_individual": "3",
+                        "uso_unico": "0",
+                        "uso_apenas_novo_cliente": "0",
+                        "qtd_usos_cupom": "1",
+                        "perc_desconto": "10.00",
+                        "valor_desconto": null,
+                        "expirado": "0",
+                        "tipos_pagamento": [
+                          {
+                            "id": "1",
+                            "nome": "Dinheiro",
+                            "tipo": "D"
+                          }
+                        ],
+                        "nome_area": null
+                      },
+                      {
+                        "id": "1050",
+                        "area_id": "7",
+                        "codigo": "PRIMEIRAVIAGEM",
+                        "perc_desconto": null,
+                        "valor_desconto": "15.00",
+                        "valor_maximo": "15.00",
+                        "limite_uso_individual": null,
+                        "uso_unico": "1",
+                        "uso_apenas_novo_cliente": "1",
+                        "criado_automaticamente": "1",
+                        "qtd_usos_cupom": 0,
+                        "primeira_viagem": "1",
+                        "tipos_pagamento": [
+                          {
+                            "id": "1",
+                            "nome": "Dinheiro",
+                            "tipo": "D"
+                          }
+                        ],
+                        "nome_area": "Centro"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetros inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "'lat_partida': Deve ser numérico."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cliente não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Cliente não encontrado ou não pertence à bandeira autenticada."
+                    }
+                  ]
+                }
+              }
+            }
           }
         }
       }

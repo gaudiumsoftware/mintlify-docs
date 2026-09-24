@@ -108,7 +108,8 @@
                       "pages/v2/referencia/cupons/endpoint/get",
                       "pages/v2/referencia/cupons/endpoint/post",
                       "pages/v2/referencia/cupons/endpoint/get-geradores",
-                      "pages/v2/referencia/cupons/endpoint/get-areas"
+                      "pages/v2/referencia/cupons/endpoint/get-areas",
+                      "pages/v2/referencia/cupons/endpoint/get-cliente-disponiveis"
                     ]
                   },
                   {
