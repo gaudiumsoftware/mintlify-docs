@@ -2683,7 +2683,7 @@
     "/corridas/consultar": {
       "post": {
         "summary": "Consultar corridas",
-        "description": "Retorna as solicitações da central conforme os filtros informados. O intervalo máximo aceito entre `data_hora_solicitacao_min` e `data_hora_solicitacao_max` é de 30 dias. Para acessar este endpoint, o usuário precisa ter a permissão `API - Corrida`.\n\nO campo `valor_corrida` traz o valor já líquido, com o desconto do cupom aplicado, e `valor_corrida_integral` traz o valor bruto da corrida, antes do desconto. Sem cupom aplicado, os dois campos são iguais.",
+        "description": "Retorna as solicitações da central conforme os filtros informados. O intervalo máximo aceito entre `data_hora_solicitacao_min` e `data_hora_solicitacao_max` é de 30 dias. Para acessar este endpoint, o usuário precisa ter a permissão `API - Corrida`.\n\nO campo `valor_corrida` traz o valor já líquido, com o desconto do cupom aplicado, e `valor_corrida_integral` traz o valor bruto da corrida, antes do desconto. Sem cupom aplicado, os dois campos são iguais.\n\nO bloco `desejado` traz o endereço de destino (`endereco`, `bairro`, `cidade`, `estado`, `lat` e `lng`) e vem `null` quando a corrida não tem destino definido.\n\nCada corrida da lista traz também, na raiz, os dados de fechamento que antes só vinham no recibo, em qualquer status:\n\n- `data_hora_inicio`: início da corrida (`null` enquanto não iniciou), no horário de Brasília e no formato `AAAA-MM-DD HH:MM:SS`, o mesmo padrão dos demais campos `data_hora_*` da consulta. O recibo traz esse horário em `partida.data_hora`, em ISO 8601 e no fuso da central (o `Z` no fim desse campo não indica UTC);\n- `tipo_pagamento`;\n- `desconto`: percentual de desconto (`0.00` quando não há);\n- `tarifa`, `id_categoria`, `categoria` e `descricao_categoria`;\n- `nome_cliente`;\n- `cpf_cliente`: só quando a corrida não é corporativa (sem `empresa_id`);\n- `cnpj_cpf_empresa`: só quando a corrida é corporativa (com `empresa_id`);\n- `codigo_cupom` e `gerador_cupom_id`: só quando a corrida usou cupom.",
         "requestBody": {
           "required": false,
           "content": {
@@ -2831,6 +2831,15 @@
                       "cor_veiculo": null,
                       "duracao_corrida": "0",
                       "distancia_percorrida_km": "0",
+                      "data_hora_inicio": null,
+                      "tipo_pagamento": "D",
+                      "desconto": "0.00",
+                      "tarifa": "Tarifa padrão",
+                      "id_categoria": "71",
+                      "categoria": "Comum",
+                      "descricao_categoria": "Viagens curtas-médias",
+                      "nome_cliente": "Maria Andreia",
+                      "cpf_cliente": "111.222.333-44",
                       "taxas_cancelamento": null,
                       "partida": {
                         "endereco": "Rua Altaneira",
@@ -3867,7 +3876,7 @@
     "/corridas/{id}": {
       "get": {
         "summary": "Consultar corrida",
-        "description": "Consulta uma corrida específica pelo identificador interno da corrida.\n\nO campo `valor_corrida` traz o valor já líquido, com o desconto do cupom aplicado, e `valor_corrida_integral` traz o valor bruto da corrida, antes do desconto. Sem cupom aplicado, os dois campos são iguais.",
+        "description": "Consulta uma corrida específica pelo identificador interno da corrida.\n\nO campo `valor_corrida` traz o valor já líquido, com o desconto do cupom aplicado, e `valor_corrida_integral` traz o valor bruto da corrida, antes do desconto. Sem cupom aplicado, os dois campos são iguais.\n\nO bloco `desejado` traz o endereço de destino (`endereco`, `bairro`, `cidade`, `estado`, `lat` e `lng`) e vem `null` quando a corrida não tem destino definido.\n\nCada corrida traz também, na raiz, os dados de fechamento que antes só vinham no recibo, em qualquer status:\n\n- `data_hora_inicio`: início da corrida (`null` enquanto não iniciou), no horário de Brasília e no formato `AAAA-MM-DD HH:MM:SS`, o mesmo padrão dos demais campos `data_hora_*` da consulta. O recibo traz esse horário em `partida.data_hora`, em ISO 8601 e no fuso da central (o `Z` no fim desse campo não indica UTC);\n- `tipo_pagamento`;\n- `desconto`: percentual de desconto (`0.00` quando não há);\n- `tarifa`, `id_categoria`, `categoria` e `descricao_categoria`;\n- `nome_cliente`;\n- `cpf_cliente`: só quando a corrida não é corporativa (sem `empresa_id`);\n- `cnpj_cpf_empresa`: só quando a corrida é corporativa (com `empresa_id`);\n- `codigo_cupom` e `gerador_cupom_id`: só quando a corrida usou cupom.",
         "parameters": [
           {
             "name": "id",
@@ -3887,60 +3896,140 @@
                 "schema": {
                   "type": "object"
                 },
-                "example": {
-                  "success": true,
-                  "response": {
-                    "id": "100018001",
-                    "data_hora_solicitacao": "2024-05-02 08:53:42",
-                    "data_hora_chegada_local": null,
-                    "status_solicitacao": "N",
-                    "cliente_id": "83605",
-                    "nome_passageiro": "Rogério Barreto",
-                    "empresa_id": null,
-                    "bandeira_chamada_id": "8",
-                    "data_hora_aceite": null,
-                    "data_hora_finalizacao": null,
-                    "data_hora_cancelamento": null,
-                    "data_hora_pendencia": "2024-05-02 08:53:49",
-                    "distancia_coleta_km": null,
-                    "valor_corrida": "7.00",
-                    "valor_corrida_integral": "10.00",
-                    "condutor_especificado": false,
-                    "com_retorno": false,
-                    "condutor_id": "",
-                    "nome_condutor": "",
-                    "telefone_condutor": "",
-                    "veiculo": "",
-                    "placa_veiculo": "",
-                    "cor_veiculo": null,
-                    "duracao_corrida": "0",
-                    "distancia_percorrida_km": "0",
-                    "taxas_cancelamento": null,
-                    "partida": {
-                      "endereco": "Rua Altaneira",
-                      "complemento": null,
-                      "referencia": null,
-                      "bairro": "Campo Grande",
-                      "cidade": "Rio de Janeiro",
-                      "estado": "RJ",
-                      "lat": "-22.8743056",
-                      "lng": "-43.5626744"
-                    },
-                    "paradas": [
-                      {
-                        "id": "358",
-                        "endereco": "Praia do Arpoador",
-                        "complemento": "",
-                        "bairro": "Arpoador",
-                        "cidade": "Rio de Janeiro",
-                        "uf": "RJ",
-                        "lat": "-22.988420900610592",
-                        "lng": "-43.1934916318077",
-                        "ordem": 0,
-                        "numero_pedido": "2"
+                "examples": {
+                  "em_andamento": {
+                    "summary": "Corrida em andamento, sem destino definido",
+                    "value": {
+                      "success": true,
+                      "response": {
+                        "id": "100018001",
+                        "data_hora_solicitacao": "2024-05-02 08:53:42",
+                        "data_hora_chegada_local": null,
+                        "status_solicitacao": "N",
+                        "cliente_id": "83605",
+                        "nome_passageiro": "Rogério Barreto",
+                        "empresa_id": null,
+                        "bandeira_chamada_id": "8",
+                        "data_hora_aceite": null,
+                        "data_hora_finalizacao": null,
+                        "data_hora_cancelamento": null,
+                        "data_hora_pendencia": "2024-05-02 08:53:49",
+                        "distancia_coleta_km": null,
+                        "valor_corrida": "7.00",
+                        "valor_corrida_integral": "10.00",
+                        "condutor_especificado": false,
+                        "com_retorno": false,
+                        "condutor_id": "",
+                        "nome_condutor": "",
+                        "telefone_condutor": "",
+                        "veiculo": "",
+                        "placa_veiculo": "",
+                        "cor_veiculo": null,
+                        "duracao_corrida": "0",
+                        "distancia_percorrida_km": "0",
+                        "data_hora_inicio": null,
+                        "tipo_pagamento": "D",
+                        "desconto": "0.00",
+                        "tarifa": "Tarifa padrão",
+                        "id_categoria": "71",
+                        "categoria": "Comum",
+                        "descricao_categoria": "Viagens curtas-médias",
+                        "nome_cliente": "Rogério Barreto",
+                        "cpf_cliente": "111.222.333-44",
+                        "taxas_cancelamento": null,
+                        "partida": {
+                          "endereco": "Rua Altaneira",
+                          "complemento": null,
+                          "referencia": null,
+                          "bairro": "Campo Grande",
+                          "cidade": "Rio de Janeiro",
+                          "estado": "RJ",
+                          "lat": "-22.8743056",
+                          "lng": "-43.5626744"
+                        },
+                        "desejado": null,
+                        "paradas": [
+                          {
+                            "id": "358",
+                            "endereco": "Praia do Arpoador",
+                            "complemento": "",
+                            "bairro": "Arpoador",
+                            "cidade": "Rio de Janeiro",
+                            "uf": "RJ",
+                            "lat": "-22.988420900610592",
+                            "lng": "-43.1934916318077",
+                            "ordem": 0,
+                            "numero_pedido": "2"
+                          }
+                        ],
+                        "link_acompanhamento_solicitacao": "https://link-acompanhamento-exemplo/solicitacao/acompanhar/OTU2MzE0ODIyOTM1MQ=="
                       }
-                    ],
-                    "link_acompanhamento_solicitacao": "https://link-acompanhamento-exemplo/solicitacao/acompanhar/OTU2MzE0ODIyOTM1MQ=="
+                    }
+                  },
+                  "finalizada": {
+                    "summary": "Corrida finalizada, com destino e cupom",
+                    "value": {
+                      "success": true,
+                      "response": {
+                        "id": "100018001",
+                        "data_hora_solicitacao": "2024-05-02 08:53:42",
+                        "data_hora_chegada_local": "2024-05-02 09:01:10",
+                        "status_solicitacao": "F",
+                        "cliente_id": "83605",
+                        "nome_passageiro": "Rogério Barreto",
+                        "empresa_id": null,
+                        "bandeira_chamada_id": "8",
+                        "data_hora_aceite": "2024-05-02 08:54:20",
+                        "data_hora_finalizacao": "2024-05-02 09:14:09",
+                        "data_hora_cancelamento": null,
+                        "data_hora_pendencia": "2024-05-02 08:53:49",
+                        "distancia_coleta_km": "1.20",
+                        "valor_corrida": "18.00",
+                        "valor_corrida_integral": "20.00",
+                        "condutor_especificado": false,
+                        "com_retorno": false,
+                        "condutor_id": "512",
+                        "nome_condutor": "Pedro João",
+                        "telefone_condutor": "(021) 99883-3505",
+                        "veiculo": "FORD",
+                        "placa_veiculo": "ABC-1234",
+                        "cor_veiculo": "Prata",
+                        "duracao_corrida": "600",
+                        "distancia_percorrida_km": "5.20",
+                        "data_hora_inicio": "2024-05-02 08:54:20",
+                        "tipo_pagamento": "D",
+                        "desconto": "10.00",
+                        "tarifa": "Tarifa padrão",
+                        "id_categoria": "71",
+                        "categoria": "Comum",
+                        "descricao_categoria": "Viagens curtas-médias",
+                        "nome_cliente": "Rogério Barreto",
+                        "cpf_cliente": "111.222.333-44",
+                        "codigo_cupom": "BEMVINDO10",
+                        "gerador_cupom_id": "15",
+                        "taxas_cancelamento": null,
+                        "partida": {
+                          "endereco": "R. Prof. Eurico Rabelo",
+                          "complemento": null,
+                          "referencia": null,
+                          "bairro": "Maracanã",
+                          "cidade": "Rio de Janeiro",
+                          "estado": "RJ",
+                          "lat": "-22.9111",
+                          "lng": "-43.2323"
+                        },
+                        "desejado": {
+                          "endereco": "Praça Mauá, 1",
+                          "bairro": "Centro",
+                          "cidade": "Rio de Janeiro",
+                          "estado": "RJ",
+                          "lat": "-22.8992",
+                          "lng": "-43.1804"
+                        },
+                        "paradas": [],
+                        "link_acompanhamento_solicitacao": ""
+                      }
+                    }
                   }
                 }
               }

@@ -3691,7 +3691,7 @@
     "/entregas/consultar": {
       "post": {
         "summary": "Consultar entregas",
-        "description": "Ao acionar, são retornadas todas as entregas da central conforme os parâmetros informados.",
+        "description": "Ao acionar, são retornadas todas as entregas da central conforme os parâmetros informados.\n\nO bloco `desejado` traz o endereço de retorno (`endereco`, `bairro`, `cidade`, `estado`, `lat` e `lng`) e vem `null` quando a entrega não tem retorno, o mesmo critério de `com_retorno`. Os destinos da entrega continuam em `paradas`.\n\nCada entrega da lista traz também, na raiz, os dados de fechamento que antes só vinham no recibo, em qualquer status:\n\n- `data_hora_inicio`: início da entrega (`null` enquanto não iniciou), no horário de Brasília e no formato `AAAA-MM-DD HH:MM:SS`, o mesmo padrão dos demais campos `data_hora_*` da consulta. O recibo traz esse horário em `partida.data_hora`, em ISO 8601 e no fuso da central (o `Z` no fim desse campo não indica UTC);\n- `tipo_pagamento`;\n- `desconto`: percentual de desconto (`0.00` quando não há);\n- `tarifa`, `id_categoria`, `categoria` e `descricao_categoria`;\n- `nome_cliente`;\n- `cpf_cliente`: só quando a entrega não é corporativa (sem `empresa_id`);\n- `cnpj_cpf_empresa`: só quando a entrega é corporativa (com `empresa_id`);\n- `codigo_cupom` e `gerador_cupom_id`: só quando a entrega usou cupom.",
         "requestBody": {
           "required": false,
           "content": {
@@ -3784,6 +3784,15 @@
                       "cor_veiculo": null,
                       "duracao_corrida": "0",
                       "distancia_percorrida_km": "0.000",
+                      "data_hora_inicio": "2025-02-20 14:15:02",
+                      "tipo_pagamento": "D",
+                      "desconto": "0.00",
+                      "tarifa": "Tarifa padrão",
+                      "id_categoria": "71",
+                      "categoria": "Moto",
+                      "descricao_categoria": "Entregas rápidas",
+                      "nome_cliente": "Empresa",
+                      "cpf_cliente": "111.222.333-44",
                       "taxas_cancelamento": null,
                       "paradas": [
                         {
@@ -3812,7 +3821,8 @@
                         "estado": "PB",
                         "lat": "-7.209233800",
                         "lng": "-34.878063100"
-                      }
+                      },
+                      "desejado": null
                     }
                   ]
                 }
@@ -3825,7 +3835,7 @@
     "/entregas/{id}": {
       "get": {
         "summary": "Consultar entrega",
-        "description": "Ao acionar, retorna uma entrega da central especificada pelo id da solicitação",
+        "description": "Ao acionar, retorna uma entrega da central especificada pelo id da solicitação\n\nO bloco `desejado` traz o endereço de retorno (`endereco`, `bairro`, `cidade`, `estado`, `lat` e `lng`) e vem `null` quando a entrega não tem retorno, o mesmo critério de `com_retorno`. Os destinos da entrega continuam em `paradas`.\n\nCada entrega traz também, na raiz, os dados de fechamento que antes só vinham no recibo, em qualquer status:\n\n- `data_hora_inicio`: início da entrega (`null` enquanto não iniciou), no horário de Brasília e no formato `AAAA-MM-DD HH:MM:SS`, o mesmo padrão dos demais campos `data_hora_*` da consulta. O recibo traz esse horário em `partida.data_hora`, em ISO 8601 e no fuso da central (o `Z` no fim desse campo não indica UTC);\n- `tipo_pagamento`;\n- `desconto`: percentual de desconto (`0.00` quando não há);\n- `tarifa`, `id_categoria`, `categoria` e `descricao_categoria`;\n- `nome_cliente`;\n- `cpf_cliente`: só quando a entrega não é corporativa (sem `empresa_id`);\n- `cnpj_cpf_empresa`: só quando a entrega é corporativa (com `empresa_id`);\n- `codigo_cupom` e `gerador_cupom_id`: só quando a entrega usou cupom.",
         "parameters": [
           {
             "name": "id",
@@ -3871,6 +3881,15 @@
                       "cor_veiculo": null,
                       "duracao_corrida": "0",
                       "distancia_percorrida_km": "0.000",
+                      "data_hora_inicio": null,
+                      "tipo_pagamento": "D",
+                      "desconto": "0.00",
+                      "tarifa": "Tarifa padrão",
+                      "id_categoria": "71",
+                      "categoria": "Moto",
+                      "descricao_categoria": "Entregas rápidas",
+                      "nome_cliente": "Felipe Teste",
+                      "cpf_cliente": "111.222.333-44",
                       "taxas_cancelamento": null,
                       "paradas": [],
                       "condutor_id": "",
@@ -3886,7 +3905,8 @@
                         "estado": "PB",
                         "lat": "-7.209233800",
                         "lng": "-34.878063100"
-                      }
+                      },
+                      "desejado": null
                     }
                   ]
                 }
