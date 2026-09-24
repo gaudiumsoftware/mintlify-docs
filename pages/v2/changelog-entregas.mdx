@@ -154,6 +154,44 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="24 set 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="webhook-mensagens-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Webhook de mensagens da corrida
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novo tipo de webhook, <code>mensagens_corrida</code>, que entrega as mensagens trocadas entre condutor e
+      passageiro no chat de uma corrida, nos dois sentidos e na ordem em que foram escritas. O webhook de
+      mensagens atual continua entregando só as conversas da central.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/webhooks" href="/pages/v2/entregas/webhooks/endpoint/post" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="tipo" /> aceita o valor <code>mensagens_corrida</code>. O cadastro está disponível apenas para a central.</li>
+        <li>Payload com <ParamBadge name="sender_type" /> (<code>DRIVER</code> ou <code>PASSENGER</code>), <ParamBadge name="request_id" /> da corrida e <ParamBadge name="links.request" />, além dos campos do webhook de mensagens. Detalhes na página <a href="/pages/v2/entregas/webhooks/sobre#webhook-de-mensagens-da-corrida">Sobre</a>.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
+  <Entry date="24 set 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 id="limite-webhook-mensagens" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Limite do webhook de mensagens igualado aos demais tipos
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      O webhook do tipo <code>mensagens</code> deixa de ser limitado a 1 cadastro e passa a admitir até 5 webhooks
+      por tipo, como os outros.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/webhooks" href="/pages/v2/entregas/webhooks/endpoint/post" />
+
+    <ChangeSection type="changed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "6px" }}>
+        <li>Até 5 webhooks do tipo <code>mensagens</code> por combinação de central, empresa e responsável.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="22 set 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="valor-original-recibo" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Valor da entrega antes do desconto do cupom
