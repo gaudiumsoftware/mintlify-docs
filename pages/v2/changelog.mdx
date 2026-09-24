@@ -173,13 +173,13 @@ export const EndpointBadge = ({ method, path, href }) => (
     </ChangeSection>
 
     <ChangeSection type="added">
-      <p style={{ marginBottom: "10px" }}>O retorno traz a lista das tarifas atuais da categoria — tarifas encerradas não são listadas. Cada item inclui:</p>
+      <p style={{ marginBottom: "10px" }}>O retorno traz a lista das tarifas atuais da categoria — já iniciadas e sem término ou com término futuro; tarifas encerradas ou futuras não são listadas. Cada item inclui:</p>
       <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
         <li><ParamBadge name="metodo_calculo_tarifa" /> — método de cálculo usado pela tarifa.</li>
         <li><ParamBadge name="valor_bandeirada" />, <ParamBadge name="valor_km" />, <ParamBadge name="valor_minuto" />, <ParamBadge name="valor_hora_parada" /> e <ParamBadge name="valor_minimo" /> — valores base da tarifa.</li>
-        <li><ParamBadge name="data_inicio" /> — data a partir da qual a tarifa vale.</li>
+        <li><ParamBadge name="data_inicio" /> e <ParamBadge name="data_fim" /> — vigência da tarifa; <ParamBadge name="data_fim" /> vem nulo quando a tarifa não tem término.</li>
         <li><ParamBadge name="horarios" /> — uma janela por dia (<ParamBadge name="dia_semana" />, <ParamBadge name="hora_inicio" />, <ParamBadge name="hora_fim" />); vem vazio quando a tarifa não tem calendário.</li>
-        <li><ParamBadge name="valores_tabelados" /> — faixas de distância e valor, preenchidas apenas nos métodos de cálculo tabelados.</li>
+        <li><ParamBadge name="valores_tabelados" /> — faixas de distância e valor, preenchidas apenas nos métodos de cálculo tabelados. A última faixa, que vale a partir da faixa anterior, vem com <ParamBadge name="distancia_km" /> nulo e <ParamBadge name="a_partir_de" /> verdadeiro.</li>
       </ul>
     </ChangeSection>
   </Entry>
