@@ -499,7 +499,7 @@
     "/cadastrarWebhook": {
       "post": {
         "summary": "Cadastrar webhook",
-        "description": "Permite cadastrar um webhook, sendo possível cadastrar até 5 webhooks por tipo. O webhook do tipo mensagem é limitado a 1 cadastro.",
+        "description": "Permite cadastrar um webhook, sendo possível cadastrar até 5 webhooks por tipo. O tipo mensagens_corrida (mensagens da conversa entre condutor e passageiro) só pode ser cadastrado pela central.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -508,11 +508,12 @@
                 "properties": {
                   "tipo": {
                     "type": "string",
-                    "description": "Indica o tipo de webhook. Valores aceitos: posicao, status ou mensagens",
+                    "description": "Indica o tipo de webhook. Valores aceitos: posicao, status, mensagens ou mensagens_corrida",
                     "enum": [
                       "posicao",
                       "status",
-                      "mensagens"
+                      "mensagens",
+                      "mensagens_corrida"
                     ]
                   },
                   "url": {
