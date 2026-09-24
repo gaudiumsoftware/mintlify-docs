@@ -4119,7 +4119,7 @@
     "/solicitacao": {
       "get": {
         "summary": "Obter solicitações",
-        "description": "Ao acionar, são retornadas todas as solicitações da central conforme os parâmetros informados.",
+        "description": "Ao acionar, são retornadas todas as solicitações da central conforme os parâmetros informados.\n\nO bloco `desejado` traz o endereço de destino (`endereco`, `bairro`, `cidade`, `estado`, `lat` e `lng`) e vem `null` quando a solicitação não tem destino definido.\n\nCada solicitação traz também, na raiz, os dados de fechamento que antes só vinham no recibo, em qualquer status, na consulta por `id_mch` e na listagem:\n\n- `data_hora_inicio`: início da solicitação (`null` enquanto não iniciou);\n- `tipo_pagamento`;\n- `desconto`: percentual de desconto (`0.00` quando não há);\n- `tarifa`, `id_categoria`, `categoria` e `descricao_categoria`;\n- `nome_cliente`;\n- `cpf_cliente`: só quando a solicitação não é corporativa (sem `empresa_id`);\n- `cnpj_cpf_empresa`: só quando a solicitação é corporativa (com `empresa_id`);\n- `codigo_cupom` e `gerador_cupom_id`: só quando a solicitação usou cupom.",
         "parameters": [
           {
             "name": "id_mch",
@@ -4286,6 +4286,15 @@
                           "cor_veiculo": null,
                           "duracao_corrida": "0",
                           "distancia_percorrida_km": "0",
+                          "data_hora_inicio": null,
+                          "tipo_pagamento": "D",
+                          "desconto": "0.00",
+                          "tarifa": "Tarifa padrão",
+                          "id_categoria": "71",
+                          "categoria": "Comum",
+                          "descricao_categoria": "Viagens curtas-médias",
+                          "nome_cliente": "Rogério Barreto",
+                          "cpf_cliente": "111.222.333-44",
                           "taxas_cancelamento": null,
                           "desejado": null,
                           "paradas": []
@@ -4314,6 +4323,15 @@
                           "cor_veiculo": null,
                           "duracao_corrida": "0",
                           "distancia_percorrida_km": "0",
+                          "data_hora_inicio": null,
+                          "tipo_pagamento": "D",
+                          "desconto": "0.00",
+                          "tarifa": "Tarifa padrão",
+                          "id_categoria": "71",
+                          "categoria": "Comum",
+                          "descricao_categoria": "Viagens curtas-médias",
+                          "nome_cliente": "Maria Andreia",
+                          "cpf_cliente": "111.222.333-44",
                           "taxas_cancelamento": null,
                           "partida": {
                             "endereco": "Rua Altaneira",
@@ -4327,8 +4345,6 @@
                           },
                           "desejado": {
                             "endereco": "Praça Mauá, 1",
-                            "complemento": null,
-                            "referencia": null,
                             "bairro": "Centro",
                             "cidade": "Rio de Janeiro",
                             "estado": "RJ",
@@ -4354,8 +4370,8 @@
                       ]
                     }
                   },
-                  "consulta_por_id_finalizada_com_recibo": {
-                    "summary": "Consulta por id_mch de solicitação finalizada (recibo anexado)",
+                  "consulta_por_id_finalizada": {
+                    "summary": "Consulta por id_mch de solicitação finalizada, com destino e cupom",
                     "value": {
                       "success": true,
                       "response": [
@@ -4384,6 +4400,17 @@
                           "cor_veiculo": "Prata",
                           "duracao_corrida": "600",
                           "distancia_percorrida_km": "5.20",
+                          "data_hora_inicio": "2024-05-02 08:54:20",
+                          "tipo_pagamento": "D",
+                          "desconto": "10.00",
+                          "tarifa": "Tarifa padrão",
+                          "id_categoria": "71",
+                          "categoria": "Comum",
+                          "descricao_categoria": "Viagens curtas-médias",
+                          "nome_cliente": "Rogério Barreto",
+                          "cpf_cliente": "111.222.333-44",
+                          "codigo_cupom": "BEMVINDO10",
+                          "gerador_cupom_id": "15",
                           "taxas_cancelamento": null,
                           "partida": {
                             "endereco": "R. Prof. Eurico Rabelo",
@@ -4397,55 +4424,13 @@
                           },
                           "desejado": {
                             "endereco": "Praça Mauá, 1",
-                            "complemento": null,
-                            "referencia": null,
                             "bairro": "Centro",
                             "cidade": "Rio de Janeiro",
                             "estado": "RJ",
                             "lat": "-22.8992",
                             "lng": "-43.1804"
                           },
-                          "paradas": [],
-                          "recibo": {
-                            "condutor": {
-                              "nome": "Pedro João",
-                              "telefone": "(021) 99883-3505",
-                              "telefone_internacional": "+55 21 99883-3505",
-                              "modelo": "FORD",
-                              "placa": "ABC-1234"
-                            },
-                            "dados_solicitacao": {
-                              "valor": "18.00",
-                              "valor_original": "20.00",
-                              "duracao": "600",
-                              "distancia": "5.20",
-                              "tarifa": "Tarifa padrão",
-                              "id_categoria": "71",
-                              "categoria": "Comum",
-                              "descricao_categoria": "Comum",
-                              "desconto": "10.00",
-                              "tipo_pagamento": "D"
-                            },
-                            "partida": {
-                              "endereco": "R. Prof. Eurico Rabelo",
-                              "bairro": "Maracanã",
-                              "cidade": "Rio de Janeiro",
-                              "estado": "RJ",
-                              "data_hora": "2024-05-02T08:54:20Z"
-                            },
-                            "desejado": {
-                              "endereco": "Praça Mauá, 1",
-                              "bairro": "Centro",
-                              "cidade": "Rio de Janeiro",
-                              "estado": "RJ",
-                              "data_hora": "2024-05-02T09:14:09Z"
-                            },
-                            "cliente": {
-                              "cliente_id": "83605",
-                              "nome": "Rogério Barreto",
-                              "cpf": null
-                            }
-                          }
+                          "paradas": []
                         }
                       ]
                     }
