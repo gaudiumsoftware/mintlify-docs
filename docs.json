@@ -153,7 +153,9 @@
                       "pages/v2/referencia/mensagens/endpoint/post-empresa-broadcast",
                       "pages/v2/referencia/mensagens/endpoint/post-empresa-privada",
                       "pages/v2/referencia/mensagens/endpoint/post-corrida-passageiro",
-                      "pages/v2/referencia/mensagens/endpoint/get-corrida-mensagens"
+                      "pages/v2/referencia/mensagens/endpoint/get-corrida-passageiro",
+                      "pages/v2/referencia/mensagens/endpoint/post-corrida-condutor",
+                      "pages/v2/referencia/mensagens/endpoint/get-corrida-condutor"
                     ]
                   },
                   {
