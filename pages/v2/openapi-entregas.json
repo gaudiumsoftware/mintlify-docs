@@ -2744,7 +2744,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "Id da categoria. Deve pertencer à central autenticada.",
+            "description": "Id da categoria. Deve pertencer à central autenticada; categoria excluída responde 404, como a inexistente.",
             "schema": {
               "type": "integer"
             }
@@ -2842,7 +2842,7 @@
             }
           },
           "404": {
-            "description": "Categoria não encontrada",
+            "description": "Categoria não encontrada, excluída ou de outra central",
             "content": {
               "application/json": {
                 "example": {
