@@ -6926,14 +6926,14 @@
                       ]
                     }
                   },
-                  "corrida_repasse": {
-                    "summary": "Corrida de repasse (chamada por uma central e atendida por outra)",
+                  "corrida_outra_central": {
+                    "summary": "Central do condutor numa corrida de repasse (só a central que recebeu a corrida fala pelo passageiro)",
                     "value": {
                       "success": false,
                       "errors": [
                         {
                           "code": 0,
-                          "message": "Não é possível trocar mensagens em corrida de repasse."
+                          "message": "Só a central que recebeu a corrida pode trocar mensagens pelo passageiro."
                         }
                       ]
                     }
@@ -7288,14 +7288,14 @@
                   "type": "object"
                 },
                 "examples": {
-                  "corrida_repasse": {
-                    "summary": "Corrida de repasse (chamada por uma central e atendida por outra)",
+                  "corrida_outra_central": {
+                    "summary": "Central do condutor numa corrida de repasse (só a central que recebeu a corrida fala pelo passageiro)",
                     "value": {
                       "success": false,
                       "errors": [
                         {
                           "code": 0,
-                          "message": "Não é possível trocar mensagens em corrida de repasse."
+                          "message": "Só a central que recebeu a corrida pode trocar mensagens pelo passageiro."
                         }
                       ]
                     }
