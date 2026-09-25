@@ -154,6 +154,36 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="29 set 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="tarifas-categoria" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Tarifas da categoria
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novo endpoint para consultar as tarifas atuais de uma categoria, com valores, método de
+      cálculo e o calendário de dias e horários em que cada tarifa se aplica.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/configuracoes/categorias/{id}/tarifas" href="/pages/v2/referencia/configuracoes/endpoint/get-categorias-tarifas" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Parâmetros aceitos:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="id" /> — obrigatório, na URL. Identificador da categoria, que precisa pertencer à bandeira da chave de API.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>O retorno traz a lista das tarifas atuais da categoria — já iniciadas e não excluídas; tarifas removidas, substituídas na edição ou futuras não são listadas. Cada item inclui:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="metodo_calculo_tarifa" /> — método de cálculo usado pela tarifa.</li>
+        <li><ParamBadge name="valor_bandeirada" />, <ParamBadge name="valor_km" />, <ParamBadge name="valor_minuto" />, <ParamBadge name="valor_hora_parada" /> e <ParamBadge name="valor_minimo" /> — valores base da tarifa.</li>
+        <li><ParamBadge name="data_inicio" /> — data a partir da qual a tarifa vale (ISO-8601, UTC).</li>
+        <li><ParamBadge name="horarios" /> — uma janela por dia (<ParamBadge name="dia_semana" />, <ParamBadge name="hora_inicio" />, <ParamBadge name="hora_fim" />); vem vazio quando a tarifa não tem calendário.</li>
+        <li><ParamBadge name="valores_tabelados" /> — faixas de distância e valor, preenchidas apenas nos métodos de cálculo tabelados. A última faixa, que vale a partir da faixa anterior, vem com <ParamBadge name="distancia_km" /> nulo e <ParamBadge name="a_partir_de" /> verdadeiro.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="22 set 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="valor-original-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Valor da corrida antes do desconto do cupom

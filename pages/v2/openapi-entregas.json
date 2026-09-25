@@ -2735,6 +2735,148 @@
         }
       }
     },
+    "/configuracoes/categorias/{id}/tarifas": {
+      "get": {
+        "summary": "Listar tarifas da categoria",
+        "description": "Retorna as tarifas atuais da categoria informada (já iniciadas e não excluídas; tarifas removidas, substituídas na edição ou futuras não são listadas), com valores, método de cálculo, data de início (`data_inicio`, em ISO-8601 UTC) e, quando houver calendário operacional, `horarios`: uma janela por dia (`dia_semana`, `hora_inicio`, `hora_fim`) — cada dia tem a própria hora e um mesmo dia pode ter mais de uma janela. Tarifa sem calendário retorna `horarios` vazio. Em `valores_tabelados`, a última faixa \"a partir de\" a faixa anterior vem com `distancia_km` `null` e `a_partir_de` `true`.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Id da categoria. Deve pertencer à central autenticada; categoria excluída responde 404, como a inexistente.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "data": [
+                    {
+                      "id": 501,
+                      "nome": "Padrão",
+                      "metodo_calculo_tarifa": "D",
+                      "valor_bandeirada": "5.00",
+                      "valor_km": "2.10",
+                      "valor_minuto": "0.30",
+                      "valor_hora_parada": "15.00",
+                      "valor_minimo": "8.00",
+                      "valor_parada_adicional": null,
+                      "tipo_cobranca_retorno": "T",
+                      "valor_retorno_adicional": null,
+                      "taxa_retorno_porcentagem": null,
+                      "data_inicio": "2026-01-01T03:00:00Z",
+                      "horarios": [
+                        {
+                          "dia_semana": 2,
+                          "hora_inicio": "07:00:00",
+                          "hora_fim": "19:00:00"
+                        },
+                        {
+                          "dia_semana": 3,
+                          "hora_inicio": "07:00:00",
+                          "hora_fim": "19:00:00"
+                        },
+                        {
+                          "dia_semana": 4,
+                          "hora_inicio": "07:00:00",
+                          "hora_fim": "19:00:00"
+                        },
+                        {
+                          "dia_semana": 5,
+                          "hora_inicio": "07:00:00",
+                          "hora_fim": "19:00:00"
+                        },
+                        {
+                          "dia_semana": 6,
+                          "hora_inicio": "07:00:00",
+                          "hora_fim": "19:00:00"
+                        }
+                      ],
+                      "valores_tabelados": []
+                    },
+                    {
+                      "id": 502,
+                      "nome": "Tabelada",
+                      "metodo_calculo_tarifa": "T",
+                      "valor_bandeirada": "5.00",
+                      "valor_km": null,
+                      "valor_minuto": null,
+                      "valor_hora_parada": null,
+                      "valor_minimo": null,
+                      "valor_parada_adicional": null,
+                      "tipo_cobranca_retorno": "T",
+                      "valor_retorno_adicional": null,
+                      "taxa_retorno_porcentagem": null,
+                      "data_inicio": "2026-01-01T03:00:00Z",
+                      "horarios": [],
+                      "valores_tabelados": [
+                        {
+                          "distancia_km": "5.00",
+                          "a_partir_de": false,
+                          "valor": "12.00"
+                        },
+                        {
+                          "distancia_km": "10.00",
+                          "a_partir_de": false,
+                          "valor": "20.00"
+                        },
+                        {
+                          "distancia_km": null,
+                          "a_partir_de": true,
+                          "valor": "30.00"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Categoria não encontrada, excluída ou de outra central",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Categoria informada não existe."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Ocorreu um erro interno no servidor. Por favor, tente novamente mais tarde."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/configuracoes": {
       "patch": {
         "summary": "Atualizar configurações",
