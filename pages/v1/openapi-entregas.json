@@ -3336,9 +3336,21 @@
                         },
                         "eventos": {
                           "type": "array",
-                          "description": "Eventos que a bandeira deve receber.",
+                          "description": "Eventos que a bandeira deve receber. Evento fora da lista de valores aceitos, ou ainda indisponível no ambiente, é recusado com 400.",
                           "items": {
-                            "type": "string"
+                            "type": "string",
+                            "enum": [
+                              "cadastro_passageiro_app",
+                              "estimativa_passageiro_app",
+                              "solicitacao_passageiro_app_abertura",
+                              "solicitacao_passageiro_app_iniciada",
+                              "solicitacao_passageiro_app_finalizada",
+                              "solicitacao_passageiro_app_cancelada_pelo_cliente",
+                              "solicitacao_passageiro_app_cancelada_por_outros",
+                              "solicitacao_passageiro_app_avaliada",
+                              "solicitacao_passageiro_app_nao_atendida",
+                              "abertura_app_passageiro"
+                            ]
                           }
                         }
                       }
@@ -3385,6 +3397,25 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "field": "bandeiras",
+                      "error": "Evento evento_inexistente inválido ou indisponível neste ambiente para a bandeira 913."
+                    }
+                  ]
+                }
+              }
+            }
           }
         }
       },
@@ -3425,9 +3456,21 @@
                       },
                       "eventos": {
                         "type": "array",
-                        "description": "Eventos que a bandeira deve receber.",
+                        "description": "Eventos que a bandeira deve receber. Evento fora da lista de valores aceitos, ou ainda indisponível no ambiente, é recusado com 400.",
                         "items": {
-                          "type": "string"
+                          "type": "string",
+                          "enum": [
+                            "cadastro_passageiro_app",
+                            "estimativa_passageiro_app",
+                            "solicitacao_passageiro_app_abertura",
+                            "solicitacao_passageiro_app_iniciada",
+                            "solicitacao_passageiro_app_finalizada",
+                            "solicitacao_passageiro_app_cancelada_pelo_cliente",
+                            "solicitacao_passageiro_app_cancelada_por_outros",
+                            "solicitacao_passageiro_app_avaliada",
+                            "solicitacao_passageiro_app_nao_atendida",
+                            "abertura_app_passageiro"
+                          ]
                         }
                       }
                     }
@@ -3441,7 +3484,8 @@
                     "cadastro_passageiro_app",
                     "estimativa_passageiro_app",
                     "solicitacao_passageiro_app_abertura",
-                    "solicitacao_passageiro_app_finalizada"
+                    "solicitacao_passageiro_app_finalizada",
+                    "abertura_app_passageiro"
                   ]
                 }
               }
@@ -3459,6 +3503,25 @@
                 "example": {
                   "success": true,
                   "message": "Permissões de engajamento criadas com sucesso."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "field": "bandeiras",
+                      "error": "Evento evento_inexistente inválido ou indisponível neste ambiente para a bandeira 402."
+                    }
+                  ]
                 }
               }
             }
