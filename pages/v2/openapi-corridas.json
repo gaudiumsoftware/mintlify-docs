@@ -2463,7 +2463,7 @@
                   "chat_ativo": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Envie `true` para exibir o chat da corrida. As mensagens são enviadas por `POST /mensagens/corridas/passageiro` e lidas por `GET /mensagens/corridas/passageiro/{solicitacao_id}`."
+                    "description": "Envie `true` para habilitar o chat da corrida. Sem ele a corrida não tem chat: os endpoints de mensagem recusam, e o condutor não vê a caixa de texto no app. Com ele, as mensagens são enviadas por `POST /mensagens/corridas/passageiro` e lidas por `GET /mensagens/corridas/passageiro/{solicitacao_id}`, e os dois lados podem escrever desde o início da corrida."
                   },
                   "extras": {
                     "type": "object",
@@ -3353,7 +3353,7 @@
                   "chat_ativo": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Envie `true` para exibir o chat da corrida. A marca vale para a corrida criada quando a programada for disparada. As mensagens são enviadas por `POST /mensagens/corridas/passageiro` e lidas por `GET /mensagens/corridas/passageiro/{solicitacao_id}`."
+                    "description": "Envie `true` para habilitar o chat da corrida. Sem ele a corrida não tem chat: os endpoints de mensagem recusam, e o condutor não vê a caixa de texto no app. A marca vale para a corrida criada quando a programada for disparada, e as mensagens são enviadas por `POST /mensagens/corridas/passageiro` e lidas por `GET /mensagens/corridas/passageiro/{solicitacao_id}`."
                   },
                   "extras": {
                     "type": "object"
@@ -6750,7 +6750,7 @@
     "/mensagens/corridas/passageiro": {
       "post": {
         "summary": "Enviar mensagem na conversa da corrida como passageiro",
-        "description": "Envia uma mensagem na conversa entre passageiro e condutor de uma corrida. A mensagem é gravada como sendo do **passageiro** da corrida — é essa a identidade que o condutor vê no app dele — e dispara o push de mensagem nova no aplicativo do condutor.\n\nSó a corrida criada pela API de Integração aceita mensagem por este endpoint. Para exibir o chat da corrida, crie a corrida com o parâmetro `chat_ativo: true` (`POST /corridas`).\n\n**O texto é sanitizado:** marcação HTML é removida e emoji é descartado, mas os demais caracteres chegam ao condutor como você os enviou.",
+        "description": "Envia uma mensagem na conversa entre passageiro e condutor de uma corrida. A mensagem é gravada como sendo do **passageiro** da corrida — é essa a identidade que o condutor vê no app dele — e dispara o push de mensagem nova no aplicativo do condutor.\n\nSó a corrida criada pela API de Integração **com `\"chat_ativo\": true`** aceita mensagem por este endpoint. Sem o campo a corrida não tem chat, e a conversa fica indisponível para todos. Com ele, você pode escrever desde o início da corrida, sem esperar o condutor.\n\n**O texto é sanitizado:** marcação HTML é removida e emoji é descartado, mas os demais caracteres chegam ao condutor como você os enviou.",
         "requestBody": {
           "required": true,
           "content": {
@@ -6939,7 +6939,7 @@
                     }
                   },
                   "corrida_fora_da_integracao": {
-                    "summary": "Corrida que não foi criada pela API de Integração",
+                    "summary": "Corrida sem chat: não foi criada pela API de Integração, ou foi criada sem `chat_ativo`",
                     "value": {
                       "success": false,
                       "errors": [
@@ -7112,7 +7112,7 @@
     "/mensagens/corridas/passageiro/{solicitacao_id}": {
       "get": {
         "summary": "Listar mensagens da conversa da corrida como passageiro",
-        "description": "Devolve as mensagens trocadas entre passageiro e condutor de uma corrida, em ordem crescente de `sequencial`, e marca como lidas, pelo passageiro, as mensagens retornadas. Só a corrida criada pela API de Integração pode ser lida por este endpoint.\n\nA resposta do condutor aparece aqui: é por este endpoint que você acompanha a conversa, já que não há webhook de mensagem.",
+        "description": "Devolve as mensagens trocadas entre passageiro e condutor de uma corrida, em ordem crescente de `sequencial`, e marca como lidas, pelo passageiro, as mensagens retornadas. Só a corrida criada pela API de Integração com `\"chat_ativo\": true` pode ser lida por este endpoint.\n\nA resposta do condutor aparece aqui: é por este endpoint que você acompanha a conversa, já que não há webhook de mensagem.",
         "parameters": [
           {
             "name": "solicitacao_id",
@@ -7301,7 +7301,7 @@
                     }
                   },
                   "corrida_fora_da_integracao": {
-                    "summary": "Corrida que não foi criada pela API de Integração",
+                    "summary": "Corrida sem chat: não foi criada pela API de Integração, ou foi criada sem `chat_ativo`",
                     "value": {
                       "success": false,
                       "errors": [
@@ -7389,7 +7389,7 @@
     "/mensagens/corridas/condutor": {
       "post": {
         "summary": "Enviar mensagem na conversa da corrida como condutor",
-        "description": "Envia uma mensagem na conversa entre passageiro e condutor de uma corrida pedida pelo app do passageiro. A mensagem é gravada como sendo do **condutor** da corrida — é essa a identidade que o passageiro vê no app dele — e dispara o push de mensagem nova no aplicativo do passageiro.\n\nSó a corrida pedida pelo app do passageiro e atendida por um condutor do parceiro aceita mensagem por este endpoint. Na corrida de repasse, quem fala pelo condutor é a central que atende a corrida.\n\n**O texto é sanitizado:** marcação HTML é removida e emoji é descartado, mas os demais caracteres chegam ao passageiro como você os enviou.",
+        "description": "Envia uma mensagem na conversa entre passageiro e condutor de uma corrida pedida pelo app do passageiro. A mensagem é gravada como sendo do **condutor** da corrida — é essa a identidade que o passageiro vê no app dele — e dispara o push de mensagem nova no aplicativo do passageiro.\n\nSó a corrida pedida pelo app do passageiro, atendida por um condutor do parceiro e com o chat habilitado aceita mensagem por este endpoint. Na corrida de repasse, quem fala pelo condutor é a central que atende a corrida.\n\n**O texto é sanitizado:** marcação HTML é removida e emoji é descartado, mas os demais caracteres chegam ao passageiro como você os enviou.",
         "requestBody": {
           "required": true,
           "content": {
