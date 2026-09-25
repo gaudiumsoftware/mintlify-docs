@@ -154,6 +154,40 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="25 set 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="evento-engajamento-abertura-app" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Evento de engajamento de abertura do app
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Os webhooks de engajamento podem assinar um novo evento, disparado quando o passageiro abre
+      o aplicativo ou volta para ele depois de deixá-lo em segundo plano.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/engajamento/{id}/permissoes" href="/pages/v2/referencia/engajamento/permissoes/endpoint/post" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="abertura_app_passageiro" /> — novo valor aceito em <ParamBadge name="eventos" />. Passageiro inativo não gera o evento.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="changed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="eventos" /> — evento fora da lista de valores aceitos, ou ainda indisponível no ambiente, passa a ser recusado com 400, em vez de gravado como uma assinatura que nunca é entregue.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="PUT" path="/api/v2/integracao/engajamento/{id}/permissoes" href="/pages/v2/referencia/engajamento/permissoes/endpoint/put" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="abertura_app_passageiro" /> e a recusa com 400 de evento inválido — mesmas regras, na bandeira única enviada em <ParamBadge name="bandeira" />.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+  </Entry>
+
   <Entry date="22 set 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="valor-original-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Valor da corrida antes do desconto do cupom
