@@ -2738,7 +2738,7 @@
     "/configuracoes/categorias/{id}/tarifas": {
       "get": {
         "summary": "Listar tarifas da categoria",
-        "description": "Retorna as tarifas atuais da categoria informada (já iniciadas e não excluídas; tarifas removidas, substituídas na edição ou futuras não são listadas), com valores, método de cálculo, data de início (`data_inicio`) e, quando houver calendário operacional, `horarios`: uma janela por dia (`dia_semana`, `hora_inicio`, `hora_fim`) — cada dia tem a própria hora e um mesmo dia pode ter mais de uma janela. Tarifa sem calendário retorna `horarios` vazio. Em `valores_tabelados`, a última faixa \"a partir de\" a faixa anterior vem com `distancia_km` `null` e `a_partir_de` `true`.",
+        "description": "Retorna as tarifas atuais da categoria informada (já iniciadas e não excluídas; tarifas removidas, substituídas na edição ou futuras não são listadas), com valores, método de cálculo, data de início (`data_inicio`, em ISO-8601 UTC) e, quando houver calendário operacional, `horarios`: uma janela por dia (`dia_semana`, `hora_inicio`, `hora_fim`) — cada dia tem a própria hora e um mesmo dia pode ter mais de uma janela. Tarifa sem calendário retorna `horarios` vazio. Em `valores_tabelados`, a última faixa \"a partir de\" a faixa anterior vem com `distancia_km` `null` e `a_partir_de` `true`.",
         "parameters": [
           {
             "name": "id",
@@ -2771,7 +2771,7 @@
                       "tipo_cobranca_retorno": "T",
                       "valor_retorno_adicional": null,
                       "taxa_retorno_porcentagem": null,
-                      "data_inicio": "2026-01-01 00:00:00",
+                      "data_inicio": "2026-01-01T03:00:00Z",
                       "horarios": [
                         {
                           "dia_semana": 2,
@@ -2814,7 +2814,7 @@
                       "tipo_cobranca_retorno": "T",
                       "valor_retorno_adicional": null,
                       "taxa_retorno_porcentagem": null,
-                      "data_inicio": "2026-01-01 00:00:00",
+                      "data_inicio": "2026-01-01T03:00:00Z",
                       "horarios": [],
                       "valores_tabelados": [
                         {

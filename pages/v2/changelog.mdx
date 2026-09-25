@@ -177,7 +177,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
         <li><ParamBadge name="metodo_calculo_tarifa" /> — método de cálculo usado pela tarifa.</li>
         <li><ParamBadge name="valor_bandeirada" />, <ParamBadge name="valor_km" />, <ParamBadge name="valor_minuto" />, <ParamBadge name="valor_hora_parada" /> e <ParamBadge name="valor_minimo" /> — valores base da tarifa.</li>
-        <li><ParamBadge name="data_inicio" /> — data a partir da qual a tarifa vale.</li>
+        <li><ParamBadge name="data_inicio" /> — data a partir da qual a tarifa vale (ISO-8601, UTC).</li>
         <li><ParamBadge name="horarios" /> — uma janela por dia (<ParamBadge name="dia_semana" />, <ParamBadge name="hora_inicio" />, <ParamBadge name="hora_fim" />); vem vazio quando a tarifa não tem calendário.</li>
         <li><ParamBadge name="valores_tabelados" /> — faixas de distância e valor, preenchidas apenas nos métodos de cálculo tabelados. A última faixa, que vale a partir da faixa anterior, vem com <ParamBadge name="distancia_km" /> nulo e <ParamBadge name="a_partir_de" /> verdadeiro.</li>
       </ul>
