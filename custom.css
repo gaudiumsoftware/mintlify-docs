@@ -51,6 +51,19 @@ html[data-current-path="/pages/v2/changelog-entregas"] .nav-tabs > a:nth-child(4
   margin-left: 0 !important;
 }
 
+/* Tag "Em breve" (`tag: 'Em breve'` no frontmatter): página de endpoint ou funcionalidade
+   que ainda não entrou em produção. Não expira; quando a entrega chega em produção, a tag é
+   trocada à mão pela data de publicação e passa a valer a regra do "Novo". */
+#sidebar-content .nav-tag-pill-text[data-nav-tag="Em breve"] {
+  color: #c2410c;
+  background-color: rgba(234, 88, 12, 0.12);
+}
+
+html.dark #sidebar-content .nav-tag-pill-text[data-nav-tag="Em breve"] {
+  color: #fb923c;
+  background-color: rgba(251, 146, 60, 0.16);
+}
+
 /* Pill um pouco mais compacta para caber ao lado do título */
 #sidebar-content .nav-tag-pill-text {
   white-space: nowrap;
