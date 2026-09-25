@@ -154,6 +154,103 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="24 set 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="mensagens-corrida-condutor" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Conversa da corrida pelo lado do condutor
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Dois endpoints novos deixam o parceiro falar pelo condutor numa corrida pedida pelo app do
+      passageiro: um envia mensagem como sendo do condutor, e o outro lê a conversa e marca como
+      lidas, pelo condutor, as mensagens retornadas. Os endpoints do lado do passageiro passam a
+      ficar em <code>/mensagens/corridas/passageiro</code>.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/mensagens/corridas/condutor" href="/pages/v2/referencia/mensagens/endpoint/post-corrida-condutor" />
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/v2/integracao/mensagens/corridas/condutor/{solicitacao_id}" href="/pages/v2/referencia/mensagens/endpoint/get-corrida-condutor" />
+    </div>
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>O envio grava a mensagem como do condutor da corrida e dispara o push de mensagem nova no aplicativo do passageiro.</li>
+        <li><ParamBadge name="solicitacao_id" />, <ParamBadge name="condutor_id" /> e <ParamBadge name="mensagem" /> vão no corpo do <code>POST</code>; a rota é fixa.</li>
+        <li>Só a corrida pedida pelo app do passageiro, atendida por um condutor do parceiro e com o chat habilitado aceita o envio. A corrida criada pela API de Integração continua nos endpoints do lado do passageiro.</li>
+        <li>Na corrida de repasse, quem fala pelo condutor é a central que atende a corrida.</li>
+        <li>A leitura devolve o nome do passageiro com o sobrenome oculto, como no app do condutor.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
+  <Entry date="23 set 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 id="chat-ativo-criar-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Parâmetro que habilita o chat da corrida
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      A criação de corrida aceita o campo <code>chat_ativo</code>. Ele é o que habilita o chat da
+      corrida: sem <code>true</code>, a corrida não tem chat, os endpoints de mensagem recusam e o
+      condutor não vê a caixa de texto no app.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/corridas" href="/pages/v2/referencia/corridas/endpoint/post-criar" />
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/corridas/programadas" href="/pages/v2/referencia/corridas/endpoint/post-criar-programada" />
+    </div>
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="chat_ativo" /> opcional no corpo da criação de corrida, booleano, com padrão <code>false</code>.</li>
+        <li>Vale também na criação de corrida programada: a marca passa para a corrida quando ela é disparada.</li>
+        <li>Com o chat habilitado, os dois lados escrevem desde o início da corrida — você não precisa esperar o condutor, nem ele a você.</li>
+        <li>O envio de mensagem na conversa da corrida passa a aceitar também a corrida em espera.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
+  <Entry date="22 set 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="mensagens-conversa-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Conversa da corrida entre passageiro e condutor
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Dois endpoints novos abrem ao parceiro a conversa da corrida: um envia mensagem como sendo
+      do passageiro, que é a identidade que o condutor vê no app dele, e o outro lê a conversa e
+      marca como lidas as mensagens retornadas. Antes o chat da corrida só era acessível pelos
+      aplicativos, e quem opera pela integração precisava resolver por fora.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/mensagens/corridas/passageiro" href="/pages/v2/referencia/mensagens/endpoint/post-corrida-passageiro" />
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/v2/integracao/mensagens/corridas/passageiro/{solicitacao_id}" href="/pages/v2/referencia/mensagens/endpoint/get-corrida-passageiro" />
+    </div>
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>Valem para a corrida criada pela API de Integração com <ParamBadge name="chat_ativo" />; sem o campo, os dois respondem <code>400</code>.</li>
+        <li>O envio grava a mensagem como do passageiro da corrida e dispara o push de mensagem nova no aplicativo do condutor.</li>
+        <li><ParamBadge name="solicitacao_id" />, <ParamBadge name="passageiro_id" /> e <ParamBadge name="mensagem" /> vão no corpo do <code>POST</code>; a rota é fixa.</li>
+        <li>A leitura devolve as mensagens em ordem crescente de <ParamBadge name="sequencial" />, com <ParamBadge name="texto" />, <ParamBadge name="data_hora" /> e o <ParamBadge name="remetente" /> identificado como passageiro, condutor ou central.</li>
+        <li>A leitura continua respondendo depois de a corrida encerrar; só o envio exige corrida em andamento.</li>
+        <li>Corrida sem conversa responde <code>200</code> com lista vazia — ler não cria conversa.</li>
+        <li>O texto é sanitizado — marcação HTML e emoji saem, o resto chega ao condutor como enviado.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "14px",
+      lineHeight: "1.6",
+    }}>
+      O envio tem limite de <strong>30 mensagens por corrida a cada 60 segundos</strong>. A chamada
+      que estourar o limite recebe <code>429</code> e não é gravada. A leitura não tem esse limite.
+    </div>
+  </Entry>
+
   <Entry date="22 set 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="valor-original-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Valor da corrida antes do desconto do cupom

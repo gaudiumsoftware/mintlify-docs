@@ -2460,6 +2460,11 @@
                   "ignorar_condutores_proximos": {
                     "type": "boolean"
                   },
+                  "chat_ativo": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Envie `true` para habilitar o chat da corrida. Sem ele a corrida não tem chat: os endpoints de mensagem recusam, e o condutor não vê a caixa de texto no app. Com ele, as mensagens são enviadas por `POST /mensagens/corridas/passageiro` e lidas por `GET /mensagens/corridas/passageiro/{solicitacao_id}`, e os dois lados podem escrever desde o início da corrida."
+                  },
                   "extras": {
                     "type": "object",
                     "properties": {
@@ -2594,6 +2599,7 @@
                 "categoria_nome": "Comum",
                 "estimativas": true,
                 "ignorar_condutores_proximos": false,
+                "chat_ativo": true,
                 "extras": {
                   "porta_malas_grande": false,
                   "veiculo_a_disposicao": false,
@@ -3343,6 +3349,11 @@
                   },
                   "ignorar_condutores_proximos": {
                     "type": "boolean"
+                  },
+                  "chat_ativo": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Envie `true` para habilitar o chat da corrida. Sem ele a corrida não tem chat: os endpoints de mensagem recusam, e o condutor não vê a caixa de texto no app. A marca vale para a corrida criada quando a programada for disparada, e as mensagens são enviadas por `POST /mensagens/corridas/passageiro` e lidas por `GET /mensagens/corridas/passageiro/{solicitacao_id}`."
                   },
                   "extras": {
                     "type": "object"
@@ -6729,6 +6740,1284 @@
                       ]
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mensagens/corridas/passageiro": {
+      "post": {
+        "summary": "Enviar mensagem na conversa da corrida como passageiro",
+        "description": "Envia uma mensagem na conversa entre passageiro e condutor de uma corrida. A mensagem é gravada como sendo do **passageiro** da corrida — é essa a identidade que o condutor vê no app dele — e dispara o push de mensagem nova no aplicativo do condutor.\n\nSó a corrida criada pela API de Integração **com `\"chat_ativo\": true`** aceita mensagem por este endpoint. Sem o campo a corrida não tem chat, e a conversa fica indisponível para todos. Com ele, você pode escrever desde o início da corrida, sem esperar o condutor.\n\n**O texto é sanitizado:** marcação HTML é removida e emoji é descartado, mas os demais caracteres chegam ao condutor como você os enviou.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "solicitacao_id",
+                  "passageiro_id",
+                  "mensagem"
+                ],
+                "properties": {
+                  "solicitacao_id": {
+                    "type": "integer",
+                    "description": "ID da corrida (solicitação) na qual a mensagem será enviada.",
+                    "example": 639
+                  },
+                  "passageiro_id": {
+                    "type": "integer",
+                    "description": "ID do passageiro da corrida. Precisa corresponder ao passageiro da solicitação informada.",
+                    "example": 543
+                  },
+                  "mensagem": {
+                    "type": "string",
+                    "description": "Conteúdo da mensagem. Máximo de 10.000 caracteres. Marcação HTML e emoji são removidos; os demais caracteres chegam ao condutor como enviados.",
+                    "maxLength": 10000,
+                    "example": "Estou na portaria."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Mensagem gravada como do passageiro e push enviado ao condutor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "solicitacao_id": {
+                          "type": "integer"
+                        },
+                        "passageiro_id": {
+                          "type": "integer"
+                        },
+                        "conversa_id": {
+                          "type": "integer",
+                          "description": "Conversa da corrida em que a mensagem foi gravada."
+                        },
+                        "sequencial": {
+                          "type": "integer",
+                          "description": "Posição da mensagem gravada na conversa. É o mesmo `sequencial` que a leitura devolve."
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "__links": {
+                      "type": "object",
+                      "description": "Links HATEOAS do domínio, indexados pelo rel."
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "solicitacao_id": 639,
+                    "passageiro_id": 543,
+                    "conversa_id": 8,
+                    "sequencial": 3
+                  },
+                  "message": "Mensagem enviada com sucesso.",
+                  "__links": {
+                    "self": {
+                      "href": "api/v2/integracao/mensagens/corridas/passageiro",
+                      "metodo": "post"
+                    },
+                    "listar-mensagens-corrida-passageiro": {
+                      "href": "api/v2/integracao/mensagens/corridas/passageiro/{id}",
+                      "metodo": "get"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação ou de regra de negócio",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "campo_obrigatorio": {
+                    "summary": "Campo obrigatório ausente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'mensagem': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "id_nao_numerico": {
+                    "summary": "Identificador que não é número",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'passageiro_id': Deve ser numérico."
+                        }
+                      ]
+                    }
+                  },
+                  "id_nao_inteiro": {
+                    "summary": "Identificador com sinal, espaço, casa decimal ou zero à esquerda",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'solicitacao_id': Deve ser um número inteiro positivo, sem sinal, espaço ou casa decimal."
+                        }
+                      ]
+                    }
+                  },
+                  "mensagem_longa": {
+                    "summary": "Mensagem acima de 10.000 caracteres",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'mensagem': Deve ter no máximo 10000 caracteres."
+                        }
+                      ]
+                    }
+                  },
+                  "corpo_nao_json": {
+                    "summary": "Corpo que não é JSON",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "JSON inválido"
+                        }
+                      ]
+                    }
+                  },
+                  "texto_vazio": {
+                    "summary": "Texto vazio depois de remover HTML e emoji",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O texto da mensagem não pode ficar vazio."
+                        }
+                      ]
+                    }
+                  },
+                  "corrida_outra_central": {
+                    "summary": "Central do condutor numa corrida de repasse (só a central que recebeu a corrida fala pelo passageiro)",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Só a central que recebeu a corrida pode trocar mensagens pelo passageiro."
+                        }
+                      ]
+                    }
+                  },
+                  "corrida_fora_da_integracao": {
+                    "summary": "Corrida sem chat: não foi criada pela API de Integração, ou foi criada sem `chat_ativo`",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A conversa da corrida não está disponível."
+                        }
+                      ]
+                    }
+                  },
+                  "fora_da_janela": {
+                    "summary": "Corrida fora dos status aceita, em espera e em andamento",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A corrida não está em andamento."
+                        }
+                      ]
+                    }
+                  },
+                  "passageiro_divergente": {
+                    "summary": "passageiro_id não é o passageiro da corrida",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O passageiro informado não é o passageiro da corrida."
+                        }
+                      ]
+                    }
+                  },
+                  "sem_condutor": {
+                    "summary": "Corrida ainda sem condutor",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A corrida ainda não tem condutor."
+                        }
+                      ]
+                    }
+                  },
+                  "passageiro_sem_usuario": {
+                    "summary": "Passageiro da corrida sem usuário vinculado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível identificar o usuário do passageiro."
+                        }
+                      ]
+                    }
+                  },
+                  "conversa_indisponivel": {
+                    "summary": "Central não permite mensagem entre passageiro e condutor",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A conversa da corrida não está disponível."
+                        }
+                      ]
+                    }
+                  },
+                  "conversa_empresa_condutor": {
+                    "summary": "A conversa da corrida é entre empresa e condutor",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A conversa desta corrida é entre empresa e condutor."
+                        }
+                      ]
+                    }
+                  },
+                  "nao_enviada": {
+                    "summary": "Falha ao gravar a mensagem",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível enviar a mensagem."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Credenciais ausentes ou inválidas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "gestor_invalido": {
+                    "summary": "Usuário ou senha do Basic Auth inválidos",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 401,
+                          "message": "Usuário e/ou senhas inválidos."
+                        }
+                      ]
+                    }
+                  },
+                  "api_key_invalida": {
+                    "summary": "Api-Key ausente ou sem bandeira",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 401,
+                          "message": "Você não está autorizado a acessar este recurso."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Corrida não encontrada no escopo do parceiro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 404,
+                      "message": "Solicitação não encontrada."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido. Os limites estão na tabela de rate limit da introdução.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mensagens/corridas/passageiro/{solicitacao_id}": {
+      "get": {
+        "summary": "Listar mensagens da conversa da corrida como passageiro",
+        "description": "Devolve as mensagens trocadas entre passageiro e condutor de uma corrida, em ordem crescente de `sequencial`, e marca como lidas, pelo passageiro, as mensagens retornadas. Só a corrida criada pela API de Integração com `\"chat_ativo\": true` pode ser lida por este endpoint.\n\nA resposta do condutor aparece aqui: é por este endpoint que você acompanha a conversa, já que não há webhook de mensagem.",
+        "parameters": [
+          {
+            "name": "solicitacao_id",
+            "in": "path",
+            "required": true,
+            "description": "ID da corrida (solicitação) cuja conversa será lida. Deve ser numérico.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mensagens da conversa, em ordem crescente de sequencial",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "solicitacao_id": {
+                          "type": "integer"
+                        },
+                        "conversa_id": {
+                          "type": "integer",
+                          "nullable": true,
+                          "description": "Nulo quando a corrida ainda não tem conversa."
+                        },
+                        "mensagens": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "description": "Identificador da mensagem."
+                              },
+                              "sequencial": {
+                                "type": "integer",
+                                "description": "Posição da mensagem na conversa. Cresce a cada mensagem nova."
+                              },
+                              "texto": {
+                                "type": "string"
+                              },
+                              "data_hora": {
+                                "type": "string",
+                                "description": "Data e hora do envio, no formato `YYYY-MM-DD HH:MM:SS`, na hora local da central.",
+                                "example": "2026-09-22 14:02:11"
+                              },
+                              "remetente": {
+                                "type": "object",
+                                "properties": {
+                                  "tipo": {
+                                    "type": "string",
+                                    "enum": [
+                                      "passageiro",
+                                      "condutor",
+                                      "central"
+                                    ]
+                                  },
+                                  "id": {
+                                    "type": "integer",
+                                    "nullable": true,
+                                    "description": "ID do passageiro, do condutor ou do gestor, conforme o tipo."
+                                  },
+                                  "nome": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "__links": {
+                      "type": "object",
+                      "description": "Links HATEOAS do domínio, indexados pelo rel. `self` aponta para o próprio endpoint."
+                    }
+                  }
+                },
+                "examples": {
+                  "conversa": {
+                    "summary": "Conversa com mensagens do condutor e do passageiro",
+                    "value": {
+                      "success": true,
+                      "data": {
+                        "solicitacao_id": 639,
+                        "conversa_id": 8,
+                        "mensagens": [
+                          {
+                            "id": 12045,
+                            "sequencial": 1,
+                            "texto": "Estou a caminho.",
+                            "data_hora": "2026-09-23 15:51:11",
+                            "remetente": {
+                              "tipo": "condutor",
+                              "id": 1,
+                              "nome": "Carlos Silva"
+                            }
+                          },
+                          {
+                            "id": 12046,
+                            "sequencial": 2,
+                            "texto": "Cheguei, estou na entrada principal.",
+                            "data_hora": "2026-09-23 15:52:04",
+                            "remetente": {
+                              "tipo": "condutor",
+                              "id": 1,
+                              "nome": "Carlos Silva"
+                            }
+                          },
+                          {
+                            "id": 12047,
+                            "sequencial": 3,
+                            "texto": "Desço em 2 minutos.",
+                            "data_hora": "2026-09-23 15:52:19",
+                            "remetente": {
+                              "tipo": "passageiro",
+                              "id": 543,
+                              "nome": "Felipe Nunes"
+                            }
+                          }
+                        ]
+                      },
+                      "__links": {
+                        "self": {
+                          "href": "api/v2/integracao/mensagens/corridas/passageiro/{id}",
+                          "metodo": "get"
+                        },
+                        "enviar-mensagem-corrida-passageiro": {
+                          "href": "api/v2/integracao/mensagens/corridas/passageiro",
+                          "metodo": "post"
+                        }
+                      }
+                    }
+                  },
+                  "sem_conversa": {
+                    "summary": "Corrida em que ninguém escreveu ainda",
+                    "value": {
+                      "success": true,
+                      "data": {
+                        "solicitacao_id": 642,
+                        "conversa_id": null,
+                        "mensagens": []
+                      },
+                      "__links": {
+                        "self": {
+                          "href": "api/v2/integracao/mensagens/corridas/passageiro/{id}",
+                          "metodo": "get"
+                        },
+                        "enviar-mensagem-corrida-passageiro": {
+                          "href": "api/v2/integracao/mensagens/corridas/passageiro",
+                          "metodo": "post"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de regra de negócio",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "corrida_outra_central": {
+                    "summary": "Central do condutor numa corrida de repasse (só a central que recebeu a corrida fala pelo passageiro)",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Só a central que recebeu a corrida pode trocar mensagens pelo passageiro."
+                        }
+                      ]
+                    }
+                  },
+                  "corrida_fora_da_integracao": {
+                    "summary": "Corrida sem chat: não foi criada pela API de Integração, ou foi criada sem `chat_ativo`",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A conversa da corrida não está disponível."
+                        }
+                      ]
+                    }
+                  },
+                  "conversa_empresa_condutor": {
+                    "summary": "A conversa da corrida é entre empresa e condutor",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A conversa desta corrida é entre empresa e condutor."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Credenciais ausentes ou inválidas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "gestor_invalido": {
+                    "summary": "Usuário ou senha do Basic Auth inválidos",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 401,
+                          "message": "Usuário e/ou senhas inválidos."
+                        }
+                      ]
+                    }
+                  },
+                  "api_key_invalida": {
+                    "summary": "Api-Key ausente ou sem bandeira",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 401,
+                          "message": "Você não está autorizado a acessar este recurso."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Corrida não encontrada no escopo do parceiro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 404,
+                      "message": "Solicitação não encontrada."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mensagens/corridas/condutor": {
+      "post": {
+        "summary": "Enviar mensagem na conversa da corrida como condutor",
+        "description": "Envia uma mensagem na conversa entre passageiro e condutor de uma corrida pedida pelo app do passageiro. A mensagem é gravada como sendo do **condutor** da corrida — é essa a identidade que o passageiro vê no app dele — e dispara o push de mensagem nova no aplicativo do passageiro.\n\nSó a corrida pedida pelo app do passageiro, atendida por um condutor do parceiro e com o chat habilitado aceita mensagem por este endpoint. Na corrida de repasse, quem fala pelo condutor é a central que atende a corrida.\n\n**O texto é sanitizado:** marcação HTML é removida e emoji é descartado, mas os demais caracteres chegam ao passageiro como você os enviou.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "solicitacao_id",
+                  "condutor_id",
+                  "mensagem"
+                ],
+                "properties": {
+                  "solicitacao_id": {
+                    "type": "integer",
+                    "description": "ID da corrida (solicitação) na qual a mensagem será enviada.",
+                    "example": 639
+                  },
+                  "condutor_id": {
+                    "type": "integer",
+                    "description": "ID do condutor da corrida. Precisa corresponder ao condutor da solicitação informada.",
+                    "example": 12
+                  },
+                  "mensagem": {
+                    "type": "string",
+                    "description": "Conteúdo da mensagem. Máximo de 10.000 caracteres. Marcação HTML e emoji são removidos; os demais caracteres chegam ao passageiro como enviados.",
+                    "maxLength": 10000,
+                    "example": "Estou no portão principal."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Mensagem gravada como do condutor e push enviado ao passageiro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "solicitacao_id": {
+                          "type": "integer"
+                        },
+                        "condutor_id": {
+                          "type": "integer"
+                        },
+                        "conversa_id": {
+                          "type": "integer",
+                          "description": "Conversa da corrida em que a mensagem foi gravada."
+                        },
+                        "sequencial": {
+                          "type": "integer",
+                          "description": "Posição da mensagem gravada na conversa. É o mesmo `sequencial` que a leitura devolve."
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "__links": {
+                      "type": "object",
+                      "description": "Links HATEOAS do domínio, indexados pelo rel."
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "solicitacao_id": 639,
+                    "condutor_id": 12,
+                    "conversa_id": 8,
+                    "sequencial": 3
+                  },
+                  "message": "Mensagem enviada com sucesso.",
+                  "__links": {
+                    "self": {
+                      "href": "api/v2/integracao/mensagens/corridas/condutor",
+                      "metodo": "post"
+                    },
+                    "listar-mensagens-corrida-condutor": {
+                      "href": "api/v2/integracao/mensagens/corridas/condutor/{id}",
+                      "metodo": "get"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação ou de regra de negócio",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "campo_obrigatorio": {
+                    "summary": "Campo obrigatório ausente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'mensagem': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "id_nao_numerico": {
+                    "summary": "Identificador que não é número",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'condutor_id': Deve ser numérico."
+                        }
+                      ]
+                    }
+                  },
+                  "id_nao_inteiro": {
+                    "summary": "Identificador com sinal, espaço, casa decimal ou zero à esquerda",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'solicitacao_id': Deve ser um número inteiro positivo, sem sinal, espaço ou casa decimal."
+                        }
+                      ]
+                    }
+                  },
+                  "mensagem_longa": {
+                    "summary": "Mensagem acima de 10.000 caracteres",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'mensagem': Deve ter no máximo 10000 caracteres."
+                        }
+                      ]
+                    }
+                  },
+                  "corpo_nao_json": {
+                    "summary": "Corpo que não é JSON",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "JSON inválido"
+                        }
+                      ]
+                    }
+                  },
+                  "texto_vazio": {
+                    "summary": "Texto vazio depois de remover HTML e emoji",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O texto da mensagem não pode ficar vazio."
+                        }
+                      ]
+                    }
+                  },
+                  "corrida_outra_central": {
+                    "summary": "Central que recebeu o pedido numa corrida de repasse (só a central que atende a corrida fala pelo condutor)",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Só a central que atende a corrida pode trocar mensagens pelo condutor."
+                        }
+                      ]
+                    }
+                  },
+                  "corrida_sem_condutor_do_parceiro": {
+                    "summary": "Corrida que não foi pedida pelo app do passageiro, ou em que o condutor não é do parceiro",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A conversa da corrida não está disponível."
+                        }
+                      ]
+                    }
+                  },
+                  "fora_da_janela": {
+                    "summary": "Corrida fora dos status aceita, em espera e em andamento",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A corrida não está em andamento."
+                        }
+                      ]
+                    }
+                  },
+                  "condutor_divergente": {
+                    "summary": "condutor_id não é o condutor da corrida",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O condutor informado não é o condutor da corrida."
+                        }
+                      ]
+                    }
+                  },
+                  "sem_condutor": {
+                    "summary": "Corrida ainda sem condutor",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A corrida ainda não tem condutor."
+                        }
+                      ]
+                    }
+                  },
+                  "condutor_sem_usuario": {
+                    "summary": "Condutor da corrida sem usuário vinculado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível identificar o usuário do condutor."
+                        }
+                      ]
+                    }
+                  },
+                  "conversa_indisponivel": {
+                    "summary": "Central não permite mensagem entre passageiro e condutor",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A conversa da corrida não está disponível."
+                        }
+                      ]
+                    }
+                  },
+                  "conversa_empresa_condutor": {
+                    "summary": "A conversa da corrida é entre empresa e condutor",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A conversa desta corrida é entre empresa e condutor."
+                        }
+                      ]
+                    }
+                  },
+                  "nao_enviada": {
+                    "summary": "Falha ao gravar a mensagem",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível enviar a mensagem."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Credenciais ausentes ou inválidas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "gestor_invalido": {
+                    "summary": "Usuário ou senha do Basic Auth inválidos",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 401,
+                          "message": "Usuário e/ou senhas inválidos."
+                        }
+                      ]
+                    }
+                  },
+                  "api_key_invalida": {
+                    "summary": "Api-Key ausente ou sem bandeira",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 401,
+                          "message": "Você não está autorizado a acessar este recurso."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Corrida não encontrada no escopo do parceiro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 404,
+                      "message": "Solicitação não encontrada."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido. Os limites estão na tabela de rate limit da introdução.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/mensagens/corridas/condutor/{solicitacao_id}": {
+      "get": {
+        "summary": "Listar mensagens da conversa da corrida como condutor",
+        "description": "Devolve as mensagens trocadas entre passageiro e condutor de uma corrida, em ordem crescente de `sequencial`, e marca como lidas, pelo condutor, as mensagens retornadas. Só a corrida que aceita o envio como condutor pode ser lida por este endpoint. O nome do passageiro vem com o sobrenome oculto, como no app do condutor.\n\nA mensagem do passageiro aparece aqui: é por este endpoint que você acompanha a conversa, já que não há webhook de mensagem.",
+        "parameters": [
+          {
+            "name": "solicitacao_id",
+            "in": "path",
+            "required": true,
+            "description": "ID da corrida (solicitação) cuja conversa será lida. Deve ser numérico.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mensagens da conversa, em ordem crescente de sequencial",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "solicitacao_id": {
+                          "type": "integer"
+                        },
+                        "conversa_id": {
+                          "type": "integer",
+                          "nullable": true,
+                          "description": "Nulo quando a corrida ainda não tem conversa."
+                        },
+                        "mensagens": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "description": "Identificador da mensagem."
+                              },
+                              "sequencial": {
+                                "type": "integer",
+                                "description": "Posição da mensagem na conversa. Cresce a cada mensagem nova."
+                              },
+                              "texto": {
+                                "type": "string"
+                              },
+                              "data_hora": {
+                                "type": "string",
+                                "description": "Data e hora do envio, no formato `YYYY-MM-DD HH:MM:SS`, na hora local da central.",
+                                "example": "2026-09-22 14:02:11"
+                              },
+                              "remetente": {
+                                "type": "object",
+                                "properties": {
+                                  "tipo": {
+                                    "type": "string",
+                                    "enum": [
+                                      "passageiro",
+                                      "condutor",
+                                      "central"
+                                    ]
+                                  },
+                                  "id": {
+                                    "type": "integer",
+                                    "nullable": true,
+                                    "description": "ID do passageiro, do condutor ou do gestor, conforme o tipo."
+                                  },
+                                  "nome": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "__links": {
+                      "type": "object",
+                      "description": "Links HATEOAS do domínio, indexados pelo rel. `self` aponta para o próprio endpoint."
+                    }
+                  }
+                },
+                "examples": {
+                  "conversa": {
+                    "summary": "Conversa com mensagens do condutor e do passageiro",
+                    "value": {
+                      "success": true,
+                      "data": {
+                        "solicitacao_id": 639,
+                        "conversa_id": 8,
+                        "mensagens": [
+                          {
+                            "id": 12045,
+                            "sequencial": 1,
+                            "texto": "Estou a caminho.",
+                            "data_hora": "2026-09-23 15:51:11",
+                            "remetente": {
+                              "tipo": "condutor",
+                              "id": 1,
+                              "nome": "Carlos Silva"
+                            }
+                          },
+                          {
+                            "id": 12046,
+                            "sequencial": 2,
+                            "texto": "Cheguei, estou na entrada principal.",
+                            "data_hora": "2026-09-23 15:52:04",
+                            "remetente": {
+                              "tipo": "condutor",
+                              "id": 1,
+                              "nome": "Carlos Silva"
+                            }
+                          },
+                          {
+                            "id": 12047,
+                            "sequencial": 3,
+                            "texto": "Desço em 2 minutos.",
+                            "data_hora": "2026-09-23 15:52:19",
+                            "remetente": {
+                              "tipo": "passageiro",
+                              "id": 543,
+                              "nome": "Felipe"
+                            }
+                          }
+                        ]
+                      },
+                      "__links": {
+                        "self": {
+                          "href": "api/v2/integracao/mensagens/corridas/condutor/{id}",
+                          "metodo": "get"
+                        },
+                        "enviar-mensagem-corrida-condutor": {
+                          "href": "api/v2/integracao/mensagens/corridas/condutor",
+                          "metodo": "post"
+                        }
+                      }
+                    }
+                  },
+                  "sem_conversa": {
+                    "summary": "Corrida em que ninguém escreveu ainda",
+                    "value": {
+                      "success": true,
+                      "data": {
+                        "solicitacao_id": 642,
+                        "conversa_id": null,
+                        "mensagens": []
+                      },
+                      "__links": {
+                        "self": {
+                          "href": "api/v2/integracao/mensagens/corridas/condutor/{id}",
+                          "metodo": "get"
+                        },
+                        "enviar-mensagem-corrida-condutor": {
+                          "href": "api/v2/integracao/mensagens/corridas/condutor",
+                          "metodo": "post"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de regra de negócio",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "corrida_outra_central": {
+                    "summary": "Central que recebeu o pedido numa corrida de repasse (só a central que atende a corrida fala pelo condutor)",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Só a central que atende a corrida pode trocar mensagens pelo condutor."
+                        }
+                      ]
+                    }
+                  },
+                  "corrida_sem_condutor_do_parceiro": {
+                    "summary": "Corrida que não foi pedida pelo app do passageiro, ou em que o condutor não é do parceiro",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A conversa da corrida não está disponível."
+                        }
+                      ]
+                    }
+                  },
+                  "conversa_empresa_condutor": {
+                    "summary": "A conversa da corrida é entre empresa e condutor",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A conversa desta corrida é entre empresa e condutor."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Credenciais ausentes ou inválidas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "gestor_invalido": {
+                    "summary": "Usuário ou senha do Basic Auth inválidos",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 401,
+                          "message": "Usuário e/ou senhas inválidos."
+                        }
+                      ]
+                    }
+                  },
+                  "api_key_invalida": {
+                    "summary": "Api-Key ausente ou sem bandeira",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 401,
+                          "message": "Você não está autorizado a acessar este recurso."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Corrida não encontrada no escopo do parceiro",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 404,
+                      "message": "Solicitação não encontrada."
+                    }
+                  ]
                 }
               }
             }
