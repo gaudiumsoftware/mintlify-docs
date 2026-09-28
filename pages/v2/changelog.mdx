@@ -154,6 +154,33 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="1 out 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 id="ids-e-chat-na-criacao-da-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Identificadores e estado do chat na criação da corrida
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      A resposta da criação de corrida passa a trazer os identificadores das pessoas da corrida
+      e o estado do chat. Guardando <code>passageiro_id</code> na criação, você envia mensagem
+      sem precisar consultar a corrida antes.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/corridas" href="/pages/v2/referencia/corridas/endpoint/post-criar" />
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/corridas/programadas" href="/pages/v2/referencia/corridas/endpoint/post-criar-programada" />
+    </div>
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="passageiro_id" /> na resposta da criação. É o mesmo id que os endpoints de mensagem exigem no corpo.</li>
+        <li><ParamBadge name="condutor_id" /> na resposta, quando a corrida já nasce com um condutor definido.</li>
+        <li><ParamBadge name="chat_ativo" /> na resposta, quando você enviou o campo na criação: diz se a corrida ficou de fato com chat.</li>
+        <li><ParamBadge name="chat_ativo_motivo" /> quando o chat não ficou habilitado — <code>PASSAGEIRO_POSSUI_APP</code>, quando o passageiro já usa o aplicativo e a conversa acontece por ele, ou <code>FALHA_AO_REGISTRAR</code>. A corrida vale nos dois casos.</li>
+        <li>Campos novos apenas na resposta: nada muda no corpo que você já envia.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="1 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="mensagens-corrida-condutor" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Conversa da corrida pelo lado do condutor

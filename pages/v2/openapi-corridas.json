@@ -2664,7 +2664,7 @@
         },
         "responses": {
           "200": {
-            "description": "Corrida criada com sucesso. Os campos `valor_corrida`, `valor_desconto` e `valor_cupom` só vêm presentes quando a bandeira usa cálculo pré-fixo ou pré-variável (valor pré-calculado).",
+            "description": "Corrida criada com sucesso. `passageiro_id` e `condutor_id` são os identificadores que os endpoints de mensagem exigem no corpo — guarde-os na criação em vez de consultar a corrida antes de cada envio. `condutor_id` só aparece quando a corrida já nasce com um condutor definido. `chat_ativo` só aparece quando você enviou o campo na criação, e diz se a corrida ficou de fato com chat. Quando vier `false`, `chat_ativo_motivo` diz por quê: `PASSAGEIRO_POSSUI_APP`, quando o passageiro da corrida já usa o aplicativo e a conversa acontece por ele, ou `FALHA_AO_REGISTRAR`, quando não conseguimos habilitar o chat. A corrida vale nos dois casos. Os campos `valor_corrida`, `valor_desconto` e `valor_cupom` só vêm presentes quando a bandeira usa cálculo pré-fixo ou pré-variável (valor pré-calculado).",
             "content": {
               "application/json": {
                 "schema": {
@@ -2675,6 +2675,9 @@
                   "data": {
                     "id_mch": "100018556",
                     "tipo": "normal",
+                    "passageiro_id": 543,
+                    "condutor_id": 12,
+                    "chat_ativo": true,
                     "valor_corrida": 32,
                     "valor_desconto": 10,
                     "valor_cupom": 8
@@ -3475,7 +3478,7 @@
         },
         "responses": {
           "200": {
-            "description": "Corrida programada criada com sucesso",
+            "description": "Corrida programada criada com sucesso. `passageiro_id` e `condutor_id` identificam as pessoas da programada e valem para a corrida que ela gerar no disparo; `condutor_id` só aparece quando a programada já nasce com um condutor definido. `chat_ativo` só aparece quando você enviou o campo na criação, e quando vier `false`, `chat_ativo_motivo` diz por quê: `PASSAGEIRO_POSSUI_APP`, quando o passageiro da corrida já usa o aplicativo e a conversa acontece por ele, ou `FALHA_AO_REGISTRAR`, quando não conseguimos habilitar o chat. A corrida vale nos dois casos.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3485,7 +3488,9 @@
                   "success": true,
                   "data": {
                     "id_mch_programada": "100018556",
-                    "tipo": "programada"
+                    "tipo": "programada",
+                    "passageiro_id": 543,
+                    "chat_ativo": true
                   }
                 }
               }
@@ -6770,7 +6775,7 @@
                   },
                   "passageiro_id": {
                     "type": "integer",
-                    "description": "ID do passageiro da corrida. Precisa corresponder ao passageiro da solicitação informada.",
+                    "description": "ID do passageiro da corrida. Precisa corresponder ao passageiro da solicitação informada. Ele vem como `passageiro_id` na resposta da criação da corrida; guarde-o ali para não precisar consultar a corrida antes de cada envio.",
                     "example": 543
                   },
                   "mensagem": {
@@ -7409,7 +7414,7 @@
                   },
                   "condutor_id": {
                     "type": "integer",
-                    "description": "ID do condutor da corrida. Precisa corresponder ao condutor da solicitação informada.",
+                    "description": "ID do condutor da corrida. Precisa corresponder ao condutor da solicitação informada. Ele vem como `condutor_id` na resposta da criação da corrida, quando ela já nasce com condutor definido, e também na consulta da corrida.",
                     "example": 12
                   },
                   "mensagem": {
