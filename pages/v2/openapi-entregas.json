@@ -3691,7 +3691,7 @@
     "/entregas/consultar": {
       "post": {
         "summary": "Consultar entregas",
-        "description": "Ao acionar, são retornadas todas as entregas da central conforme os parâmetros informados.\n\nO bloco `desejado` traz o endereço de retorno (`endereco`, `bairro`, `cidade`, `estado`, `lat` e `lng`) e vem `null` quando a entrega não tem retorno, o mesmo critério de `com_retorno`. Os destinos da entrega continuam em `paradas`.\n\nCada entrega da lista traz também, na raiz, os dados de fechamento que antes só vinham no recibo, em qualquer status:\n\n- `data_hora_inicio`: início da entrega (`null` enquanto não iniciou), no horário de Brasília e no formato `AAAA-MM-DD HH:MM:SS`, o mesmo padrão dos demais campos `data_hora_*` da consulta. O recibo traz esse horário em `partida.data_hora`, em ISO 8601 e no fuso da central (o `Z` no fim desse campo não indica UTC);\n- `tipo_pagamento`;\n- `desconto`: percentual de desconto (`0.00` quando não há);\n- `tarifa`, `id_categoria`, `categoria` e `descricao_categoria`;\n- `nome_cliente`;\n- `cpf_cliente`: só quando a entrega não é corporativa (sem `empresa_id`);\n- `cnpj_cpf_empresa`: só quando a entrega é corporativa (com `empresa_id`);\n- `codigo_cupom` e `gerador_cupom_id`: só quando a entrega usou cupom.",
+        "description": "Ao acionar, são retornadas todas as entregas da central conforme os parâmetros informados.\n\nO bloco `desejado` traz o endereço de retorno (`endereco`, `bairro`, `cidade`, `estado`, `lat` e `lng`) e vem `null` quando a entrega não tem retorno, o mesmo critério de `com_retorno`. Os destinos da entrega continuam em `paradas`.\n\nOs campos de data e hora `data_hora_solicitacao`, `data_hora_chegada_local`, `data_hora_aceite`, `data_hora_finalizacao`, `data_hora_cancelamento` e `data_hora_pendencia` continuam no horário da central e no formato `AAAA-MM-DD HH:MM:SS`. Cada um deles ganhou uma cópia com o sufixo `_utc` (por exemplo, `data_hora_aceite_utc`), em ISO 8601 e em UTC (por exemplo, `2023-11-07T05:31:56Z`), que vem `null` quando o original vem `null`.\n\nCada entrega da lista traz também, na raiz, os dados de fechamento que antes só vinham no recibo, em qualquer status:\n\n- `data_hora_inicio`: início da entrega (`null` enquanto não iniciou), em ISO 8601 e em UTC (por exemplo, `2023-11-07T05:31:56Z`);\n- `tipo_pagamento`;\n- `desconto`: percentual de desconto (`0.00` quando não há);\n- `tarifa`, `id_categoria`, `categoria` e `descricao_categoria`;\n- `nome_cliente`;\n- `cpf_cliente`: só quando a entrega não é corporativa (sem `empresa_id`);\n- `cnpj_cpf_empresa`: só quando a entrega é corporativa (com `empresa_id`);\n- `codigo_cupom` e `gerador_cupom_id`: só quando a entrega usou cupom.",
         "requestBody": {
           "required": false,
           "content": {
@@ -3761,7 +3761,9 @@
                     {
                       "id": "83381",
                       "data_hora_solicitacao": "2025-02-20 11:45:13",
+                      "data_hora_solicitacao_utc": "2025-02-20T14:45:13Z",
                       "data_hora_chegada_local": "2025-02-20 14:12:34",
+                      "data_hora_chegada_local_utc": "2025-02-20T17:12:34Z",
                       "status_solicitacao": "F",
                       "cliente_id": "3",
                       "nome_passageiro": "Empresa",
@@ -3769,9 +3771,13 @@
                       "bandeira_chamada_id": "8",
                       "bandeira_configuracao_id": "8",
                       "data_hora_aceite": "2025-02-20 14:12:32",
+                      "data_hora_aceite_utc": "2025-02-20T17:12:32Z",
                       "data_hora_finalizacao": "2025-02-20 14:12:45",
+                      "data_hora_finalizacao_utc": "2025-02-20T17:12:45Z",
                       "data_hora_cancelamento": null,
+                      "data_hora_cancelamento_utc": null,
                       "data_hora_pendencia": null,
+                      "data_hora_pendencia_utc": null,
                       "distancia_coleta_km": "0.005",
                       "valor_corrida": "26.80",
                       "condutor_especificado": false,
@@ -3784,7 +3790,7 @@
                       "cor_veiculo": null,
                       "duracao_corrida": "0",
                       "distancia_percorrida_km": "0.000",
-                      "data_hora_inicio": "2025-02-20 14:15:02",
+                      "data_hora_inicio": "2025-02-20T17:15:02Z",
                       "tipo_pagamento": "D",
                       "desconto": "0.00",
                       "tarifa": "Tarifa padrão",
@@ -3835,7 +3841,7 @@
     "/entregas/{id}": {
       "get": {
         "summary": "Consultar entrega",
-        "description": "Ao acionar, retorna uma entrega da central especificada pelo id da solicitação\n\nO bloco `desejado` traz o endereço de retorno (`endereco`, `bairro`, `cidade`, `estado`, `lat` e `lng`) e vem `null` quando a entrega não tem retorno, o mesmo critério de `com_retorno`. Os destinos da entrega continuam em `paradas`.\n\nCada entrega traz também, na raiz, os dados de fechamento que antes só vinham no recibo, em qualquer status:\n\n- `data_hora_inicio`: início da entrega (`null` enquanto não iniciou), no horário de Brasília e no formato `AAAA-MM-DD HH:MM:SS`, o mesmo padrão dos demais campos `data_hora_*` da consulta. O recibo traz esse horário em `partida.data_hora`, em ISO 8601 e no fuso da central (o `Z` no fim desse campo não indica UTC);\n- `tipo_pagamento`;\n- `desconto`: percentual de desconto (`0.00` quando não há);\n- `tarifa`, `id_categoria`, `categoria` e `descricao_categoria`;\n- `nome_cliente`;\n- `cpf_cliente`: só quando a entrega não é corporativa (sem `empresa_id`);\n- `cnpj_cpf_empresa`: só quando a entrega é corporativa (com `empresa_id`);\n- `codigo_cupom` e `gerador_cupom_id`: só quando a entrega usou cupom.",
+        "description": "Ao acionar, retorna uma entrega da central especificada pelo id da solicitação\n\nO bloco `desejado` traz o endereço de retorno (`endereco`, `bairro`, `cidade`, `estado`, `lat` e `lng`) e vem `null` quando a entrega não tem retorno, o mesmo critério de `com_retorno`. Os destinos da entrega continuam em `paradas`.\n\nOs campos de data e hora `data_hora_solicitacao`, `data_hora_chegada_local`, `data_hora_aceite`, `data_hora_finalizacao`, `data_hora_cancelamento` e `data_hora_pendencia` continuam no horário da central e no formato `AAAA-MM-DD HH:MM:SS`. Cada um deles ganhou uma cópia com o sufixo `_utc` (por exemplo, `data_hora_aceite_utc`), em ISO 8601 e em UTC (por exemplo, `2023-11-07T05:31:56Z`), que vem `null` quando o original vem `null`.\n\nCada entrega traz também, na raiz, os dados de fechamento que antes só vinham no recibo, em qualquer status:\n\n- `data_hora_inicio`: início da entrega (`null` enquanto não iniciou), em ISO 8601 e em UTC (por exemplo, `2023-11-07T05:31:56Z`);\n- `tipo_pagamento`;\n- `desconto`: percentual de desconto (`0.00` quando não há);\n- `tarifa`, `id_categoria`, `categoria` e `descricao_categoria`;\n- `nome_cliente`;\n- `cpf_cliente`: só quando a entrega não é corporativa (sem `empresa_id`);\n- `cnpj_cpf_empresa`: só quando a entrega é corporativa (com `empresa_id`);\n- `codigo_cupom` e `gerador_cupom_id`: só quando a entrega usou cupom.",
         "parameters": [
           {
             "name": "id",
@@ -3858,7 +3864,9 @@
                     {
                       "id": "1",
                       "data_hora_solicitacao": "2025-02-17 15:03:54",
+                      "data_hora_solicitacao_utc": "2025-02-17T18:03:54Z",
                       "data_hora_chegada_local": null,
+                      "data_hora_chegada_local_utc": null,
                       "status_solicitacao": "N",
                       "cliente_id": "119459",
                       "nome_passageiro": "Felipe Teste",
@@ -3866,9 +3874,13 @@
                       "bandeira_chamada_id": "8",
                       "bandeira_configuracao_id": "8",
                       "data_hora_aceite": null,
+                      "data_hora_aceite_utc": null,
                       "data_hora_finalizacao": null,
+                      "data_hora_finalizacao_utc": null,
                       "data_hora_cancelamento": null,
+                      "data_hora_cancelamento_utc": null,
                       "data_hora_pendencia": null,
+                      "data_hora_pendencia_utc": null,
                       "distancia_coleta_km": null,
                       "valor_corrida": "0.00",
                       "condutor_especificado": false,
