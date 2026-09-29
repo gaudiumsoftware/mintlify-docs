@@ -293,7 +293,10 @@ Os valores da tabela são **limites base**. O limite efetivo de cada grupo é o 
 | Push de condutor (individual) | `/api/v2/integracao/notificacoes/condutor/push/individual` | 200 * faixa requisições por minuto |
 | Cupons | `/api/v2/integracao/cupons` | 60 * faixa requisições por minuto |
 | Webhooks | `/api/v2/integracao/webhooks`<br />`/api/v2/integracao/webhooks/*` | 60 * faixa requisições por minuto |
+| Mensagens da corrida (envio) | `/api/v2/integracao/mensagens/corridas/passageiro`<br />`/api/v2/integracao/mensagens/corridas/condutor` | 900 * faixa requisições por minuto |
 | Padrão | `/api/v2/integracao/*` | 1000 * faixa requisições por minuto |
+
+O limite de mensagens da corrida vale para o envio; a leitura (`/api/v2/integracao/mensagens/corridas/passageiro/*` e `/api/v2/integracao/mensagens/corridas/condutor/*`) segue o limite Padrão.
 
 ### Limites por recurso
 
@@ -305,6 +308,7 @@ Alguns endpoints têm, além do limite do grupo, um limite **por recurso informa
 | Saldo e documentos de condutor | `/api/v2/integracao/condutores/creditos/saldo`<br />`/api/v2/integracao/condutores/documentos`<br />`/api/v2/integracao/condutores/requisitos-cadastro/documentos` | `identificacao` na query string | 12 por minuto por condutor |
 | Notificações a passageiro | `/api/v2/integracao/notificacoes/in-app-messaging`<br />`/api/v2/integracao/notificacoes/push`<br />`/api/v2/integracao/notificacoes/in-app-messaging/individual`<br />`/api/v2/integracao/notificacoes/push/individual` | `passageiros` ou `passageiro_id` no body | 4 por minuto por passageiro ou conjunto de passageiros |
 | Criação de cupom | `/api/v2/integracao/cupons` | `gerador_cupom_id` no body (`POST`) | 20 por minuto por gerador |
+| Mensagem na corrida | `/api/v2/integracao/mensagens/corridas/passageiro`<br />`/api/v2/integracao/mensagens/corridas/condutor` | `solicitacao_id` no body (`POST`) | 30 por minuto por corrida |
 
 Nas notificações, o envio individual conta por `passageiro_id`, e no envio em lote o conjunto de passageiros informado em `passageiros` é tratado como um único recurso: o mesmo conjunto só pode receber 4 envios por minuto. Lotes com mais de 100 passageiros contam apenas no limite do grupo.
 
