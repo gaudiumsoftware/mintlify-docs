@@ -133,6 +133,62 @@
                 "description": "Indica se o cliente entra com a conta Facebook"
               }
             }
+          },
+          "cartao_app": {
+            "type": "object",
+            "nullable": true,
+            "description": "Situação do cliente com o cartão de crédito no app: bloqueio e cartões cadastrados. Vem `null` quando a central não aceita cartão no app. Não vem na resposta para credencial de empresa.",
+            "properties": {
+              "bloqueado": {
+                "type": "boolean",
+                "description": "Indica se o cliente está impedido de cadastrar cartão e de pagar com cartão no app"
+              },
+              "motivo_bloqueio": {
+                "type": "object",
+                "nullable": true,
+                "description": "Motivo do bloqueio aberto mais recente. `null` quando o cliente não está bloqueado ou quando o bloqueio não tem motivo registrado.",
+                "properties": {
+                  "codigo": {
+                    "type": "string",
+                    "enum": [
+                      "CADASTRO_CARTAO",
+                      "DISPUTA_CHARGEBACK",
+                      "BLOQUEADO_OUTRA_BANDEIRA"
+                    ],
+                    "description": "Código do motivo: `CADASTRO_CARTAO` (tentativas de cadastro de cartão acima do limite), `DISPUTA_CHARGEBACK` (chargeback pendente) ou `BLOQUEADO_OUTRA_BANDEIRA` (bloqueado em outra central)"
+                  },
+                  "descricao": {
+                    "type": "string",
+                    "description": "Texto do motivo no idioma da resposta"
+                  }
+                }
+              },
+              "cartoes": {
+                "type": "array",
+                "description": "Cartões do cliente no app. Na listagem, só os ativos. No detalhe (`GET /clientes/{id}`) ou com o filtro `id`, também os pendentes. Lista vazia quando o cliente não tem cartão.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "operadora": {
+                      "type": "string",
+                      "description": "Bandeira do cartão, como o gateway de pagamento informa (ex.: `visa`, `mastercard`)"
+                    },
+                    "ultimos_digitos": {
+                      "type": "string",
+                      "description": "Últimos quatro dígitos do número do cartão"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ativo",
+                        "pendente"
+                      ],
+                      "description": "`ativo` para o cartão que o cliente pode usar; `pendente` para o cartão que aguarda a validação da central e ainda não pode ser usado"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -256,6 +312,17 @@
                         "google": true,
                         "apple": false,
                         "facebook": false
+                      },
+                      "cartao_app": {
+                        "bloqueado": false,
+                        "motivo_bloqueio": null,
+                        "cartoes": [
+                          {
+                            "operadora": "visa",
+                            "ultimos_digitos": "1234",
+                            "status": "ativo"
+                          }
+                        ]
                       }
                     }
                   ]
@@ -325,6 +392,22 @@
                         "google": true,
                         "apple": false,
                         "facebook": false
+                      },
+                      "cartao_app": {
+                        "bloqueado": false,
+                        "motivo_bloqueio": null,
+                        "cartoes": [
+                          {
+                            "operadora": "visa",
+                            "ultimos_digitos": "1234",
+                            "status": "ativo"
+                          },
+                          {
+                            "operadora": "mastercard",
+                            "ultimos_digitos": "5678",
+                            "status": "pendente"
+                          }
+                        ]
                       }
                     }
                   ]
