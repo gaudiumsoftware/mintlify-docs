@@ -341,11 +341,13 @@ export const EndpointBadge = ({ method, path, href }) => (
     <ChangeSection type="added">
       <p style={{ marginBottom: "10px" }}>O retorno traz a lista das tarifas atuais da categoria — já iniciadas e não excluídas; tarifas removidas, substituídas na edição ou futuras não são listadas. Cada item inclui:</p>
       <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-        <li><ParamBadge name="metodo_calculo_tarifa" /> — método de cálculo usado pela tarifa.</li>
+        <li><ParamBadge name="metodo_calculo_tarifa" /> — método de cálculo: <code>D</code> km + minuto, <code>P</code> km + hora parada, <code>T</code> valor tabelado, <code>B</code> por bairro, <code>V</code> km variável.</li>
         <li><ParamBadge name="valor_bandeirada" />, <ParamBadge name="valor_km" />, <ParamBadge name="valor_minuto" />, <ParamBadge name="valor_hora_parada" /> e <ParamBadge name="valor_minimo" /> — valores base da tarifa.</li>
+        <li><ParamBadge name="valor_parada_adicional" /> — custo extra por parada adicional.</li>
+        <li><ParamBadge name="tipo_cobranca_retorno" /> — cobrança do retorno: <code>T</code> conforme a tarifa, <code>F</code> valor fixo (<ParamBadge name="valor_retorno_adicional" />), <code>P</code> porcentagem do valor tabelado (<ParamBadge name="taxa_retorno_porcentagem" />), <code>N</code> sem cobrança.</li>
         <li><ParamBadge name="data_inicio" /> — data a partir da qual a tarifa vale (ISO-8601, UTC).</li>
-        <li><ParamBadge name="horarios" /> — uma janela por dia (<ParamBadge name="dia_semana" />, <ParamBadge name="hora_inicio" />, <ParamBadge name="hora_fim" />); vem vazio quando a tarifa não tem calendário.</li>
-        <li><ParamBadge name="valores_tabelados" /> — faixas de distância e valor, preenchidas apenas nos métodos de cálculo tabelados. A última faixa, que vale a partir da faixa anterior, vem com <ParamBadge name="distancia_km" /> nulo e <ParamBadge name="a_partir_de" /> verdadeiro.</li>
+        <li><ParamBadge name="horarios" /> — uma janela por dia (<ParamBadge name="dia_semana" />, de 1 = domingo a 7 = sábado; <ParamBadge name="hora_inicio" /> e <ParamBadge name="hora_fim" /> no horário local da central); vem vazio quando a tarifa não tem calendário.</li>
+        <li><ParamBadge name="valores_tabelados" /> — faixas de distância e valor, preenchidas apenas no método <code>T</code>. A última faixa, que vale a partir da faixa anterior, vem com <ParamBadge name="distancia_km" /> nulo e <ParamBadge name="a_partir_de" /> verdadeiro.</li>
       </ul>
     </ChangeSection>
   </Entry>
