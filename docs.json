@@ -76,6 +76,7 @@
                     "group": "Condutores",
                     "pages": [
                       "pages/v2/referencia/condutores/endpoint/get",
+                      "pages/v2/referencia/condutores/endpoint/get-posicoes",
                       "pages/v2/referencia/condutores/endpoint/get-by-id",
                       "pages/v2/referencia/condutores/endpoint/patch-by-id",
                       "pages/v2/referencia/condutores/endpoint/put-by-id",
@@ -105,6 +106,7 @@
                     "pages": [
                       "pages/v2/referencia/cupons/endpoint/post",
                       "pages/v2/referencia/cupons/endpoint/get",
+                      "pages/v2/referencia/cupons/endpoint/delete",
                       "pages/v2/referencia/cupons/endpoint/get-cliente-disponiveis",
                       "pages/v2/referencia/cupons/endpoint/get-geradores"
                     ]
@@ -151,7 +153,11 @@
                       "pages/v2/referencia/mensagens/endpoint/post-condutor-broadcast",
                       "pages/v2/referencia/mensagens/endpoint/post-condutor-privada",
                       "pages/v2/referencia/mensagens/endpoint/post-empresa-broadcast",
-                      "pages/v2/referencia/mensagens/endpoint/post-empresa-privada"
+                      "pages/v2/referencia/mensagens/endpoint/post-empresa-privada",
+                      "pages/v2/referencia/mensagens/endpoint/post-corrida-passageiro",
+                      "pages/v2/referencia/mensagens/endpoint/get-corrida-passageiro",
+                      "pages/v2/referencia/mensagens/endpoint/post-corrida-condutor",
+                      "pages/v2/referencia/mensagens/endpoint/get-corrida-condutor"
                     ]
                   },
                   {
