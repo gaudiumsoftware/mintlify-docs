@@ -7117,7 +7117,7 @@
     "/mensagens/corridas/passageiro/{solicitacao_id}": {
       "get": {
         "summary": "Listar mensagens da conversa da corrida como passageiro",
-        "description": "Devolve as mensagens trocadas entre passageiro e condutor de uma corrida, em ordem crescente de `sequencial`, e marca como lidas, pelo passageiro, as mensagens retornadas. Só a corrida criada pela API de Integração com `\"chat_ativo\": true` pode ser lida por este endpoint.\n\nA resposta do condutor aparece aqui: é por este endpoint que você acompanha a conversa, já que não há webhook de mensagem.",
+        "description": "Devolve as mensagens trocadas entre passageiro e condutor de uma corrida, em ordem crescente de `sequencial`, e marca como lidas, pelo passageiro, as mensagens retornadas. Só a corrida criada pela API de Integração com `\"chat_ativo\": true` pode ser lida por este endpoint.\n\nA resposta do condutor aparece aqui: é por este endpoint que você acompanha a conversa.",
         "parameters": [
           {
             "name": "solicitacao_id",
@@ -7756,7 +7756,7 @@
     "/mensagens/corridas/condutor/{solicitacao_id}": {
       "get": {
         "summary": "Listar mensagens da conversa da corrida como condutor",
-        "description": "Devolve as mensagens trocadas entre passageiro e condutor de uma corrida, em ordem crescente de `sequencial`, e marca como lidas, pelo condutor, as mensagens retornadas. Só a corrida que aceita o envio como condutor pode ser lida por este endpoint. O nome do passageiro vem com o sobrenome oculto, como no app do condutor.\n\nA mensagem do passageiro aparece aqui: é por este endpoint que você acompanha a conversa, já que não há webhook de mensagem.",
+        "description": "Devolve as mensagens trocadas entre passageiro e condutor de uma corrida, em ordem crescente de `sequencial`, e marca como lidas, pelo condutor, as mensagens retornadas. Só a corrida que aceita o envio como condutor pode ser lida por este endpoint. O nome do passageiro vem com o sobrenome oculto, como no app do condutor.\n\nA mensagem do passageiro aparece aqui: é por este endpoint que você acompanha a conversa.",
         "parameters": [
           {
             "name": "solicitacao_id",
