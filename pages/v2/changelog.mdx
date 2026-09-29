@@ -155,6 +155,27 @@ export const EndpointBadge = ({ method, path, href }) => (
   </div>
 
   <Entry date="1 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="desativar-cupom" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Desativar cupom
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Agora você desativa um cupom pela API, como no painel. O cupom não é apagado: a data de fim
+      passa a ser o momento da chamada, e ele deixa de ser aceito em novas corridas.
+    </p>
+
+    <EndpointBadge method="DELETE" path="/api/v2/integracao/cupons/{id}" href="/pages/v2/referencia/cupons/endpoint/delete" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>Endpoint novo. Responde com <ParamBadge name="id" />, <ParamBadge name="status" /> (<code>inativo</code>) e <ParamBadge name="data_hora_fim" />.</li>
+        <li>Cupom que já estava inativo responde 200 com a data de fim original: repetir a chamada é seguro.</li>
+        <li>Cupom inexistente ou de outra bandeira responde 404.</li>
+        <li>Exige a permissão <code>API - Cupom</code>, a mesma de <code>POST /cupons</code>.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
+  <Entry date="1 out 2026" label="Em breve" labelColor="#ea580c">
     <h2 id="ids-e-chat-na-criacao-da-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Identificadores e estado do chat na criação da corrida
     </h2>
