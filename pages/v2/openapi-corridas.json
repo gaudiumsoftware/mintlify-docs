@@ -4615,6 +4615,101 @@
         }
       }
     },
+    "/cupons/{id}": {
+      "delete": {
+        "summary": "Desativar cupom",
+        "description": "Desativa um cupom da bandeira autenticada. O cupom não é apagado: a data de fim passa a ser o momento da chamada, o status fica `inativo` e o cupom deixa de ser aceito em novas corridas.\n\nRegras importantes:\n- Cupom que já estava inativo responde `200` com os dados atuais, sem alterar `data_hora_fim`. Repetir a chamada é seguro.\n- Cupom inexistente ou de outra bandeira responde `404`.\n- Vale para cupom manual e cupom criado por gerador. Cupom automático não é desativado por aqui e responde `404`: ele segue a configuração da central.\n- Gestor vinculado a uma empresa só desativa cupom de gerador da própria empresa, o mesmo alcance do `POST /cupons`. Os demais respondem `404`.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira. O cargo do gestor deve ter a permissão `API - Cupom`, a mesma exigida por `POST /cupons`.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador interno do cupom, o mesmo `id` devolvido por `GET /cupons` e `POST /cupons`.",
+            "schema": {
+              "type": "integer",
+              "example": 6
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cupom desativado, ou já inativo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": 6,
+                    "status": "inativo",
+                    "data_hora_fim": "2026-09-29 11:07:17"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Gestor sem a permissão de cupom",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 68,
+                      "message": "O usuário informado não tem permissão para realizar essa operação."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Usuário ou senha do Basic Auth inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": "B5",
+                      "message": "Usuário e/ou senhas inválidos."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cupom inexistente, de outra bandeira, automático ou fora dos geradores da empresa do gestor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Cupom não encontrado ou não pertence à bandeira autenticada."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/cupons/geradores": {
       "get": {
         "summary": "Listar geradores de cupom",
