@@ -169,7 +169,8 @@ export const EndpointBadge = ({ method, path, href }) => (
       <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
         <li>Endpoint novo. Responde com <ParamBadge name="id" />, <ParamBadge name="status" /> (<code>inativo</code>) e <ParamBadge name="data_hora_fim" />.</li>
         <li>Cupom que já estava inativo responde 200 com a data de fim original: repetir a chamada é seguro.</li>
-        <li>Cupom inexistente ou de outra bandeira responde 404.</li>
+        <li>Cupom inexistente, de outra bandeira ou automático responde 404.</li>
+        <li>Gestor vinculado a uma empresa só desativa cupom de gerador da própria empresa.</li>
         <li>Exige a permissão <code>API - Cupom</code>, a mesma de <code>POST /cupons</code>.</li>
       </ul>
     </ChangeSection>
