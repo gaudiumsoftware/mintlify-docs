@@ -126,6 +126,36 @@
                           }
                         ]
                       }
+                    },
+                    {
+                      "id": "2",
+                      "nome": "Exemplo Bloqueado",
+                      "email": "bloqueado@email.com.br",
+                      "telefone": "(11) 98888-4455",
+                      "status_cliente": "A",
+                      "cpf": null,
+                      "data_nascimento": null,
+                      "avaliacao_media": null,
+                      "ultima_estimativa_em": "2026-08-10T09:00:00Z",
+                      "quantidade_corridas_finalizadas": 3,
+                      "ultima_corrida_em": "2026-08-02T18:20:00Z",
+                      "token_atualizado_em": "2026-08-10T09:00:00Z",
+                      "ultimo_acesso_em": "2026-08-10T09:02:00Z",
+                      "cadastrado_em": "2025-11-04T16:10:00Z",
+                      "foto_url": null,
+                      "login_terceiros": {
+                        "google": false,
+                        "apple": false,
+                        "facebook": false
+                      },
+                      "cartao_app": {
+                        "bloqueado": true,
+                        "motivo_bloqueio": {
+                          "codigo": "DISPUTA_CHARGEBACK",
+                          "descricao": "Chargeback pendente"
+                        },
+                        "cartoes": []
+                      }
                     }
                   ]
                 }
@@ -5533,12 +5563,7 @@
                 "properties": {
                   "codigo": {
                     "type": "string",
-                    "enum": [
-                      "CADASTRO_CARTAO",
-                      "DISPUTA_CHARGEBACK",
-                      "BLOQUEADO_OUTRA_BANDEIRA"
-                    ],
-                    "description": "Código do motivo: `CADASTRO_CARTAO` (tentativas de cadastro de cartão acima do limite), `DISPUTA_CHARGEBACK` (chargeback pendente) ou `BLOQUEADO_OUTRA_BANDEIRA` (bloqueado em outra central)"
+                    "description": "Código do motivo. Hoje são `CADASTRO_CARTAO` (tentativas de cadastro de cartão acima do limite), `DISPUTA_CHARGEBACK` (chargeback pendente) e `BLOQUEADO_OUTRA_BANDEIRA` (bloqueado em outra central). Outros códigos podem aparecer; trate um código desconhecido pela `descricao`."
                   },
                   "descricao": {
                     "type": "string",
