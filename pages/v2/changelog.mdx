@@ -154,6 +154,29 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="08 out 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="cupons-em-lote" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Criação de cupons em lote
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novo endpoint que cria vários cupons de desconto numa única requisição, tudo ou nada: ou todos os
+      cupons são criados, ou nenhum. Cada item segue o formato e as regras do <code>POST /cupons</code>,
+      com o próprio <code>gerador_cupom_id</code>.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/cupons/lote" href="/pages/v2/referencia/cupons/endpoint/post-lote" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="cupons" /> — array de 1 a 100 cupons por requisição, cada um no formato do body do <code>POST /cupons</code>.</li>
+        <li>Resposta <code>201</code> com <ParamBadge name="id" /> e <ParamBadge name="codigo" /> de cada cupom, na ordem enviada.</li>
+        <li>Todos os erros de todos os itens voltam juntos, com <ParamBadge name="field" /> no formato <code>cupons.N.campo</code> e os mesmos <code>code</code> do <code>POST /cupons</code>. Nenhum cupom é criado quando há erro.</li>
+        <li>A cota de cada gerador é conferida somando os cupons já criados e os do lote; código repetido no lote ou já em uso é recusado.</li>
+        <li>Limite próprio de rate limit, 20 * faixa requisições por minuto, sem o limite por gerador. Detalhes na <a href="/pages/v2/referencia/introducao#rate-limit">introdução</a>.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="24 set 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="webhook-mensagens-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Webhook de mensagens da corrida
