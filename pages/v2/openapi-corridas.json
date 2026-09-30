@@ -211,7 +211,7 @@
           {
             "name": "cpf_cnpj",
             "in": "query",
-            "description": "CPF ou CNPJ do cliente. Aceita com ou sem máscara, inclusive o CNPJ alfanumérico, com letras maiúsculas ou minúsculas, por exemplo: `123.456.789-09`, `11.222.333/0001-81` ou `AB.12C.D34/EFGH-83`. O tipo do documento é identificado pelo conteúdo, e a busca faz correspondência exata só no documento daquele tipo. Quando informado, `status_cliente` e paginação são ignorados. Retorna 400 quando o valor não é um CPF nem um CNPJ válido, ou quando é informado junto com `cpf`. Os filtros `ultimo_acesso_apos`, `ultimo_acesso_antes_de` e `nunca_acessou` continuam valendo e se combinam com a busca.",
+            "description": "CPF ou CNPJ do cliente. Aceita com ou sem máscara, inclusive o CNPJ alfanumérico, com letras maiúsculas ou minúsculas, por exemplo: `123.456.789-09`, `11.222.333/0001-81` ou `AB.12C.D34/EFGH-83`. O tipo do documento é identificado pelo conteúdo, e a busca faz correspondência exata só no documento daquele tipo. Quando informado, `status_cliente` e paginação são ignorados. Retorna 400 quando o valor não é um CPF nem um CNPJ válido, ou quando é informado junto com `cpf`. Com `email`, `telefone` ou `nome`, os filtros se combinam, e o cliente precisa atender a todos. Os filtros `ultimo_acesso_apos`, `ultimo_acesso_antes_de` e `nunca_acessou` continuam valendo e se combinam com a busca.",
             "schema": {
               "type": "string"
             }

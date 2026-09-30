@@ -187,6 +187,7 @@ export const EndpointBadge = ({ method, path, href }) => (
         <li><ParamBadge name="quantidade_corridas_finalizadas" /> passa a sair como número, e não mais como texto.</li>
         <li>A referência do endpoint passa a descrever cada campo da resposta.</li>
         <li><ParamBadge name="cpf" />, <ParamBadge name="email" />, <ParamBadge name="telefone" /> e <ParamBadge name="nome" /> voltam à referência do endpoint, com o comportamento anunciado em <a href="/pages/v2/changelog#filtros-busca-clientes-condutores">25 de junho</a>. A referência de <ParamBadge name="status_cliente" />, <ParamBadge name="limite" /> e <ParamBadge name="pagina" /> volta a dizer quando eles são ignorados.</li>
+        <li>A referência de <ParamBadge name="ultimo_acesso_apos" />, <ParamBadge name="ultimo_acesso_antes_de" /> e <ParamBadge name="nunca_acessou" /> passa a dizer que eles se combinam também com as buscas diretas (<code>cpf_cnpj</code>, <code>cpf</code>, <code>email</code> e <code>telefone</code>), como a consulta já fazia.</li>
         <li><ParamBadge name="foto_url" /> vem <code>null</code> na listagem paginada e só é preenchida na busca direta por um cliente (<code>id</code>, <code>cpf_cnpj</code>, <code>cpf</code>, <code>email</code> ou <code>telefone</code>), como desde a entrada de 14 de julho. A referência passa a dizer isso.</li>
       </ul>
     </ChangeSection>
