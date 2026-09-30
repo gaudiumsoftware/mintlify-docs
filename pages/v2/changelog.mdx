@@ -156,12 +156,13 @@ export const EndpointBadge = ({ method, path, href }) => (
 
   <Entry date="A definir" label="Em breve" labelColor="#ea580c">
     <h2 id="dados-engajamento-clientes" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
-      Dados de engajamento na consulta de clientes
+      Dados de engajamento e busca por CPF ou CNPJ na consulta de clientes
     </h2>
     <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
       A consulta de clientes passa a informar a avaliação do passageiro, a data de cadastro, as contas de
       terceiros que ele usa para entrar no app e a situação dele com o cartão de crédito no app. As datas de última estimativa e de última corrida mudam de
-      nome e passam a sair em ISO-8601 UTC, como as demais datas da resposta.
+      nome e passam a sair em ISO-8601 UTC, como as demais datas da resposta. A consulta também passa a buscar o cliente
+      por CPF ou CNPJ num filtro só e a devolver o CNPJ dele, e os filtros por CPF, e-mail, telefone e nome voltam à referência.
     </p>
 
     <EndpointBadge method="GET" path="/api/v2/integracao/clientes" href="/pages/v2/referencia/clientes/endpoint/get" />
@@ -172,6 +173,8 @@ export const EndpointBadge = ({ method, path, href }) => (
         <li><ParamBadge name="cadastrado_em" /> — data do cadastro do cliente, em ISO-8601 UTC. Vem <code>null</code> quando a data não está disponível, como em cadastros antigos.</li>
         <li><ParamBadge name="login_terceiros" /> — objeto com <ParamBadge name="google" />, <ParamBadge name="apple" /> e <ParamBadge name="facebook" />, booleanos, que indicam com quais contas de terceiros o cliente entra no app.</li>
         <li><ParamBadge name="cartao_app" /> — objeto com <ParamBadge name="bloqueado" />, que indica se o cliente está impedido de cadastrar e de pagar com cartão no app, <ParamBadge name="motivo_bloqueio" />, com <ParamBadge name="codigo" /> e <ParamBadge name="descricao" /> do bloqueio aberto mais recente, e <ParamBadge name="cartoes" />, com <ParamBadge name="operadora" />, <ParamBadge name="ultimos_digitos" /> e <ParamBadge name="status" /> de cada cartão. Na listagem, <ParamBadge name="cartoes" /> traz só os cartões ativos; com o filtro <code>id</code>, também os pendentes. Vem <code>null</code> quando a central não aceita cartão no app, e não vem na resposta para credencial de empresa.</li>
+        <li><ParamBadge name="cnpj" /> — CNPJ do cliente, como foi cadastrado. Vem <code>null</code> quando não informado.</li>
+        <li>Parâmetro de query <ParamBadge name="cpf_cnpj" /> — CPF ou CNPJ, com ou sem máscara, inclusive o CNPJ alfanumérico (ex: <code>123.456.789-09</code>, <code>11.222.333/0001-81</code> ou <code>AB.12C.D34/EFGH-83</code>). A busca faz correspondência exata só no documento do tipo informado. Ignora <code>status_cliente</code> e paginação. Retorna 400 quando o valor não é um CPF nem um CNPJ válido, ou quando vem junto com <code>cpf</code>.</li>
       </ul>
     </ChangeSection>
 
@@ -181,6 +184,7 @@ export const EndpointBadge = ({ method, path, href }) => (
         <li><ParamBadge name="data_hora_ultima_solicitacao" /> passa a se chamar <ParamBadge name="ultima_corrida_em" />, em ISO-8601 UTC. É a data de criação da última corrida finalizada do cliente.</li>
         <li><ParamBadge name="quantidade_corridas_finalizadas" /> passa a sair como número, e não mais como texto.</li>
         <li>A referência do endpoint passa a descrever cada campo da resposta.</li>
+        <li><ParamBadge name="cpf" />, <ParamBadge name="email" />, <ParamBadge name="telefone" /> e <ParamBadge name="nome" /> voltam à referência do endpoint, com o comportamento anunciado em <a href="/pages/v2/changelog#filtros-busca-clientes-condutores">25 de junho</a>. A referência de <ParamBadge name="status_cliente" />, <ParamBadge name="limite" /> e <ParamBadge name="pagina" /> volta a dizer quando eles são ignorados.</li>
       </ul>
     </ChangeSection>
 
@@ -207,6 +211,8 @@ export const EndpointBadge = ({ method, path, href }) => (
       <ChangeSection type="added">
         <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
           <li>Mesmos campos novos, em cada cliente da resposta da v1.</li>
+          <li>Parâmetro de query <ParamBadge name="cpf_cnpj" />, com o mesmo comportamento da v2.</li>
+          <li><ParamBadge name="cpf" />, <ParamBadge name="email" />, <ParamBadge name="telefone" /> e <ParamBadge name="nome" />, que a v1 já aceitava, passam a constar na referência da v1.</li>
         </ul>
       </ChangeSection>
 
