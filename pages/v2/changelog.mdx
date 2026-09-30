@@ -180,6 +180,7 @@ export const EndpointBadge = ({ method, path, href }) => (
         <li><ParamBadge name="data_hora_ultima_solicitacao" /> passa a se chamar <ParamBadge name="ultima_corrida_em" />, em ISO-8601 UTC. É a data de criação da última corrida finalizada do cliente.</li>
         <li><ParamBadge name="quantidade_corridas_finalizadas" /> passa a sair como número, e não mais como texto.</li>
         <li>A referência do endpoint passa a descrever cada campo da resposta.</li>
+        <li><ParamBadge name="foto_url" /> vem <code>null</code> na listagem paginada e só é preenchida na busca direta por um cliente (<code>id</code>, <code>email</code>, <code>telefone</code> ou <code>cpf</code>), como desde a entrada de 14 de julho. A referência passa a dizer isso.</li>
       </ul>
     </ChangeSection>
 
@@ -211,6 +212,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       <ChangeSection type="changed">
         <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
           <li>Mesmas mudanças de nome e de tipo.</li>
+          <li>A referência da v1 passa a descrever cada campo da resposta, inclusive <ParamBadge name="data_nascimento" />, <ParamBadge name="token_atualizado_em" /> e <ParamBadge name="ultimo_acesso_em" />, que a v1 já devolvia.</li>
         </ul>
       </ChangeSection>
     </div>
