@@ -5493,7 +5493,7 @@
           "avaliacao_media": {
             "type": "number",
             "nullable": true,
-            "description": "Média das avaliações que os motoristas deram ao cliente. `null` quando o cliente ainda não foi avaliado ou quando a central do cliente não permite que o motorista avalie o passageiro. Vale a regra da central do cliente, e não a da credencial usada na consulta."
+            "description": "Média das avaliações que os motoristas deram ao cliente. `null` quando o cliente ainda não foi avaliado ou quando a central não permite que o motorista avalie o passageiro."
           },
           "ultima_estimativa_em": {
             "type": "string",
