@@ -45,6 +45,7 @@
           "telefone",
           "status_cliente",
           "cpf",
+          "cnpj",
           "data_nascimento",
           "avaliacao_media",
           "ultima_estimativa_em",
