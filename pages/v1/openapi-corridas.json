@@ -5499,6 +5499,24 @@
     "schemas": {
       "Cliente": {
         "type": "object",
+        "required": [
+          "id",
+          "nome",
+          "email",
+          "telefone",
+          "status_cliente",
+          "cpf",
+          "data_nascimento",
+          "avaliacao_media",
+          "ultima_estimativa_em",
+          "quantidade_corridas_finalizadas",
+          "ultima_corrida_em",
+          "token_atualizado_em",
+          "ultimo_acesso_em",
+          "cadastrado_em",
+          "foto_url",
+          "login_terceiros"
+        ],
         "properties": {
           "id": {
             "type": "string",
