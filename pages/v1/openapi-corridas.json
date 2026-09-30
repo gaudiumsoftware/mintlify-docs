@@ -5382,7 +5382,7 @@
           "foto_url": {
             "type": "string",
             "nullable": true,
-            "description": "URL temporária da foto do cliente, válida por 30 minutos. Preenchida só na busca de um cliente por `id`, `email`, `telefone` ou `cpf`. Na listagem paginada, ou quando o cliente não tem foto, vem `null`."
+            "description": "URL temporária da foto do cliente, válida por 30 minutos. Preenchida só na busca de um cliente específico, como a busca por `id`. Na listagem paginada, ou quando o cliente não tem foto, vem `null`."
           },
           "login_terceiros": {
             "type": "object",
