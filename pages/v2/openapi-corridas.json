@@ -88,7 +88,7 @@
           },
           "desconto": {
             "type": "string",
-            "description": "Valor do desconto. Para `valor_fixo`, use o valor monetário (ex: `\"10.00\"`). Para `porcentagem`, use o percentual (ex: `\"15\"`).",
+            "description": "Valor do desconto. Para `valor_fixo`, use o valor monetário (ex: `\"10.00\"`). Para `percentual`, use o percentual (ex: `\"15\"`).",
             "example": "10.00"
           },
           "tipos_pagamentos": {
@@ -4810,32 +4810,32 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 0,
-                          "message": "'gerador_cupom_id': Preenchimento obrigatório."
+                          "code": 2,
+                          "message": "'gerador_cupom_id': Preenchimento obrigatório"
                         },
                         {
-                          "code": 0,
-                          "message": "'data_hora_inicio': Preenchimento obrigatório."
+                          "code": 2,
+                          "message": "'data_hora_inicio': Preenchimento obrigatório"
                         },
                         {
-                          "code": 0,
-                          "message": "'data_hora_final': Preenchimento obrigatório."
+                          "code": 2,
+                          "message": "'data_hora_final': Preenchimento obrigatório"
                         },
                         {
-                          "code": 0,
-                          "message": "'limite_de_uso': Preenchimento obrigatório."
+                          "code": 2,
+                          "message": "'limite_de_uso': Preenchimento obrigatório"
                         },
                         {
-                          "code": 0,
-                          "message": "'tipo_desconto': Preenchimento obrigatório."
+                          "code": 2,
+                          "message": "'tipo_desconto': Preenchimento obrigatório"
                         },
                         {
-                          "code": 0,
-                          "message": "'desconto': Preenchimento obrigatório."
+                          "code": 2,
+                          "message": "'desconto': Preenchimento obrigatório"
                         },
                         {
-                          "code": 0,
-                          "message": "'tipos_pagamentos': Preenchimento obrigatório."
+                          "code": 2,
+                          "message": "'tipos_pagamentos': Preenchimento obrigatório"
                         },
                         {
                           "code": 0,
@@ -4863,7 +4863,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "JSON inválido."
+                          "message": "JSON inválido"
                         }
                       ]
                     }
