@@ -123,6 +123,11 @@
                             "operadora": "visa",
                             "ultimos_digitos": "1234",
                             "status": "ativo"
+                          },
+                          {
+                            "operadora": "mastercard",
+                            "ultimos_digitos": "5678",
+                            "status": "pendente"
                           }
                         ]
                       }
@@ -5573,7 +5578,7 @@
               },
               "cartoes": {
                 "type": "array",
-                "description": "Cartões do cliente no app. Na listagem, só os ativos. Com o filtro `id`, também os pendentes. Lista vazia quando o cliente não tem cartão.",
+                "description": "Cartões do cliente no app, os mesmos que ele vê em \"Meus cartões\": os ativos e os pendentes. Lista vazia quando o cliente não tem cartão.",
                 "items": {
                   "type": "object",
                   "properties": {
