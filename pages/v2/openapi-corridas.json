@@ -211,7 +211,7 @@
           {
             "name": "cpf_cnpj",
             "in": "query",
-            "description": "CPF ou CNPJ do cliente. Aceita com ou sem máscara, inclusive o CNPJ alfanumérico, com letras maiúsculas ou minúsculas, por exemplo: `123.456.789-09`, `11.222.333/0001-81` ou `AB.12C.D34/EFGH-83`. O tipo do documento é identificado pelo conteúdo, e a busca faz correspondência exata só no documento daquele tipo. Quando informado, `status_cliente` e paginação são ignorados. Retorna 400 quando o valor não é um CPF nem um CNPJ válido, ou quando é informado junto com `cpf`.",
+            "description": "CPF ou CNPJ do cliente. Aceita com ou sem máscara, inclusive o CNPJ alfanumérico, com letras maiúsculas ou minúsculas, por exemplo: `123.456.789-09`, `11.222.333/0001-81` ou `AB.12C.D34/EFGH-83`. O tipo do documento é identificado pelo conteúdo, e a busca faz correspondência exata só no documento daquele tipo. Quando informado, `status_cliente` e paginação são ignorados. Retorna 400 quando o valor não é um CPF nem um CNPJ válido, ou quando é informado junto com `cpf`. Os filtros `ultimo_acesso_apos`, `ultimo_acesso_antes_de` e `nunca_acessou` continuam valendo e se combinam com a busca.",
             "schema": {
               "type": "string"
             }
@@ -219,7 +219,7 @@
           {
             "name": "cpf",
             "in": "query",
-            "description": "CPF do cliente. Aceita com ou sem máscara, por exemplo: `123.456.789-09` ou `12345678909`. Faz correspondência exata. Quando informado, `status_cliente` e paginação são ignorados.",
+            "description": "CPF do cliente. Aceita com ou sem máscara, por exemplo: `123.456.789-09` ou `12345678909`. Faz correspondência exata. Quando informado, `status_cliente` e paginação são ignorados. Os filtros `ultimo_acesso_apos`, `ultimo_acesso_antes_de` e `nunca_acessou` continuam valendo e se combinam com a busca.",
             "schema": {
               "type": "string"
             }
@@ -227,7 +227,7 @@
           {
             "name": "email",
             "in": "query",
-            "description": "E-mail do cliente. Faz correspondência exata. Quando informado, `status_cliente` e paginação são ignorados.",
+            "description": "E-mail do cliente. Faz correspondência exata. Quando informado, `status_cliente` e paginação são ignorados. Os filtros `ultimo_acesso_apos`, `ultimo_acesso_antes_de` e `nunca_acessou` continuam valendo e se combinam com a busca.",
             "schema": {
               "type": "string",
               "format": "email"
@@ -236,7 +236,7 @@
           {
             "name": "telefone",
             "in": "query",
-            "description": "Telefone do cliente. Aceita com ou sem DDI e com ou sem o prefixo `+`. O DDI é inferido a partir do país da bandeira (fallback Brasil `55`). Quando informado, `status_cliente` e paginação são ignorados.",
+            "description": "Telefone do cliente. Aceita com ou sem DDI e com ou sem o prefixo `+`. O DDI é inferido a partir do país da bandeira (fallback Brasil `55`). Quando informado, `status_cliente` e paginação são ignorados. Os filtros `ultimo_acesso_apos`, `ultimo_acesso_antes_de` e `nunca_acessou` continuam valendo e se combinam com a busca.",
             "schema": {
               "type": "string"
             }
@@ -286,7 +286,7 @@
           {
             "name": "ultimo_acesso_apos",
             "in": "query",
-            "description": "Filtra clientes com último acesso ao app a partir desta data (inclusive). Formato ISO-8601 UTC. É um filtro de segmento: preserva a paginação e é combinável com `status_cliente`. Exclui clientes com último acesso nulo — para buscar quem nunca acessou o app, use `nunca_acessou`.",
+            "description": "Filtra clientes com último acesso ao app a partir desta data (inclusive). Formato ISO-8601 UTC. É um filtro de segmento: preserva a paginação e é combinável com `status_cliente` e com as buscas diretas (`cpf_cnpj`, `cpf`, `email` e `telefone`). Exclui clientes com último acesso nulo — para buscar quem nunca acessou o app, use `nunca_acessou`.",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -295,7 +295,7 @@
           {
             "name": "ultimo_acesso_antes_de",
             "in": "query",
-            "description": "Filtra clientes com último acesso ao app antes desta data (exclusive). Formato ISO-8601 UTC. É um filtro de segmento: preserva a paginação e é combinável com `status_cliente`. Exclui clientes com último acesso nulo — para buscar quem nunca acessou o app, use `nunca_acessou`.",
+            "description": "Filtra clientes com último acesso ao app antes desta data (exclusive). Formato ISO-8601 UTC. É um filtro de segmento: preserva a paginação e é combinável com `status_cliente` e com as buscas diretas (`cpf_cnpj`, `cpf`, `email` e `telefone`). Exclui clientes com último acesso nulo — para buscar quem nunca acessou o app, use `nunca_acessou`.",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -304,7 +304,7 @@
           {
             "name": "nunca_acessou",
             "in": "query",
-            "description": "Quando `true` ou `1`, retorna somente os clientes que nunca acessaram o app (último acesso nulo).",
+            "description": "Quando `true` ou `1`, retorna somente os clientes que nunca acessaram o app (último acesso nulo). Combinável com as buscas diretas (`cpf_cnpj`, `cpf`, `email` e `telefone`).",
             "schema": {
               "type": "boolean"
             }
