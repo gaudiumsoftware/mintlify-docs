@@ -2735,6 +2735,148 @@
         }
       }
     },
+    "/configuracoes/categorias/{id}/tarifas": {
+      "get": {
+        "summary": "Listar tarifas da categoria",
+        "description": "Retorna as tarifas atuais da categoria informada (já iniciadas e não excluídas; tarifas removidas, substituídas na edição ou futuras não são listadas), com valores, método de cálculo, data de início (`data_inicio`, em ISO-8601 UTC) e, quando houver calendário operacional, `horarios`: uma janela por dia (`dia_semana`, `hora_inicio`, `hora_fim`) — cada dia tem a própria hora e um mesmo dia pode ter mais de uma janela. `dia_semana` vai de 1 a 7, sendo 1 = domingo, 2 = segunda … 7 = sábado; `hora_inicio` e `hora_fim` estão no horário local da central, sem conversão para UTC (diferente de `data_inicio`). Tarifa sem calendário retorna `horarios` vazio. Em `valores_tabelados`, a última faixa \"a partir de\" a faixa anterior vem com `distancia_km` `null` e `a_partir_de` `true`. `metodo_calculo_tarifa`: `D` = km percorrido + minuto, `P` = km percorrido + hora parada, `T` = valor tabelado, `B` = por bairro, `V` = valor do km variável; `valores_tabelados` só vem preenchido no método `T`. `tipo_cobranca_retorno` (cobrança do retorno, quando houver): `T` = conforme o cálculo da tarifa, `F` = valor fixo (`valor_retorno_adicional`), `P` = porcentagem do valor tabelado (`taxa_retorno_porcentagem`), `N` = não cobra. `valor_parada_adicional` é o custo extra por ponto de parada adicional.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Id da categoria. Deve pertencer à central autenticada; categoria excluída responde 404, como a inexistente.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "data": [
+                    {
+                      "id": 501,
+                      "nome": "Padrão",
+                      "metodo_calculo_tarifa": "D",
+                      "valor_bandeirada": "5.00",
+                      "valor_km": "2.10",
+                      "valor_minuto": "0.30",
+                      "valor_hora_parada": "15.00",
+                      "valor_minimo": "8.00",
+                      "valor_parada_adicional": null,
+                      "tipo_cobranca_retorno": "T",
+                      "valor_retorno_adicional": null,
+                      "taxa_retorno_porcentagem": null,
+                      "data_inicio": "2026-01-01T03:00:00Z",
+                      "horarios": [
+                        {
+                          "dia_semana": 2,
+                          "hora_inicio": "07:00:00",
+                          "hora_fim": "19:00:00"
+                        },
+                        {
+                          "dia_semana": 3,
+                          "hora_inicio": "07:00:00",
+                          "hora_fim": "19:00:00"
+                        },
+                        {
+                          "dia_semana": 4,
+                          "hora_inicio": "07:00:00",
+                          "hora_fim": "19:00:00"
+                        },
+                        {
+                          "dia_semana": 5,
+                          "hora_inicio": "07:00:00",
+                          "hora_fim": "19:00:00"
+                        },
+                        {
+                          "dia_semana": 6,
+                          "hora_inicio": "07:00:00",
+                          "hora_fim": "19:00:00"
+                        }
+                      ],
+                      "valores_tabelados": []
+                    },
+                    {
+                      "id": 502,
+                      "nome": "Tabelada",
+                      "metodo_calculo_tarifa": "T",
+                      "valor_bandeirada": "5.00",
+                      "valor_km": null,
+                      "valor_minuto": null,
+                      "valor_hora_parada": null,
+                      "valor_minimo": null,
+                      "valor_parada_adicional": null,
+                      "tipo_cobranca_retorno": "T",
+                      "valor_retorno_adicional": null,
+                      "taxa_retorno_porcentagem": null,
+                      "data_inicio": "2026-01-01T03:00:00Z",
+                      "horarios": [],
+                      "valores_tabelados": [
+                        {
+                          "distancia_km": "5.00",
+                          "a_partir_de": false,
+                          "valor": "12.00"
+                        },
+                        {
+                          "distancia_km": "10.00",
+                          "a_partir_de": false,
+                          "valor": "20.00"
+                        },
+                        {
+                          "distancia_km": null,
+                          "a_partir_de": true,
+                          "valor": "30.00"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Categoria não encontrada, excluída ou de outra central",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Categoria informada não existe."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Ocorreu um erro interno no servidor. Por favor, tente novamente mais tarde."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/configuracoes": {
       "patch": {
         "summary": "Atualizar configurações",
@@ -3692,7 +3834,7 @@
     "/entregas/consultar": {
       "post": {
         "summary": "Consultar entregas",
-        "description": "Ao acionar, são retornadas todas as entregas da central conforme os parâmetros informados.",
+        "description": "Ao acionar, são retornadas todas as entregas da central conforme os parâmetros informados.\n\nO bloco `desejado` traz o endereço de retorno (`endereco`, `bairro`, `cidade`, `estado`, `lat` e `lng`) e vem `null` quando a entrega não tem retorno, o mesmo critério de `com_retorno`. Os destinos da entrega continuam em `paradas`.\n\nOs campos de data e hora `data_hora_solicitacao`, `data_hora_chegada_local`, `data_hora_aceite`, `data_hora_finalizacao`, `data_hora_cancelamento` e `data_hora_pendencia` continuam no horário da central e no formato `AAAA-MM-DD HH:MM:SS`. Cada um deles ganhou uma cópia com o sufixo `_utc` (por exemplo, `data_hora_aceite_utc`), em ISO 8601 e em UTC (por exemplo, `2023-11-07T05:31:56Z`), que vem `null` quando o original vem `null`.\n\nCada entrega da lista traz também, na raiz, os dados de fechamento que antes só vinham no recibo, em qualquer status:\n\n- `data_hora_inicio`: início da entrega (`null` enquanto não iniciou), em ISO 8601 e em UTC (por exemplo, `2023-11-07T05:31:56Z`);\n- `tipo_pagamento`;\n- `desconto`: percentual de desconto (`0.00` quando não há);\n- `tarifa`, `id_categoria`, `categoria` e `descricao_categoria`;\n- `nome_cliente`;\n- `cpf_cliente`: só quando a entrega não é corporativa (sem `empresa_id`);\n- `cnpj_cpf_empresa`: só quando a entrega é corporativa (com `empresa_id`);\n- `codigo_cupom` e `gerador_cupom_id`: só quando a entrega usou cupom.",
         "requestBody": {
           "required": false,
           "content": {
@@ -3762,7 +3904,9 @@
                     {
                       "id": "83381",
                       "data_hora_solicitacao": "2025-02-20 11:45:13",
+                      "data_hora_solicitacao_utc": "2025-02-20T14:45:13Z",
                       "data_hora_chegada_local": "2025-02-20 14:12:34",
+                      "data_hora_chegada_local_utc": "2025-02-20T17:12:34Z",
                       "status_solicitacao": "F",
                       "cliente_id": "3",
                       "nome_passageiro": "Empresa",
@@ -3770,9 +3914,13 @@
                       "bandeira_chamada_id": "8",
                       "bandeira_configuracao_id": "8",
                       "data_hora_aceite": "2025-02-20 14:12:32",
+                      "data_hora_aceite_utc": "2025-02-20T17:12:32Z",
                       "data_hora_finalizacao": "2025-02-20 14:12:45",
+                      "data_hora_finalizacao_utc": "2025-02-20T17:12:45Z",
                       "data_hora_cancelamento": null,
+                      "data_hora_cancelamento_utc": null,
                       "data_hora_pendencia": null,
+                      "data_hora_pendencia_utc": null,
                       "distancia_coleta_km": "0.005",
                       "valor_corrida": "26.80",
                       "condutor_especificado": false,
@@ -3785,6 +3933,15 @@
                       "cor_veiculo": null,
                       "duracao_corrida": "0",
                       "distancia_percorrida_km": "0.000",
+                      "data_hora_inicio": "2025-02-20T17:15:02Z",
+                      "tipo_pagamento": "D",
+                      "desconto": "0.00",
+                      "tarifa": "Tarifa padrão",
+                      "id_categoria": "71",
+                      "categoria": "Moto",
+                      "descricao_categoria": "Entregas rápidas",
+                      "nome_cliente": "Empresa",
+                      "cpf_cliente": "111.222.333-44",
                       "taxas_cancelamento": null,
                       "paradas": [
                         {
@@ -3813,7 +3970,8 @@
                         "estado": "PB",
                         "lat": "-7.209233800",
                         "lng": "-34.878063100"
-                      }
+                      },
+                      "desejado": null
                     }
                   ]
                 }
@@ -3826,7 +3984,7 @@
     "/entregas/{id}": {
       "get": {
         "summary": "Consultar entrega",
-        "description": "Ao acionar, retorna uma entrega da central especificada pelo id da solicitação",
+        "description": "Ao acionar, retorna uma entrega da central especificada pelo id da solicitação\n\nO bloco `desejado` traz o endereço de retorno (`endereco`, `bairro`, `cidade`, `estado`, `lat` e `lng`) e vem `null` quando a entrega não tem retorno, o mesmo critério de `com_retorno`. Os destinos da entrega continuam em `paradas`.\n\nOs campos de data e hora `data_hora_solicitacao`, `data_hora_chegada_local`, `data_hora_aceite`, `data_hora_finalizacao`, `data_hora_cancelamento` e `data_hora_pendencia` continuam no horário da central e no formato `AAAA-MM-DD HH:MM:SS`. Cada um deles ganhou uma cópia com o sufixo `_utc` (por exemplo, `data_hora_aceite_utc`), em ISO 8601 e em UTC (por exemplo, `2023-11-07T05:31:56Z`), que vem `null` quando o original vem `null`.\n\nCada entrega traz também, na raiz, os dados de fechamento que antes só vinham no recibo, em qualquer status:\n\n- `data_hora_inicio`: início da entrega (`null` enquanto não iniciou), em ISO 8601 e em UTC (por exemplo, `2023-11-07T05:31:56Z`);\n- `tipo_pagamento`;\n- `desconto`: percentual de desconto (`0.00` quando não há);\n- `tarifa`, `id_categoria`, `categoria` e `descricao_categoria`;\n- `nome_cliente`;\n- `cpf_cliente`: só quando a entrega não é corporativa (sem `empresa_id`);\n- `cnpj_cpf_empresa`: só quando a entrega é corporativa (com `empresa_id`);\n- `codigo_cupom` e `gerador_cupom_id`: só quando a entrega usou cupom.",
         "parameters": [
           {
             "name": "id",
@@ -3849,7 +4007,9 @@
                     {
                       "id": "1",
                       "data_hora_solicitacao": "2025-02-17 15:03:54",
+                      "data_hora_solicitacao_utc": "2025-02-17T18:03:54Z",
                       "data_hora_chegada_local": null,
+                      "data_hora_chegada_local_utc": null,
                       "status_solicitacao": "N",
                       "cliente_id": "119459",
                       "nome_passageiro": "Felipe Teste",
@@ -3857,9 +4017,13 @@
                       "bandeira_chamada_id": "8",
                       "bandeira_configuracao_id": "8",
                       "data_hora_aceite": null,
+                      "data_hora_aceite_utc": null,
                       "data_hora_finalizacao": null,
+                      "data_hora_finalizacao_utc": null,
                       "data_hora_cancelamento": null,
+                      "data_hora_cancelamento_utc": null,
                       "data_hora_pendencia": null,
+                      "data_hora_pendencia_utc": null,
                       "distancia_coleta_km": null,
                       "valor_corrida": "0.00",
                       "condutor_especificado": false,
@@ -3872,6 +4036,15 @@
                       "cor_veiculo": null,
                       "duracao_corrida": "0",
                       "distancia_percorrida_km": "0.000",
+                      "data_hora_inicio": null,
+                      "tipo_pagamento": "D",
+                      "desconto": "0.00",
+                      "tarifa": "Tarifa padrão",
+                      "id_categoria": "71",
+                      "categoria": "Moto",
+                      "descricao_categoria": "Entregas rápidas",
+                      "nome_cliente": "Felipe Teste",
+                      "cpf_cliente": "111.222.333-44",
                       "taxas_cancelamento": null,
                       "paradas": [],
                       "condutor_id": "",
@@ -3887,7 +4060,8 @@
                         "estado": "PB",
                         "lat": "-7.209233800",
                         "lng": "-34.878063100"
-                      }
+                      },
+                      "desejado": null
                     }
                   ]
                 }

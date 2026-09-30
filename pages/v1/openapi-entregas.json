@@ -3041,492 +3041,6 @@
         }
       }
     },
-    "/integracao/v1/engajamento/index": {
-      "servers": [
-        {
-          "url": "https://api-vendas.taximachine.com.br"
-        },
-        {
-          "url": "https://api.taximachine.com.br"
-        }
-      ],
-      "get": {
-        "summary": "Listar webhooks de engajamento",
-        "description": "Lista os webhooks de engajamento cadastrados e as bandeiras sem webhook vinculado. Apenas bandeiras do mesmo grupo são consideradas, e somente bandeiras ativas são retornadas na lista de bandeiras sem webhook vinculado.",
-        "responses": {
-          "200": {
-            "description": "Sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "success": true,
-                  "data": {
-                    "webhooks": [
-                      {
-                        "id": 1,
-                        "headers": {
-                          "X-Cliente-Nome": "nome-exemplo",
-                          "X-Cliente-Chave": "chave-exemplo"
-                        },
-                        "url": "https://www.exemplo.url",
-                        "bandeiras": [
-                          {
-                            "id": 1,
-                            "nome": "Bandeira Exemplo 1",
-                            "eventos": [
-                              "cadastro_passageiro_app",
-                              "estimativa_passageiro_app",
-                              "solicitacao_passageiro_app_abertura",
-                              "solicitacao_passageiro_app_finalizada"
-                            ]
-                          },
-                          {
-                            "id": 2,
-                            "nome": "Bandeira Exemplo 2",
-                            "eventos": [
-                              "cadastro_passageiro_app",
-                              "estimativa_passageiro_app",
-                              "solicitacao_passageiro_app_abertura",
-                              "solicitacao_passageiro_app_finalizada"
-                            ]
-                          },
-                          {
-                            "id": 3,
-                            "nome": "Bandeira Exemplo 3",
-                            "eventos": [
-                              "cadastro_passageiro_app",
-                              "estimativa_passageiro_app",
-                              "solicitacao_passageiro_app_abertura",
-                              "solicitacao_passageiro_app_finalizada"
-                            ]
-                          }
-                        ]
-                      },
-                      {
-                        "id": 2,
-                        "headers": null,
-                        "url": "https://www.exemplo.url2",
-                        "bandeiras": [
-                          {
-                            "id": 6,
-                            "nome": "Bandeira Exemplo 6",
-                            "eventos": [
-                              "cadastro_passageiro_app",
-                              "estimativa_passageiro_app",
-                              "solicitacao_passageiro_app_abertura",
-                              "solicitacao_passageiro_app_finalizada"
-                            ]
-                          }
-                        ]
-                      }
-                    ],
-                    "bandeiras_sem_webhook": [
-                      {
-                        "id": 4,
-                        "nome": "Bandeira Exemplo 4"
-                      },
-                      {
-                        "id": 5,
-                        "nome": "Bandeira Exemplo 5"
-                      }
-                    ]
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Criar webhook de engajamento",
-        "description": "Cria um webhook de engajamento a partir da URL. Os headers são opcionais e limitados a 10 chaves. Não é possível criar dois webhooks com a mesma URL.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "url"
-                ],
-                "properties": {
-                  "url": {
-                    "type": "string",
-                    "description": "Obrigatório. URL para envio dos eventos."
-                  },
-                  "headers": {
-                    "type": "object",
-                    "description": "Opcional. Headers utilizados no envio à URL. Limite de 10 chaves.",
-                    "additionalProperties": {
-                      "type": "string"
-                    }
-                  }
-                }
-              },
-              "example": {
-                "url": "https://mariela.net"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Criado com sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Webhook de engajamento criado com sucesso."
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/integracao/v1/engajamento/index/{id}": {
-      "servers": [
-        {
-          "url": "https://api-vendas.taximachine.com.br"
-        },
-        {
-          "url": "https://api.taximachine.com.br"
-        }
-      ],
-      "put": {
-        "summary": "Editar webhook de engajamento",
-        "description": "Edita um webhook de engajamento a partir do ID. Você pode editar a URL ou os headers. Os headers são limitados a 10 chaves. Não é possível usar a mesma URL de outro webhook já existente. O envio de eventos é alterado em até 5 minutos após a edição.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "ID do webhook.",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "url": {
-                    "type": "string",
-                    "description": "Opcional. URL para envio dos eventos."
-                  },
-                  "headers": {
-                    "type": "object",
-                    "description": "Opcional. Headers utilizados no envio à URL. Limite de 10 chaves.",
-                    "additionalProperties": {
-                      "type": "string"
-                    }
-                  }
-                }
-              },
-              "example": {
-                "url": "https://agustina.info"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Webhook de engajamento atualizado com sucesso."
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "summary": "Deletar webhook de engajamento",
-        "description": "Deleta um webhook de engajamento a partir do ID. O envio de eventos do webhook removido para em até 5 minutos após a exclusão.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "ID do webhook.",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Webhook de engajamento excluído com sucesso."
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/integracao/v1/engajamento/permissao/{id}": {
-      "servers": [
-        {
-          "url": "https://api-vendas.taximachine.com.br"
-        },
-        {
-          "url": "https://api.taximachine.com.br"
-        }
-      ],
-      "post": {
-        "summary": "Adicionar bandeiras e permissões a webhook",
-        "description": "Adiciona ou substitui o grupo atual de bandeiras de um webhook e define as permissões dessas bandeiras. As bandeiras e permissões anteriores do webhook são removidas. Impede a inclusão de bandeiras já atreladas a outros webhooks. O envio de eventos é alterado em até 5 minutos após a edição.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "ID do webhook.",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "bandeiras"
-                ],
-                "properties": {
-                  "bandeiras": {
-                    "type": "array",
-                    "description": "Obrigatório. Lista de bandeiras com `bandeira_id` e os `eventos` que cada bandeira deve receber.",
-                    "items": {
-                      "type": "object",
-                      "required": [
-                        "bandeira_id",
-                        "eventos"
-                      ],
-                      "properties": {
-                        "bandeira_id": {
-                          "type": "integer",
-                          "description": "ID da bandeira."
-                        },
-                        "eventos": {
-                          "type": "array",
-                          "description": "Eventos que a bandeira deve receber.",
-                          "items": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "example": {
-                "bandeiras": [
-                  {
-                    "bandeira_id": 913,
-                    "eventos": [
-                      "cadastro_passageiro_app",
-                      "estimativa_passageiro_app",
-                      "solicitacao_passageiro_app_abertura",
-                      "solicitacao_passageiro_app_finalizada"
-                    ]
-                  },
-                  {
-                    "bandeira_id": 8,
-                    "eventos": [
-                      "cadastro_passageiro_app",
-                      "estimativa_passageiro_app",
-                      "solicitacao_passageiro_app_abertura",
-                      "solicitacao_passageiro_app_finalizada"
-                    ]
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Permissões de engajamento criadas com sucesso."
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "summary": "Adicionar ou editar permissões de uma bandeira",
-        "description": "Adiciona uma bandeira a um webhook e define as permissões dessa bandeira. Se a bandeira já estiver no grupo, as permissões de eventos dessa bandeira são alteradas. Impede a inclusão de bandeiras já atreladas a outros webhooks. O envio de eventos é alterado em até 5 minutos após a edição.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "ID do webhook.",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "bandeira"
-                ],
-                "properties": {
-                  "bandeira": {
-                    "type": "object",
-                    "required": [
-                      "bandeira_id",
-                      "eventos"
-                    ],
-                    "properties": {
-                      "bandeira_id": {
-                        "type": "integer",
-                        "description": "ID da bandeira."
-                      },
-                      "eventos": {
-                        "type": "array",
-                        "description": "Eventos que a bandeira deve receber.",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "example": {
-                "bandeira": {
-                  "bandeira_id": 402,
-                  "eventos": [
-                    "cadastro_passageiro_app",
-                    "estimativa_passageiro_app",
-                    "solicitacao_passageiro_app_abertura",
-                    "solicitacao_passageiro_app_finalizada"
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Permissões de engajamento criadas com sucesso."
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "summary": "Remover bandeiras de webhook",
-        "description": "Remove o vínculo de um grupo de bandeiras do webhook. Recebe uma lista de `bandeiras` com cada `bandeira_id` a ser removido. O envio de eventos é alterado em até 5 minutos após a exclusão.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "description": "ID do webhook.",
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "bandeiras"
-                ],
-                "properties": {
-                  "bandeiras": {
-                    "type": "array",
-                    "description": "Obrigatório. Lista de IDs das bandeiras que serão removidas.",
-                    "items": {
-                      "type": "integer"
-                    }
-                  }
-                }
-              },
-              "example": {
-                "bandeiras": [
-                  820,
-                  620,
-                  767
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Sucesso",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "success": true,
-                  "message": "Permissões de engajamento excluídas com sucesso."
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/empresa": {
       "get": {
         "summary": "Obter empresas da central",
@@ -4350,7 +3864,7 @@
     "/solicitacao": {
       "get": {
         "summary": "Obter solicitações",
-        "description": "Ao acionar, são retornadas todas as solicitações da central conforme os parâmetros informados.",
+        "description": "Ao acionar, são retornadas todas as solicitações da central conforme os parâmetros informados.\n\nO bloco `desejado` traz o endereço de retorno (`endereco`, `bairro`, `cidade`, `estado`, `lat` e `lng`) e vem `null` quando a entrega não tem retorno, o mesmo critério de `com_retorno`. Os destinos da entrega continuam em `paradas`.\n\nOs campos de data e hora `data_hora_solicitacao`, `data_hora_chegada_local`, `data_hora_aceite`, `data_hora_finalizacao`, `data_hora_cancelamento` e `data_hora_pendencia` continuam no horário da central e no formato `AAAA-MM-DD HH:MM:SS`. Cada um deles ganhou uma cópia com o sufixo `_utc` (por exemplo, `data_hora_aceite_utc`), em ISO 8601 e em UTC (por exemplo, `2023-11-07T05:31:56Z`), que vem `null` quando o original vem `null`.\n\nCada entrega traz também, na raiz, os dados de fechamento que antes só vinham no recibo, em qualquer status, na consulta por `id_mch` e na listagem:\n\n- `data_hora_inicio`: início da entrega (`null` enquanto não iniciou), em ISO 8601 e em UTC (por exemplo, `2023-11-07T05:31:56Z`);\n- `tipo_pagamento`;\n- `desconto`: percentual de desconto (`0.00` quando não há);\n- `tarifa`, `id_categoria`, `categoria` e `descricao_categoria`;\n- `nome_cliente`;\n- `cpf_cliente`: só quando a entrega não é corporativa (sem `empresa_id`);\n- `cnpj_cpf_empresa`: só quando a entrega é corporativa (com `empresa_id`);\n- `codigo_cupom` e `gerador_cupom_id`: só quando a entrega usou cupom.",
         "parameters": [
           {
             "name": "id",
@@ -4480,16 +3994,22 @@
                     {
                       "id": "790",
                       "data_hora_solicitacao": "2021-02-18 10:23:42",
+                      "data_hora_solicitacao_utc": "2021-02-18T13:23:42Z",
                       "data_hora_chegada_local": "2021-02-18 10:24:42",
+                      "data_hora_chegada_local_utc": "2021-02-18T13:24:42Z",
                       "status_solicitacao": "A",
                       "cliente_id": "1",
                       "nome_passageiro": "NOME DO CLIENTE",
                       "empresa_id": null,
                       "bandeira_chamada_id": "1",
                       "data_hora_aceite": "2021-02-18 10:23:42",
+                      "data_hora_aceite_utc": "2021-02-18T13:23:42Z",
                       "data_hora_finalizacao": null,
+                      "data_hora_finalizacao_utc": null,
                       "data_hora_cancelamento": null,
+                      "data_hora_cancelamento_utc": null,
                       "data_hora_pendencia": null,
+                      "data_hora_pendencia_utc": null,
                       "distancia_coleta_km": "1.00",
                       "valor_corrida": "0.00",
                       "condutor_especificado": false,
@@ -4502,8 +4022,18 @@
                       "cor_veiculo": "AZUL",
                       "duracao_corrida": "0",
                       "distancia_percorrida_km": "0.00",
+                      "data_hora_inicio": null,
+                      "tipo_pagamento": "D",
+                      "desconto": "0.00",
+                      "tarifa": "Tarifa padrão",
+                      "id_categoria": "71",
+                      "categoria": "Moto",
+                      "descricao_categoria": "Entregas rápidas",
+                      "nome_cliente": "NOME DO CLIENTE",
+                      "cpf_cliente": "111.222.333-44",
                       "taxas_cancelamento": null,
-                      "paradas": []
+                      "paradas": [],
+                      "desejado": null
                     }
                   ]
                 }

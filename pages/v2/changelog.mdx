@@ -154,7 +154,7 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
-  <Entry date="08 out 2026" label="Novo" labelColor="#3b82f6">
+  <Entry date="08 out 2026" label="Em breve" labelColor="#ea580c">
     <h2 id="cupons-em-lote" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Criação de cupons em lote
     </h2>
@@ -177,7 +177,199 @@ export const EndpointBadge = ({ method, path, href }) => (
     </ChangeSection>
   </Entry>
 
-  <Entry date="24 set 2026" label="Novo" labelColor="#3b82f6">
+  <Entry date="1 out 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="destino-dados-fechamento-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Destino e dados de fechamento na consulta da corrida
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      A consulta da corrida passou a retornar o endereço de destino e os dados de fechamento que
+      antes só vinham no recibo. Assim, você não precisa chamar o endpoint de recibo separadamente.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/corridas/{id}" href="/pages/v2/referencia/corridas/endpoint/get-by-id" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="desejado" /> — endereço de destino (<ParamBadge name="endereco" />, <ParamBadge name="bairro" />, <ParamBadge name="cidade" />, <ParamBadge name="estado" />, <ParamBadge name="lat" /> e <ParamBadge name="lng" />). Vem <code>null</code> quando a corrida não tem destino definido.</li>
+        <li><ParamBadge name="data_hora_inicio" /> — início da corrida. Vem <code>null</code> enquanto não iniciou. Vem em ISO 8601 e em UTC (por exemplo, <code>2023-11-07T05:31:56Z</code>).</li>
+        <li><ParamBadge name="data_hora_solicitacao_utc" />, <ParamBadge name="data_hora_chegada_local_utc" />, <ParamBadge name="data_hora_aceite_utc" />, <ParamBadge name="data_hora_finalizacao_utc" />, <ParamBadge name="data_hora_cancelamento_utc" /> e <ParamBadge name="data_hora_pendencia_utc" /> — cópia de cada campo <code>data_hora_*</code> que já existia, em ISO 8601 e em UTC (por exemplo, <code>2023-11-07T05:31:56Z</code>). Vêm <code>null</code> quando o original vem <code>null</code>. Os campos originais não mudaram: continuam no horário da central, no formato <code>AAAA-MM-DD HH:MM:SS</code>.</li>
+        <li><ParamBadge name="tipo_pagamento" /> e <ParamBadge name="desconto" />. O desconto é o percentual aplicado e vem <code>0.00</code> quando não há.</li>
+        <li><ParamBadge name="tarifa" />, <ParamBadge name="id_categoria" />, <ParamBadge name="categoria" /> e <ParamBadge name="descricao_categoria" />.</li>
+        <li><ParamBadge name="nome_cliente" /> e o documento: <ParamBadge name="cpf_cliente" /> quando a corrida não é corporativa, ou <ParamBadge name="cnpj_cpf_empresa" /> quando é (com <ParamBadge name="empresa_id" />).</li>
+        <li><ParamBadge name="codigo_cupom" /> e <ParamBadge name="gerador_cupom_id" /> — só quando a corrida usou cupom.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/corridas/consultar" href="/pages/v2/referencia/corridas/endpoint/post-consultar" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Os mesmos campos, em cada corrida da lista retornada.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> os campos vêm direto na raiz de cada corrida, em qualquer status, e não dentro de um bloco <code>recibo</code>. Os dados de condutor, veículo, valores, duração e distância já eram retornados e não mudaram.
+    </div>
+  </Entry>
+
+  <Entry date="1 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="desativar-cupom" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Desativar cupom
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Agora você desativa um cupom pela API, como no painel. O cupom não é apagado: a data de fim
+      passa a ser o momento da chamada, e ele deixa de ser aceito em novas corridas.
+    </p>
+
+    <EndpointBadge method="DELETE" path="/api/v2/integracao/cupons/{id}" href="/pages/v2/referencia/cupons/endpoint/delete" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>Endpoint novo. Responde com <ParamBadge name="id" />, <ParamBadge name="status" /> (<code>inativo</code>) e <ParamBadge name="data_hora_fim" />.</li>
+        <li>Cupom que já estava inativo responde 200 com a data de fim original: repetir a chamada é seguro.</li>
+        <li>Cupom inexistente, de outra bandeira ou automático responde 404.</li>
+        <li>Gestor vinculado a uma empresa só desativa cupom de gerador da própria empresa.</li>
+        <li>Exige a permissão <code>API - Cupom</code>, a mesma de <code>POST /cupons</code>.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
+  <Entry date="1 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="ids-e-chat-na-criacao-da-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Identificadores e estado do chat na criação da corrida
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      A resposta da criação de corrida passa a trazer os identificadores das pessoas da corrida
+      e o estado do chat. Guardando <code>passageiro_id</code> na criação, você envia mensagem
+      sem precisar consultar a corrida antes.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/corridas" href="/pages/v2/referencia/corridas/endpoint/post-criar" />
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/corridas/programadas" href="/pages/v2/referencia/corridas/endpoint/post-criar-programada" />
+    </div>
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="passageiro_id" /> na resposta da criação. É o mesmo id que os endpoints de mensagem exigem no corpo.</li>
+        <li><ParamBadge name="condutor_id" /> na resposta, quando a corrida já nasce com um condutor definido.</li>
+        <li><ParamBadge name="chat_ativo" /> na resposta, quando você enviou o campo na criação: diz se a corrida ficou de fato com chat.</li>
+        <li><ParamBadge name="chat_ativo_motivo" /> quando o chat não ficou habilitado — <code>PASSAGEIRO_POSSUI_APP</code>, quando o passageiro já usa o aplicativo e a conversa acontece por ele, ou <code>FALHA_AO_REGISTRAR</code>. A corrida vale nos dois casos.</li>
+        <li>Campos novos apenas na resposta: nada muda no corpo que você já envia.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
+  <Entry date="1 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="mensagens-corrida-condutor" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Conversa da corrida pelo lado do condutor
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Dois endpoints novos deixam o parceiro falar pelo condutor numa corrida pedida pelo app do
+      passageiro: um envia mensagem como sendo do condutor, e o outro lê a conversa e marca como
+      lidas, pelo condutor, as mensagens retornadas. Os endpoints do lado do passageiro passam a
+      ficar em <code>/mensagens/corridas/passageiro</code>.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/mensagens/corridas/condutor" href="/pages/v2/referencia/mensagens/endpoint/post-corrida-condutor" />
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/v2/integracao/mensagens/corridas/condutor/{solicitacao_id}" href="/pages/v2/referencia/mensagens/endpoint/get-corrida-condutor" />
+    </div>
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>O envio grava a mensagem como do condutor da corrida e dispara o push de mensagem nova no aplicativo do passageiro.</li>
+        <li><ParamBadge name="solicitacao_id" />, <ParamBadge name="condutor_id" /> e <ParamBadge name="mensagem" /> vão no corpo do <code>POST</code>; a rota é fixa.</li>
+        <li>Só a corrida pedida pelo app do passageiro, atendida por um condutor do parceiro e com o chat habilitado aceita o envio. A corrida criada pela API de Integração continua nos endpoints do lado do passageiro.</li>
+        <li>Na corrida de repasse, quem fala pelo condutor é a central que atende a corrida.</li>
+        <li>A leitura devolve o nome do passageiro com o sobrenome oculto, como no app do condutor.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
+  <Entry date="1 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="chat-ativo-criar-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Parâmetro que habilita o chat da corrida
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      A criação de corrida aceita o campo <code>chat_ativo</code>. Ele é o que habilita o chat da
+      corrida: sem <code>true</code>, a corrida não tem chat, os endpoints de mensagem recusam e o
+      condutor não vê a caixa de texto no app.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/corridas" href="/pages/v2/referencia/corridas/endpoint/post-criar" />
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/corridas/programadas" href="/pages/v2/referencia/corridas/endpoint/post-criar-programada" />
+    </div>
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="chat_ativo" /> opcional no corpo da criação de corrida, booleano, com padrão <code>false</code>.</li>
+        <li>Vale também na criação de corrida programada: a marca passa para a corrida quando ela é disparada.</li>
+        <li>Com o chat habilitado, os dois lados escrevem desde o início da corrida — você não precisa esperar o condutor, nem ele a você.</li>
+        <li>O envio de mensagem na conversa da corrida passa a aceitar também a corrida em espera.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
+  <Entry date="1 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="mensagens-conversa-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Conversa da corrida entre passageiro e condutor
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Dois endpoints novos abrem ao parceiro a conversa da corrida: um envia mensagem como sendo
+      do passageiro, que é a identidade que o condutor vê no app dele, e o outro lê a conversa e
+      marca como lidas as mensagens retornadas. Antes o chat da corrida só era acessível pelos
+      aplicativos, e quem opera pela integração precisava resolver por fora.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/mensagens/corridas/passageiro" href="/pages/v2/referencia/mensagens/endpoint/post-corrida-passageiro" />
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/v2/integracao/mensagens/corridas/passageiro/{solicitacao_id}" href="/pages/v2/referencia/mensagens/endpoint/get-corrida-passageiro" />
+    </div>
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>Valem para a corrida criada pela API de Integração com <ParamBadge name="chat_ativo" />; sem o campo, os dois respondem <code>400</code>.</li>
+        <li>O envio grava a mensagem como do passageiro da corrida e dispara o push de mensagem nova no aplicativo do condutor.</li>
+        <li><ParamBadge name="solicitacao_id" />, <ParamBadge name="passageiro_id" /> e <ParamBadge name="mensagem" /> vão no corpo do <code>POST</code>; a rota é fixa.</li>
+        <li>A leitura devolve as mensagens em ordem crescente de <ParamBadge name="sequencial" />, com <ParamBadge name="texto" />, <ParamBadge name="data_hora" /> e o <ParamBadge name="remetente" /> identificado como passageiro, condutor ou central.</li>
+        <li>A leitura continua respondendo depois de a corrida encerrar; só o envio exige corrida em andamento.</li>
+        <li>Corrida sem conversa responde <code>200</code> com lista vazia — ler não cria conversa.</li>
+        <li>O texto é sanitizado — marcação HTML e emoji saem, o resto chega ao condutor como enviado.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "14px",
+      lineHeight: "1.6",
+    }}>
+      O envio tem limite de <strong>30 mensagens por corrida a cada 60 segundos</strong>. A chamada
+      que estourar o limite recebe <code>429</code> e não é gravada. A leitura não tem esse limite.
+    </div>
+  </Entry>
+
+  <Entry date="01 out 2026" label="Em breve" labelColor="#ea580c">
     <h2 id="webhook-mensagens-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Webhook de mensagens da corrida
     </h2>
@@ -195,6 +387,72 @@ export const EndpointBadge = ({ method, path, href }) => (
         <li>Payload com <ParamBadge name="sender_type" /> (<code>DRIVER</code> ou <code>PASSENGER</code>), <ParamBadge name="request_id" /> da corrida e <ParamBadge name="links.request" />, além dos campos do webhook de mensagens. Detalhes na página <a href="/pages/v2/referencia/webhooks/sobre#webhook-de-mensagens-da-corrida">Sobre</a>.</li>
       </ul>
     </ChangeSection>
+  </Entry>
+  
+  <Entry date="29 set 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="tarifas-categoria" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Tarifas da categoria
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novo endpoint para consultar as tarifas atuais de uma categoria, com valores, método de
+      cálculo e o calendário de dias e horários em que cada tarifa se aplica.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/configuracoes/categorias/{id}/tarifas" href="/pages/v2/referencia/configuracoes/endpoint/get-categorias-tarifas" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Parâmetros aceitos:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="id" /> — obrigatório, na URL. Identificador da categoria, que precisa pertencer à central autenticada.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>O retorno traz a lista das tarifas atuais da categoria — já iniciadas e não excluídas; tarifas removidas, substituídas na edição ou futuras não são listadas. Cada item inclui:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="metodo_calculo_tarifa" /> — método de cálculo: <code>D</code> km + minuto, <code>P</code> km + hora parada, <code>T</code> valor tabelado, <code>B</code> por bairro, <code>V</code> km variável.</li>
+        <li><ParamBadge name="valor_bandeirada" />, <ParamBadge name="valor_km" />, <ParamBadge name="valor_minuto" />, <ParamBadge name="valor_hora_parada" /> e <ParamBadge name="valor_minimo" /> — valores base da tarifa.</li>
+        <li><ParamBadge name="valor_parada_adicional" /> — custo extra por parada adicional.</li>
+        <li><ParamBadge name="tipo_cobranca_retorno" /> — cobrança do retorno: <code>T</code> conforme a tarifa, <code>F</code> valor fixo (<ParamBadge name="valor_retorno_adicional" />), <code>P</code> porcentagem do valor tabelado (<ParamBadge name="taxa_retorno_porcentagem" />), <code>N</code> sem cobrança.</li>
+        <li><ParamBadge name="data_inicio" /> — data a partir da qual a tarifa vale (ISO-8601, UTC).</li>
+        <li><ParamBadge name="horarios" /> — uma janela por dia (<ParamBadge name="dia_semana" />, de 1 = domingo a 7 = sábado; <ParamBadge name="hora_inicio" /> e <ParamBadge name="hora_fim" /> no horário local da central); vem vazio quando a tarifa não tem calendário.</li>
+        <li><ParamBadge name="valores_tabelados" /> — faixas de distância e valor, preenchidas apenas no método <code>T</code>. A última faixa, que vale a partir da faixa anterior, vem com <ParamBadge name="distancia_km" /> nulo e <ParamBadge name="a_partir_de" /> verdadeiro.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
+   <Entry date="29 set 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="evento-engajamento-abertura-app" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Evento de engajamento de abertura do app
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Os webhooks de engajamento podem assinar um novo evento, disparado quando o passageiro abre
+      o aplicativo ou volta para ele depois de deixá-lo em segundo plano.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/engajamento/{id}/permissoes" href="/pages/v2/referencia/engajamento/permissoes/endpoint/post" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="abertura_app_passageiro" /> — novo valor aceito em <ParamBadge name="eventos" />. Passageiro inativo não gera o evento.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="changed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="eventos" /> — evento fora da lista de valores aceitos, ou ainda indisponível no ambiente, passa a ser recusado com 400, em vez de gravado como uma assinatura que nunca é entregue.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="PUT" path="/api/v2/integracao/engajamento/{id}/permissoes" href="/pages/v2/referencia/engajamento/permissoes/endpoint/put" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="abertura_app_passageiro" /> e a recusa com 400 de evento inválido — mesmas regras, na bandeira única enviada em <ParamBadge name="bandeira" />.</li>
+        </ul>
+      </ChangeSection>
+    </div>
   </Entry>
 
   <Entry date="24 set 2026" label="Melhoria" labelColor="#16A34A">
