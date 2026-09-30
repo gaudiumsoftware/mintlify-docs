@@ -168,7 +168,7 @@ export const EndpointBadge = ({ method, path, href }) => (
 
     <ChangeSection type="added">
       <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-        <li><ParamBadge name="avaliacao_media" /> — média das avaliações que os motoristas deram ao cliente. Vem <code>null</code> quando o cliente ainda não foi avaliado ou quando a central não permite que o motorista avalie o passageiro.</li>
+        <li><ParamBadge name="avaliacao_media" /> — média das avaliações que os motoristas deram ao cliente. Vem <code>null</code> quando o cliente ainda não foi avaliado ou quando a central do cliente não permite que o motorista avalie o passageiro. Vale a regra da central do cliente, e não a da credencial usada na consulta.</li>
         <li><ParamBadge name="cadastrado_em" /> — data do cadastro do cliente, em ISO-8601 UTC. Vem <code>null</code> quando a data não está disponível, como em cadastros antigos.</li>
         <li><ParamBadge name="login_terceiros" /> — objeto com <ParamBadge name="google" />, <ParamBadge name="apple" /> e <ParamBadge name="facebook" />, booleanos, que indicam com quais contas de terceiros o cliente entra no app.</li>
       </ul>
