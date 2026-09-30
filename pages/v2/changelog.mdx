@@ -188,7 +188,29 @@ export const EndpointBadge = ({ method, path, href }) => (
 
       <ChangeSection type="added">
         <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-          <li>Mesmos campos e mesmas mudanças, no cliente retornado.</li>
+          <li>Mesmos campos novos, no cliente retornado.</li>
+        </ul>
+      </ChangeSection>
+
+      <ChangeSection type="changed">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Mesmas mudanças de nome e de tipo.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/integracao/cliente" href="/pages/v1/referencia/clientes/endpoint/get" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Mesmos campos novos, em cada cliente da resposta da v1.</li>
+        </ul>
+      </ChangeSection>
+
+      <ChangeSection type="changed">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Mesmas mudanças de nome e de tipo.</li>
         </ul>
       </ChangeSection>
     </div>
@@ -202,7 +224,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       fontSize: "13px",
       lineHeight: "1.6",
     }}>
-      <strong>Nota:</strong> quem já lê <ParamBadge name="data_hora_ultima_estimativa" /> ou <ParamBadge name="data_hora_ultima_solicitacao" /> precisa passar para <ParamBadge name="ultima_estimativa_em" /> e <ParamBadge name="ultima_corrida_em" />: os nomes antigos deixam de sair na resposta.
+      <strong>Nota:</strong> quem já lê <ParamBadge name="data_hora_ultima_estimativa" /> ou <ParamBadge name="data_hora_ultima_solicitacao" /> precisa passar para <ParamBadge name="ultima_estimativa_em" /> e <ParamBadge name="ultima_corrida_em" />: os nomes antigos deixam de sair na resposta. <ParamBadge name="quantidade_corridas_finalizadas" /> passa de texto para número, então quem compara ou desserializa o campo como texto precisa ajustar.
     </div>
   </Entry>
 
