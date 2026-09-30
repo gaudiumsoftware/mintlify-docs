@@ -5410,6 +5410,24 @@
     "schemas": {
       "Cliente": {
         "type": "object",
+        "required": [
+          "id",
+          "nome",
+          "email",
+          "telefone",
+          "status_cliente",
+          "cpf",
+          "data_nascimento",
+          "avaliacao_media",
+          "ultima_estimativa_em",
+          "quantidade_corridas_finalizadas",
+          "ultima_corrida_em",
+          "token_atualizado_em",
+          "ultimo_acesso_em",
+          "cadastrado_em",
+          "foto_url",
+          "login_terceiros"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -5486,7 +5504,7 @@
           "foto_url": {
             "type": "string",
             "nullable": true,
-            "description": "URL temporária da foto do cliente, válida por 30 minutos. Preenchida só na busca de um cliente específico, como a busca por `id`. Na listagem paginada, ou quando o cliente não tem foto, vem `null`."
+            "description": "URL temporária da foto do cliente, válida por 30 minutos. Preenchida só na busca de um cliente específico, pelo filtro `id`. Na listagem paginada, ou quando o cliente não tem foto, vem `null`."
           },
           "login_terceiros": {
             "type": "object",
