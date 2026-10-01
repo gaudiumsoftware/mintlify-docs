@@ -137,6 +137,11 @@
           "login_terceiros": {
             "type": "object",
             "description": "Contas de terceiros que o cliente usa para entrar no app",
+            "required": [
+              "google",
+              "apple",
+              "facebook"
+            ],
             "properties": {
               "google": {
                 "type": "boolean",
