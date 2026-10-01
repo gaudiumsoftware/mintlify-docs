@@ -24,7 +24,7 @@
   ],
   "components": {
     "schemas": {
-      "CupomCriacao": {
+      "CupomCriacaoBase": {
         "type": "object",
         "required": [
           "gerador_cupom_id",
@@ -116,18 +116,6 @@
               "B"
             ]
           },
-          "cliente_ids": {
-            "type": "array",
-            "description": "Opcional. Lista de ids dos clientes que poderão usar o cupom criado.",
-            "items": {
-              "type": "integer"
-            },
-            "example": [
-              83983,
-              83992,
-              83959
-            ]
-          },
           "area_id": {
             "type": "integer",
             "description": "Opcional. Indica a área a qual o cupom será restrito.",
@@ -143,6 +131,49 @@
             "example": "D"
           }
         }
+      },
+      "CupomCriacao": {
+        "description": "Body do POST /cupons: os campos comuns de criação mais a lista cliente_ids.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CupomCriacaoBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "cliente_ids": {
+                "type": "array",
+                "description": "Opcional. Lista de ids dos clientes que poderão usar o cupom criado.",
+                "items": {
+                  "type": "integer"
+                },
+                "example": [
+                  83983,
+                  83992,
+                  83959
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "CupomLoteItem": {
+        "description": "Item do POST /cupons/lote: os campos comuns de criação mais um único cliente_id. A lista cliente_ids do POST /cupons não é aceita no lote.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CupomCriacaoBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "cliente_id": {
+                "type": "integer",
+                "description": "Opcional. Id do único cliente que poderá usar o cupom; sem ele o cupom fica aberto a todos os passageiros da central. O cliente precisa pertencer à bandeira autenticada.",
+                "example": 83983
+              }
+            }
+          }
+        ]
       }
     },
     "securitySchemes": {
@@ -4878,7 +4909,7 @@
     "/cupons/lote": {
       "post": {
         "summary": "Criar cupons em lote",
-        "description": "Cria vários cupons de desconto numa única requisição, tudo ou nada: ou todos os cupons são criados, ou nenhum.\n\nCada item de `cupons` tem o mesmo formato e as mesmas regras do body do [`POST /cupons`](/pages/v2/referencia/cupons/endpoint/post), inclusive `cliente_ids`, `area_id`, `local_aplicacao`, `valor_maximo` e `valor_maximo_corrida`, e traz o próprio `gerador_cupom_id`. O lote aceita de 1 a 100 cupons.\n\nA validação é completa antes de gravar: todos os erros de todos os itens voltam juntos, cada um com o campo no formato `cupons.N.campo`, em que `N` é a posição do item a partir de zero, e com o mesmo `code` que o `POST /cupons` devolve para o mesmo erro. Além das regras de cada item, o lote confere que a cota de cada gerador comporta os cupons já criados mais os do lote, que nenhum `codigo` se repete no lote e que nenhum já está em uso na central. Item com `codigo_pattern` tem o código sorteado na criação e ressorteado até 5 vezes em caso de colisão; persistindo a colisão, o lote falha.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira com a permissão de cupons, como o `POST /cupons`. Gestor com empresa vinculada só alcança os geradores da própria empresa.",
+        "description": "Cria vários cupons de desconto numa única requisição, tudo ou nada: ou todos os cupons são criados, ou nenhum.\n\nCada item de `cupons` tem o formato e as regras do body do [`POST /cupons`](/pages/v2/referencia/cupons/endpoint/post), inclusive `area_id`, `local_aplicacao`, `valor_maximo` e `valor_maximo_corrida`, e traz o próprio `gerador_cupom_id`, com uma diferença: a restrição de cliente é um único `cliente_id` opcional por cupom, e a lista `cliente_ids` do `POST /cupons` é recusada no lote. O lote aceita de 1 a 100 cupons.\n\nA validação é completa antes de gravar: todos os erros de todos os itens voltam juntos, cada um com o campo no formato `cupons.N.campo`, em que `N` é a posição do item a partir de zero, e com o mesmo `code` que o `POST /cupons` devolve para o mesmo erro. Além das regras de cada item, o lote confere que a cota de cada gerador comporta os cupons já criados mais os do lote, que nenhum `codigo` se repete no lote e que nenhum já está em uso na central. Item com `codigo_pattern` tem o código sorteado na criação e ressorteado até 5 vezes em caso de colisão; persistindo a colisão, o lote falha.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira com a permissão de cupons, como o `POST /cupons`. Gestor com empresa vinculada só alcança os geradores da própria empresa.",
         "requestBody": {
           "required": true,
           "content": {
@@ -4891,11 +4922,11 @@
                 "properties": {
                   "cupons": {
                     "type": "array",
-                    "description": "Cupons a criar, de 1 a 100. Cada item segue o body do `POST /cupons`.",
+                    "description": "Cupons a criar, de 1 a 100. Cada item segue o body do `POST /cupons`, com `cliente_id` (um cliente) no lugar de `cliente_ids`.",
                     "minItems": 1,
                     "maxItems": 100,
                     "items": {
-                      "$ref": "#/components/schemas/CupomCriacao"
+                      "$ref": "#/components/schemas/CupomLoteItem"
                     }
                   }
                 }
@@ -4931,10 +4962,7 @@
                           "C",
                           "B"
                         ],
-                        "cliente_ids": [
-                          83983,
-                          83992
-                        ],
+                        "cliente_id": 83983,
                         "area_id": 239,
                         "local_aplicacao": "D"
                       }
@@ -4988,6 +5016,19 @@
                           "code": 0,
                           "message": "'cupons': Deve ter no máximo 100 cupons por requisição.",
                           "field": "cupons"
+                        }
+                      ]
+                    }
+                  },
+                  "cliente_ids_no_lote": {
+                    "summary": "Lista cliente_ids no lugar de cliente_id",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'cupons.0.cliente_ids': No lote cada cupom aceita um único cliente_id; cliente_ids não é aceito.",
+                          "field": "cupons.0.cliente_ids"
                         }
                       ]
                     }
