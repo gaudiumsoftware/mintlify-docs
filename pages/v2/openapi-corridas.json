@@ -143,6 +143,11 @@
           "login_terceiros": {
             "type": "object",
             "description": "Contas de terceiros que o cliente usa para entrar no app",
+            "required": [
+              "google",
+              "apple",
+              "facebook"
+            ],
             "properties": {
               "google": {
                 "type": "boolean",
@@ -162,6 +167,11 @@
             "type": "object",
             "nullable": true,
             "description": "Situação do cliente com o cartão de crédito no app: bloqueio e cartões cadastrados. Vem `null` quando a central não aceita cartão no app. Não vem na resposta para credencial de empresa.",
+            "required": [
+              "bloqueado",
+              "motivo_bloqueio",
+              "cartoes"
+            ],
             "properties": {
               "bloqueado": {
                 "type": "boolean",
@@ -171,6 +181,10 @@
                 "type": "object",
                 "nullable": true,
                 "description": "Motivo do bloqueio aberto mais recente. `null` quando o cliente não está bloqueado ou quando o bloqueio não tem motivo registrado.",
+                "required": [
+                  "codigo",
+                  "descricao"
+                ],
                 "properties": {
                   "codigo": {
                     "type": "string",
@@ -187,6 +201,11 @@
                 "description": "Cartões do cliente no app, os mesmos que ele vê em \"Meus cartões\": os ativos e os pendentes. Lista vazia quando o cliente não tem cartão.",
                 "items": {
                   "type": "object",
+                  "required": [
+                    "operadora",
+                    "ultimos_digitos",
+                    "status"
+                  ],
                   "properties": {
                     "operadora": {
                       "type": "string",
