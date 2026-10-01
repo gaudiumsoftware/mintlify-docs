@@ -2159,7 +2159,7 @@
                           },
                           "data_inicio": {
                             "type": "string",
-                            "description": "Início da vigência (`YYYY-MM-DD HH:MM:SS`)."
+                            "description": "Data e hora a partir da qual a tarifa vale, em ISO 8601 UTC (ex.: 2026-09-30T13:20:00Z). Definida pelo servidor no momento da gravação; não é aceita no corpo do POST/PUT."
                           },
                           "nome": {
                             "type": "string"
@@ -2225,7 +2225,7 @@
                   "data": [
                     {
                       "id": 4821,
-                      "data_inicio": "2026-09-30 10:15:00",
+                      "data_inicio": "2026-09-30T13:15:00Z",
                       "nome": "Tarifa padrão",
                       "metodo_calculo_tarifa": "D",
                       "valor_bandeirada": "5.90",
@@ -2239,7 +2239,7 @@
                     },
                     {
                       "id": 4822,
-                      "data_inicio": "2026-09-30 10:20:00",
+                      "data_inicio": "2026-09-30T13:20:00Z",
                       "nome": "Noite fim de semana",
                       "metodo_calculo_tarifa": "T",
                       "valor_parada_adicional": "2.00",
@@ -2697,7 +2697,7 @@
                         },
                         "data_inicio": {
                           "type": "string",
-                          "description": "Início da vigência (`YYYY-MM-DD HH:MM:SS`)."
+                          "description": "Data e hora a partir da qual a tarifa vale, em ISO 8601 UTC (ex.: 2026-09-30T13:20:00Z). Definida pelo servidor no momento da gravação; não é aceita no corpo do POST/PUT."
                         },
                         "nome": {
                           "type": "string"
@@ -2761,7 +2761,7 @@
                   "success": true,
                   "data": {
                     "id": 4823,
-                    "data_inicio": "2026-09-30 10:25:00",
+                    "data_inicio": "2026-09-30T13:25:00Z",
                     "nome": "Noite fim de semana",
                     "metodo_calculo_tarifa": "T",
                     "valor_parada_adicional": "2.00",
@@ -3345,7 +3345,7 @@
                         },
                         "data_inicio": {
                           "type": "string",
-                          "description": "Início da vigência (`YYYY-MM-DD HH:MM:SS`)."
+                          "description": "Data e hora a partir da qual a tarifa vale, em ISO 8601 UTC (ex.: 2026-09-30T13:20:00Z). Definida pelo servidor no momento da gravação; não é aceita no corpo do POST/PUT."
                         },
                         "nome": {
                           "type": "string"
@@ -3413,7 +3413,7 @@
                       "data": {
                         "id": 4830,
                         "id_anterior": 4821,
-                        "data_inicio": "2026-09-30 11:00:00",
+                        "data_inicio": "2026-09-30T14:00:00Z",
                         "nome": "Tarifa padrão",
                         "metodo_calculo_tarifa": "D",
                         "valor_bandeirada": "5.90",
@@ -3434,7 +3434,7 @@
                       "data": {
                         "id": 4822,
                         "id_anterior": null,
-                        "data_inicio": "2026-09-30 10:20:00",
+                        "data_inicio": "2026-09-30T13:20:00Z",
                         "nome": "Noite fim de semana",
                         "metodo_calculo_tarifa": "T",
                         "valor_parada_adicional": "2.00",
