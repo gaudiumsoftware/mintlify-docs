@@ -114,6 +114,52 @@
                         "google": true,
                         "apple": false,
                         "facebook": false
+                      },
+                      "cartao_app": {
+                        "bloqueado": false,
+                        "motivo_bloqueio": null,
+                        "cartoes": [
+                          {
+                            "operadora": "visa",
+                            "ultimos_digitos": "1234",
+                            "status": "ativo"
+                          },
+                          {
+                            "operadora": "mastercard",
+                            "ultimos_digitos": "5678",
+                            "status": "pendente"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "2",
+                      "nome": "Exemplo Bloqueado",
+                      "email": "bloqueado@email.com.br",
+                      "telefone": "(11) 98888-4455",
+                      "status_cliente": "A",
+                      "cpf": null,
+                      "data_nascimento": null,
+                      "avaliacao_media": null,
+                      "ultima_estimativa_em": "2026-08-10T09:00:00Z",
+                      "quantidade_corridas_finalizadas": 3,
+                      "ultima_corrida_em": "2026-08-02T18:20:00Z",
+                      "token_atualizado_em": "2026-08-10T09:00:00Z",
+                      "ultimo_acesso_em": "2026-08-10T09:02:00Z",
+                      "cadastrado_em": "2025-11-04T16:10:00Z",
+                      "foto_url": null,
+                      "login_terceiros": {
+                        "google": false,
+                        "apple": false,
+                        "facebook": false
+                      },
+                      "cartao_app": {
+                        "bloqueado": true,
+                        "motivo_bloqueio": {
+                          "codigo": "DISPUTA_CHARGEBACK",
+                          "descricao": "Chargeback pendente"
+                        },
+                        "cartoes": []
                       }
                     }
                   ]
@@ -5526,6 +5572,71 @@
               "facebook": {
                 "type": "boolean",
                 "description": "Indica se o cliente entra com a conta Facebook"
+              }
+            }
+          },
+          "cartao_app": {
+            "type": "object",
+            "nullable": true,
+            "description": "Situação do cliente com o cartão de crédito no app: bloqueio e cartões cadastrados. Vem `null` quando a central não aceita cartão no app. Não vem na resposta para credencial de empresa.",
+            "required": [
+              "bloqueado",
+              "motivo_bloqueio",
+              "cartoes"
+            ],
+            "properties": {
+              "bloqueado": {
+                "type": "boolean",
+                "description": "Indica se o cliente está impedido de cadastrar cartão e de pagar com cartão no app"
+              },
+              "motivo_bloqueio": {
+                "type": "object",
+                "nullable": true,
+                "description": "Motivo do bloqueio aberto mais recente. `null` quando o cliente não está bloqueado ou quando o bloqueio não tem motivo registrado.",
+                "required": [
+                  "codigo",
+                  "descricao"
+                ],
+                "properties": {
+                  "codigo": {
+                    "type": "string",
+                    "description": "Código do motivo. Hoje são `CADASTRO_CARTAO` (tentativas de cadastro de cartão acima do limite), `DISPUTA_CHARGEBACK` (chargeback pendente) e `BLOQUEADO_OUTRA_BANDEIRA` (bloqueado em outra central). Outros códigos podem aparecer; trate um código desconhecido pela `descricao`."
+                  },
+                  "descricao": {
+                    "type": "string",
+                    "description": "Texto do motivo no idioma da resposta"
+                  }
+                }
+              },
+              "cartoes": {
+                "type": "array",
+                "description": "Cartões do cliente no app, os mesmos que ele vê em \"Meus cartões\": os ativos e os pendentes. Lista vazia quando o cliente não tem cartão.",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "operadora",
+                    "ultimos_digitos",
+                    "status"
+                  ],
+                  "properties": {
+                    "operadora": {
+                      "type": "string",
+                      "description": "Bandeira do cartão, como o gateway de pagamento informa (ex.: `visa`, `mastercard`)"
+                    },
+                    "ultimos_digitos": {
+                      "type": "string",
+                      "description": "Últimos quatro dígitos do número do cartão"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ativo",
+                        "pendente"
+                      ],
+                      "description": "`ativo` para o cartão que o cliente pode usar; `pendente` para o cartão que aguarda a validação da central e ainda não pode ser usado"
+                    }
+                  }
+                }
               }
             }
           }

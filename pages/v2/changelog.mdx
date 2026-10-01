@@ -159,9 +159,10 @@ export const EndpointBadge = ({ method, path, href }) => (
       Dados de engajamento na consulta de clientes
     </h2>
     <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
-      A consulta de clientes passa a informar a avaliação do passageiro, a data de cadastro e as contas de
-      terceiros que ele usa para entrar no app. As datas de última estimativa e de última corrida mudam de
-      nome e passam a sair em ISO-8601 UTC, como as demais datas da resposta.
+      A consulta de clientes passa a informar a avaliação do passageiro, a data de cadastro, as
+      contas de terceiros que ele usa para entrar no app e a situação dele com o cartão de crédito
+      no app. As datas de última estimativa e de última corrida mudam de nome e passam a sair em
+      ISO-8601 UTC, como as demais datas da resposta.
     </p>
 
     <EndpointBadge method="GET" path="/api/v2/integracao/clientes" href="/pages/v2/referencia/clientes/endpoint/get" />
@@ -171,6 +172,7 @@ export const EndpointBadge = ({ method, path, href }) => (
         <li><ParamBadge name="avaliacao_media" /> — média das avaliações que os motoristas deram ao cliente. Vem <code>null</code> quando o cliente ainda não foi avaliado ou quando a central não permite que o motorista avalie o passageiro.</li>
         <li><ParamBadge name="cadastrado_em" /> — data do cadastro do cliente, em ISO-8601 UTC. Vem <code>null</code> quando a data não está disponível, como em cadastros antigos.</li>
         <li><ParamBadge name="login_terceiros" /> — objeto com <ParamBadge name="google" />, <ParamBadge name="apple" /> e <ParamBadge name="facebook" />, booleanos, que indicam com quais contas de terceiros o cliente entra no app.</li>
+        <li><ParamBadge name="cartao_app" /> — objeto com <ParamBadge name="bloqueado" />, que indica se o cliente está impedido de cadastrar e de pagar com cartão no app, <ParamBadge name="motivo_bloqueio" />, com <ParamBadge name="codigo" /> e <ParamBadge name="descricao" /> do bloqueio aberto mais recente, e <ParamBadge name="cartoes" />, com <ParamBadge name="operadora" />, <ParamBadge name="ultimos_digitos" /> e <ParamBadge name="status" /> de cada cartão. <ParamBadge name="cartoes" /> traz os mesmos cartões que o cliente vê no app: os ativos e os pendentes, que aguardam a validação da central e ainda não podem ser usados. Vem <code>null</code> quando a central não aceita cartão no app, e não vem na resposta para credencial de empresa.</li>
       </ul>
     </ChangeSection>
 
