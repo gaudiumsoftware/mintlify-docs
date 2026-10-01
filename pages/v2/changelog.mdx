@@ -155,6 +155,72 @@ export const EndpointBadge = ({ method, path, href }) => (
   </div>
 
   <Entry date="1 out 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="tarifas-categoria-criar-editar" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Criar, editar e excluir tarifas da categoria
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      As tarifas da categoria — a tarifa padrão e as tarifas extras com calendário de dias e horários —
+      agora podem ser criadas, editadas e excluídas pela integração, com as mesmas regras da tela de
+      tarifas do painel. A listagem passou a trazer só os campos que fazem sentido para o método de
+      cálculo de cada tarifa.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/configuracoes/categorias/{id}/tarifas" href="/pages/v2/referencia/configuracoes/endpoint/post-tarifas" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>A primeira tarifa da categoria é a padrão (sem <ParamBadge name="horarios" />); as seguintes são extras e exigem <ParamBadge name="horarios" />. Máximo de 8 vigentes (a padrão e mais 7 extras).</li>
+        <li><ParamBadge name="metodo_calculo_tarifa" /> — duração (<code>D</code>), hora parada (<code>P</code>), tabelado (<code>T</code>), km variável (<code>V</code>) ou por bairro (<code>B</code>), cada um com seus campos de valor; faixas em <ParamBadge name="valores_tabelados" />.</li>
+        <li><ParamBadge name="habilitar_limite_distancia" />, <ParamBadge name="habilitar_taxa_deslocamento" /> e os campos que cada um liga.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="PUT" path="/api/v2/integracao/configuracoes/categorias/{id}/tarifas/{tarifaId}" href="/pages/v2/referencia/configuracoes/endpoint/put-tarifas" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Campo omitido mantém o valor atual. Quando os valores mudam, nasce uma nova versão da tarifa: a resposta traz o <ParamBadge name="id" /> novo e o <ParamBadge name="id_anterior" />, e o id antigo passa a responder 409.</li>
+          <li>Mudar só <ParamBadge name="horarios" /> mantém o id; reenviar os mesmos dados não grava nada.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="DELETE" path="/api/v2/integracao/configuracoes/categorias/{id}/tarifas/{tarifaId}" href="/pages/v2/referencia/configuracoes/endpoint/delete-tarifas" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Encerra uma tarifa extra. A tarifa padrão só pode ser editada.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/v2/integracao/configuracoes/categorias/{id}/tarifas" href="/pages/v2/referencia/configuracoes/endpoint/get-categorias-tarifas" />
+
+      <ChangeSection type="changed">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Cada tarifa traz só os campos do seu método de cálculo e da operação da bandeira, incluindo <ParamBadge name="habilitar_limite_distancia" />, <ParamBadge name="habilitar_taxa_deslocamento" /> e os campos dependentes quando ligados.</li>
+          <li>Passa a exigir autenticação HTTP Basic de um gestor ativo da bandeira, como os demais endpoints de tarifa.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> decimais usam ponto e até 2 casas, e campo que não se aplica ao método ou à bandeira é recusado com 400. O <ParamBadge name="hora_fim" /> é o último minuto em que a tarifa vale: <code>05:59</code> é gravado como <code>05:59:59</code>, igual ao calendário do painel.
+    </div>
+  </Entry>
+
+  <Entry date="1 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="destino-dados-fechamento-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Destino e dados de fechamento na consulta da corrida
     </h2>
