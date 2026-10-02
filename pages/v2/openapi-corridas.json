@@ -569,6 +569,324 @@
         }
       }
     },
+    "/condutores/historico-punicoes": {
+      "get": {
+        "summary": "Listar histórico de punições dos condutores",
+        "description": "Retorna o histórico de punições aplicadas aos condutores da central autenticada. Cada item é uma punição aplicada, manualmente por um gestor ou de forma automática pela central (por exemplo, por cancelamentos).\n\nUma punição liberada antes do fim não gera um segundo item: ela aparece no próprio item, com `situacao` igual a `R` e a data da liberação em `data_revogacao`. A edição do motivo também não gera item, e `motivo` traz o texto de quando a punição foi aplicada. Em `duracao_minutos` vem a duração programada, mesmo nas punições revogadas.\n\nOs itens vêm do mais recente para o mais antigo. O retorno é paginado com `limite` e `pagina`, como nos demais endpoints de condutores. Um parâmetro com nome diferente dos listados abaixo é ignorado, sem erro.\n\nOs horários seguem o fuso da central, no formato `AAAA-MM-DD HH:MM:SS` e sem indicação de fuso. Os filtros `dt_ini` e `dt_end` usam o mesmo fuso e formato.\n\nSó há histórico das punições aplicadas a partir do lançamento deste endpoint.\n\nPara acessar este endpoint, o usuário autenticado deve ser um gestor da central, sem empresa vinculada, e a central deve ter a licença de integração via API ativa.",
+        "parameters": [
+          {
+            "name": "taxista_id",
+            "in": "query",
+            "description": "ID do condutor. Retorna apenas as punições dele. O nome do parâmetro é `taxista_id`, e não `condutor_id`: com outro nome o filtro é ignorado e o retorno traz todos os condutores.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "name": "busca",
+            "in": "query",
+            "description": "Texto para buscar o condutor por nome, telefone ou e-mail (o campo contém o texto). Use pelo menos 3 caracteres: com menos, a resposta é `200` com `data` vazio. A busca considera no máximo 200 condutores que combinam com o texto; os demais ficam fora do resultado.",
+            "schema": {
+              "type": "string",
+              "minLength": 3
+            }
+          },
+          {
+            "name": "origem",
+            "in": "query",
+            "description": "Origem da punição: `A` (automática) ou `M` (manual, aplicada por um gestor). Sem o parâmetro, traz as duas. Outros valores são ignorados.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "A",
+                "M"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Situação da punição: `E` (em andamento), `C` (concluída, o prazo terminou) ou `R` (revogada, liberada antes do fim). Outro valor devolve `data` vazio.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "E",
+                "C",
+                "R"
+              ]
+            }
+          },
+          {
+            "name": "dt_ini",
+            "in": "query",
+            "description": "Início do período, inclusive, pela data em que a punição foi aplicada. Formato `AAAA-MM-DD HH:MM:SS`, no fuso da central.",
+            "schema": {
+              "type": "string",
+              "example": "2026-10-01 00:00:00"
+            }
+          },
+          {
+            "name": "dt_end",
+            "in": "query",
+            "description": "Fim do período, inclusive, pela data em que a punição foi aplicada. Formato `AAAA-MM-DD HH:MM:SS`, no fuso da central.",
+            "schema": {
+              "type": "string",
+              "example": "2026-10-31 23:59:59"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "description": "Ordem dos itens pela data em que a punição foi aplicada. Envie exatamente `t.data_hora asc` (mais antigo primeiro) ou `t.data_hora desc` (mais recente primeiro). Qualquer outro valor usa o padrão.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "t.data_hora asc",
+                "t.data_hora desc"
+              ],
+              "default": "t.data_hora desc"
+            }
+          },
+          {
+            "name": "limite",
+            "in": "query",
+            "description": "Quantidade de registros por página. O limite padrão é 20 e o máximo é 100: um valor maior vira 100. Deve ser maior ou igual a 1.",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "pagina",
+            "in": "query",
+            "description": "Número da página, a partir de 1. O padrão é 1. Deve ser maior ou igual a 1.",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": [
+                    {
+                      "id": 1523,
+                      "condutor": {
+                        "id": 5574,
+                        "nome": "Lara",
+                        "telefone": "(43) 99999-0001",
+                        "email": "lara@exemplo.com"
+                      },
+                      "data_hora": "2026-10-01 14:32:10",
+                      "motivo": "Cancelamentos consecutivos",
+                      "origem": "A",
+                      "impedido_ate": "2026-10-01 15:32:10",
+                      "duracao_minutos": 60,
+                      "gatilho": "O.S. 987654, 987655",
+                      "situacao": "C",
+                      "data_revogacao": null
+                    },
+                    {
+                      "id": 1519,
+                      "condutor": {
+                        "id": 5590,
+                        "nome": "Marcos",
+                        "telefone": "(43) 99999-0002",
+                        "email": "marcos@exemplo.com"
+                      },
+                      "data_hora": "2026-10-01 09:10:00",
+                      "motivo": "Conduta inadequada",
+                      "origem": "M",
+                      "impedido_ate": "2026-10-01 11:10:00",
+                      "duracao_minutos": 120,
+                      "gatilho": "Ana Souza",
+                      "situacao": "R",
+                      "data_revogacao": "2026-10-01 09:45:00"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "data_invalida": {
+                    "summary": "Data fora do formato",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'dt_ini': Deve ser uma data/hora válida (Y-m-d H:i:s)."
+                        }
+                      ]
+                    }
+                  },
+                  "taxista_id_invalido": {
+                    "summary": "ID do condutor inválido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'taxista_id': Deve ser numérico."
+                        }
+                      ]
+                    }
+                  },
+                  "busca_nao_texto": {
+                    "summary": "Busca que não é texto",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'busca': Deve ser do tipo texto (string)."
+                        }
+                      ]
+                    }
+                  },
+                  "limite_invalido": {
+                    "summary": "Limite menor que 1",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'limite': Deve ser maior ou igual a 1."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Api-Key ou credenciais do gestor inválidas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "api_key_invalida": {
+                    "summary": "Api-Key inválida",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": "B4",
+                          "message": "Você não está autorizado a acessar este recurso."
+                        }
+                      ]
+                    }
+                  },
+                  "gestor_invalido": {
+                    "summary": "Usuário ou senha do Basic Auth inválidos",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": "B5",
+                          "message": "Usuário e/ou senhas inválidos."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Gestor sem acesso a este recurso ou central sem licença de integração",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "gestor_de_empresa": {
+                    "summary": "Gestor vinculado a uma empresa",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Você não tem permissão para realizar essa operação."
+                        }
+                      ]
+                    }
+                  },
+                  "licenca_invalida": {
+                    "summary": "Central sem a licença de integração via API",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não é possível utilizar a API com a sua licença."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido. Os limites estão na tabela de rate limit da introdução.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Falha na operação"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/condutores/areas-bloqueio/batch": {
       "put": {
         "summary": "Atualizar áreas de bloqueio em lote",

@@ -154,6 +154,57 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="" label="Em breve" labelColor="#ea580c">
+    <h2 id="historico-punicoes-condutores" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Histórico de punições dos condutores
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novo endpoint para consultar as punições aplicadas aos condutores da central, manuais ou automáticas.
+      Até agora esse histórico só existia como registro interno de auditoria, sem consulta pela API.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/condutores/historico-punicoes" href="/pages/v2/entregas/condutores/endpoint/get-historico-punicoes" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Parâmetros aceitos na consulta, todos opcionais:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="taxista_id" /> — ID do condutor. Retorna apenas as punições dele.</li>
+        <li><ParamBadge name="busca" /> — nome, telefone ou e-mail do condutor, com pelo menos 3 caracteres.</li>
+        <li><ParamBadge name="origem" /> — <code>A</code> para punições automáticas ou <code>M</code> para as aplicadas por um gestor.</li>
+        <li><ParamBadge name="status" /> — <code>E</code> (em andamento), <code>C</code> (concluída) ou <code>R</code> (revogada).</li>
+        <li><ParamBadge name="dt_ini" /> e <ParamBadge name="dt_end" /> — período da data de aplicação, no formato <code>AAAA-MM-DD HH:MM:SS</code> e no horário da central.</li>
+        <li><ParamBadge name="order" /> — <code>t.data_hora asc</code> ou <code>t.data_hora desc</code> (padrão).</li>
+        <li><ParamBadge name="limite" /> e <ParamBadge name="pagina" /> — paginação, como nos demais endpoints de condutores. O padrão é 20 itens por página e o máximo é 100.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Campos devolvidos em cada item:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="id" /> e <ParamBadge name="condutor" /> — identificação da punição e dados do condutor (<ParamBadge name="id" />, <ParamBadge name="nome" />, <ParamBadge name="telefone" /> e <ParamBadge name="email" />).</li>
+        <li><ParamBadge name="data_hora" />, <ParamBadge name="motivo" /> e <ParamBadge name="origem" /> — quando a punição foi aplicada, o motivo e se foi automática (<code>A</code>) ou manual (<code>M</code>).</li>
+        <li><ParamBadge name="impedido_ate" /> e <ParamBadge name="duracao_minutos" /> — até quando o condutor fica impedido e a duração programada, em minutos.</li>
+        <li><ParamBadge name="gatilho" /> — as ordens de serviço que geraram a punição automática (por exemplo, <code>O.S. 987654, 987655</code>) ou o nome do gestor que aplicou a manual.</li>
+        <li><ParamBadge name="situacao" /> e <ParamBadge name="data_revogacao" /> — <code>E</code>, <code>C</code> ou <code>R</code>. Vem <code>null</code> em <ParamBadge name="data_revogacao" /> quando a punição não foi revogada.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "14px",
+      lineHeight: "1.6",
+    }}>
+      Cada item é uma punição aplicada. Uma punição liberada antes do fim continua sendo um único item, com
+      situação <code>R</code> e a data da liberação em <ParamBadge name="data_revogacao" />. Os horários seguem o fuso
+      da central, sem indicação de fuso. Só há histórico das punições aplicadas a partir do lançamento. O endpoint tem limite de 10 requisições por minuto por{" "}
+      <code>api-key</code> — veja a seção <a href="/pages/v2/entregas/introducao#rate-limit">Rate limit</a>.
+    </div>
+  </Entry>
+
   <Entry date="1 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="retorno-dados-fechamento-entrega" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Retorno e dados de fechamento na consulta da entrega
