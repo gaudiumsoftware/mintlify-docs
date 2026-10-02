@@ -2738,13 +2738,13 @@
     "/configuracoes/categorias/{id}/tarifas": {
       "get": {
         "summary": "Listar tarifas da categoria",
-        "description": "Retorna as tarifas atuais da categoria informada (já iniciadas e não excluídas; tarifas removidas, substituídas na edição ou futuras não são listadas), com valores, método de cálculo, data de início (`data_inicio`, em ISO-8601 UTC) e, quando houver calendário operacional, `horarios`: uma janela por dia (`dia_semana`, `hora_inicio`, `hora_fim`) — cada dia tem a própria hora e um mesmo dia pode ter mais de uma janela. `dia_semana` vai de 1 a 7, sendo 1 = domingo, 2 = segunda … 7 = sábado; `hora_inicio` e `hora_fim` estão no horário local da central, sem conversão para UTC (diferente de `data_inicio`). Tarifa sem calendário retorna `horarios` vazio. Em `valores_tabelados`, a última faixa \"a partir de\" a faixa anterior vem com `distancia_km` `null` e `a_partir_de` `true`. `metodo_calculo_tarifa`: `D` = km percorrido + minuto, `P` = km percorrido + hora parada, `T` = valor tabelado, `B` = por bairro, `V` = valor do km variável; `valores_tabelados` só vem preenchido no método `T`. `tipo_cobranca_retorno` (cobrança do retorno, quando houver): `T` = conforme o cálculo da tarifa, `F` = valor fixo (`valor_retorno_adicional`), `P` = porcentagem do valor tabelado (`taxa_retorno_porcentagem`), `N` = não cobra. `valor_parada_adicional` é o custo extra por ponto de parada adicional.",
+        "description": "Lista as tarifas vigentes da categoria: a tarifa padrão (com `horarios` vazio) e as tarifas extras (com os horários de atuação).\n\nCada tarifa traz **só os campos que se aplicam** ao seu método de cálculo e à operação da bandeira: por exemplo, `valor_hora_parada` só aparece no método `P`, `valores_tabelados` só em `T`, `V` e `B`, `tipo_cobranca_retorno` só em bandeira que faz entregas, e os campos do bônus de deslocamento só com `habilitar_taxa_deslocamento: true`. Valores vêm como texto com 2 casas decimais. Na lista de faixas, a faixa acima da maior distância vem como `{\"distancia_km\": null, \"a_partir_de\": true, \"valor\": ...}`.\n\nO formato de cada tarifa é o mesmo devolvido pelo POST e pelo PUT de tarifas; a tabela de campos por método está na página **Criar tarifa da categoria**.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "description": "Id da categoria. Deve pertencer à central autenticada; categoria excluída responde 404, como a inexistente.",
+            "description": "Id da categoria. Deve pertencer à central autenticada.",
             "schema": {
               "type": "integer"
             }
@@ -2755,82 +2755,135 @@
             "description": "Sucesso",
             "content": {
               "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "description": "Tarifa com só os campos que se aplicam ao método e à operação da bandeira. Valores em texto com 2 casas decimais.",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "data_inicio": {
+                            "type": "string",
+                            "description": "Data e hora a partir da qual a tarifa vale, em ISO 8601 UTC (ex.: 2026-09-30T13:20:00Z). Definida pelo servidor no momento da gravação; não é aceita no corpo do POST/PUT."
+                          },
+                          "nome": {
+                            "type": "string"
+                          },
+                          "metodo_calculo_tarifa": {
+                            "type": "string",
+                            "enum": [
+                              "D",
+                              "P",
+                              "T",
+                              "V",
+                              "B"
+                            ]
+                          },
+                          "valores_tabelados": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "distancia_km": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "a_partir_de": {
+                                  "type": "boolean"
+                                },
+                                "valor": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "horarios": {
+                            "type": "array",
+                            "description": "Lista vazia na tarifa padrão.",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "dia_semana": {
+                                  "type": "integer"
+                                },
+                                "hora_inicio": {
+                                  "type": "string",
+                                  "example": "18:00:00"
+                                },
+                                "hora_fim": {
+                                  "type": "string",
+                                  "example": "23:59:00"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                },
                 "example": {
                   "success": true,
                   "data": [
                     {
-                      "id": 501,
-                      "nome": "Padrão",
+                      "id": 4821,
+                      "data_inicio": "2026-09-30T13:15:00Z",
+                      "nome": "Tarifa padrão",
                       "metodo_calculo_tarifa": "D",
-                      "valor_bandeirada": "5.00",
-                      "valor_km": "2.10",
-                      "valor_minuto": "0.30",
-                      "valor_hora_parada": "15.00",
+                      "valor_bandeirada": "5.90",
+                      "valor_km": "1.20",
+                      "valor_minuto": "0.15",
                       "valor_minimo": "8.00",
-                      "valor_parada_adicional": null,
-                      "tipo_cobranca_retorno": "T",
-                      "valor_retorno_adicional": null,
-                      "taxa_retorno_porcentagem": null,
-                      "data_inicio": "2026-01-01T03:00:00Z",
-                      "horarios": [
-                        {
-                          "dia_semana": 2,
-                          "hora_inicio": "07:00:00",
-                          "hora_fim": "19:00:00"
-                        },
-                        {
-                          "dia_semana": 3,
-                          "hora_inicio": "07:00:00",
-                          "hora_fim": "19:00:00"
-                        },
-                        {
-                          "dia_semana": 4,
-                          "hora_inicio": "07:00:00",
-                          "hora_fim": "19:00:00"
-                        },
-                        {
-                          "dia_semana": 5,
-                          "hora_inicio": "07:00:00",
-                          "hora_fim": "19:00:00"
-                        },
-                        {
-                          "dia_semana": 6,
-                          "hora_inicio": "07:00:00",
-                          "hora_fim": "19:00:00"
-                        }
-                      ],
-                      "valores_tabelados": []
+                      "valor_parada_adicional": "2.00",
+                      "habilitar_limite_distancia": false,
+                      "habilitar_taxa_deslocamento": false,
+                      "tipo_cobranca_retorno": "F",
+                      "valor_retorno_adicional": "4.00",
+                      "calcular_individual_por_entrega": false,
+                      "horarios": []
                     },
                     {
-                      "id": 502,
-                      "nome": "Tabelada",
+                      "id": 4822,
+                      "data_inicio": "2026-09-30T13:20:00Z",
+                      "nome": "Noite fim de semana",
                       "metodo_calculo_tarifa": "T",
-                      "valor_bandeirada": "5.00",
-                      "valor_km": null,
-                      "valor_minuto": null,
-                      "valor_hora_parada": null,
-                      "valor_minimo": null,
-                      "valor_parada_adicional": null,
-                      "tipo_cobranca_retorno": "T",
-                      "valor_retorno_adicional": null,
-                      "taxa_retorno_porcentagem": null,
-                      "data_inicio": "2026-01-01T03:00:00Z",
-                      "horarios": [],
+                      "valor_parada_adicional": "2.00",
                       "valores_tabelados": [
                         {
                           "distancia_km": "5.00",
                           "a_partir_de": false,
-                          "valor": "12.00"
+                          "valor": "15.00"
                         },
                         {
                           "distancia_km": "10.00",
                           "a_partir_de": false,
-                          "valor": "20.00"
+                          "valor": "25.00"
+                        }
+                      ],
+                      "habilitar_taxa_deslocamento": false,
+                      "tipo_cobranca_retorno": "T",
+                      "calcular_individual_por_entrega": false,
+                      "horarios": [
+                        {
+                          "dia_semana": 6,
+                          "hora_inicio": "18:00:00",
+                          "hora_fim": "23:59:59"
                         },
                         {
-                          "distancia_km": null,
-                          "a_partir_de": true,
-                          "valor": "30.00"
+                          "dia_semana": 7,
+                          "hora_inicio": "18:00:00",
+                          "hora_fim": "23:59:59"
                         }
                       ]
                     }
@@ -2839,10 +2892,32 @@
               }
             }
           },
-          "404": {
-            "description": "Categoria não encontrada, excluída ou de outra central",
+          "401": {
+            "description": "Gestor não autenticado (Authorization Basic ausente ou inválido).",
             "content": {
               "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": "B5",
+                      "message": "Usuário e/ou senhas inválidos."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Categoria não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
                 "example": {
                   "success": false,
                   "errors": [
@@ -2867,7 +2942,1581 @@
                   "errors": [
                     {
                       "code": 0,
-                      "message": "Ocorreu um erro interno no servidor. Por favor, tente novamente mais tarde."
+                      "message": "Falha na operação"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Criar tarifa da categoria",
+        "description": "Cria a tarifa padrão ou uma tarifa extra da categoria. A tarifa começa a valer na hora.\n\n### Tarifa padrão × tarifa extra\n- A **primeira** tarifa da categoria é a **padrão**: é criada **sem** `horarios` e vale o tempo todo.\n- Com a padrão já criada, toda tarifa nova é **extra** e **exige** `horarios`.\n- A categoria aceita no máximo **8** tarifas vigentes: a padrão e mais 7 extras.\n\n### Método de cálculo (`metodo_calculo_tarifa`)\n\n| Método | Campos aceitos | Obrigatórios |\n|---|---|---|\n| `D` duração | `valor_bandeirada`, `valor_km`, `valor_minuto`, `valor_minimo`, `valor_parada_adicional`, `habilitar_limite_distancia` | `valor_bandeirada`, `valor_km`, `valor_minuto`, `valor_minimo` |\n| `P` hora parada | `valor_bandeirada`, `valor_km`, `valor_hora_parada`, `valor_minimo`, `valor_parada_adicional` | `valor_bandeirada`, `valor_km`, `valor_hora_parada`, `valor_minimo` |\n| `V` km variável | `valor_bandeirada`, `valor_minuto`, `valor_minimo`, `valor_parada_adicional`, `valores_tabelados`, `habilitar_limite_distancia` | `valor_bandeirada`, `valor_minuto`, `valor_minimo` e `valores_tabelados` com a faixa `a_partir_de` |\n| `T` tabelado | `valor_parada_adicional`, `valores_tabelados` | `valores_tabelados` (sem a faixa `a_partir_de`) |\n| `B` por bairro | `valores_tabelados` | `valores_tabelados` com a faixa `a_partir_de` |\n\nEm todos os métodos também valem `nome`, `horarios` e `habilitar_taxa_deslocamento`.\n\nRestrições de bandeira (400 quando não atendidas):\n- `V` exige o app de motorista da bandeira (ou da bandeira agrupadora) na versão **14.4** ou superior;\n- `B` só em bandeira que faz **somente entregas**;\n- `P` não é aceito em bandeira com cálculo de corrida **pré-fixado**.\n\nUma tarifa que já usa `V`, `B` ou `P` pode continuar com o mesmo método mesmo sem atender à restrição.\n\n### Campos condicionais\n- `limite_distancia_maxima` (maior que zero): só com `habilitar_limite_distancia: true` (métodos `D` e `V`). No `V`, precisa ser maior que a maior faixa de `valores_tabelados`.\n- Bônus de deslocamento: `habilitar_taxa_deslocamento: true` exige `taxa_deslocamento_valor_km` (maior que zero), `taxa_deslocamento_km_minimo` (aceita zero) e `taxa_deslocamento_valor_maximo` (maior que zero). Com `false`, os três são limpos e não são aceitos.\n- Retorno (`tipo_cobranca_retorno`): só em bandeira que faz entregas. `T` pelo cálculo da tarifa, `N` não cobrar, `F` valor fixo e `K` por km percorrido (ambos exigem `valor_retorno_adicional` maior que zero), `P` porcentagem (exige `taxa_retorno_porcentagem` maior que zero, até `999.99`). Sem a funcionalidade de taxa de retorno na bandeira, só `T` é aceito.\n- `calcular_individual_por_entrega`: só em bandeira que faz entregas, com o cálculo individual por entrega liberado, e em método diferente de `B`. Com `true`, a parada adicional não é cobrada (`valor_parada_adicional` fica vazio).\n\nCampo enviado que não se aplica ao método ou à operação da bandeira responde **400** com a mensagem `'<campo>': Não se aplica ao método de cálculo da tarifa ou à operação da bandeira.`\n\n### Formatos\n- **Valores**: número JSON ou texto, não negativo, com **ponto** como separador e até **2 casas decimais** (`\"5.90\"` ou `5.9`). `\"5,90\"` e `\"5.999\"` respondem 400. Na resposta, os valores vêm sempre como texto (`\"5.90\"`). `null` limpa o campo (e a obrigatoriedade do método continua valendo).\n- **Booleanos** (`habilitar_*`, `calcular_individual_por_entrega`): `true` ou `false`.\n- **`nome`**: texto de 1 a 20 caracteres. Omitido, vale \"Tarifa padrão\" ou \"Tarifa extra N\", como no painel.\n- **`horarios`**: lista de `{dia_semana, hora_inicio, hora_fim}`, com `dia_semana` de `1` (domingo) a `7` (sábado) e horas em `HH:MM` ou `HH:MM:SS`, `hora_fim` maior que `hora_inicio`. Os limites são **inclusivos**: `08:00`–`12:00` e `12:00`–`18:00` no mesmo dia se sobrepõem (use `11:59`). Sobreposição dentro do próprio payload responde 400; com outra tarifa vigente da categoria, 409.\n- **`valores_tabelados`**: lista de faixas `{distancia_km, valor}` (ambos maiores que zero, sem repetir distância) e no máximo uma faixa `{a_partir_de: true, valor}`, sem `distancia_km`, que vale acima da maior distância. Até **100** faixas de distância. A ordem é definida pelo servidor (distância crescente, `a_partir_de` por último).\n\n### Resposta\nDevolve a tarifa criada no mesmo formato da listagem (só os campos aplicáveis).\n\n### Status de erro\n| Status | Quando |\n|---|---|\n| 400 | Payload inválido (formato, campo obrigatório do método, campo não aplicável) ou configuração que a bandeira não pode usar |\n| 401 | Gestor não autenticado no header `Authorization` (Basic) |\n| 404 | Categoria ou tarifa inexistente, ou de outra bandeira |\n| 409 | Conflito com as tarifas vigentes da categoria (detalhes no exemplo de cada resposta) |\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Id da categoria. Deve pertencer à central autenticada.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "metodo_calculo_tarifa"
+                ],
+                "properties": {
+                  "nome": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 20,
+                    "description": "Nome da tarifa (1 a 20 caracteres). Omitido, vale \"Tarifa padrão\" ou \"Tarifa extra N\"."
+                  },
+                  "metodo_calculo_tarifa": {
+                    "type": "string",
+                    "enum": [
+                      "D",
+                      "P",
+                      "T",
+                      "V",
+                      "B"
+                    ],
+                    "description": "Método de cálculo: `D` duração, `P` hora parada, `T` tabelado, `V` km variável, `B` por bairro. Obrigatório."
+                  },
+                  "valor_bandeirada": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Bandeirada. Métodos `D`, `P` e `V` (obrigatório).",
+                    "example": "5.90"
+                  },
+                  "valor_km": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Valor por km. Métodos `D` e `P` (obrigatório).",
+                    "example": "5.90"
+                  },
+                  "valor_minuto": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Valor por minuto. Métodos `D` e `V` (obrigatório).",
+                    "example": "5.90"
+                  },
+                  "valor_hora_parada": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Valor da hora parada. Método `P` (obrigatório).",
+                    "example": "5.90"
+                  },
+                  "valor_minimo": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Valor mínimo da corrida. Métodos `D`, `P` e `V` (obrigatório).",
+                    "example": "5.90"
+                  },
+                  "valor_parada_adicional": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Valor por parada adicional. Métodos `D`, `P`, `V` e `T`.",
+                    "example": "5.90"
+                  },
+                  "valores_tabelados": {
+                    "type": "array",
+                    "maxItems": 101,
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "valor"
+                      ],
+                      "properties": {
+                        "distancia_km": {
+                          "type": [
+                            "string",
+                            "number",
+                            "null"
+                          ],
+                          "description": "Distância da faixa em km (maior que zero). Não informar na faixa `a_partir_de`.",
+                          "example": "5.00"
+                        },
+                        "a_partir_de": {
+                          "type": "boolean",
+                          "description": "`true` na faixa que vale acima da maior distância (no máximo uma). Obrigatória em `V` e `B`; não aceita em `T`."
+                        },
+                        "valor": {
+                          "type": [
+                            "string",
+                            "number"
+                          ],
+                          "description": "Valor da faixa (maior que zero).",
+                          "example": "15.00"
+                        }
+                      }
+                    },
+                    "description": "Faixas de distância. Métodos `T`, `V` e `B` (obrigatório). Quando enviada, substitui a lista inteira."
+                  },
+                  "habilitar_limite_distancia": {
+                    "type": "boolean",
+                    "description": "Liga o limite de distância. Métodos `D` e `V`. `false` limpa `limite_distancia_maxima`."
+                  },
+                  "limite_distancia_maxima": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Distância máxima em km (maior que zero). Só com `habilitar_limite_distancia: true`; no `V`, maior que a maior faixa.",
+                    "example": "5.90"
+                  },
+                  "habilitar_taxa_deslocamento": {
+                    "type": "boolean",
+                    "description": "Liga o bônus de deslocamento. `false` limpa os três campos do bônus."
+                  },
+                  "taxa_deslocamento_valor_km": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Bônus: valor por km (maior que zero). Só com `habilitar_taxa_deslocamento: true`.",
+                    "example": "5.90"
+                  },
+                  "taxa_deslocamento_km_minimo": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Bônus: km mínimo (aceita zero). Só com `habilitar_taxa_deslocamento: true`.",
+                    "example": "5.90"
+                  },
+                  "taxa_deslocamento_valor_maximo": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Bônus: valor máximo (maior que zero). Só com `habilitar_taxa_deslocamento: true`.",
+                    "example": "5.90"
+                  },
+                  "tipo_cobranca_retorno": {
+                    "type": "string",
+                    "enum": [
+                      "T",
+                      "N",
+                      "F",
+                      "K",
+                      "P"
+                    ],
+                    "description": "Cobrança do retorno, só em bandeira que faz entregas: `T` pelo cálculo da tarifa, `N` não cobrar, `F` valor fixo, `K` por km percorrido, `P` porcentagem. Sem a funcionalidade de taxa de retorno, só `T`."
+                  },
+                  "valor_retorno_adicional": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Valor do retorno (maior que zero). Só com `tipo_cobranca_retorno` `F` ou `K`.",
+                    "example": "5.90"
+                  },
+                  "taxa_retorno_porcentagem": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Percentual do retorno (maior que zero, até `999.99`). Só com `tipo_cobranca_retorno` `P`.",
+                    "example": "5.90"
+                  },
+                  "calcular_individual_por_entrega": {
+                    "type": "boolean",
+                    "description": "Calcula o valor de cada entrega separadamente. Só em bandeira que faz entregas com o cálculo individual liberado, e método diferente de `B`."
+                  },
+                  "horarios": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "dia_semana",
+                        "hora_inicio",
+                        "hora_fim"
+                      ],
+                      "properties": {
+                        "dia_semana": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 7,
+                          "description": "1 (domingo) a 7 (sábado)."
+                        },
+                        "hora_inicio": {
+                          "type": "string",
+                          "description": "`HH:MM` ou `HH:MM:SS`.",
+                          "example": "18:00"
+                        },
+                        "hora_fim": {
+                          "type": "string",
+                          "description": "`HH:MM` ou `HH:MM:SS`, maior que `hora_inicio`. É o último instante em que a tarifa vale (limite inclusivo): `HH:MM` sem segundos cobre o minuto inteiro e é gravado como `HH:MM:59` (ex.: `05:59` → `05:59:59`), o mesmo formato do calendário do painel. Para emendar com a janela seguinte, comece a próxima no minuto seguinte (ex.: `06:00`).",
+                          "example": "23:59"
+                        }
+                      }
+                    },
+                    "description": "Horários de atuação. Omitido na tarifa padrão (primeira da categoria); obrigatório nas extras."
+                  }
+                }
+              },
+              "examples": {
+                "padrao_duracao": {
+                  "summary": "Tarifa padrão por duração (primeira da categoria)",
+                  "value": {
+                    "metodo_calculo_tarifa": "D",
+                    "valor_bandeirada": "5.90",
+                    "valor_km": "1.20",
+                    "valor_minuto": "0.15",
+                    "valor_minimo": "8.00",
+                    "valor_parada_adicional": "2.00",
+                    "tipo_cobranca_retorno": "F",
+                    "valor_retorno_adicional": "4.00"
+                  }
+                },
+                "extra_tabelada": {
+                  "summary": "Tarifa extra tabelada com horários",
+                  "value": {
+                    "nome": "Noite fim de semana",
+                    "metodo_calculo_tarifa": "T",
+                    "valor_parada_adicional": "2.00",
+                    "valores_tabelados": [
+                      {
+                        "distancia_km": 5,
+                        "valor": 15
+                      },
+                      {
+                        "distancia_km": 10,
+                        "valor": 25
+                      }
+                    ],
+                    "horarios": [
+                      {
+                        "dia_semana": 6,
+                        "hora_inicio": "18:00",
+                        "hora_fim": "23:59"
+                      },
+                      {
+                        "dia_semana": 7,
+                        "hora_inicio": "18:00",
+                        "hora_fim": "23:59"
+                      }
+                    ]
+                  }
+                },
+                "extra_km_variavel": {
+                  "summary": "Tarifa extra km variável com limite de distância e bônus de deslocamento",
+                  "value": {
+                    "nome": "Pico da manhã",
+                    "metodo_calculo_tarifa": "V",
+                    "valor_bandeirada": "6.00",
+                    "valor_minuto": "0.20",
+                    "valor_minimo": "9.00",
+                    "valores_tabelados": [
+                      {
+                        "distancia_km": "3.00",
+                        "valor": "2.50"
+                      },
+                      {
+                        "distancia_km": "8.00",
+                        "valor": "2.00"
+                      },
+                      {
+                        "a_partir_de": true,
+                        "valor": "1.80"
+                      }
+                    ],
+                    "habilitar_limite_distancia": true,
+                    "limite_distancia_maxima": "30.00",
+                    "habilitar_taxa_deslocamento": true,
+                    "taxa_deslocamento_valor_km": "1.00",
+                    "taxa_deslocamento_km_minimo": "2.00",
+                    "taxa_deslocamento_valor_maximo": "10.00",
+                    "horarios": [
+                      {
+                        "dia_semana": 2,
+                        "hora_inicio": "06:00",
+                        "hora_fim": "09:00"
+                      },
+                      {
+                        "dia_semana": 3,
+                        "hora_inicio": "06:00",
+                        "hora_fim": "09:00"
+                      },
+                      {
+                        "dia_semana": 4,
+                        "hora_inicio": "06:00",
+                        "hora_fim": "09:00"
+                      },
+                      {
+                        "dia_semana": 5,
+                        "hora_inicio": "06:00",
+                        "hora_fim": "09:00"
+                      },
+                      {
+                        "dia_semana": 6,
+                        "hora_inicio": "06:00",
+                        "hora_fim": "09:00"
+                      }
+                    ]
+                  }
+                },
+                "extra_por_bairro": {
+                  "summary": "Tarifa extra por bairro (bandeira que faz somente entregas)",
+                  "value": {
+                    "nome": "Madrugada",
+                    "metodo_calculo_tarifa": "B",
+                    "valores_tabelados": [
+                      {
+                        "distancia_km": "5.00",
+                        "valor": "12.00"
+                      },
+                      {
+                        "a_partir_de": true,
+                        "valor": "20.00"
+                      }
+                    ],
+                    "horarios": [
+                      {
+                        "dia_semana": 1,
+                        "hora_inicio": "00:00",
+                        "hora_fim": "05:59"
+                      },
+                      {
+                        "dia_semana": 2,
+                        "hora_inicio": "00:00",
+                        "hora_fim": "05:59"
+                      },
+                      {
+                        "dia_semana": 3,
+                        "hora_inicio": "00:00",
+                        "hora_fim": "05:59"
+                      },
+                      {
+                        "dia_semana": 4,
+                        "hora_inicio": "00:00",
+                        "hora_fim": "05:59"
+                      },
+                      {
+                        "dia_semana": 5,
+                        "hora_inicio": "00:00",
+                        "hora_fim": "05:59"
+                      },
+                      {
+                        "dia_semana": 6,
+                        "hora_inicio": "00:00",
+                        "hora_fim": "05:59"
+                      },
+                      {
+                        "dia_semana": 7,
+                        "hora_inicio": "00:00",
+                        "hora_fim": "05:59"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tarifa criada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "description": "Tarifa com só os campos que se aplicam ao método e à operação da bandeira. Valores em texto com 2 casas decimais.",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "data_inicio": {
+                          "type": "string",
+                          "description": "Data e hora a partir da qual a tarifa vale, em ISO 8601 UTC (ex.: 2026-09-30T13:20:00Z). Definida pelo servidor no momento da gravação; não é aceita no corpo do POST/PUT."
+                        },
+                        "nome": {
+                          "type": "string"
+                        },
+                        "metodo_calculo_tarifa": {
+                          "type": "string",
+                          "enum": [
+                            "D",
+                            "P",
+                            "T",
+                            "V",
+                            "B"
+                          ]
+                        },
+                        "valores_tabelados": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "distancia_km": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "a_partir_de": {
+                                "type": "boolean"
+                              },
+                              "valor": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "horarios": {
+                          "type": "array",
+                          "description": "Lista vazia na tarifa padrão.",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "dia_semana": {
+                                "type": "integer"
+                              },
+                              "hora_inicio": {
+                                "type": "string",
+                                "example": "18:00:00"
+                              },
+                              "hora_fim": {
+                                "type": "string",
+                                "example": "23:59:00"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "additionalProperties": true
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": 4823,
+                    "data_inicio": "2026-09-30T13:25:00Z",
+                    "nome": "Noite fim de semana",
+                    "metodo_calculo_tarifa": "T",
+                    "valor_parada_adicional": "2.00",
+                    "valores_tabelados": [
+                      {
+                        "distancia_km": "5.00",
+                        "a_partir_de": false,
+                        "valor": "15.00"
+                      },
+                      {
+                        "distancia_km": "10.00",
+                        "a_partir_de": false,
+                        "valor": "25.00"
+                      }
+                    ],
+                    "habilitar_taxa_deslocamento": false,
+                    "tipo_cobranca_retorno": "T",
+                    "calcular_individual_por_entrega": false,
+                    "horarios": [
+                      {
+                        "dia_semana": 6,
+                        "hora_inicio": "18:00:00",
+                        "hora_fim": "23:59:59"
+                      },
+                      {
+                        "dia_semana": 7,
+                        "hora_inicio": "18:00:00",
+                        "hora_fim": "23:59:59"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "metodo_ausente": {
+                    "summary": "Método de cálculo não informado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'metodo_calculo_tarifa': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "decimal_com_virgula": {
+                    "summary": "Valor com vírgula ou mais de 2 casas",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'valor_bandeirada': Deve ser um número não negativo, com até 2 casas decimais e ponto como separador."
+                        }
+                      ]
+                    }
+                  },
+                  "obrigatorio_do_metodo": {
+                    "summary": "Obrigatório do método ausente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'valor_minuto': Preenchimento obrigatório para o método de cálculo da tarifa."
+                        }
+                      ]
+                    }
+                  },
+                  "campo_nao_aplicavel": {
+                    "summary": "Campo que não se aplica ao método",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'valor_hora_parada': Não se aplica ao método de cálculo da tarifa ou à operação da bandeira."
+                        }
+                      ]
+                    }
+                  },
+                  "a_partir_de_obrigatorio": {
+                    "summary": "Km variável ou por bairro sem a faixa a_partir_de",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'valores_tabelados': Informe o valor da faixa 'a_partir_de' (obrigatória no km variável e na tarifa por bairro)."
+                        }
+                      ]
+                    }
+                  },
+                  "km_variavel_versao_app": {
+                    "summary": "Km variável com app de motorista abaixo da 14.4",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'metodo_calculo_tarifa': O km variável exige o app de motorista na versão 14.4 ou superior."
+                        }
+                      ]
+                    }
+                  },
+                  "hora_parada_pre_fixada": {
+                    "summary": "Hora parada em bandeira pré-fixada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'metodo_calculo_tarifa': Bandeira com cálculo pré-fixado não pode usar o método hora parada."
+                        }
+                      ]
+                    }
+                  },
+                  "horario_invalido": {
+                    "summary": "Horário inválido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'horarios.0.dia_semana': Deve ser um número inteiro de 1 (domingo) a 7 (sábado)."
+                        },
+                        {
+                          "code": 0,
+                          "message": "'horarios.0.hora_fim': Deve ser maior que 'hora_inicio'."
+                        }
+                      ]
+                    }
+                  },
+                  "por_bairro_somente_entregas": {
+                    "summary": "Por bairro em bandeira que não faz somente entregas",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'metodo_calculo_tarifa': A tarifa por bairro é só para bandeira que faz somente entregas."
+                        }
+                      ]
+                    }
+                  },
+                  "retorno_nao_liberado": {
+                    "summary": "Retorno sem a funcionalidade de taxa de retorno",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'tipo_cobranca_retorno': A bandeira não tem a funcionalidade de taxa de retorno: use 'T' (pelo cálculo da tarifa)."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Gestor não autenticado (Authorization Basic ausente ou inválido).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": "B5",
+                      "message": "Usuário e/ou senhas inválidos."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Categoria não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Categoria informada não existe."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com as tarifas vigentes da categoria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "padrao_obrigatoria": {
+                    "summary": "Categoria sem tarifa padrão e POST com horarios",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A categoria ainda não tem tarifa padrão: a primeira tarifa deve ser criada sem 'horarios'."
+                        }
+                      ]
+                    }
+                  },
+                  "padrao_existente": {
+                    "summary": "Categoria com tarifa padrão e POST sem horarios",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A categoria já tem tarifa padrão: novas tarifas devem informar 'horarios'. Para alterar a tarifa padrão, use o PUT."
+                        }
+                      ]
+                    }
+                  },
+                  "limite_excedido": {
+                    "summary": "Categoria com 8 tarifas vigentes",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A categoria já atingiu o limite de tarifas vigentes (a padrão e mais 7 extras)."
+                        }
+                      ]
+                    }
+                  },
+                  "horario_sobreposto": {
+                    "summary": "Horário sobreposto a outra tarifa vigente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Existe sobreposição de horários no mesmo dia da semana."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Falha na operação"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/configuracoes/categorias/{id}/tarifas/{tarifaId}": {
+      "put": {
+        "summary": "Editar tarifa da categoria",
+        "description": "Edita uma tarifa vigente da categoria, **mesclando** o payload sobre a tarifa atual: campo omitido mantém o valor gravado, `null` limpa um campo de valor, e `valores_tabelados` e `horarios`, quando enviados, substituem a lista inteira. Os campos, formatos e restrições de bandeira são os mesmos do POST (veja **Criar tarifa da categoria**).\n\n### Versionamento e troca de id\n- **Valores mudaram** (qualquer campo além de `horarios`): nasce uma **nova versão** da tarifa com **id novo**, e a versão anterior é encerrada. A resposta traz `id` (o novo) e `id_anterior` (o id enviado na URL). Passe a usar o `id` devolvido: um PUT ou DELETE no id antigo responde **409**.\n- **Só `horarios` mudou**: a tarifa mantém o id, e `id_anterior` vem `null`.\n- **Nada mudou**: nada é gravado; responde 200 com a tarifa atual e `id_anterior: null`.\n\n### Regras da edição\n- A tarifa padrão não aceita `horarios`, e a extra não aceita `horarios: null` (400): o PUT não transforma uma tarifa padrão em extra nem o contrário.\n- Trocar `metodo_calculo_tarifa` exige os obrigatórios do método novo. Os campos já gravados que não se aplicam ao método novo são limpos; campos **enviados** que não se aplicam respondem 400.\n- Uma tarifa tabelada (`T`) antiga com faixa `a_partir_de` a mantém na nova versão, mesmo sem ela no payload.\n\n### Resposta\nDevolve a tarifa no mesmo formato da listagem, com `id_anterior` logo após o `id`.\n\n### Status de erro\n| Status | Quando |\n|---|---|\n| 400 | Payload inválido (formato, campo obrigatório do método, campo não aplicável) ou configuração que a bandeira não pode usar |\n| 401 | Gestor não autenticado no header `Authorization` (Basic) |\n| 404 | Categoria ou tarifa inexistente, ou de outra bandeira |\n| 409 | Conflito com as tarifas vigentes da categoria (detalhes no exemplo de cada resposta) |\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Id da categoria. Deve pertencer à central autenticada.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "tarifaId",
+            "in": "path",
+            "required": true,
+            "description": "Id da tarifa. Deve ser uma tarifa vigente da categoria `id`.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nome": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 20,
+                    "description": "Nome da tarifa (1 a 20 caracteres). Omitido, mantém o valor atual."
+                  },
+                  "metodo_calculo_tarifa": {
+                    "type": "string",
+                    "enum": [
+                      "D",
+                      "P",
+                      "T",
+                      "V",
+                      "B"
+                    ],
+                    "description": "Método de cálculo: `D` duração, `P` hora parada, `T` tabelado, `V` km variável, `B` por bairro. Trocar o método exige os obrigatórios do método novo; os campos gravados que não se aplicam a ele são limpos."
+                  },
+                  "valor_bandeirada": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Bandeirada. Métodos `D`, `P` e `V` (obrigatório). Omitido, mantém o valor atual.",
+                    "example": "5.90"
+                  },
+                  "valor_km": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Valor por km. Métodos `D` e `P` (obrigatório). Omitido, mantém o valor atual.",
+                    "example": "5.90"
+                  },
+                  "valor_minuto": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Valor por minuto. Métodos `D` e `V` (obrigatório). Omitido, mantém o valor atual.",
+                    "example": "5.90"
+                  },
+                  "valor_hora_parada": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Valor da hora parada. Método `P` (obrigatório). Omitido, mantém o valor atual.",
+                    "example": "5.90"
+                  },
+                  "valor_minimo": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Valor mínimo da corrida. Métodos `D`, `P` e `V` (obrigatório). Omitido, mantém o valor atual.",
+                    "example": "5.90"
+                  },
+                  "valor_parada_adicional": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Valor por parada adicional. Métodos `D`, `P`, `V` e `T`. Omitido, mantém o valor atual.",
+                    "example": "5.90"
+                  },
+                  "valores_tabelados": {
+                    "type": "array",
+                    "maxItems": 101,
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "valor"
+                      ],
+                      "properties": {
+                        "distancia_km": {
+                          "type": [
+                            "string",
+                            "number",
+                            "null"
+                          ],
+                          "description": "Distância da faixa em km (maior que zero). Não informar na faixa `a_partir_de`.",
+                          "example": "5.00"
+                        },
+                        "a_partir_de": {
+                          "type": "boolean",
+                          "description": "`true` na faixa que vale acima da maior distância (no máximo uma). Obrigatória em `V` e `B`; não aceita em `T`."
+                        },
+                        "valor": {
+                          "type": [
+                            "string",
+                            "number"
+                          ],
+                          "description": "Valor da faixa (maior que zero).",
+                          "example": "15.00"
+                        }
+                      }
+                    },
+                    "description": "Faixas de distância. Métodos `T`, `V` e `B` (obrigatório). Quando enviada, substitui a lista inteira. Omitido, mantém o valor atual."
+                  },
+                  "habilitar_limite_distancia": {
+                    "type": "boolean",
+                    "description": "Liga o limite de distância. Métodos `D` e `V`. `false` limpa `limite_distancia_maxima`. Omitido, mantém o valor atual."
+                  },
+                  "limite_distancia_maxima": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Distância máxima em km (maior que zero). Só com `habilitar_limite_distancia: true`; no `V`, maior que a maior faixa. Omitido, mantém o valor atual.",
+                    "example": "5.90"
+                  },
+                  "habilitar_taxa_deslocamento": {
+                    "type": "boolean",
+                    "description": "Liga o bônus de deslocamento. `false` limpa os três campos do bônus. Omitido, mantém o valor atual."
+                  },
+                  "taxa_deslocamento_valor_km": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Bônus: valor por km (maior que zero). Só com `habilitar_taxa_deslocamento: true`. Omitido, mantém o valor atual.",
+                    "example": "5.90"
+                  },
+                  "taxa_deslocamento_km_minimo": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Bônus: km mínimo (aceita zero). Só com `habilitar_taxa_deslocamento: true`. Omitido, mantém o valor atual.",
+                    "example": "5.90"
+                  },
+                  "taxa_deslocamento_valor_maximo": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Bônus: valor máximo (maior que zero). Só com `habilitar_taxa_deslocamento: true`. Omitido, mantém o valor atual.",
+                    "example": "5.90"
+                  },
+                  "tipo_cobranca_retorno": {
+                    "type": "string",
+                    "enum": [
+                      "T",
+                      "N",
+                      "F",
+                      "K",
+                      "P"
+                    ],
+                    "description": "Cobrança do retorno, só em bandeira que faz entregas: `T` pelo cálculo da tarifa, `N` não cobrar, `F` valor fixo, `K` por km percorrido, `P` porcentagem. Sem a funcionalidade de taxa de retorno, só `T`. Omitido, mantém o valor atual."
+                  },
+                  "valor_retorno_adicional": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Valor do retorno (maior que zero). Só com `tipo_cobranca_retorno` `F` ou `K`. Omitido, mantém o valor atual.",
+                    "example": "5.90"
+                  },
+                  "taxa_retorno_porcentagem": {
+                    "type": [
+                      "string",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Percentual do retorno (maior que zero, até `999.99`). Só com `tipo_cobranca_retorno` `P`. Omitido, mantém o valor atual.",
+                    "example": "5.90"
+                  },
+                  "calcular_individual_por_entrega": {
+                    "type": "boolean",
+                    "description": "Calcula o valor de cada entrega separadamente. Só em bandeira que faz entregas com o cálculo individual liberado, e método diferente de `B`. Omitido, mantém o valor atual."
+                  },
+                  "horarios": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "dia_semana",
+                        "hora_inicio",
+                        "hora_fim"
+                      ],
+                      "properties": {
+                        "dia_semana": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 7,
+                          "description": "1 (domingo) a 7 (sábado)."
+                        },
+                        "hora_inicio": {
+                          "type": "string",
+                          "description": "`HH:MM` ou `HH:MM:SS`.",
+                          "example": "18:00"
+                        },
+                        "hora_fim": {
+                          "type": "string",
+                          "description": "`HH:MM` ou `HH:MM:SS`, maior que `hora_inicio`. É o último instante em que a tarifa vale (limite inclusivo): `HH:MM` sem segundos cobre o minuto inteiro e é gravado como `HH:MM:59` (ex.: `05:59` → `05:59:59`), o mesmo formato do calendário do painel. Para emendar com a janela seguinte, comece a próxima no minuto seguinte (ex.: `06:00`).",
+                          "example": "23:59"
+                        }
+                      }
+                    },
+                    "description": "Horários de atuação da tarifa extra. Quando enviada, substitui a lista inteira. A tarifa padrão não aceita horários, e a extra não aceita `null`. Omitido, mantém o valor atual."
+                  }
+                }
+              },
+              "examples": {
+                "alterar_valores": {
+                  "summary": "Alterar valores (gera nova versão com id novo)",
+                  "value": {
+                    "valor_km": "1.35",
+                    "valor_minimo": "9.00"
+                  }
+                },
+                "alterar_horarios": {
+                  "summary": "Alterar só os horários da tarifa extra (mantém o id)",
+                  "value": {
+                    "horarios": [
+                      {
+                        "dia_semana": 6,
+                        "hora_inicio": "19:00",
+                        "hora_fim": "23:59"
+                      },
+                      {
+                        "dia_semana": 7,
+                        "hora_inicio": "19:00",
+                        "hora_fim": "23:59"
+                      }
+                    ]
+                  }
+                },
+                "trocar_metodo": {
+                  "summary": "Trocar o método para hora parada",
+                  "value": {
+                    "metodo_calculo_tarifa": "P",
+                    "valor_hora_parada": "18.00"
+                  }
+                },
+                "desligar_bonus": {
+                  "summary": "Desligar o bônus de deslocamento",
+                  "value": {
+                    "habilitar_taxa_deslocamento": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tarifa editada (ou sem alteração)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "description": "Tarifa com só os campos que se aplicam ao método e à operação da bandeira. Valores em texto com 2 casas decimais.",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "Id atual da tarifa. Muda quando os valores são alterados: use este id daqui em diante."
+                        },
+                        "id_anterior": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Id da versão encerrada por esta edição; `null` quando não nasceu versão nova."
+                        },
+                        "data_inicio": {
+                          "type": "string",
+                          "description": "Data e hora a partir da qual a tarifa vale, em ISO 8601 UTC (ex.: 2026-09-30T13:20:00Z). Definida pelo servidor no momento da gravação; não é aceita no corpo do POST/PUT."
+                        },
+                        "nome": {
+                          "type": "string"
+                        },
+                        "metodo_calculo_tarifa": {
+                          "type": "string",
+                          "enum": [
+                            "D",
+                            "P",
+                            "T",
+                            "V",
+                            "B"
+                          ]
+                        },
+                        "valores_tabelados": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "distancia_km": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "a_partir_de": {
+                                "type": "boolean"
+                              },
+                              "valor": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "horarios": {
+                          "type": "array",
+                          "description": "Lista vazia na tarifa padrão.",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "dia_semana": {
+                                "type": "integer"
+                              },
+                              "hora_inicio": {
+                                "type": "string",
+                                "example": "18:00:00"
+                              },
+                              "hora_fim": {
+                                "type": "string",
+                                "example": "23:59:00"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "additionalProperties": true
+                    }
+                  }
+                },
+                "examples": {
+                  "nova_versao": {
+                    "summary": "Valores alterados: id novo e id_anterior preenchido",
+                    "value": {
+                      "success": true,
+                      "data": {
+                        "id": 4830,
+                        "id_anterior": 4821,
+                        "data_inicio": "2026-09-30T14:00:00Z",
+                        "nome": "Tarifa padrão",
+                        "metodo_calculo_tarifa": "D",
+                        "valor_bandeirada": "5.90",
+                        "valor_km": "1.35",
+                        "valor_minuto": "0.15",
+                        "valor_minimo": "9.00",
+                        "valor_parada_adicional": "2.00",
+                        "habilitar_limite_distancia": false,
+                        "habilitar_taxa_deslocamento": false,
+                        "tipo_cobranca_retorno": "F",
+                        "valor_retorno_adicional": "4.00",
+                        "calcular_individual_por_entrega": false,
+                        "horarios": []
+                      }
+                    }
+                  },
+                  "mesma_versao": {
+                    "summary": "Só horários alterados: mesmo id e id_anterior null",
+                    "value": {
+                      "success": true,
+                      "data": {
+                        "id": 4822,
+                        "id_anterior": null,
+                        "data_inicio": "2026-09-30T13:20:00Z",
+                        "nome": "Noite fim de semana",
+                        "metodo_calculo_tarifa": "T",
+                        "valor_parada_adicional": "2.00",
+                        "valores_tabelados": [
+                          {
+                            "distancia_km": "5.00",
+                            "a_partir_de": false,
+                            "valor": "15.00"
+                          },
+                          {
+                            "distancia_km": "10.00",
+                            "a_partir_de": false,
+                            "valor": "25.00"
+                          }
+                        ],
+                        "habilitar_taxa_deslocamento": false,
+                        "tipo_cobranca_retorno": "T",
+                        "calcular_individual_por_entrega": false,
+                        "horarios": [
+                          {
+                            "dia_semana": 6,
+                            "hora_inicio": "19:00:00",
+                            "hora_fim": "23:59:59"
+                          },
+                          {
+                            "dia_semana": 7,
+                            "hora_inicio": "19:00:00",
+                            "hora_fim": "23:59:59"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "decimal_com_virgula": {
+                    "summary": "Valor com vírgula",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'valor_km': Deve ser um número não negativo, com até 2 casas decimais e ponto como separador."
+                        }
+                      ]
+                    }
+                  },
+                  "campo_nao_aplicavel": {
+                    "summary": "Campo que não se aplica ao método",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'valores_tabelados': Não se aplica ao método de cálculo da tarifa ou à operação da bandeira."
+                        }
+                      ]
+                    }
+                  },
+                  "horarios_na_padrao": {
+                    "summary": "horarios na tarifa padrão",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'horarios': A tarifa padrão vale o tempo todo e não aceita horários."
+                        }
+                      ]
+                    }
+                  },
+                  "horarios_null_na_extra": {
+                    "summary": "horarios null na tarifa extra",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'horarios': A tarifa extra precisa de horários de atuação."
+                        }
+                      ]
+                    }
+                  },
+                  "obrigatorio_metodo_novo": {
+                    "summary": "Troca de método sem os obrigatórios do novo",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'valor_hora_parada': Preenchimento obrigatório para o método de cálculo da tarifa."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Gestor não autenticado (Authorization Basic ausente ou inválido).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": "B5",
+                      "message": "Usuário e/ou senhas inválidos."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Categoria ou tarifa não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "categoria": {
+                    "summary": "Categoria inexistente ou de outra bandeira",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Categoria informada não existe."
+                        }
+                      ]
+                    }
+                  },
+                  "tarifa": {
+                    "summary": "Tarifa inexistente ou de outra categoria",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Tarifa não encontrada na categoria informada."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com as tarifas vigentes da categoria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "tarifa_encerrada": {
+                    "summary": "Id já encerrado (excluído ou substituído por nova versão)",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A tarifa foi encerrada ou substituída por uma nova versão. Consulte as tarifas vigentes da categoria."
+                        }
+                      ]
+                    }
+                  },
+                  "horario_sobreposto": {
+                    "summary": "Horário sobreposto a outra tarifa vigente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Existe sobreposição de horários no mesmo dia da semana."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Falha na operação"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Excluir tarifa da categoria",
+        "description": "Encerra uma **tarifa extra** da categoria: ela deixa de valer na hora e sai da listagem. A tarifa padrão não pode ser excluída, apenas editada.\n\n| Status | Quando |\n|---|---|\n| 401 | Gestor não autenticado no header `Authorization` (Basic) |\n| 404 | Categoria ou tarifa inexistente, ou de outra bandeira |\n| 409 | Tarifa padrão, ou tarifa já encerrada (excluída ou substituída por nova versão) |\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Id da categoria. Deve pertencer à central autenticada.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "tarifaId",
+            "in": "path",
+            "required": true,
+            "description": "Id da tarifa. Deve ser uma tarifa vigente da categoria `id`.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tarifa encerrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "Id da tarifa encerrada."
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": 4822
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Gestor não autenticado (Authorization Basic ausente ou inválido).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": "B5",
+                      "message": "Usuário e/ou senhas inválidos."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Categoria ou tarifa não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "categoria": {
+                    "summary": "Categoria inexistente ou de outra bandeira",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Categoria informada não existe."
+                        }
+                      ]
+                    }
+                  },
+                  "tarifa": {
+                    "summary": "Tarifa inexistente ou de outra categoria",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Tarifa não encontrada na categoria informada."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Tarifa padrão ou já encerrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "padrao_nao_excluivel": {
+                    "summary": "Tarifa padrão",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A tarifa padrão não pode ser excluída, apenas editada."
+                        }
+                      ]
+                    }
+                  },
+                  "tarifa_encerrada": {
+                    "summary": "Tarifa já encerrada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A tarifa foi encerrada ou substituída por uma nova versão. Consulte as tarifas vigentes da categoria."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Falha na operação"
                     }
                   ]
                 }
