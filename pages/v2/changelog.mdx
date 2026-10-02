@@ -154,6 +154,82 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="6 out 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 id="dados-engajamento-clientes" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Dados de engajamento na consulta de clientes
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      A consulta de clientes passa a informar a avaliação do passageiro, a data de cadastro e as contas de
+      terceiros que ele usa para entrar no app. As datas de última estimativa e de última corrida mudam de
+      nome e passam a sair em ISO-8601 UTC, como as demais datas da resposta.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/clientes" href="/pages/v2/referencia/clientes/endpoint/get" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="avaliacao_media" /> — média das avaliações que os motoristas deram ao cliente. Vem <code>null</code> quando o cliente ainda não foi avaliado ou quando a central não permite que o motorista avalie o passageiro.</li>
+        <li><ParamBadge name="cadastrado_em" /> — data do cadastro do cliente, em ISO-8601 UTC. Vem <code>null</code> quando a data não está disponível, como em cadastros antigos.</li>
+        <li><ParamBadge name="login_terceiros" /> — objeto com <ParamBadge name="google" />, <ParamBadge name="apple" /> e <ParamBadge name="facebook" />, booleanos, que indicam com quais contas de terceiros o cliente entra no app.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="changed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="data_hora_ultima_estimativa" /> passa a se chamar <ParamBadge name="ultima_estimativa_em" />, em ISO-8601 UTC.</li>
+        <li><ParamBadge name="data_hora_ultima_solicitacao" /> passa a se chamar <ParamBadge name="ultima_corrida_em" />, em ISO-8601 UTC. É a data de criação da última corrida finalizada do cliente.</li>
+        <li><ParamBadge name="quantidade_corridas_finalizadas" /> passa a sair como número, e não mais como texto.</li>
+        <li>A referência do endpoint passa a descrever cada campo da resposta.</li>
+        <li>A referência de <ParamBadge name="foto_url" /> passa a dizer que ele só é preenchido na busca por <code>id</code>; na listagem paginada vem <code>null</code>. A entrada de 14 de julho não fazia essa distinção.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/v2/integracao/clientes/{id}" href="/pages/v2/referencia/clientes/endpoint/get-by-id" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Mesmos campos novos, no cliente retornado.</li>
+        </ul>
+      </ChangeSection>
+
+      <ChangeSection type="changed">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Mesmas mudanças de nome e de tipo.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/integracao/cliente" href="/pages/v1/referencia/clientes/endpoint/get" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Mesmos campos novos, em cada cliente da resposta da v1.</li>
+        </ul>
+      </ChangeSection>
+
+      <ChangeSection type="changed">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Mesmas mudanças de nome e de tipo.</li>
+          <li>A referência da v1 passa a descrever cada campo da resposta, inclusive <ParamBadge name="data_nascimento" />, <ParamBadge name="token_atualizado_em" /> e <ParamBadge name="ultimo_acesso_em" />, que a v1 já devolvia.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> quem já lê <ParamBadge name="data_hora_ultima_estimativa" /> ou <ParamBadge name="data_hora_ultima_solicitacao" /> precisa passar para <ParamBadge name="ultima_estimativa_em" /> e <ParamBadge name="ultima_corrida_em" />: os nomes antigos deixam de sair na resposta. <ParamBadge name="quantidade_corridas_finalizadas" /> passa de texto para número, então quem compara ou desserializa o campo como texto precisa ajustar.
+    </div>
+  </Entry>
+
   <Entry date="1 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="destino-dados-fechamento-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Destino e dados de fechamento na consulta da corrida
