@@ -5254,7 +5254,7 @@
     "/dinamicas/area/{id}": {
       "patch": {
         "summary": "Atualizar dinâmica por área",
-        "description": "Atualiza o cadastro da dinâmica associada a uma área específica. Todos os campos são opcionais, mas ao menos um deve ser informado. Como a área é imutável após criada, alterar `nome` cria internamente uma NOVA área — a resposta pode trazer um `id` diferente do informado na URL, que deve ser usado nas próximas requisições sobre essa área.",
+        "description": "Atualiza o cadastro da dinâmica associada a uma área específica. Todos os campos são opcionais, mas ao menos um deve ser informado. Como a área é imutável após criada, alterar `nome` cria internamente uma NOVA área — a resposta pode trazer um `id` diferente do informado na URL, que deve ser usado nas próximas requisições sobre essa área. Em área configurada por faixas de distância, `fator` e `tipo_calculo` não podem ser alterados por aqui; use `PUT /dinamicas/area/{id}/faixas`.",
         "parameters": [
           {
             "name": "id",
@@ -5426,6 +5426,18 @@
                         }
                       ]
                     }
+                  },
+                  "area_escalonada": {
+                    "summary": "Área configurada por faixas de distância",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Esta área está configurada por faixas de distância. Altere os valores em PUT /dinamicas/area/{id}/faixas."
+                        }
+                      ]
+                    }
                   }
                 }
               }
@@ -5444,6 +5456,25 @@
                     {
                       "code": 0,
                       "message": "Dinâmica não encontrada."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Alteração em andamento",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Outra alteração desta dinâmica está em andamento. Tente novamente em instantes."
                     }
                   ]
                 }
@@ -5700,6 +5731,600 @@
                     {
                       "code": 0,
                       "message": "Dinâmica não encontrada."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Alteração em andamento",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Outra alteração desta dinâmica está em andamento. Tente novamente em instantes."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dinamicas/area/{id}/faixas": {
+      "get": {
+        "summary": "Consultar faixas de distância da dinâmica",
+        "description": "Retorna as faixas de distância da dinâmica da área, com o valor base de cada faixa e os valores por categoria. Área sem faixas devolve `faixas` vazia; o valor dela é o de `GET /dinamicas/area`.\n\n`versao` identifica a configuração vigente e muda a cada alteração da dinâmica da área, por qualquer canal. Envie-a no `PUT` para não sobrescrever uma alteração feita depois da sua leitura.\n\n`categorias_elegiveis` lista as categorias que aceitam valor próprio, na ordem em que a central as vê, e vem vazia quando a central não tem valor por categoria liberado.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador da área da dinâmica.",
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": 10,
+                    "versao": 59602987,
+                    "tipo_calculo": "M",
+                    "faixas": [
+                      {
+                        "km_minimo": 0.0,
+                        "km_maximo": 5.0,
+                        "valor": 1.2,
+                        "valores": {
+                          "12": 1.2,
+                          "13": 1.4
+                        }
+                      },
+                      {
+                        "km_minimo": 5.0,
+                        "km_maximo": null,
+                        "valor": 1.6,
+                        "valores": {
+                          "12": 1.6,
+                          "13": 1.9
+                        }
+                      }
+                    ],
+                    "categorias_elegiveis": [
+                      {
+                        "id": 12,
+                        "nome": "Moto"
+                      },
+                      {
+                        "id": 13,
+                        "nome": "Carro"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Dinâmica não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Dinâmica não encontrada."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Falha na operação"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Substituir faixas de distância da dinâmica",
+        "description": "Substitui o conjunto inteiro de faixas de distância da dinâmica da área. Envie as faixas em ordem crescente informando só o limite final de cada uma (`km_maximo`): a primeira começa em 0 km, cada faixa começa no limite da anterior e a última é sempre aberta, então o `km_maximo` dela é ignorado.\n\nRegras, as mesmas da tela da central:\n- de 2 a 10 faixas, ou a partir de 1 quando há valores por categoria;\n- `km_maximo` crescente, com no máximo uma casa decimal;\n- um único `tipo_calculo` para todas as faixas. Com `M`, os valores ficam entre 1.1 e 5; com `F`, entre 0.5 e 99.9, e o valor adicional precisa estar liberado para a central;\n- com `valores` por categoria, todas as categorias de `categorias_elegiveis` precisam estar em todas as faixas, e o `valor` de cada faixa precisa ser igual ao da primeira categoria elegível, que é a base da matriz;\n- área em automação que altera o fator não aceita faixas.\n\nLista `faixas` vazia volta a área para valor único, mantendo o valor da primeira faixa. Para mudar também o `tipo_calculo`, use depois `PATCH /dinamicas/area/{id}`.\n\nEnviar o mesmo conjunto que já está configurado não cria versão nova e responde \"Nenhuma alteração detectada.\". O `id` da área não muda com este endpoint. Já o `PATCH` de nome ou de vértices cria uma área nova: depois deles, use o `id` devolvido.\n\nCom `versao`, a resposta é 409 se a dinâmica tiver sido alterada depois da sua leitura. Uma alteração em andamento na mesma área também responde 409; reenvie em instantes.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador da área da dinâmica.",
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "tipo_calculo",
+                  "faixas"
+                ],
+                "properties": {
+                  "tipo_calculo": {
+                    "type": "string",
+                    "enum": [
+                      "F",
+                      "M"
+                    ],
+                    "description": "Forma de cálculo de todas as faixas: `M` — Fator multiplicador; `F` — Valor adicional em R$.",
+                    "example": "M"
+                  },
+                  "versao": {
+                    "type": "integer",
+                    "description": "Versão lida no `GET`. Opcional; se não for mais a vigente, a resposta é 409.",
+                    "example": 59602987
+                  },
+                  "faixas": {
+                    "type": "array",
+                    "maxItems": 10,
+                    "description": "Faixas em ordem crescente de distância. Lista vazia volta a área para valor único.",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "valor"
+                      ],
+                      "properties": {
+                        "km_maximo": {
+                          "type": [
+                            "number",
+                            "null"
+                          ],
+                          "description": "Limite final da faixa em km, exclusivo, com no máximo uma casa decimal. Ignorado na última faixa.",
+                          "example": 5
+                        },
+                        "valor": {
+                          "type": "number",
+                          "description": "Valor base da faixa. Com `valores`, precisa ser igual ao da primeira categoria elegível.",
+                          "example": 1.2
+                        },
+                        "valores": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "number"
+                          },
+                          "description": "Valor por categoria, com o id da categoria como chave. Quando informado, inclui todas as categorias de `categorias_elegiveis`.",
+                          "example": {
+                            "12": 1.2,
+                            "13": 1.4
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "tipo_calculo": "M",
+                "versao": 59602987,
+                "faixas": [
+                  {
+                    "km_maximo": 5,
+                    "valor": 1.2,
+                    "valores": {
+                      "12": 1.2,
+                      "13": 1.4
+                    }
+                  },
+                  {
+                    "km_maximo": null,
+                    "valor": 1.6,
+                    "valores": {
+                      "12": 1.6,
+                      "13": 1.9
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "faixas_atualizadas": {
+                    "summary": "Faixas atualizadas",
+                    "value": {
+                      "success": true,
+                      "data": {
+                        "id": 10,
+                        "versao": 59603012,
+                        "tipo_calculo": "M",
+                        "faixas": [
+                          {
+                            "km_minimo": 0.0,
+                            "km_maximo": 5.0,
+                            "valor": 1.2,
+                            "valores": {
+                              "12": 1.2,
+                              "13": 1.4
+                            }
+                          },
+                          {
+                            "km_minimo": 5.0,
+                            "km_maximo": null,
+                            "valor": 1.6,
+                            "valores": {
+                              "12": 1.6,
+                              "13": 1.9
+                            }
+                          }
+                        ],
+                        "categorias_elegiveis": [
+                          {
+                            "id": 12,
+                            "nome": "Moto"
+                          },
+                          {
+                            "id": 13,
+                            "nome": "Carro"
+                          }
+                        ]
+                      },
+                      "message": "Faixas da dinâmica atualizadas com sucesso."
+                    }
+                  },
+                  "sem_alteracao": {
+                    "summary": "Mesmo conjunto já configurado",
+                    "value": {
+                      "success": true,
+                      "data": {
+                        "id": 10,
+                        "versao": 59602987,
+                        "tipo_calculo": "M",
+                        "faixas": [
+                          {
+                            "km_minimo": 0.0,
+                            "km_maximo": 5.0,
+                            "valor": 1.2,
+                            "valores": {
+                              "12": 1.2,
+                              "13": 1.4
+                            }
+                          },
+                          {
+                            "km_minimo": 5.0,
+                            "km_maximo": null,
+                            "valor": 1.6,
+                            "valores": {
+                              "12": 1.6,
+                              "13": 1.9
+                            }
+                          }
+                        ],
+                        "categorias_elegiveis": [
+                          {
+                            "id": 12,
+                            "nome": "Moto"
+                          },
+                          {
+                            "id": 13,
+                            "nome": "Carro"
+                          }
+                        ]
+                      },
+                      "message": "Nenhuma alteração detectada."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "km_casas_decimais": {
+                    "summary": "km_maximo com mais de uma casa decimal",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'faixas.0.km_maximo': Deve ter no máximo uma casa decimal."
+                        }
+                      ]
+                    }
+                  },
+                  "valor_obrigatorio": {
+                    "summary": "Faixa sem valor",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'faixas.0.valor': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "tipo_calculo_invalido": {
+                    "summary": "tipo_calculo fora do enum",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'tipo_calculo': Deve estar dentre os valores: F, M"
+                        }
+                      ]
+                    }
+                  },
+                  "quantidade_maxima": {
+                    "summary": "Mais de 10 faixas",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'faixas': Deve ter no máximo 10 faixas."
+                        }
+                      ]
+                    }
+                  },
+                  "valores_invalidos": {
+                    "summary": "valores com formato inválido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'faixas.0.valores': Deve ser um objeto com o id da categoria como chave e um valor numérico."
+                        }
+                      ]
+                    }
+                  },
+                  "quantidade": {
+                    "summary": "Quantidade de faixas fora do permitido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Configure entre 2 e 10 faixas de distância."
+                        }
+                      ]
+                    }
+                  },
+                  "teto_crescente": {
+                    "summary": "Limites fora de ordem",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O limite de cada faixa deve ser maior que o da faixa anterior."
+                        }
+                      ]
+                    }
+                  },
+                  "fator_fora_do_limite": {
+                    "summary": "Multiplicador fora do limite",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O fator enviado é inválido!"
+                        }
+                      ]
+                    }
+                  },
+                  "valor_adicional_fora_do_limite": {
+                    "summary": "Valor adicional fora do limite",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O valor adicional enviado é inválido!"
+                        }
+                      ]
+                    }
+                  },
+                  "categoria_incompleta": {
+                    "summary": "Faltam categorias elegíveis",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Preencha o valor de todas as categorias em todas as faixas de distância."
+                        }
+                      ]
+                    }
+                  },
+                  "base_diferente": {
+                    "summary": "valor diferente da primeira categoria",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O valor de cada faixa deve ser igual ao da primeira categoria (Moto), que é a base da matriz."
+                        }
+                      ]
+                    }
+                  },
+                  "categoria_invalida": {
+                    "summary": "Categoria não elegível",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Categoria indisponível para a dinâmica desta central."
+                        }
+                      ]
+                    }
+                  },
+                  "faixa_indisponivel": {
+                    "summary": "Faixas não liberadas para a central",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Faixas de distância não estão liberadas para esta central."
+                        }
+                      ]
+                    }
+                  },
+                  "area_em_automacao": {
+                    "summary": "Área em automação de fator",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Esta área está em uma automação que altera o fator. Remova a área da automação para configurar faixas de distância."
+                        }
+                      ]
+                    }
+                  },
+                  "tipo_calculo_sem_faixas": {
+                    "summary": "Troca de tipo_calculo com lista vazia",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Para alterar 'tipo_calculo' sem faixas, use PATCH /dinamicas/area/{id}."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Dinâmica não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Dinâmica não encontrada."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "versao_divergente": {
+                    "summary": "versao desatualizada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A dinâmica foi alterada depois da versão informada. Consulte as faixas novamente e reenvie."
+                        }
+                      ]
+                    }
+                  },
+                  "alteracao_em_andamento": {
+                    "summary": "Alteração em andamento na mesma área",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Outra alteração desta dinâmica está em andamento. Tente novamente em instantes."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Falha na operação"
                     }
                   ]
                 }
