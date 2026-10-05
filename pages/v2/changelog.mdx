@@ -154,6 +154,109 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="8 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="cupons-em-lote" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Criação de cupons em lote
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novo endpoint que cria vários cupons de desconto numa única requisição, tudo ou nada: ou todos os
+      cupons são criados, ou nenhum. Cada item segue o formato e as regras do <code>POST /cupons</code>,
+      com o próprio <code>gerador_cupom_id</code> e, no lugar da lista <code>cliente_ids</code>, um único
+      <code>cliente_id</code> opcional.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/cupons/lote" href="/pages/v2/referencia/cupons/endpoint/post-lote" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="cupons" /> — array de 1 a 100 cupons por requisição, cada um no formato do body do <code>POST /cupons</code>.</li>
+        <li><ParamBadge name="cliente_id" /> — opcional, por cupom: o único cliente que poderá usar o cupom. A lista <code>cliente_ids</code> do <code>POST /cupons</code> não é aceita no lote.</li>
+        <li>Resposta <code>201</code> com <ParamBadge name="id" /> e <ParamBadge name="codigo" /> de cada cupom, na ordem enviada.</li>
+        <li>Todos os erros de todos os itens voltam juntos, com <ParamBadge name="field" /> no formato <code>cupons.N.campo</code> e os mesmos <code>code</code> do <code>POST /cupons</code>. Nenhum cupom é criado quando há erro.</li>
+        <li>A cota de cada gerador é conferida somando os cupons já criados e os do lote; código repetido no lote ou já em uso é recusado.</li>
+        <li>Limite próprio de rate limit, 20 * faixa requisições por minuto, sem o limite por gerador. Detalhes na <a href="/pages/v2/referencia/introducao#rate-limit">introdução</a>.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
+  <Entry date="6 out 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 id="dados-engajamento-clientes" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Dados de engajamento na consulta de clientes
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      A consulta de clientes passa a informar a avaliação do passageiro, a data de cadastro, as
+      contas de terceiros que ele usa para entrar no app e a situação dele com o cartão de crédito
+      no app. As datas de última estimativa e de última corrida mudam de nome e passam a sair em
+      ISO-8601 UTC, como as demais datas da resposta.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/clientes" href="/pages/v2/referencia/clientes/endpoint/get" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="avaliacao_media" /> — média das avaliações que os motoristas deram ao cliente. Vem <code>null</code> quando o cliente ainda não foi avaliado ou quando a central não permite que o motorista avalie o passageiro.</li>
+        <li><ParamBadge name="cadastrado_em" /> — data do cadastro do cliente, em ISO-8601 UTC. Vem <code>null</code> quando a data não está disponível, como em cadastros antigos.</li>
+        <li><ParamBadge name="login_terceiros" /> — objeto com <ParamBadge name="google" />, <ParamBadge name="apple" /> e <ParamBadge name="facebook" />, booleanos, que indicam com quais contas de terceiros o cliente entra no app.</li>
+        <li><ParamBadge name="cartao_app" /> — objeto com <ParamBadge name="bloqueado" />, que indica se o cliente está impedido de cadastrar e de pagar com cartão no app, <ParamBadge name="motivo_bloqueio" />, com <ParamBadge name="codigo" /> e <ParamBadge name="descricao" /> do bloqueio aberto mais recente, e <ParamBadge name="cartoes" />, com <ParamBadge name="operadora" />, <ParamBadge name="ultimos_digitos" /> e <ParamBadge name="status" /> de cada cartão. <ParamBadge name="cartoes" /> traz os mesmos cartões que o cliente vê no app: os ativos e os pendentes, que aguardam a validação da central e ainda não podem ser usados. Vem <code>null</code> quando a central não aceita cartão no app, e não vem na resposta para credencial de empresa.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="changed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="data_hora_ultima_estimativa" /> passa a se chamar <ParamBadge name="ultima_estimativa_em" />, em ISO-8601 UTC.</li>
+        <li><ParamBadge name="data_hora_ultima_solicitacao" /> passa a se chamar <ParamBadge name="ultima_corrida_em" />, em ISO-8601 UTC. É a data de criação da última corrida finalizada do cliente.</li>
+        <li><ParamBadge name="quantidade_corridas_finalizadas" /> passa a sair como número, e não mais como texto.</li>
+        <li>A referência do endpoint passa a descrever cada campo da resposta.</li>
+        <li>A referência de <ParamBadge name="foto_url" /> passa a dizer que ele só é preenchido na busca por <code>id</code>; na listagem paginada vem <code>null</code>. A entrada de 14 de julho não fazia essa distinção.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/v2/integracao/clientes/{id}" href="/pages/v2/referencia/clientes/endpoint/get-by-id" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Mesmos campos novos, no cliente retornado.</li>
+        </ul>
+      </ChangeSection>
+
+      <ChangeSection type="changed">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Mesmas mudanças de nome e de tipo.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/integracao/cliente" href="/pages/v1/referencia/clientes/endpoint/get" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Mesmos campos novos, em cada cliente da resposta da v1.</li>
+        </ul>
+      </ChangeSection>
+
+      <ChangeSection type="changed">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Mesmas mudanças de nome e de tipo.</li>
+          <li>A referência da v1 passa a descrever cada campo da resposta, inclusive <ParamBadge name="data_nascimento" />, <ParamBadge name="token_atualizado_em" /> e <ParamBadge name="ultimo_acesso_em" />, que a v1 já devolvia.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> quem já lê <ParamBadge name="data_hora_ultima_estimativa" /> ou <ParamBadge name="data_hora_ultima_solicitacao" /> precisa passar para <ParamBadge name="ultima_estimativa_em" /> e <ParamBadge name="ultima_corrida_em" />: os nomes antigos deixam de sair na resposta. <ParamBadge name="quantidade_corridas_finalizadas" /> passa de texto para número, então quem compara ou desserializa o campo como texto precisa ajustar.
+    </div>
+  </Entry>
+
   <Entry date="1 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="destino-dados-fechamento-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Destino e dados de fechamento na consulta da corrida
@@ -249,7 +352,7 @@ export const EndpointBadge = ({ method, path, href }) => (
     </ChangeSection>
   </Entry>
 
-  <Entry date="1 out 2026" label="Em breve" labelColor="#ea580c">
+  <Entry date="1 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="mensagens-corrida-condutor" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Conversa da corrida pelo lado do condutor
     </h2>
@@ -277,7 +380,7 @@ export const EndpointBadge = ({ method, path, href }) => (
     </ChangeSection>
   </Entry>
 
-  <Entry date="1 out 2026" label="Em breve" labelColor="#ea580c">
+  <Entry date="1 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="chat-ativo-criar-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Parâmetro que habilita o chat da corrida
     </h2>
@@ -303,7 +406,7 @@ export const EndpointBadge = ({ method, path, href }) => (
     </ChangeSection>
   </Entry>
 
-  <Entry date="1 out 2026" label="Em breve" labelColor="#ea580c">
+  <Entry date="1 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="mensagens-conversa-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Conversa da corrida entre passageiro e condutor
     </h2>
@@ -346,7 +449,7 @@ export const EndpointBadge = ({ method, path, href }) => (
     </div>
   </Entry>
 
-  <Entry date="01 out 2026" label="Em breve" labelColor="#ea580c">
+  <Entry date="1 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="webhook-mensagens-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Webhook de mensagens da corrida
     </h2>
