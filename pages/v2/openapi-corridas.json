@@ -143,7 +143,7 @@
             "properties": {
               "cliente_ids": {
                 "type": "array",
-                "description": "Opcional. Lista de ids dos clientes que poderão usar o cupom criado, até 1000. Id que não é numérico ou que não é de um cliente da bandeira autenticada não é vinculado e volta em `data.falhas`, sem impedir a criação do cupom.",
+                "description": "Opcional. Lista de ids dos clientes que poderão usar o cupom criado, até 1000, como inteiros positivos. Valor que não é inteiro positivo, ou id que não é de um cliente da bandeira autenticada, não é vinculado e volta em `data.falhas`, sem impedir a criação do cupom.",
                 "items": {
                   "type": "integer"
                 },
@@ -5041,7 +5041,7 @@
       },
       "post": {
         "summary": "Criar cupom",
-        "description": "Cria um novo cupom de desconto vinculado a um gerador de cupom.\n\nCom `cliente_ids`, o cupom fica restrito aos clientes informados. Cliente inválido não impede a criação: o cupom é criado para os clientes que existem na bandeira autenticada, e a resposta é `207` com os demais em `data.falhas`, cada um com o `cliente_id` como veio na requisição e os `errors`. O campo do erro aponta a posição do id em `cliente_ids` (`cliente_ids.N`, a partir de zero). Id repetido conta uma vez. Quando nenhum cliente de `cliente_ids` é válido, o cupom não é criado e a resposta é `400`, com um erro por cliente.",
+        "description": "Cria um novo cupom de desconto vinculado a um gerador de cupom.\n\nCom `cliente_ids`, o cupom fica restrito aos clientes informados. Cliente inválido não impede a criação: o cupom é criado para os ids inteiros positivos de clientes que existem na bandeira autenticada, e a resposta é `207` com os demais em `data.falhas`, cada um com o `cliente_id` como veio na requisição e os `errors`. O campo do erro aponta a posição do id em `cliente_ids` (`cliente_ids.N`, a partir de zero). Id repetido conta uma vez. Quando nenhum cliente de `cliente_ids` é válido, o cupom não é criado e a resposta é `400`, com um erro por cliente.",
         "requestBody": {
           "required": true,
           "content": {
@@ -5109,18 +5109,9 @@
                 "example": {
                   "success": true,
                   "data": {
-                    "id": 42,
-                    "codigo": "DESCONTO10",
-                    "gerador_cupom_id": 1,
-                    "data_hora_inicio": "2026-05-01T00:00:00Z",
-                    "data_hora_final": "2026-06-01T23:59:59Z",
-                    "limite_de_uso": "sem_limite",
-                    "desconto": "10.00",
-                    "tipos_pagamentos": [
-                      "D"
-                    ]
+                    "codigo": "DESCONTO10"
                   },
-                  "message": "Cupom criado com sucesso."
+                  "message": "Cupom criado com sucesso"
                 }
               }
             }
@@ -5148,11 +5139,11 @@
                         ]
                       },
                       {
-                        "cliente_id": "abc",
+                        "cliente_id": "1.5",
                         "errors": [
                           {
                             "code": 0,
-                            "message": "Deve ser numérico.",
+                            "message": "Campo cliente_ids deve ser um número inteiro positivo.",
                             "field": "cliente_ids.2"
                           }
                         ]
@@ -5248,7 +5239,7 @@
                         },
                         {
                           "code": 0,
-                          "message": "Deve ser numérico.",
+                          "message": "Campo cliente_ids deve ser um número inteiro positivo.",
                           "field": "cliente_ids.1"
                         }
                       ]
@@ -5264,7 +5255,7 @@
     "/cupons/lote": {
       "post": {
         "summary": "Criar cupons em lote",
-        "description": "Cria vários cupons de desconto numa única requisição. Cupom com erro não impede os demais: os válidos são criados e os recusados voltam na resposta, cada um com o motivo.\n\nCada item de `cupons` tem o formato e as regras do body do [`POST /cupons`](/pages/v2/referencia/cupons/endpoint/post), inclusive `area_id`, `local_aplicacao`, `valor_maximo` e `valor_maximo_corrida`, e traz o próprio `gerador_cupom_id`, com uma diferença: a restrição de cliente é um único `cliente_id` opcional por cupom, e a lista `cliente_ids` do `POST /cupons` é recusada no lote. O lote aceita de 1 a 100 cupons.\n\nA resposta é `201` quando todos os cupons são criados e `207` quando algum é recusado, inclusive quando todos são. O body é o mesmo nos dois: `data.cupons` traz `indice`, `id` e `codigo` de cada cupom criado, e `data.falhas` traz `indice`, `cliente_id` (como veio no item, ou `null`) e `errors` de cada cupom recusado. `indice` é a posição do item em `cupons`, a partir de zero. Cada erro tem o campo no formato `cupons.N.campo` e o mesmo `code` que o `POST /cupons` devolve para o mesmo erro. O `400` fica para o erro no próprio lote (`cupons` ausente, fora de uma lista, vazio ou acima de 100 itens), e nesse caso nenhum cupom é criado.\n\nAlém das regras de cada item, o lote confere que a cota de cada gerador comporta os cupons já criados mais os do lote; quando não comporta, os itens que excedem a cota, na ordem do lote, são recusados, e item recusado por outra regra não ocupa a cota. `codigo` repetido no lote recusa todos os itens que o repetem, e `codigo` já em uso na central recusa o item. Item com `codigo_pattern` tem o código sorteado na criação e ressorteado até 5 vezes em caso de colisão; persistindo a colisão, o item é recusado.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira com a permissão de cupons, como o `POST /cupons`. Gestor com empresa vinculada só alcança os geradores da própria empresa.",
+        "description": "Cria vários cupons de desconto numa única requisição. Cupom com erro não impede os demais: os válidos são criados e os recusados voltam na resposta, cada um com o motivo.\n\nCada item de `cupons` tem o formato e as regras do body do [`POST /cupons`](/pages/v2/referencia/cupons/endpoint/post), inclusive `area_id`, `local_aplicacao`, `valor_maximo` e `valor_maximo_corrida`, e traz o próprio `gerador_cupom_id`, com uma diferença: a restrição de cliente é um único `cliente_id` opcional por cupom, e a lista `cliente_ids` do `POST /cupons` é recusada no lote. O lote aceita de 1 a 100 cupons.\n\nA resposta é `201` quando todos os cupons são criados e `207` quando algum é recusado, inclusive quando todos são. O body é o mesmo nos dois: `data.cupons` traz `indice`, `id` e `codigo` de cada cupom criado, e `data.falhas` traz `indice`, `cliente_id` (como veio no item, ou `null`) e `errors` de cada cupom recusado. `indice` é a posição do item em `cupons`, a partir de zero. Cada erro tem o campo no formato `cupons.N.campo` e o mesmo `code` que o `POST /cupons` devolve para o mesmo erro. O `400` fica para o erro no próprio lote (`cupons` ausente, fora de uma lista, vazio ou acima de 100 itens, gestor sem permissão ou JSON malformado), e nesse caso nenhum cupom é criado.\n\nAlém das regras de cada item, o lote confere que a cota de cada gerador comporta os cupons já criados mais os do lote; quando não comporta, os itens que excedem a cota, na ordem do lote, são recusados, e item recusado por outra regra não ocupa a cota. `codigo` repetido no lote recusa todos os itens que o repetem, e `codigo` já em uso na central recusa o item. Item com `codigo_pattern` tem o código sorteado na criação e ressorteado até 5 vezes em caso de colisão; persistindo a colisão, o item é recusado.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira com a permissão de cupons, como o `POST /cupons`. Gestor com empresa vinculada só alcança os geradores da própria empresa.",
         "requestBody": {
           "required": true,
           "content": {
