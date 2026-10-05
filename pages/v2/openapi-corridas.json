@@ -23,19 +23,158 @@
     }
   ],
   "components": {
-    "securitySchemes": {
-      "basicAuth": {
-        "type": "http",
-        "scheme": "basic"
-      },
-      "ApiKeyAuth": {
-        "type": "apiKey",
-        "in": "header",
-        "name": "api-key",
-        "description": "Obrigatório. Sua chave API."
-      }
-    },
     "schemas": {
+      "CupomCriacaoBase": {
+        "type": "object",
+        "required": [
+          "gerador_cupom_id",
+          "data_hora_inicio",
+          "data_hora_final",
+          "limite_de_uso",
+          "tipo_desconto",
+          "desconto",
+          "tipos_pagamentos"
+        ],
+        "properties": {
+          "gerador_cupom_id": {
+            "type": "integer",
+            "description": "ID do gerador de cupom ao qual o cupom será vinculado. Obtenha os geradores disponíveis em `GET /cupons/geradores`."
+          },
+          "codigo": {
+            "type": "string",
+            "description": "Código do cupom que o passageiro utilizará. Obrigatório se `codigo_pattern` não for informado.",
+            "example": "DESCONTO10"
+          },
+          "codigo_pattern": {
+            "type": "string",
+            "description": "Padrão para geração automática de códigos de cupom. Obrigatório se `codigo` não for informado.",
+            "example": "DESCONTO10"
+          },
+          "data_hora_inicio": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data e hora de início da validade do cupom em formato ISO 8601",
+            "example": "2026-05-01T00:00:00Z"
+          },
+          "data_hora_final": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Data e hora de término da validade do cupom em formato ISO 8601",
+            "example": "2026-06-01T23:59:59Z"
+          },
+          "limite_de_uso": {
+            "type": "string",
+            "description": "Define a regra de limite de utilização do cupom.",
+            "enum": [
+              "sem_limite",
+              "apenas_uma_vez",
+              "apenas_primeira_corrida",
+              "ate_n_vezes_por_passageiro"
+            ]
+          },
+          "limite_de_uso_individual": {
+            "type": "integer",
+            "description": "Número máximo de vezes que cada passageiro pode usar o cupom. **Obrigatório** quando `limite_de_uso` é `ate_n_vezes_por_passageiro`.",
+            "example": 3
+          },
+          "tipo_desconto": {
+            "type": "string",
+            "description": "Tipo de desconto como percentual (percentual) ou valor fixo (valor_fixo).",
+            "enum": [
+              "percentual",
+              "valor_fixo"
+            ],
+            "example": "percentual"
+          },
+          "desconto": {
+            "type": "string",
+            "description": "Valor do desconto. Para `valor_fixo`, use o valor monetário (ex: `\"10.00\"`). Para `percentual`, use o percentual (ex: `\"15\"`).",
+            "example": "10.00"
+          },
+          "tipos_pagamentos": {
+            "type": "array",
+            "description": "Lista de formas de pagamento aceitas pelo cupom. Tipos de pagamento em que o cupom irá se aplicar separados por vírgula, valores aceitos: Dinheiro (D), Débito (máquina) (B), Crédito máquina (C), eTicket (T), Voucher (V), Pix (X), Picpay (P), Whatsapp (H), Cartão via app (A), Faturado (F), Pix via app (I) e Carteira de Créditos (R).",
+            "items": {
+              "type": "string",
+              "enum": [
+                "D",
+                "B",
+                "C",
+                "T",
+                "V",
+                "X",
+                "P",
+                "H",
+                "A",
+                "F",
+                "I",
+                "R"
+              ]
+            },
+            "example": [
+              "D",
+              "B"
+            ]
+          },
+          "area_id": {
+            "type": "integer",
+            "description": "Opcional. Indica a área a qual o cupom será restrito.",
+            "example": 239
+          },
+          "local_aplicacao": {
+            "type": "string",
+            "description": "Opcional. Indica se a restrição de area_id se aplica ao local de partida (P) ou de destino (D) da corrida. Só é considerado quando area_id é enviado; padrão P.",
+            "enum": [
+              "P",
+              "D"
+            ],
+            "example": "D"
+          }
+        }
+      },
+      "CupomCriacao": {
+        "description": "Body do POST /cupons: os campos comuns de criação mais a lista cliente_ids.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CupomCriacaoBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "cliente_ids": {
+                "type": "array",
+                "description": "Opcional. Lista de ids dos clientes que poderão usar o cupom criado.",
+                "items": {
+                  "type": "integer"
+                },
+                "example": [
+                  83983,
+                  83992,
+                  83959
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "CupomLoteItem": {
+        "description": "Item do POST /cupons/lote: os campos comuns de criação mais um único cliente_id. A lista cliente_ids do POST /cupons não é aceita no lote.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CupomCriacaoBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "cliente_id": {
+                "type": "integer",
+                "description": "Opcional. Id do único cliente que poderá usar o cupom; sem ele o cupom fica aberto a todos os passageiros da central. O cliente precisa pertencer à bandeira autenticada.",
+                "example": 83983
+              }
+            }
+          }
+        ]
+      },
       "Cliente": {
         "type": "object",
         "required": [
@@ -223,6 +362,18 @@
             }
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      },
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "api-key",
+        "description": "Obrigatório. Sua chave API."
       }
     }
   },
@@ -4896,125 +5047,8 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "required": [
-                  "gerador_cupom_id",
-                  "data_hora_inicio",
-                  "data_hora_final",
-                  "limite_de_uso",
-                  "tipo_desconto",
-                  "desconto",
-                  "tipos_pagamentos"
-                ],
-                "properties": {
-                  "gerador_cupom_id": {
-                    "type": "integer",
-                    "description": "ID do gerador de cupom ao qual o cupom será vinculado. Obtenha os geradores disponíveis em `GET /cupons/geradores`."
-                  },
-                  "codigo": {
-                    "type": "string",
-                    "description": "Código do cupom que o passageiro utilizará. Obrigatório se `codigo_pattern` não for informado.",
-                    "example": "DESCONTO10"
-                  },
-                  "codigo_pattern": {
-                    "type": "string",
-                    "description": "Padrão para geração automática de códigos de cupom. Obrigatório se `codigo` não for informado.",
-                    "example": "DESCONTO10"
-                  },
-                  "data_hora_inicio": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "Data e hora de início da validade do cupom em formato ISO 8601",
-                    "example": "2026-05-01T00:00:00Z"
-                  },
-                  "data_hora_final": {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "Data e hora de término da validade do cupom em formato ISO 8601",
-                    "example": "2026-06-01T23:59:59Z"
-                  },
-                  "limite_de_uso": {
-                    "type": "string",
-                    "description": "Define a regra de limite de utilização do cupom.",
-                    "enum": [
-                      "sem_limite",
-                      "apenas_uma_vez",
-                      "apenas_primeira_corrida",
-                      "ate_n_vezes_por_passageiro"
-                    ]
-                  },
-                  "limite_de_uso_individual": {
-                    "type": "integer",
-                    "description": "Número máximo de vezes que cada passageiro pode usar o cupom. **Obrigatório** quando `limite_de_uso` é `ate_n_vezes_por_passageiro`.",
-                    "example": 3
-                  },
-                  "tipo_desconto": {
-                    "type": "string",
-                    "description": "Tipo de desconto como percentual (percentual) ou valor fixo (valor_fixo).",
-                    "enum": [
-                      "percentual",
-                      "valor_fixo"
-                    ],
-                    "example": "percentual"
-                  },
-                  "desconto": {
-                    "type": "string",
-                    "description": "Valor do desconto. Para `valor_fixo`, use o valor monetário (ex: `\"10.00\"`). Para `porcentagem`, use o percentual (ex: `\"15\"`).",
-                    "example": "10.00"
-                  },
-                  "tipos_pagamentos": {
-                    "type": "array",
-                    "description": "Lista de formas de pagamento aceitas pelo cupom. Tipos de pagamento em que o cupom irá se aplicar separados por vírgula, valores aceitos: Dinheiro (D), Débito (máquina) (B), Crédito máquina (C), eTicket (T), Voucher (V), Pix (X), Picpay (P), Whatsapp (H), Cartão via app (A), Faturado (F), Pix via app (I) e Carteira de Créditos (R).",
-                    "items": {
-                      "type": "string",
-                      "enum": [
-                        "D",
-                        "B",
-                        "C",
-                        "T",
-                        "V",
-                        "X",
-                        "P",
-                        "H",
-                        "A",
-                        "F",
-                        "I",
-                        "R"
-                      ]
-                    },
-                    "example": [
-                      "D",
-                      "B"
-                    ]
-                  },
-                  "cliente_ids": {
-                    "type": "array",
-                    "description": "Opcional. Lista de ids dos clientes que poderão usar o cupom criado.",
-                    "items": {
-                      "type": "integer"
-                    },
-                    "example": [
-                      83983,
-                      83992,
-                      83959
-                    ]
-                  },
-                  "area_id": {
-                    "type": "integer",
-                    "description": "Opcional. Indica a área a qual o cupom será restrito.",
-                    "example": 239
-                  },
-                  "local_aplicacao": {
-                    "type": "string",
-                    "description": "Opcional. Indica se a restrição de area_id se aplica ao local de partida (P) ou de destino (D) da corrida. Só é considerado quando area_id é enviado; padrão P.",
-                    "enum": [
-                      "P",
-                      "D"
-                    ],
-                    "example": "D"
-                  }
-                }
-              },
+              "$ref": "#/components/schemas/CupomCriacao"
+            },
               "examples": {
                 "cupom_valor_fixo": {
                   "summary": "Cupom com tipo de desconto inteiro e uso ilimitado",
@@ -5105,32 +5139,32 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 0,
-                          "message": "'gerador_cupom_id': Preenchimento obrigatório."
+                          "code": 2,
+                          "message": "'gerador_cupom_id': Preenchimento obrigatório"
                         },
                         {
-                          "code": 0,
-                          "message": "'data_hora_inicio': Preenchimento obrigatório."
+                          "code": 2,
+                          "message": "'data_hora_inicio': Preenchimento obrigatório"
                         },
                         {
-                          "code": 0,
-                          "message": "'data_hora_final': Preenchimento obrigatório."
+                          "code": 2,
+                          "message": "'data_hora_final': Preenchimento obrigatório"
                         },
                         {
-                          "code": 0,
-                          "message": "'limite_de_uso': Preenchimento obrigatório."
+                          "code": 2,
+                          "message": "'limite_de_uso': Preenchimento obrigatório"
                         },
                         {
-                          "code": 0,
-                          "message": "'tipo_desconto': Preenchimento obrigatório."
+                          "code": 2,
+                          "message": "'tipo_desconto': Preenchimento obrigatório"
                         },
                         {
-                          "code": 0,
-                          "message": "'desconto': Preenchimento obrigatório."
+                          "code": 2,
+                          "message": "'desconto': Preenchimento obrigatório"
                         },
                         {
-                          "code": 0,
-                          "message": "'tipos_pagamentos': Preenchimento obrigatório."
+                          "code": 2,
+                          "message": "'tipos_pagamentos': Preenchimento obrigatório"
                         },
                         {
                           "code": 0,
@@ -5158,11 +5192,263 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "JSON inválido."
+                          "message": "JSON inválido"
                         }
                       ]
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cupons/lote": {
+      "post": {
+        "summary": "Criar cupons em lote",
+        "description": "Cria vários cupons de desconto numa única requisição, tudo ou nada: ou todos os cupons são criados, ou nenhum.\n\nCada item de `cupons` tem o formato e as regras do body do [`POST /cupons`](/pages/v2/referencia/cupons/endpoint/post), inclusive `area_id`, `local_aplicacao`, `valor_maximo` e `valor_maximo_corrida`, e traz o próprio `gerador_cupom_id`, com uma diferença: a restrição de cliente é um único `cliente_id` opcional por cupom, e a lista `cliente_ids` do `POST /cupons` é recusada no lote. O lote aceita de 1 a 100 cupons.\n\nA validação é completa antes de gravar: todos os erros de todos os itens voltam juntos, cada um com o campo no formato `cupons.N.campo`, em que `N` é a posição do item a partir de zero, e com o mesmo `code` que o `POST /cupons` devolve para o mesmo erro. Além das regras de cada item, o lote confere que a cota de cada gerador comporta os cupons já criados mais os do lote, que nenhum `codigo` se repete no lote e que nenhum já está em uso na central. Item com `codigo_pattern` tem o código sorteado na criação e ressorteado até 5 vezes em caso de colisão; persistindo a colisão, o lote falha.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira com a permissão de cupons, como o `POST /cupons`. Gestor com empresa vinculada só alcança os geradores da própria empresa.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "cupons"
+                ],
+                "properties": {
+                  "cupons": {
+                    "type": "array",
+                    "description": "Cupons a criar, de 1 a 100. Cada item segue o body do `POST /cupons`, com `cliente_id` (um cliente) no lugar de `cliente_ids`.",
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "items": {
+                      "$ref": "#/components/schemas/CupomLoteItem"
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "lote_com_dois_cupons": {
+                  "summary": "Lote com dois cupons de geradores diferentes",
+                  "value": {
+                    "cupons": [
+                      {
+                        "gerador_cupom_id": 1,
+                        "codigo": "DESCONTO10",
+                        "data_hora_inicio": "2026-05-01T00:00:00Z",
+                        "data_hora_final": "2026-06-01T23:59:59Z",
+                        "limite_de_uso": "sem_limite",
+                        "tipo_desconto": "valor_fixo",
+                        "desconto": "10.00",
+                        "tipos_pagamentos": [
+                          "D"
+                        ]
+                      },
+                      {
+                        "gerador_cupom_id": 2,
+                        "codigo_pattern": "NATAL{00}",
+                        "data_hora_inicio": "2026-05-01T00:00:00Z",
+                        "data_hora_final": "2026-06-01T23:59:59Z",
+                        "limite_de_uso": "ate_n_vezes_por_passageiro",
+                        "limite_de_uso_individual": 3,
+                        "tipo_desconto": "percentual",
+                        "desconto": "15",
+                        "valor_maximo": "20.00",
+                        "tipos_pagamentos": [
+                          "C",
+                          "B"
+                        ],
+                        "cliente_id": 83983,
+                        "area_id": 239,
+                        "local_aplicacao": "D"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Cupons criados, na ordem enviada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "cupons": [
+                      {
+                        "id": 4210,
+                        "codigo": "DESCONTO10"
+                      },
+                      {
+                        "id": 4211,
+                        "codigo": "NATAL37"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação ou de regra de negócio; nenhum cupom é criado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "lote_acima_do_teto": {
+                    "summary": "Mais de 100 cupons",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'cupons': Deve ter no máximo 100 cupons por requisição.",
+                          "field": "cupons"
+                        }
+                      ]
+                    }
+                  },
+                  "cliente_ids_no_lote": {
+                    "summary": "Lista cliente_ids no lugar de cliente_id",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'cupons.0.cliente_ids': No lote cada cupom aceita um único cliente_id; cliente_ids não é aceito.",
+                          "field": "cupons.0.cliente_ids"
+                        }
+                      ]
+                    }
+                  },
+                  "formato_no_segundo_item": {
+                    "summary": "Campo obrigatório ausente no 2º item",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'cupons.1.desconto': Preenchimento obrigatório",
+                          "field": "cupons.1.desconto"
+                        }
+                      ]
+                    }
+                  },
+                  "regras_em_dois_itens": {
+                    "summary": "Regras de negócio em dois itens, com os códigos do POST /cupons",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 81,
+                          "message": "Gerador de cupom inexistente.",
+                          "field": "cupons.0.gerador_cupom_id"
+                        },
+                        {
+                          "code": 84,
+                          "message": "Data/Hora inicial inválido.",
+                          "field": "cupons.2.data_hora_inicio"
+                        }
+                      ]
+                    }
+                  },
+                  "codigo_repetido": {
+                    "summary": "Mesmo código em dois itens ou código já em uso",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 78,
+                          "message": "Você já possui um cupom ativo no período escolhido com esse código promocional.",
+                          "field": "cupons.0.codigo"
+                        },
+                        {
+                          "code": 78,
+                          "message": "Você já possui um cupom ativo no período escolhido com esse código promocional.",
+                          "field": "cupons.3.codigo"
+                        }
+                      ]
+                    }
+                  },
+                  "cota_do_gerador": {
+                    "summary": "Cota do gerador não comporta o lote",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 94,
+                          "message": "Limite de cupons criados para o gerador alcançado.",
+                          "field": "cupons.5.gerador_cupom_id"
+                        }
+                      ]
+                    }
+                  },
+                  "pattern_sem_codigo_livre": {
+                    "summary": "codigo_pattern sem código livre após 5 sorteios",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 146,
+                          "message": "Não foi possível sortear um código livre para o codigo_pattern após 5 tentativas.",
+                          "field": "cupons.1.codigo_pattern"
+                        }
+                      ]
+                    }
+                  },
+                  "sem_permissao": {
+                    "summary": "Gestor sem a permissão de cupons",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 68,
+                          "message": "O usuário informado não tem permissão para realizar essa operação."
+                        }
+                      ]
+                    }
+                  },
+                  "json_invalido": {
+                    "summary": "JSON malformado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "JSON inválido"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Gestor não autenticado pelo HTTP Basic",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": "B5",
+                      "message": "Usuário e/ou senhas inválidos."
+                    }
+                  ]
                 }
               }
             }
