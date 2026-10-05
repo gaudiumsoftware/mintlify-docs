@@ -76,7 +76,20 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "description": "Indica se a requisição foi processada com sucesso"
+                    },
+                    "response": {
+                      "type": "array",
+                      "description": "Clientes encontrados",
+                      "items": {
+                        "$ref": "#/components/schemas/Cliente"
+                      }
+                    }
+                  }
                 },
                 "example": {
                   "success": true,
@@ -88,7 +101,66 @@
                       "telefone": "(11) 97772-3133",
                       "status_cliente": "A",
                       "cpf": null,
-                      "foto_url": "https://s3.amazonaws.com/exemplo-bucket/fotos/cliente-1.jpg?X-Amz-Expires=..."
+                      "data_nascimento": "1990-05-12",
+                      "avaliacao_media": 4.8,
+                      "ultima_estimativa_em": "2026-08-19T22:05:00Z",
+                      "quantidade_corridas_finalizadas": 37,
+                      "ultima_corrida_em": "2026-08-18T11:30:00Z",
+                      "token_atualizado_em": "2026-08-20T13:45:00Z",
+                      "ultimo_acesso_em": "2026-08-19T22:10:00Z",
+                      "cadastrado_em": "2024-03-15T12:34:56Z",
+                      "foto_url": null,
+                      "login_terceiros": {
+                        "google": true,
+                        "apple": false,
+                        "facebook": false
+                      },
+                      "cartao_app": {
+                        "bloqueado": false,
+                        "motivo_bloqueio": null,
+                        "cartoes": [
+                          {
+                            "operadora": "visa",
+                            "ultimos_digitos": "1234",
+                            "status": "ativo"
+                          },
+                          {
+                            "operadora": "mastercard",
+                            "ultimos_digitos": "5678",
+                            "status": "pendente"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "2",
+                      "nome": "Exemplo Bloqueado",
+                      "email": "bloqueado@email.com.br",
+                      "telefone": "(11) 98888-4455",
+                      "status_cliente": "A",
+                      "cpf": null,
+                      "data_nascimento": null,
+                      "avaliacao_media": null,
+                      "ultima_estimativa_em": "2026-08-10T09:00:00Z",
+                      "quantidade_corridas_finalizadas": 3,
+                      "ultima_corrida_em": "2026-08-02T18:20:00Z",
+                      "token_atualizado_em": "2026-08-10T09:00:00Z",
+                      "ultimo_acesso_em": "2026-08-10T09:02:00Z",
+                      "cadastrado_em": "2025-11-04T16:10:00Z",
+                      "foto_url": null,
+                      "login_terceiros": {
+                        "google": false,
+                        "apple": false,
+                        "facebook": false
+                      },
+                      "cartao_app": {
+                        "bloqueado": true,
+                        "motivo_bloqueio": {
+                          "codigo": "DISPUTA_CHARGEBACK",
+                          "descricao": "Chargeback pendente"
+                        },
+                        "cartoes": []
+                      }
                     }
                   ]
                 }
@@ -5379,6 +5451,196 @@
         "in": "header",
         "name": "api-key",
         "description": "Obrigatório. Sua chave API."
+      }
+    },
+    "schemas": {
+      "Cliente": {
+        "type": "object",
+        "required": [
+          "id",
+          "nome",
+          "email",
+          "telefone",
+          "status_cliente",
+          "cpf",
+          "data_nascimento",
+          "avaliacao_media",
+          "ultima_estimativa_em",
+          "quantidade_corridas_finalizadas",
+          "ultima_corrida_em",
+          "token_atualizado_em",
+          "ultimo_acesso_em",
+          "cadastrado_em",
+          "foto_url",
+          "login_terceiros"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID do cliente"
+          },
+          "nome": {
+            "type": "string",
+            "description": "Nome do cliente"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true,
+            "description": "E-mail do cliente. `null` quando não informado."
+          },
+          "telefone": {
+            "type": "string",
+            "nullable": true,
+            "description": "Telefone do cliente, formatado para exibição, por exemplo `(11) 99999-0000`. `null` quando não informado."
+          },
+          "status_cliente": {
+            "type": "string",
+            "description": "Status do cadastro do cliente, por exemplo `A` (ativo), `I` (inativo), `S` (suspenso) ou `G` (aguardando ativação)."
+          },
+          "cpf": {
+            "type": "string",
+            "nullable": true,
+            "description": "CPF do cliente, como foi cadastrado. `null` quando não informado."
+          },
+          "data_nascimento": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Data de nascimento do cliente (`AAAA-MM-DD`). `null` quando não informada."
+          },
+          "avaliacao_media": {
+            "type": "number",
+            "nullable": true,
+            "description": "Média das avaliações que os motoristas deram ao cliente. `null` quando o cliente ainda não foi avaliado ou quando a central não permite que o motorista avalie o passageiro."
+          },
+          "ultima_estimativa_em": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Data/hora (ISO-8601, UTC) da última estimativa de corrida feita pelo cliente. `null` quando não há registro."
+          },
+          "quantidade_corridas_finalizadas": {
+            "type": "integer",
+            "description": "Quantidade de corridas finalizadas do cliente"
+          },
+          "ultima_corrida_em": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Data/hora (ISO-8601, UTC) de criação da última corrida finalizada do cliente. `null` quando não há registro."
+          },
+          "token_atualizado_em": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Data/hora (ISO-8601, UTC) da última atualização do token de acesso do cliente. `null` quando não há registro."
+          },
+          "ultimo_acesso_em": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Data/hora (ISO-8601, UTC) do último acesso do cliente ao app. `null` quando o cliente nunca acessou o app."
+          },
+          "cadastrado_em": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Data/hora (ISO-8601, UTC) do cadastro do cliente. `null` quando a data de cadastro não está disponível, como em cadastros antigos."
+          },
+          "foto_url": {
+            "type": "string",
+            "nullable": true,
+            "description": "URL temporária da foto do cliente, válida por 30 minutos. Preenchida só na busca de um cliente específico, pelo filtro `id`. Na listagem paginada, ou quando o cliente não tem foto, vem `null`."
+          },
+          "login_terceiros": {
+            "type": "object",
+            "description": "Contas de terceiros que o cliente usa para entrar no app",
+            "required": [
+              "google",
+              "apple",
+              "facebook"
+            ],
+            "properties": {
+              "google": {
+                "type": "boolean",
+                "description": "Indica se o cliente entra com a conta Google"
+              },
+              "apple": {
+                "type": "boolean",
+                "description": "Indica se o cliente entra com a conta Apple"
+              },
+              "facebook": {
+                "type": "boolean",
+                "description": "Indica se o cliente entra com a conta Facebook"
+              }
+            }
+          },
+          "cartao_app": {
+            "type": "object",
+            "nullable": true,
+            "description": "Situação do cliente com o cartão de crédito no app: bloqueio e cartões cadastrados. Vem `null` quando a central não aceita cartão no app. Não vem na resposta para credencial de empresa.",
+            "required": [
+              "bloqueado",
+              "motivo_bloqueio",
+              "cartoes"
+            ],
+            "properties": {
+              "bloqueado": {
+                "type": "boolean",
+                "description": "Indica se o cliente está impedido de cadastrar cartão e de pagar com cartão no app"
+              },
+              "motivo_bloqueio": {
+                "type": "object",
+                "nullable": true,
+                "description": "Motivo do bloqueio aberto mais recente. `null` quando o cliente não está bloqueado ou quando o bloqueio não tem motivo registrado.",
+                "required": [
+                  "codigo",
+                  "descricao"
+                ],
+                "properties": {
+                  "codigo": {
+                    "type": "string",
+                    "description": "Código do motivo. Hoje são `CADASTRO_CARTAO` (tentativas de cadastro de cartão acima do limite), `DISPUTA_CHARGEBACK` (chargeback pendente) e `BLOQUEADO_OUTRA_BANDEIRA` (bloqueado em outra central). Outros códigos podem aparecer; trate um código desconhecido pela `descricao`."
+                  },
+                  "descricao": {
+                    "type": "string",
+                    "description": "Texto do motivo no idioma da resposta"
+                  }
+                }
+              },
+              "cartoes": {
+                "type": "array",
+                "description": "Cartões do cliente no app, os mesmos que ele vê em \"Meus cartões\": os ativos e os pendentes. Lista vazia quando o cliente não tem cartão.",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "operadora",
+                    "ultimos_digitos",
+                    "status"
+                  ],
+                  "properties": {
+                    "operadora": {
+                      "type": "string",
+                      "description": "Bandeira do cartão, como o gateway de pagamento informa (ex.: `visa`, `mastercard`)"
+                    },
+                    "ultimos_digitos": {
+                      "type": "string",
+                      "description": "Últimos quatro dígitos do número do cartão"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ativo",
+                        "pendente"
+                      ],
+                      "description": "`ativo` para o cartão que o cliente pode usar; `pendente` para o cartão que aguarda a validação da central e ainda não pode ser usado"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
