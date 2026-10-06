@@ -5255,7 +5255,7 @@
     "/cupons/lote": {
       "post": {
         "summary": "Criar cupons em lote",
-        "description": "Cria vários cupons de desconto numa única requisição. Cupom com erro não impede os demais: os válidos são criados e os recusados voltam na resposta, cada um com o motivo.\n\nCada item de `cupons` tem o formato e as regras do body do [`POST /cupons`](/pages/v2/referencia/cupons/endpoint/post), inclusive `area_id`, `local_aplicacao`, `valor_maximo` e `valor_maximo_corrida`, e traz o próprio `gerador_cupom_id`, com uma diferença: a restrição de cliente é um único `cliente_id` opcional por cupom, e a lista `cliente_ids` do `POST /cupons` é recusada no lote. O lote aceita de 1 a 100 cupons.\n\nA resposta é `201` quando todos os cupons são criados e `207` quando algum é recusado, inclusive quando todos são. O body é o mesmo nos dois: `data.cupons` traz `indice`, `id` e `codigo` de cada cupom criado, e `data.falhas` traz `indice`, `cliente_id` (como veio no item, ou `null`) e `errors` de cada cupom recusado. `indice` é a posição do item em `cupons`, a partir de zero. Cada erro tem o campo no formato `cupons.N.campo` e o mesmo `code` que o `POST /cupons` devolve para o mesmo erro. O `400` fica para o erro no próprio lote (`cupons` ausente, fora de uma lista, vazio ou acima de 100 itens, gestor sem permissão ou JSON malformado), e nesse caso nenhum cupom é criado.\n\nAlém das regras de cada item, o lote confere que a cota de cada gerador comporta os cupons já criados mais os do lote; quando não comporta, os itens que excedem a cota, na ordem do lote, são recusados, e item recusado por outra regra não ocupa a cota. `codigo` repetido no lote recusa todos os itens que o repetem, e `codigo` já em uso na central recusa o item. Item com `codigo_pattern` tem o código sorteado na criação e ressorteado até 5 vezes em caso de colisão; persistindo a colisão, o item é recusado.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira com a permissão de cupons, como o `POST /cupons`. Gestor com empresa vinculada só alcança os geradores da própria empresa.",
+        "description": "Cria vários cupons de desconto numa única requisição. Cupom com erro não impede os demais: os válidos são criados e os recusados voltam na resposta, cada um com o motivo.\n\nCada item de `cupons` tem o formato e as regras do body do [`POST /cupons`](/pages/v2/referencia/cupons/endpoint/post), inclusive `area_id`, `local_aplicacao`, `valor_maximo` e `valor_maximo_corrida`, e traz o próprio `gerador_cupom_id`, com uma diferença: a restrição de cliente é um único `cliente_id` opcional por cupom, e a lista `cliente_ids` do `POST /cupons` é recusada no lote. O lote aceita de 1 a 100 cupons.\n\nA resposta é `201` quando todos os cupons são criados e `207` quando algum é recusado, inclusive quando todos são. O body é o mesmo nos dois: `data.cupons` traz `indice`, `id` e `codigo` de cada cupom criado, e `data.falhas` traz `indice`, `cliente_id` e `gerador_cupom_id` (como vieram no item, ou `null`) e `errors` de cada cupom recusado. `indice` é a posição do item em `cupons`, a partir de zero. Cada erro tem o campo no formato `cupons.N.campo` e o mesmo `code` que o `POST /cupons` devolve para o mesmo erro. O `400` fica para o erro no próprio lote (`cupons` ausente, fora de uma lista, vazio ou acima de 100 itens, gestor sem permissão ou JSON malformado), e nesse caso nenhum cupom é criado.\n\nAlém das regras de cada item, o lote confere que a cota de cada gerador comporta os cupons já criados mais os do lote; quando não comporta, os itens que excedem a cota, na ordem do lote, são recusados, e item recusado por outra regra não ocupa a cota. `codigo` repetido no lote recusa todos os itens que o repetem, e `codigo` já em uso na central recusa o item. Item com `codigo_pattern` tem o código sorteado na criação e ressorteado até 5 vezes em caso de colisão; persistindo a colisão, o item é recusado.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira com a permissão de cupons, como o `POST /cupons`. Gestor com empresa vinculada só alcança os geradores da própria empresa.",
         "requestBody": {
           "required": true,
           "content": {
@@ -5377,6 +5377,7 @@
                           {
                             "indice": 1,
                             "cliente_id": 999999,
+                            "gerador_cupom_id": 1,
                             "errors": [
                               {
                                 "code": 6,
@@ -5399,6 +5400,7 @@
                           {
                             "indice": 0,
                             "cliente_id": 83983,
+                            "gerador_cupom_id": 1,
                             "errors": [
                               {
                                 "code": 2,
@@ -5410,6 +5412,7 @@
                           {
                             "indice": 1,
                             "cliente_id": null,
+                            "gerador_cupom_id": 999,
                             "errors": [
                               {
                                 "code": 81,
@@ -5421,6 +5424,7 @@
                           {
                             "indice": 2,
                             "cliente_id": null,
+                            "gerador_cupom_id": 1,
                             "errors": [
                               {
                                 "code": 78,
@@ -5432,6 +5436,7 @@
                           {
                             "indice": 3,
                             "cliente_id": null,
+                            "gerador_cupom_id": 2,
                             "errors": [
                               {
                                 "code": 94,
