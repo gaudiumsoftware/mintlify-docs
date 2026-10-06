@@ -154,6 +154,66 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="8 out 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="evento-engajamento-estimativa-nao-solicitada" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Evento de engajamento da estimativa não solicitada
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Os webhooks de engajamento podem assinar um novo evento, entregue quando o passageiro simula uma corrida
+      no app e não a pede dentro de uma janela configurável. O evento traz o embarque, o destino e os preços que
+      o passageiro viu, por categoria e por forma de pagamento.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/engajamento/{id}/permissoes" href="/pages/v2/referencia/engajamento/permissoes/endpoint/post" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="estimativa_passageiro_app_nao_solicitada" /> — novo valor aceito em <ParamBadge name="eventos" />. Só a simulação do app com passageiro identificado e com destino gera o evento, uma vez por webhook.</li>
+        <li>O preço não desconta o saldo da carteira do passageiro, que é aplicado no aparelho.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="PUT" path="/api/v2/integracao/engajamento/{id}/permissoes" href="/pages/v2/referencia/engajamento/permissoes/endpoint/put" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="estimativa_passageiro_app_nao_solicitada" /> — mesmo evento, na bandeira única enviada em <ParamBadge name="bandeira" />.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/engajamento" href="/pages/v2/referencia/engajamento/endpoint/post" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="janela_estimativa_segundos" /> — opcional, inteiro de 30 a 300: quantos segundos depois da simulação o evento <code>estimativa_passageiro_app_nao_solicitada</code> sai. Só vale para esse evento: os demais eventos de engajamento continuam saindo na hora. Ausente ou nulo vale 30. Fora da faixa, texto ou decimal é recusado com 400.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="PUT" path="/api/v2/integracao/engajamento/{id}" href="/pages/v2/referencia/engajamento/endpoint/put" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="janela_estimativa_segundos" /> — mesma faixa. Ausente mantém a janela gravada, e nulo volta ao padrão de 30.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/v2/integracao/engajamento" href="/pages/v2/referencia/engajamento/endpoint/get" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="janela_estimativa_segundos" /> — a janela gravada de cada webhook para o evento <code>estimativa_passageiro_app_nao_solicitada</code>, ou 30 quando não configurada.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+  </Entry>
+
   <Entry date="8 out 2026" label="Em breve" labelColor="#ea580c">
     <h2 id="cupons-em-lote" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Criação de cupons em lote
@@ -254,66 +314,6 @@ export const EndpointBadge = ({ method, path, href }) => (
       lineHeight: "1.6",
     }}>
       <strong>Nota:</strong> quem já lê <ParamBadge name="data_hora_ultima_estimativa" /> ou <ParamBadge name="data_hora_ultima_solicitacao" /> precisa passar para <ParamBadge name="ultima_estimativa_em" /> e <ParamBadge name="ultima_corrida_em" />: os nomes antigos deixam de sair na resposta. <ParamBadge name="quantidade_corridas_finalizadas" /> passa de texto para número, então quem compara ou desserializa o campo como texto precisa ajustar.
-    </div>
-  </Entry>
-
-  <Entry date="5 out 2026" label="Em breve" labelColor="#ea580c">
-    <h2 id="evento-engajamento-estimativa-nao-solicitada" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
-      Evento de engajamento da estimativa não solicitada
-    </h2>
-    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
-      Os webhooks de engajamento podem assinar um novo evento, entregue quando o passageiro simula uma corrida
-      no app e não a pede dentro de uma janela configurável. O evento traz o embarque, o destino e os preços que
-      o passageiro viu, por categoria e por forma de pagamento.
-    </p>
-
-    <EndpointBadge method="POST" path="/api/v2/integracao/engajamento/{id}/permissoes" href="/pages/v2/referencia/engajamento/permissoes/endpoint/post" />
-
-    <ChangeSection type="added">
-      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-        <li><ParamBadge name="estimativa_passageiro_app_nao_solicitada" /> — novo valor aceito em <ParamBadge name="eventos" />. Só a simulação do app com passageiro identificado e com destino gera o evento, uma vez por webhook.</li>
-        <li>O preço não desconta o saldo da carteira do passageiro, que é aplicado no aparelho.</li>
-      </ul>
-    </ChangeSection>
-
-    <div style={{ marginTop: "24px" }}>
-      <EndpointBadge method="PUT" path="/api/v2/integracao/engajamento/{id}/permissoes" href="/pages/v2/referencia/engajamento/permissoes/endpoint/put" />
-
-      <ChangeSection type="added">
-        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-          <li><ParamBadge name="estimativa_passageiro_app_nao_solicitada" /> — mesmo evento, na bandeira única enviada em <ParamBadge name="bandeira" />.</li>
-        </ul>
-      </ChangeSection>
-    </div>
-
-    <div style={{ marginTop: "24px" }}>
-      <EndpointBadge method="POST" path="/api/v2/integracao/engajamento" href="/pages/v2/referencia/engajamento/endpoint/post" />
-
-      <ChangeSection type="added">
-        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-          <li><ParamBadge name="janela_estimativa_segundos" /> — opcional, inteiro de 30 a 300: quantos segundos depois da simulação o evento sai. Ausente ou nulo vale 30. Fora da faixa, texto ou decimal é recusado com 400.</li>
-        </ul>
-      </ChangeSection>
-    </div>
-
-    <div style={{ marginTop: "24px" }}>
-      <EndpointBadge method="PUT" path="/api/v2/integracao/engajamento/{id}" href="/pages/v2/referencia/engajamento/endpoint/put" />
-
-      <ChangeSection type="added">
-        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-          <li><ParamBadge name="janela_estimativa_segundos" /> — mesma faixa. Ausente mantém a janela gravada, e nulo volta ao padrão de 30.</li>
-        </ul>
-      </ChangeSection>
-    </div>
-
-    <div style={{ marginTop: "24px" }}>
-      <EndpointBadge method="GET" path="/api/v2/integracao/engajamento" href="/pages/v2/referencia/engajamento/endpoint/get" />
-
-      <ChangeSection type="added">
-        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-          <li><ParamBadge name="janela_estimativa_segundos" /> — a janela gravada de cada webhook, ou 30 quando não configurada.</li>
-        </ul>
-      </ChangeSection>
     </div>
   </Entry>
 
