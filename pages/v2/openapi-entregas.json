@@ -2953,7 +2953,7 @@
       },
       "post": {
         "summary": "Criar tarifa da categoria",
-        "description": "Cria a tarifa padrão ou uma tarifa extra da categoria. A tarifa começa a valer na hora.\n\n### Tarifa padrão × tarifa extra\n- A **primeira** tarifa da categoria é a **padrão**: é criada **sem** `horarios` e vale o tempo todo.\n- Com a padrão já criada, toda tarifa nova é **extra** e **exige** `horarios`.\n- A categoria aceita no máximo **8** tarifas vigentes: a padrão e mais 7 extras.\n\n### Método de cálculo (`metodo_calculo_tarifa`)\n\n| Método | Campos aceitos | Obrigatórios |\n|---|---|---|\n| `D` duração | `valor_bandeirada`, `valor_km`, `valor_minuto`, `valor_minimo`, `valor_parada_adicional`, `habilitar_limite_distancia` | `valor_bandeirada`, `valor_km` |\n| `P` hora parada | `valor_bandeirada`, `valor_km`, `valor_hora_parada`, `valor_minimo`, `valor_parada_adicional` | `valor_bandeirada` |\n| `V` km variável | `valor_bandeirada`, `valor_minuto`, `valor_minimo`, `valor_parada_adicional`, `valores_tabelados`, `habilitar_limite_distancia` | `valor_bandeirada` e `valores_tabelados` com a faixa `a_partir_de` |\n| `T` tabelado | `valor_parada_adicional`, `valores_tabelados` | `valores_tabelados` (sem a faixa `a_partir_de`) |\n| `B` por bairro | `valores_tabelados` | `valores_tabelados` com a faixa `a_partir_de` |\n\nOs obrigatórios são os mesmos que o painel exige ao salvar; os demais valores podem ficar vazios. Em todos os métodos também valem `nome`, `horarios` e `habilitar_taxa_deslocamento`.\n\nRestrições de bandeira (400 quando não atendidas):\n- `V` exige o app de motorista da bandeira (ou da bandeira agrupadora) na versão **14.4** ou superior;\n- `B` só em bandeira que faz **somente entregas**;\n- `P` não é aceito em bandeira com cálculo de corrida **pré-fixado**.\n\nUma tarifa que já usa `V`, `B` ou `P` pode continuar com o mesmo método mesmo sem atender à restrição.\n\n### Campos condicionais\n- `limite_distancia_maxima` (maior que zero): só com `habilitar_limite_distancia: true` (métodos `D` e `V`). No `V`, precisa ser maior que a maior faixa de `valores_tabelados`.\n- Bônus de deslocamento: `habilitar_taxa_deslocamento: true` exige `taxa_deslocamento_valor_km` (maior que zero), `taxa_deslocamento_km_minimo` (aceita zero) e `taxa_deslocamento_valor_maximo` (maior que zero). Com `false`, os três são limpos e não são aceitos.\n- Retorno (`tipo_cobranca_retorno`): só em bandeira que faz entregas. `T` pelo cálculo da tarifa, `N` não cobrar, `F` valor fixo e `K` por km percorrido (ambos exigem `valor_retorno_adicional` maior que zero), `P` porcentagem (exige `taxa_retorno_porcentagem` maior que zero, até `999.99`). Sem a funcionalidade de taxa de retorno na bandeira, só `T` é aceito.\n- `calcular_individual_por_entrega`: só em bandeira que faz entregas, com o cálculo individual por entrega liberado, e em método diferente de `B`. Com `true`, a parada adicional não é cobrada (`valor_parada_adicional` fica vazio).\n\nCampo enviado que não se aplica ao método ou à operação da bandeira responde **400** com a mensagem `'<campo>': Não se aplica ao método de cálculo da tarifa ou à operação da bandeira.` Campos que não fazem parte do contrato (como `id`, `categoria_id` ou `data_inicio`) são ignorados.\n\n### Formatos\n- **Valores**: número JSON ou texto, não negativo, com **ponto** como separador e até **2 casas decimais** (`\"5.90\"` ou `5.9`), nos mesmos limites do painel: até 8 dígitos inteiros nos valores da tarifa, 5 na taxa de deslocamento, 7 em `limite_distancia_maxima` e 11 no valor das faixas. `\"5,90\"` e `\"5.999\"` respondem 400. Na resposta, os valores vêm sempre como texto (`\"5.90\"`). `null` limpa o campo (e a obrigatoriedade do método continua valendo).\n- **Booleanos** (`habilitar_*`, `calcular_individual_por_entrega`): `true` ou `false`.\n- **`nome`**: texto de 1 a 20 caracteres, sem `<`, `>`, `\"`, `'`, `&` e emoji (400). Omitido, vale \"Tarifa padrão\" ou \"Tarifa extra N\", como no painel.\n- **`horarios`**: lista de até **36** horários `{dia_semana, hora_inicio, hora_fim}` por tarifa, com `dia_semana` de `1` (domingo) a `7` (sábado) e horas em `HH:MM`, **sem segundos** (`18:00:00` responde 400), `hora_fim` maior que `hora_inicio` e `24:00` para ir até o fim do dia. `hora_fim` é o fim do bloco, como no calendário do painel: `08:00`–`12:00` e `12:00`–`18:00` no mesmo dia **não** se sobrepõem. Na resposta, os horários vêm no mesmo formato. Sobreposição dentro do próprio payload responde 400; com outra tarifa vigente da categoria, 409.\n- **`valores_tabelados`**: lista de faixas `{distancia_km, valor}` (ambos maiores que zero, sem repetir distância) e no máximo uma faixa `{a_partir_de: true, valor}`, sem `distancia_km`, que vale acima da maior distância. Até **100** faixas de distância. A ordem é definida pelo servidor (distância crescente, `a_partir_de` por último).\n\n### Alterações simultâneas\nA criação de tarifa e a troca de horários de uma tarifa (PUT) travam a categoria enquanto gravam. Uma segunda chamada desse tipo para a mesma categoria, feita ao mesmo tempo, responde **409** com `Outra alteração de tarifa desta categoria está em andamento. Tente novamente em instantes.` e não grava nada: aguarde a anterior terminar e repita a chamada.\n\n### Resposta\nDevolve a tarifa criada no mesmo formato da listagem (só os campos aplicáveis).\n\n### Status de erro\n| Status | Quando |\n|---|---|\n| 400 | Payload inválido (formato, campo obrigatório do método, campo não aplicável) ou configuração que a bandeira não pode usar |\n| 401 | Gestor não autenticado no header `Authorization` (Basic) |\n| 404 | Categoria ou tarifa inexistente, ou de outra bandeira |\n| 409 | Conflito com as tarifas vigentes da categoria, ou outra alteração de tarifa da mesma categoria em andamento (detalhes no exemplo de cada resposta) |\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "description": "Cria a tarifa padrão ou uma tarifa extra da categoria. A tarifa começa a valer na hora.\n\n### Tarifa padrão × tarifa extra\n- A **primeira** tarifa da categoria é a **padrão**: é criada **sem** `horarios` e vale o tempo todo.\n- Com a padrão já criada, toda tarifa nova é **extra** e **exige** `horarios`.\n- A categoria aceita no máximo **8** tarifas vigentes: a padrão e mais 7 extras.\n\n### Método de cálculo (`metodo_calculo_tarifa`)\n\n| Método | Campos aceitos | Obrigatórios |\n|---|---|---|\n| `D` duração | `valor_bandeirada`, `valor_km`, `valor_minuto`, `valor_minimo`, `valor_parada_adicional`, `habilitar_limite_distancia` | `valor_bandeirada`, `valor_km`, `valor_minuto`, `valor_minimo` |\n| `P` hora parada | `valor_bandeirada`, `valor_km`, `valor_hora_parada`, `valor_minimo`, `valor_parada_adicional` | `valor_bandeirada`, `valor_km`, `valor_hora_parada`, `valor_minimo` |\n| `V` km variável | `valor_bandeirada`, `valor_minuto`, `valor_minimo`, `valor_parada_adicional`, `valores_tabelados`, `habilitar_limite_distancia` | `valor_bandeirada`, `valor_minuto`, `valor_minimo` e `valores_tabelados` com a faixa `a_partir_de` |\n| `T` tabelado | `valor_parada_adicional`, `valores_tabelados` | `valores_tabelados` (sem a faixa `a_partir_de`) |\n| `B` por bairro | `valores_tabelados` | `valores_tabelados` com a faixa `a_partir_de` |\n\nOs obrigatórios são os mesmos que o painel exige ao salvar: só o campo vazio é recusado, e zero é aceito. Os demais valores podem ficar vazios. Em todos os métodos também valem `nome`, `horarios` e `habilitar_taxa_deslocamento`.\n\nRestrições de bandeira (400 quando não atendidas):\n- `V` exige o app de motorista da bandeira (ou da bandeira agrupadora) na versão **14.4** ou superior;\n- `B` só em bandeira que faz **somente entregas**;\n- `P` não é aceito em bandeira com cálculo de corrida **pré-fixado**.\n\nUma tarifa que já usa `V`, `B` ou `P` pode continuar com o mesmo método mesmo sem atender à restrição.\n\n### Campos condicionais\n- `limite_distancia_maxima` (maior que zero): só com `habilitar_limite_distancia: true` (métodos `D` e `V`). No `V`, precisa ser maior que a maior faixa de `valores_tabelados`.\n- Bônus de deslocamento: `habilitar_taxa_deslocamento: true` exige `taxa_deslocamento_valor_km` (maior que zero), `taxa_deslocamento_km_minimo` (aceita zero) e `taxa_deslocamento_valor_maximo` (maior que zero). Com `false`, os três são limpos e não são aceitos.\n- Retorno (`tipo_cobranca_retorno`): só em bandeira que faz entregas. `T` pelo cálculo da tarifa, `N` não cobrar, `F` valor fixo e `K` por km percorrido (ambos exigem `valor_retorno_adicional` maior que zero), `P` porcentagem (exige `taxa_retorno_porcentagem` maior que zero, até `999.99`). Sem a funcionalidade de taxa de retorno na bandeira, só `T` é aceito.\n- `calcular_individual_por_entrega`: só em bandeira que faz entregas, com o cálculo individual por entrega liberado, e em método diferente de `B`. Com `true`, a parada adicional não é cobrada (`valor_parada_adicional` fica vazio).\n\nCampo enviado que não se aplica ao método ou à operação da bandeira responde **400** com a mensagem `'<campo>': Não se aplica ao método de cálculo da tarifa ou à operação da bandeira.` Campos que não fazem parte do contrato (como `id`, `categoria_id` ou `data_inicio`) são ignorados.\n\n### Formatos\n- **Valores**: número JSON ou texto, não negativo, com **ponto** como separador e até **2 casas decimais** (`\"5.90\"` ou `5.9`), nos mesmos limites do painel: até 8 dígitos inteiros nos valores da tarifa, 5 na taxa de deslocamento, 7 em `limite_distancia_maxima` e 11 no valor das faixas. `\"5,90\"` e `\"5.999\"` respondem 400. Na resposta, os valores vêm sempre como texto (`\"5.90\"`). `null` limpa o campo (e a obrigatoriedade do método continua valendo).\n- **Booleanos** (`habilitar_*`, `calcular_individual_por_entrega`): `true` ou `false`.\n- **`nome`**: texto de 1 a 20 caracteres, sem `<`, `>`, `\"`, `'`, `&` e emoji (400). Omitido, vale \"Tarifa padrão\" ou \"Tarifa extra N\", como no painel.\n- **`horarios`**: lista de até **36** horários `{dia_semana, hora_inicio, hora_fim}` por tarifa, com `dia_semana` de `1` (domingo) a `7` (sábado) e horas em `HH:MM`, **sem segundos** (`18:00:00` responde 400), `hora_fim` maior que `hora_inicio` e `24:00` para ir até o fim do dia. `hora_fim` é o fim do bloco, como no calendário do painel: `08:00`–`12:00` e `12:00`–`18:00` no mesmo dia **não** se sobrepõem. Na resposta, os horários vêm no mesmo formato. Sobreposição dentro do próprio payload responde 400; com outra tarifa vigente da categoria, 409.\n- **`valores_tabelados`**: lista de faixas `{distancia_km, valor}` (ambos maiores que zero, sem repetir distância) e no máximo uma faixa `{a_partir_de: true, valor}`, sem `distancia_km`, que vale acima da maior distância. Até **100** faixas de distância. A ordem é definida pelo servidor (distância crescente, `a_partir_de` por último).\n\n### Alterações simultâneas\nA criação de tarifa e a troca de horários de uma tarifa (PUT) travam a categoria enquanto gravam. Uma segunda chamada desse tipo para a mesma categoria, feita ao mesmo tempo, responde **409** com `Outra alteração de tarifa desta categoria está em andamento. Tente novamente em instantes.` e não grava nada: aguarde a anterior terminar e repita a chamada.\n\n### Resposta\nDevolve a tarifa criada no mesmo formato da listagem (só os campos aplicáveis).\n\n### Status de erro\n| Status | Quando |\n|---|---|\n| 400 | Payload inválido (formato, campo obrigatório do método, campo não aplicável) ou configuração que a bandeira não pode usar |\n| 401 | Gestor não autenticado no header `Authorization` (Basic) |\n| 404 | Categoria ou tarifa inexistente, ou de outra bandeira |\n| 409 | Conflito com as tarifas vigentes da categoria, ou outra alteração de tarifa da mesma categoria em andamento (detalhes no exemplo de cada resposta) |\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
         "parameters": [
           {
             "name": "id",
@@ -3007,7 +3007,7 @@
                       "number",
                       "null"
                     ],
-                    "description": "Valor por km. Métodos `D` (obrigatório) e `P`.",
+                    "description": "Valor por km. Métodos `D` e `P` (obrigatório).",
                     "example": "5.90"
                   },
                   "valor_minuto": {
@@ -3016,7 +3016,7 @@
                       "number",
                       "null"
                     ],
-                    "description": "Valor por minuto. Métodos `D` e `V`.",
+                    "description": "Valor por minuto. Métodos `D` e `V` (obrigatório).",
                     "example": "5.90"
                   },
                   "valor_hora_parada": {
@@ -3025,7 +3025,7 @@
                       "number",
                       "null"
                     ],
-                    "description": "Valor da hora parada. Método `P`.",
+                    "description": "Valor da hora parada. Método `P` (obrigatório).",
                     "example": "5.90"
                   },
                   "valor_minimo": {
@@ -3034,7 +3034,7 @@
                       "number",
                       "null"
                     ],
-                    "description": "Valor mínimo da corrida. Métodos `D`, `P` e `V`.",
+                    "description": "Valor mínimo da corrida. Métodos `D`, `P` e `V` (obrigatório).",
                     "example": "5.90"
                   },
                   "valor_parada_adicional": {
@@ -3815,7 +3815,7 @@
                       "number",
                       "null"
                     ],
-                    "description": "Valor por km. Métodos `D` (obrigatório) e `P`. Omitido, mantém o valor atual.",
+                    "description": "Valor por km. Métodos `D` e `P` (obrigatório). Omitido, mantém o valor atual.",
                     "example": "5.90"
                   },
                   "valor_minuto": {
@@ -3824,7 +3824,7 @@
                       "number",
                       "null"
                     ],
-                    "description": "Valor por minuto. Métodos `D` e `V`. Omitido, mantém o valor atual.",
+                    "description": "Valor por minuto. Métodos `D` e `V` (obrigatório). Omitido, mantém o valor atual.",
                     "example": "5.90"
                   },
                   "valor_hora_parada": {
@@ -3833,7 +3833,7 @@
                       "number",
                       "null"
                     ],
-                    "description": "Valor da hora parada. Método `P`. Omitido, mantém o valor atual.",
+                    "description": "Valor da hora parada. Método `P` (obrigatório). Omitido, mantém o valor atual.",
                     "example": "5.90"
                   },
                   "valor_minimo": {
@@ -3842,7 +3842,7 @@
                       "number",
                       "null"
                     ],
-                    "description": "Valor mínimo da corrida. Métodos `D`, `P` e `V`. Omitido, mantém o valor atual.",
+                    "description": "Valor mínimo da corrida. Métodos `D`, `P` e `V` (obrigatório). Omitido, mantém o valor atual.",
                     "example": "5.90"
                   },
                   "valor_parada_adicional": {
