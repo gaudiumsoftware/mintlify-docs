@@ -202,7 +202,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       <ChangeSection type="changed">
         <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
           <li>Cada tarifa traz só os campos do seu método de cálculo e da operação da bandeira, incluindo <ParamBadge name="habilitar_limite_distancia" />, <ParamBadge name="habilitar_taxa_deslocamento" /> e os campos dependentes quando ligados.</li>
-          <li>Passa a exigir autenticação HTTP Basic de um gestor ativo da bandeira, como os demais endpoints de tarifa, com a permissão de API de categoria (<code>api_integracao_categoria</code>) no cargo da bandeira; sem ela, a resposta é 403.</li>
+          <li><strong>Mudança incompatível:</strong> o gestor do Basic precisa ter a permissão de API de categoria (<code>api_integracao_categoria</code>) no cargo da bandeira; sem ela, a resposta é 403. A resposta também deixa de trazer os campos que não se aplicam ao método da tarifa: em Corridas, saem <ParamBadge name="tipo_cobranca_retorno" />, <ParamBadge name="valor_retorno_adicional" /> e <ParamBadge name="taxa_retorno_porcentagem" />. O Basic de gestor ativo da bandeira, já exigido, continua valendo.</li>
         </ul>
       </ChangeSection>
     </div>
@@ -216,7 +216,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       fontSize: "13px",
       lineHeight: "1.6",
     }}>
-      <strong>Nota:</strong> todos os endpoints de tarifa exigem um gestor da bandeira com a permissão <code>api_integracao_categoria</code> (403 sem ela). Decimais usam ponto e até 2 casas, e campo que não se aplica ao método ou à bandeira é recusado com 400. O <ParamBadge name="hora_fim" /> é o último minuto em que a tarifa vale: <code>05:59</code> é gravado como <code>05:59:59</code>, igual ao calendário do painel.
+      <strong>Nota:</strong> todos os endpoints de tarifa exigem um gestor da bandeira com a permissão <code>api_integracao_categoria</code> (403 sem ela). Decimais usam ponto e até 2 casas, e campo que não se aplica ao método ou à bandeira é recusado com 400. O <ParamBadge name="hora_fim" /> é o fim do bloco, como no calendário do painel: <code>18:00</code>–<code>22:00</code> vale até 21:59:59, e <code>24:00</code> vai até o fim do dia. As horas vão em <code>HH:MM</code>, sem segundos, com no máximo 36 horários por tarifa.
     </div>
   </Entry>
 
