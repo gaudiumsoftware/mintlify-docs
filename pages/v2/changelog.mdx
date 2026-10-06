@@ -169,7 +169,7 @@ export const EndpointBadge = ({ method, path, href }) => (
     <ChangeSection type="added">
       <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
         <li><ParamBadge name="estimativa_passageiro_app_nao_solicitada" /> — novo valor aceito em <ParamBadge name="eventos" />. Só a simulação do app com passageiro identificado e com destino gera o evento, uma vez por webhook.</li>
-        <li>O preço não desconta o saldo da carteira do passageiro, que é aplicado no aparelho.</li>
+        <li><strong>Limitação:</strong> o preço enviado não considera o saldo da carteira do passageiro, porque o uso do saldo é decidido no aparelho.</li>
       </ul>
     </ChangeSection>
 
