@@ -9120,7 +9120,7 @@
     "/notificacoes/in-app-messaging": {
       "post": {
         "summary": "Enviar notificação in-app",
-        "description": "Envia notificação via in-app messaging para uma lista de passageiros.",
+        "description": "Envia notificação via in-app messaging para uma lista de passageiros.\n\nSó recebem a notificação os passageiros da bandeira da chave de API que tenham aplicativo com token de notificação registrado. Um passageiro que não pode ser notificado não impede o envio para os demais. Nesse caso, a resposta é `207`, com `data.falhas` listando cada passageiro que ficou de fora, na ordem em que veio na requisição, com o `passageiro_id` como foi enviado e os `errors`. O campo do erro aponta a posição do ID em `passageiros` (`passageiros.N`, a partir de zero). Os motivos são:\n\n- `code` `0`: o ID não é um número inteiro positivo.\n- `code` `6`: o passageiro não existe ou não pertence à bandeira da chave de API. Os dois casos têm a mesma mensagem.\n- `code` `147`: o passageiro é da bandeira, mas não tem aplicativo com token de notificação registrado.\n\nUm ID repetido é considerado uma única vez, na primeira posição, e não gera falha. Quando nenhum passageiro pode ser notificado, a resposta é `404`, com um erro por ID em `errors`. Uma falha da requisição inteira, como o envio indisponível, responde com o próprio status e sem `data.falhas`.",
         "requestBody": {
           "required": true,
           "content": {
@@ -9135,7 +9135,7 @@
                 "properties": {
                   "passageiros": {
                     "type": "array",
-                    "description": "Lista de passageiros que receberão a notificação. Deve conter ao menos um item e todos os itens devem ser numéricos. Limite máximo de 1000 itens.",
+                    "description": "Lista de passageiros que receberão a notificação. Deve conter ao menos um item. Limite máximo de 1000 itens. IDs repetidos são considerados uma única vez. Um ID que não é inteiro positivo não recusa a lista: ele volta como falha em `data.falhas`.",
                     "minItems": 1,
                     "maxItems": 1000,
                     "items": {
@@ -9196,10 +9196,65 @@
                 },
                 "example": {
                   "success": true,
+                  "message": "In-App Messaging enviado com sucesso"
+                }
+              }
+            }
+          },
+          "207": {
+            "description": "Notificação enviada aos passageiros alcançáveis; algum passageiro ficou de fora",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
                   "data": {
-                    "status": "OK"
+                    "falhas": [
+                      {
+                        "passageiro_id": 999999,
+                        "errors": [
+                          {
+                            "code": 6,
+                            "message": "Destinatário não encontrado ou não pertence à bandeira autenticada.",
+                            "field": "passageiros.1"
+                          }
+                        ]
+                      },
+                      {
+                        "passageiro_id": 26,
+                        "errors": [
+                          {
+                            "code": 6,
+                            "message": "Destinatário não encontrado ou não pertence à bandeira autenticada.",
+                            "field": "passageiros.2"
+                          }
+                        ]
+                      },
+                      {
+                        "passageiro_id": 25,
+                        "errors": [
+                          {
+                            "code": 147,
+                            "message": "Destinatário sem dispositivo registrado para receber notificações.",
+                            "field": "passageiros.3"
+                          }
+                        ]
+                      },
+                      {
+                        "passageiro_id": "abc",
+                        "errors": [
+                          {
+                            "code": 0,
+                            "message": "Campo passageiros deve ser um número inteiro positivo.",
+                            "field": "passageiros.4"
+                          }
+                        ]
+                      }
+                    ]
                   },
-                  "message": "Notificação enviada com sucesso."
+                  "message": "In-App Messaging enviado com sucesso"
                 }
               }
             }
@@ -9275,6 +9330,48 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Nenhum dos passageiros informados pode ser notificado. Em casos raros, quando o passageiro perde o token de notificação durante a requisição, o `404` chega com uma única mensagem, sem os erros por ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "nenhum_alcancavel": {
+                    "summary": "Nenhum passageiro pode ser notificado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 6,
+                          "message": "Destinatário não encontrado ou não pertence à bandeira autenticada.",
+                          "field": "passageiros.0"
+                        },
+                        {
+                          "code": 147,
+                          "message": "Destinatário sem dispositivo registrado para receber notificações.",
+                          "field": "passageiros.1"
+                        }
+                      ]
+                    }
+                  },
+                  "token_perdido": {
+                    "summary": "Passageiro perdeu o token de notificação durante a requisição",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Nenhum token FCM encontrado para os passageiros informados"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -9282,7 +9379,7 @@
     "/notificacoes/push": {
       "post": {
         "summary": "Enviar notificação push",
-        "description": "Envia notificação push para uma lista de passageiros.",
+        "description": "Envia notificação push para uma lista de passageiros.\n\nSó recebem a notificação os passageiros da bandeira da chave de API que tenham aplicativo com token de notificação registrado. Um passageiro que não pode ser notificado não impede o envio para os demais. Nesse caso, a resposta é `207`, com `data.falhas` listando cada passageiro que ficou de fora, na ordem em que veio na requisição, com o `passageiro_id` como foi enviado e os `errors`. O campo do erro aponta a posição do ID em `passageiros` (`passageiros.N`, a partir de zero). Os motivos são:\n\n- `code` `0`: o ID não é um número inteiro positivo.\n- `code` `6`: o passageiro não existe ou não pertence à bandeira da chave de API. Os dois casos têm a mesma mensagem.\n- `code` `147`: o passageiro é da bandeira, mas não tem aplicativo com token de notificação registrado.\n\nUm ID repetido é considerado uma única vez, na primeira posição, e não gera falha. Quando nenhum passageiro pode ser notificado, a resposta é `404`, com um erro por ID em `errors`. Uma falha da requisição inteira, como o envio indisponível, responde com o próprio status e sem `data.falhas`.",
         "requestBody": {
           "required": true,
           "content": {
@@ -9296,7 +9393,7 @@
                 "properties": {
                   "passageiros": {
                     "type": "array",
-                    "description": "Lista de passageiros que receberão a notificação. Deve conter ao menos um item e todos os itens devem ser numéricos. Limite máximo de 1000 itens.",
+                    "description": "Lista de passageiros que receberão a notificação. Deve conter ao menos um item. Limite máximo de 1000 itens. IDs repetidos são considerados uma única vez. Um ID que não é inteiro positivo não recusa a lista: ele volta como falha em `data.falhas`.",
                     "minItems": 1,
                     "maxItems": 1000,
                     "items": {
@@ -9337,10 +9434,65 @@
                 },
                 "example": {
                   "success": true,
+                  "message": "Push comum enviado com sucesso"
+                }
+              }
+            }
+          },
+          "207": {
+            "description": "Notificação enviada aos passageiros alcançáveis; algum passageiro ficou de fora",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
                   "data": {
-                    "status": "OK"
+                    "falhas": [
+                      {
+                        "passageiro_id": 999999,
+                        "errors": [
+                          {
+                            "code": 6,
+                            "message": "Destinatário não encontrado ou não pertence à bandeira autenticada.",
+                            "field": "passageiros.1"
+                          }
+                        ]
+                      },
+                      {
+                        "passageiro_id": 26,
+                        "errors": [
+                          {
+                            "code": 6,
+                            "message": "Destinatário não encontrado ou não pertence à bandeira autenticada.",
+                            "field": "passageiros.2"
+                          }
+                        ]
+                      },
+                      {
+                        "passageiro_id": 25,
+                        "errors": [
+                          {
+                            "code": 147,
+                            "message": "Destinatário sem dispositivo registrado para receber notificações.",
+                            "field": "passageiros.3"
+                          }
+                        ]
+                      },
+                      {
+                        "passageiro_id": "abc",
+                        "errors": [
+                          {
+                            "code": 0,
+                            "message": "Campo passageiros deve ser um número inteiro positivo.",
+                            "field": "passageiros.4"
+                          }
+                        ]
+                      }
+                    ]
                   },
-                  "message": "Notificação enviada com sucesso."
+                  "message": "Push comum enviado com sucesso"
                 }
               }
             }
@@ -9365,18 +9517,6 @@
                       ]
                     }
                   },
-                  "passageiro_invalido": {
-                    "summary": "Item da lista não é numérico",
-                    "value": {
-                      "success": false,
-                      "errors": [
-                        {
-                          "field": "passageiros.1",
-                          "message": "Deve ser numérico."
-                        }
-                      ]
-                    }
-                  },
                   "mensagem_obrigatoria": {
                     "summary": "Campo mensagem ausente",
                     "value": {
@@ -9385,6 +9525,48 @@
                         {
                           "field": "mensagem",
                           "message": "Campo obrigatório."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Nenhum dos passageiros informados pode ser notificado. Em casos raros, quando o passageiro perde o token de notificação durante a requisição, o `404` chega com uma única mensagem, sem os erros por ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "nenhum_alcancavel": {
+                    "summary": "Nenhum passageiro pode ser notificado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 6,
+                          "message": "Destinatário não encontrado ou não pertence à bandeira autenticada.",
+                          "field": "passageiros.0"
+                        },
+                        {
+                          "code": 147,
+                          "message": "Destinatário sem dispositivo registrado para receber notificações.",
+                          "field": "passageiros.1"
+                        }
+                      ]
+                    }
+                  },
+                  "token_perdido": {
+                    "summary": "Passageiro perdeu o token de notificação durante a requisição",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Nenhum token FCM encontrado para os passageiros informados"
                         }
                       ]
                     }
@@ -9495,7 +9677,7 @@
     "/notificacoes/condutor/push": {
       "post": {
         "summary": "Enviar notificação push para condutores",
-        "description": "Envia notificação push para uma lista de condutores.\n\nSó recebem a notificação os condutores da bandeira da chave de API (ou de suas filiais) que tenham aplicativo com token de notificação registrado. Condutores inexistentes, de outra bandeira ou sem token são ignorados sem erro — o retorno é `404` apenas quando nenhum dos condutores informados pode ser notificado.",
+        "description": "Envia notificação push para uma lista de condutores.\n\nSó recebem a notificação os condutores da bandeira da chave de API (ou de suas filiais) que tenham aplicativo com token de notificação registrado. Um condutor que não pode ser notificado não impede o envio para os demais. Nesse caso, a resposta é `207`, com `data.falhas` listando cada condutor que ficou de fora, na ordem em que veio na requisição, com o `condutor_id` como foi enviado e os `errors`. O campo do erro aponta a posição do ID em `condutores` (`condutores.N`, a partir de zero). Os motivos são:\n\n- `code` `0`: o ID não é um número inteiro positivo.\n- `code` `6`: o condutor não existe ou não pertence à bandeira da chave de API. Os dois casos têm a mesma mensagem.\n- `code` `147`: o condutor é da bandeira, mas não tem aplicativo com token de notificação registrado.\n\nUm ID repetido é considerado uma única vez, na primeira posição, e não gera falha. Quando nenhum condutor pode ser notificado, a resposta é `404`, com um erro por ID em `errors`. Uma falha da requisição inteira, como o envio indisponível, responde com o próprio status e sem `data.falhas`.",
         "requestBody": {
           "required": true,
           "content": {
@@ -9509,7 +9691,7 @@
                 "properties": {
                   "condutores": {
                     "type": "array",
-                    "description": "Lista de condutores que receberão a notificação. Deve conter ao menos um item e todos os itens devem ser numéricos. IDs repetidos são considerados uma única vez. Limite máximo de 1000 itens.",
+                    "description": "Lista de condutores que receberão a notificação. Deve conter ao menos um item. Limite máximo de 1000 itens. IDs repetidos são considerados uma única vez. Um ID que não é inteiro positivo não recusa a lista: ele volta como falha em `data.falhas`.",
                     "minItems": 1,
                     "maxItems": 1000,
                     "items": {
@@ -9567,6 +9749,86 @@
               }
             }
           },
+          "207": {
+            "description": "Notificação enviada aos condutores alcançáveis; algum condutor ficou de fora",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "falhas": [
+                      {
+                        "condutor_id": 999999,
+                        "errors": [
+                          {
+                            "code": 6,
+                            "message": "Destinatário não encontrado ou não pertence à bandeira autenticada.",
+                            "field": "condutores.1"
+                          }
+                        ]
+                      },
+                      {
+                        "condutor_id": 6,
+                        "errors": [
+                          {
+                            "code": 6,
+                            "message": "Destinatário não encontrado ou não pertence à bandeira autenticada.",
+                            "field": "condutores.2"
+                          }
+                        ]
+                      },
+                      {
+                        "condutor_id": 5,
+                        "errors": [
+                          {
+                            "code": 147,
+                            "message": "Destinatário sem dispositivo registrado para receber notificações.",
+                            "field": "condutores.3"
+                          }
+                        ]
+                      },
+                      {
+                        "condutor_id": "abc",
+                        "errors": [
+                          {
+                            "code": 0,
+                            "message": "Campo condutores deve ser um número inteiro positivo.",
+                            "field": "condutores.4"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "message": "Push enviado com sucesso",
+                  "__links": [
+                    {
+                      "rel": "self",
+                      "href": "api/v2/integracao/notificacoes/condutor/push",
+                      "metodo": "post"
+                    },
+                    {
+                      "rel": "enviar-push-condutor-individual",
+                      "href": "api/v2/integracao/notificacoes/condutor/push/individual",
+                      "metodo": "post"
+                    },
+                    {
+                      "rel": "enviar-in-app-messaging-condutores",
+                      "href": "api/v2/integracao/notificacoes/condutor/in-app-messaging",
+                      "metodo": "post"
+                    },
+                    {
+                      "rel": "enviar-in-app-messaging-condutor-individual",
+                      "href": "api/v2/integracao/notificacoes/condutor/in-app-messaging/individual",
+                      "metodo": "post"
+                    }
+                  ]
+                }
+              }
+            }
+          },
           "400": {
             "description": "Erro de validação",
             "content": {
@@ -9595,18 +9857,6 @@
                         {
                           "code": 0,
                           "message": "'condutores': Informe ao menos um condutor."
-                        }
-                      ]
-                    }
-                  },
-                  "condutor_invalido": {
-                    "summary": "Item da lista não é numérico",
-                    "value": {
-                      "success": false,
-                      "errors": [
-                        {
-                          "code": 0,
-                          "message": "'condutores.1': Deve ser numérico."
                         }
                       ]
                     }
@@ -9640,7 +9890,7 @@
             }
           },
           "404": {
-            "description": "Nenhum dos condutores informados possui token de notificação registrado na bandeira da chave de API",
+            "description": "Nenhum dos condutores informados pode ser notificado",
             "content": {
               "application/json": {
                 "schema": {
@@ -9650,8 +9900,14 @@
                   "success": false,
                   "errors": [
                     {
-                      "code": 0,
-                      "message": "Nenhum token FCM encontrado para os condutores informados"
+                      "code": 6,
+                      "message": "Destinatário não encontrado ou não pertence à bandeira autenticada.",
+                      "field": "condutores.0"
+                    },
+                    {
+                      "code": 147,
+                      "message": "Destinatário sem dispositivo registrado para receber notificações.",
+                      "field": "condutores.1"
                     }
                   ]
                 }
@@ -9908,7 +10164,7 @@
     "/notificacoes/condutor/in-app-messaging": {
       "post": {
         "summary": "Enviar notificação in-app para condutores",
-        "description": "Envia notificação via in-app messaging para uma lista de condutores.\n\nA mensagem é exibida como um modal dentro do aplicativo do condutor, com título, conteúdo, imagem opcional e um botão de redirecionamento opcional. Mensagem recebida com o aplicativo fechado fica guardada e aparece na próxima abertura; enquanto o condutor não a fechar, ela volta a aparecer a cada troca de tela.\n\nSó recebem a notificação os condutores da bandeira da chave de API (ou de suas filiais) que tenham aplicativo com token de notificação registrado. Condutores inexistentes, de outra bandeira ou sem token são ignorados sem erro — o retorno é `404` apenas quando nenhum dos condutores informados pode ser notificado.",
+        "description": "Envia notificação via in-app messaging para uma lista de condutores.\n\nA mensagem é exibida como um modal dentro do aplicativo do condutor, com título, conteúdo, imagem opcional e um botão de redirecionamento opcional. Mensagem recebida com o aplicativo fechado fica guardada e aparece na próxima abertura; enquanto o condutor não a fechar, ela volta a aparecer a cada troca de tela.\n\nSó recebem a notificação os condutores da bandeira da chave de API (ou de suas filiais) que tenham aplicativo com token de notificação registrado. Um condutor que não pode ser notificado não impede o envio para os demais. Nesse caso, a resposta é `207`, com `data.falhas` listando cada condutor que ficou de fora, na ordem em que veio na requisição, com o `condutor_id` como foi enviado e os `errors`. O campo do erro aponta a posição do ID em `condutores` (`condutores.N`, a partir de zero). Os motivos são:\n\n- `code` `0`: o ID não é um número inteiro positivo.\n- `code` `6`: o condutor não existe ou não pertence à bandeira da chave de API. Os dois casos têm a mesma mensagem.\n- `code` `147`: o condutor é da bandeira, mas não tem aplicativo com token de notificação registrado.\n\nUm ID repetido é considerado uma única vez, na primeira posição, e não gera falha. Quando nenhum condutor pode ser notificado, a resposta é `404`, com um erro por ID em `errors`. Uma falha da requisição inteira, como o envio indisponível, responde com o próprio status e sem `data.falhas`.",
         "requestBody": {
           "required": true,
           "content": {
@@ -9923,7 +10179,7 @@
                 "properties": {
                   "condutores": {
                     "type": "array",
-                    "description": "Lista de condutores que receberão a notificação. Deve conter ao menos um item e todos os itens devem ser numéricos. IDs repetidos são considerados uma única vez. Limite máximo de 1000 itens.",
+                    "description": "Lista de condutores que receberão a notificação. Deve conter ao menos um item. Limite máximo de 1000 itens. IDs repetidos são considerados uma única vez. Um ID que não é inteiro positivo não recusa a lista: ele volta como falha em `data.falhas`.",
                     "minItems": 1,
                     "maxItems": 1000,
                     "items": {
@@ -10015,6 +10271,86 @@
               }
             }
           },
+          "207": {
+            "description": "Notificação enviada aos condutores alcançáveis; algum condutor ficou de fora",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "falhas": [
+                      {
+                        "condutor_id": 999999,
+                        "errors": [
+                          {
+                            "code": 6,
+                            "message": "Destinatário não encontrado ou não pertence à bandeira autenticada.",
+                            "field": "condutores.1"
+                          }
+                        ]
+                      },
+                      {
+                        "condutor_id": 6,
+                        "errors": [
+                          {
+                            "code": 6,
+                            "message": "Destinatário não encontrado ou não pertence à bandeira autenticada.",
+                            "field": "condutores.2"
+                          }
+                        ]
+                      },
+                      {
+                        "condutor_id": 5,
+                        "errors": [
+                          {
+                            "code": 147,
+                            "message": "Destinatário sem dispositivo registrado para receber notificações.",
+                            "field": "condutores.3"
+                          }
+                        ]
+                      },
+                      {
+                        "condutor_id": "abc",
+                        "errors": [
+                          {
+                            "code": 0,
+                            "message": "Campo condutores deve ser um número inteiro positivo.",
+                            "field": "condutores.4"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "message": "In-App Messaging enviado com sucesso",
+                  "__links": [
+                    {
+                      "rel": "self",
+                      "href": "api/v2/integracao/notificacoes/condutor/in-app-messaging",
+                      "metodo": "post"
+                    },
+                    {
+                      "rel": "enviar-push-condutores",
+                      "href": "api/v2/integracao/notificacoes/condutor/push",
+                      "metodo": "post"
+                    },
+                    {
+                      "rel": "enviar-push-condutor-individual",
+                      "href": "api/v2/integracao/notificacoes/condutor/push/individual",
+                      "metodo": "post"
+                    },
+                    {
+                      "rel": "enviar-in-app-messaging-condutor-individual",
+                      "href": "api/v2/integracao/notificacoes/condutor/in-app-messaging/individual",
+                      "metodo": "post"
+                    }
+                  ]
+                }
+              }
+            }
+          },
           "400": {
             "description": "Erro de validação",
             "content": {
@@ -10043,18 +10379,6 @@
                         {
                           "code": 0,
                           "message": "'condutores': Informe ao menos um condutor."
-                        }
-                      ]
-                    }
-                  },
-                  "condutor_invalido": {
-                    "summary": "Item da lista não é numérico",
-                    "value": {
-                      "success": false,
-                      "errors": [
-                        {
-                          "code": 0,
-                          "message": "'condutores.1': Deve ser numérico."
                         }
                       ]
                     }
@@ -10148,7 +10472,7 @@
             }
           },
           "404": {
-            "description": "Nenhum dos condutores informados possui token de notificação registrado na bandeira da chave de API",
+            "description": "Nenhum dos condutores informados pode ser notificado",
             "content": {
               "application/json": {
                 "schema": {
@@ -10158,8 +10482,14 @@
                   "success": false,
                   "errors": [
                     {
-                      "code": 0,
-                      "message": "Nenhum token FCM encontrado para os condutores informados"
+                      "code": 6,
+                      "message": "Destinatário não encontrado ou não pertence à bandeira autenticada.",
+                      "field": "condutores.0"
+                    },
+                    {
+                      "code": 147,
+                      "message": "Destinatário sem dispositivo registrado para receber notificações.",
+                      "field": "condutores.1"
                     }
                   ]
                 }
