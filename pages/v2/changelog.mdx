@@ -154,6 +154,38 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="8 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="cupons-sucesso-parcial" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Sucesso parcial na criação de cupons
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      A criação de cupons em lote deixa de ser tudo ou nada. Cupom com erro não impede os demais: os
+      válidos são criados e os recusados voltam na resposta, cada um com o motivo. O
+      <code>POST /cupons</code> passa a seguir a mesma ideia para os clientes de <code>cliente_ids</code>.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/cupons/lote" href="/pages/v2/referencia/cupons/endpoint/post-lote" />
+
+    <ChangeSection type="changed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>Resposta <code>201</code> quando todos os cupons são criados e <code>207</code> quando algum é recusado, inclusive quando todos são, com o mesmo body: <ParamBadge name="cupons" /> traz <ParamBadge name="indice" />, <ParamBadge name="id" /> e <ParamBadge name="codigo" /> de cada cupom criado, e <ParamBadge name="falhas" /> traz <ParamBadge name="indice" />, <ParamBadge name="cliente_id" />, <ParamBadge name="gerador_cupom_id" /> e <ParamBadge name="errors" /> de cada cupom recusado.</li>
+        <li>Cada erro continua com <ParamBadge name="field" /> no formato <code>cupons.N.campo</code> e o mesmo <code>code</code> do <code>POST /cupons</code>. O <code>400</code> fica para o erro no próprio lote, como mais de 100 cupons, e nesse caso nenhum cupom é criado.</li>
+        <li>Os cupons que excedem a cota do gerador são recusados, e os demais do lote são criados.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/cupons" href="/pages/v2/referencia/cupons/endpoint/post" />
+
+      <ChangeSection type="changed">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="cliente_ids" /> — cliente inexistente, de outra bandeira ou com id não numérico deixa de recusar o cupom inteiro. O cupom é criado para os clientes válidos, e a resposta passa a ser <code>207</code>, com <ParamBadge name="falhas" /> trazendo <ParamBadge name="cliente_id" /> e <ParamBadge name="errors" /> de cada cliente não vinculado.</li>
+          <li>Quando nenhum cliente de <ParamBadge name="cliente_ids" /> é válido, o cupom não é criado e a resposta é <code>400</code>, com um erro por cliente.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+  </Entry>
+
   <Entry date="6 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="cupons-em-lote" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Criação de cupons em lote
