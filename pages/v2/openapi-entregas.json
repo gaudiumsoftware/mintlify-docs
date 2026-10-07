@@ -7393,6 +7393,517 @@
         }
       }
     },
+    "/financeiro/extrato": {
+      "get": {
+        "summary": "Consultar extrato de créditos",
+        "description": "Lista os lançamentos do extrato de créditos da central, com os mesmos filtros e a mesma classificação da tela MachinePay > Extrato do painel. Os lançamentos vêm do mais recente para o mais antigo, 10 por página e sem total: a última página é a que vem com menos de 10 itens.\n\nO período (`data_ini` a `data_fim`) tem no máximo 31 dias e `data_ini` precisa estar nos últimos 6 meses. Quando `subfiltros` é informado (e não é `todos`), ele define os lançamentos e o `tipo` é ignorado.\n\n**`tipo_operacao`** de cada lançamento. Estorno leva o prefixo `estorno_` (ex.: `estorno_recarga`), e `operacao_descricao` traz o texto legível (ex.: `Estorno (Recarga via central)`):\n\n| Valor | Lançamento |\n|---|---|\n| `recarga` | Recarga de créditos (via central, pix, bônus de deslocamento ou desconto na primeira solicitação) |\n| `saque` | Saque de créditos (via central ou pix, inclusive em processamento) |\n| `taxa_saque` | Taxa de saque via pix |\n| `taxa_central` | Taxa da central cobrada na corrida |\n| `taxa_cancelamento` | Taxa de cancelamento |\n| `cashback` | Cashback ou bônus para novo passageiro |\n| `desafio` | Recompensa por desafio |\n| `indicacao` | Recompensa por indicação |\n| `gorjeta` | Gorjeta |\n| `passe_livre` | Compra ou reembolso de passe livre |\n| `impulsionamento_central` | Impulsionamento da solicitação pela central |\n| `cupom` | Cupom creditado |\n| `voucher` | Ganhos em voucher |\n| `ticket` | Ganhos em e-ticket |\n| `faturado` | Ganhos em faturado |\n| `cartao` | Ganhos em cartão no app |\n| `pix_app` | Ganhos em pix no app |\n| `ganho` | Ganho de créditos (carteira de créditos ou bônus dedicado recebido) |\n| `consumido` | Consumo de créditos (carteira de créditos, taxa da central em centrais só de entregas ou bônus dedicado enviado) |\n| `pagamento_pendente` | Pagamento pendente |\n\n**`subfiltros`** aceitos:\n\n| Valor | Lançamentos |\n|---|---|\n| `todos` | Sem subfiltro: vale o `tipo` |\n| `ganhos-app` | Ganhos em cartão no app |\n| `ganhos-pix` | Ganhos em pix no app |\n| `ganhos-faturado` | Ganhos em faturado |\n| `ganhos-voucher` | Ganhos em voucher |\n| `ganhos-eticket` | Ganhos em e-ticket |\n| `ganhos-carteira-credito` | Ganhos em carteira de créditos |\n| `ganhos-presencial` | Corridas e entregas com pagamento presencial |\n| `ganhos-cupom` | Cupons creditados |\n| `consumo-empresas` | Consumo de créditos por empresas |\n| `consumo-taxas-central` | Taxas da central |\n| `cashback` | Cashback e bônus de passageiro |\n| `desafios` | Recompensas por desafio |\n| `indicacao` | Recompensas por indicação |\n| `bonus_dedicado` | Bônus dedicado |\n| `taxas-repassadas` | Taxas de cancelamento repassadas |\n| `recarga-pix` | Recargas via pix |\n| `recarga-central` | Recargas via central |\n| `saque-central` | Saques via central |\n| `saque-pix` | Saques via pix |\n\n`processamento_mchpay` vem `NOK` quando o processamento dos lançamentos está atrasado: os mais recentes ainda podem não aparecer.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "parameters": [
+          {
+            "name": "data_ini",
+            "in": "query",
+            "description": "Início do período (`YYYY-MM-DD`), no fuso da central. Precisa estar nos últimos 6 meses.",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2026-10-01"
+            },
+            "required": true
+          },
+          {
+            "name": "data_fim",
+            "in": "query",
+            "description": "Fim do período (`YYYY-MM-DD`), no fuso da central. No máximo 31 dias depois de `data_ini`.",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2026-10-07"
+            },
+            "required": true
+          },
+          {
+            "name": "pagina",
+            "in": "query",
+            "description": "Página, a partir de 1. Cada página traz até 10 lançamentos.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "example": 1
+            }
+          },
+          {
+            "name": "tipo",
+            "in": "query",
+            "description": "Aba do extrato: `T` todos, `C` solicitações, `B` benefícios, `R` recargas, `S` saques, `P` passe livre.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "T",
+                "C",
+                "B",
+                "R",
+                "S",
+                "P"
+              ],
+              "default": "T",
+              "example": "R"
+            }
+          },
+          {
+            "name": "subfiltros[]",
+            "in": "query",
+            "description": "Subfiltros do extrato (ver tabela acima). Pode ser repetido.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "todos",
+                  "ganhos-app",
+                  "ganhos-pix",
+                  "ganhos-faturado",
+                  "ganhos-voucher",
+                  "ganhos-eticket",
+                  "ganhos-carteira-credito",
+                  "ganhos-presencial",
+                  "ganhos-cupom",
+                  "consumo-empresas",
+                  "consumo-taxas-central",
+                  "cashback",
+                  "desafios",
+                  "indicacao",
+                  "bonus_dedicado",
+                  "taxas-repassadas",
+                  "recarga-pix",
+                  "recarga-central",
+                  "saque-central",
+                  "saque-pix"
+                ]
+              },
+              "example": [
+                "recarga-central"
+              ]
+            }
+          },
+          {
+            "name": "situacao",
+            "in": "query",
+            "description": "Com subfiltros: `T` todos, `R` recebidos, `E` retirados.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "T",
+                "R",
+                "E"
+              ],
+              "example": "R"
+            }
+          },
+          {
+            "name": "tipo_usuario[]",
+            "in": "query",
+            "description": "Com subfiltros de recarga e saque: `T` todos, `C` passageiros, `M` condutores, `E` empresas. Pode ser repetido.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "T",
+                  "C",
+                  "M",
+                  "E"
+                ]
+              },
+              "example": [
+                "M"
+              ]
+            }
+          },
+          {
+            "name": "taxista_id",
+            "in": "query",
+            "description": "Extrato de um condutor da central.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 1
+            }
+          },
+          {
+            "name": "cliente_id",
+            "in": "query",
+            "description": "Extrato de um passageiro da central.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 4
+            }
+          },
+          {
+            "name": "empresa_id",
+            "in": "query",
+            "description": "Extrato de uma empresa da central. Com `taxista_id` ou `cliente_id`, filtra os lançamentos deles com essa empresa.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 2
+            }
+          },
+          {
+            "name": "solicitacao_id",
+            "in": "query",
+            "description": "Lançamentos de uma corrida ou entrega da central. Substitui o período pelo da solicitação.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 632
+            }
+          },
+          {
+            "name": "registro_manual_id",
+            "in": "query",
+            "description": "Lançamentos de uma recarga ou saque manual da central. Substitui o período pelo do registro.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 4
+            }
+          },
+          {
+            "name": "categoria_id",
+            "in": "query",
+            "description": "Lançamentos de corridas de uma categoria da central.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 6
+            }
+          },
+          {
+            "name": "tipo_pagamento_id",
+            "in": "query",
+            "description": "Lançamentos de corridas com um tipo de pagamento da central.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "example": 3
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lançamentos da página. `pessoa.tipo` é `condutor`, `cliente` ou `empresa`; `pessoa`, `registro_manual`, `desafio_id` e `solicitacao_cashback_id` vêm `null` quando não se aplicam. `valor` segue o ponto de vista da pessoa do lançamento, como na tela: positivo quando ela recebe créditos (recarga, ganhos) e negativo quando perde (saque, taxa).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "lista": [
+                      {
+                        "data_hora": "2026-10-07T17:19:20-03:00",
+                        "valor": -1.31,
+                        "pessoa": {
+                          "tipo": "condutor",
+                          "nome": "Rafael Lima"
+                        },
+                        "tipo_operacao": "taxa_central",
+                        "operacao_descricao": "Taxa da central",
+                        "descricao": "OS #632",
+                        "estornado": false,
+                        "registro_manual": null,
+                        "desafio_id": null,
+                        "solicitacao_cashback_id": null
+                      },
+                      {
+                        "data_hora": "2026-10-07T12:59:45-03:00",
+                        "valor": 100,
+                        "pessoa": {
+                          "tipo": "cliente",
+                          "nome": "Ana Oliveira"
+                        },
+                        "tipo_operacao": "recarga",
+                        "operacao_descricao": "Recarga via central",
+                        "descricao": "Operador: Administrador Velox",
+                        "estornado": false,
+                        "registro_manual": {
+                          "id": 4,
+                          "operador": "Administrador Velox",
+                          "observacao": null,
+                          "observacao_condutor": null
+                        },
+                        "desafio_id": null,
+                        "solicitacao_cashback_id": null
+                      },
+                      {
+                        "data_hora": "2026-10-07T12:51:48-03:00",
+                        "valor": -1.5,
+                        "pessoa": {
+                          "tipo": "condutor",
+                          "nome": "Carlos Silva"
+                        },
+                        "tipo_operacao": "saque",
+                        "operacao_descricao": "Saque via central",
+                        "descricao": "Operador: Administrador Velox",
+                        "estornado": false,
+                        "registro_manual": {
+                          "id": 2,
+                          "operador": "Administrador Velox",
+                          "observacao": null,
+                          "observacao_condutor": null
+                        },
+                        "desafio_id": null,
+                        "solicitacao_cashback_id": null
+                      }
+                    ],
+                    "processamento_mchpay": "OK"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parâmetro inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "data_obrigatoria": {
+                    "summary": "Data ausente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'data_fim': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "data_invalida": {
+                    "summary": "Data fora do formato ou inexistente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'data_ini': Deve ser uma data válida no formato YYYY-MM-DD."
+                        }
+                      ]
+                    }
+                  },
+                  "periodo_invertido": {
+                    "summary": "data_ini depois de data_fim",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'data_ini': Deve ser anterior ou igual a 'data_fim'."
+                        }
+                      ]
+                    }
+                  },
+                  "periodo_maximo": {
+                    "summary": "Período maior que 31 dias",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'data_fim': O período entre 'data_ini' e 'data_fim' pode ter no máximo 31 dias."
+                        }
+                      ]
+                    }
+                  },
+                  "fora_da_janela": {
+                    "summary": "data_ini antes dos últimos 6 meses",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'data_ini': O extrato só está disponível para os últimos 6 meses."
+                        }
+                      ]
+                    }
+                  },
+                  "inteiro_invalido": {
+                    "summary": "Id ou página que não é inteiro positivo",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'taxista_id': Deve ser um número inteiro positivo."
+                        }
+                      ]
+                    }
+                  },
+                  "valor_invalido": {
+                    "summary": "Valor fora da lista aceita",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'tipo': Deve estar dentre os valores: T, C, B, R, S, P."
+                        }
+                      ]
+                    }
+                  },
+                  "categoria_outra_bandeira": {
+                    "summary": "Categoria ou tipo de pagamento que não é da central",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'categoria_id': Não encontrado na bandeira."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Gestor não autenticado pelo HTTP Basic",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": "B5",
+                      "message": "Usuário e/ou senhas inválidos."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Filtro que não é da central",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "condutor": {
+                    "summary": "Condutor de outra central",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'taxista_id': Não encontrado na bandeira."
+                        }
+                      ]
+                    }
+                  },
+                  "cliente": {
+                    "summary": "Passageiro de outra central",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'cliente_id': Não encontrado na bandeira."
+                        }
+                      ]
+                    }
+                  },
+                  "empresa": {
+                    "summary": "Empresa de outra central",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'empresa_id': Não encontrado na bandeira."
+                        }
+                      ]
+                    }
+                  },
+                  "solicitacao": {
+                    "summary": "Solicitação de outra central",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'solicitacao_id': Não encontrado na bandeira."
+                        }
+                      ]
+                    }
+                  },
+                  "registro_manual": {
+                    "summary": "Registro manual de outra central",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'registro_manual_id': Não encontrado na bandeira."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha ao consultar o extrato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Falha na operação"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Extrato temporariamente indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "O extrato está temporariamente indisponível. Tente novamente mais tarde."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/condutores/requisitos-cadastro/documentos": {
       "get": {
         "summary": "Consultar requisitos de documentos para cadastro",

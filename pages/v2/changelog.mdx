@@ -154,6 +154,39 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="15 out 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="extrato-creditos-central" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Extrato de créditos da central
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Consulte pela API os lançamentos do extrato de créditos da central, com os mesmos filtros e a mesma classificação da tela de extrato do painel.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/financeiro/extrato" href="/pages/v2/referencia/financeiro/endpoint/get-extrato" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Novo endpoint com os parâmetros de query:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="data_ini" /> e <ParamBadge name="data_fim" /> — período obrigatório, de até 31 dias, com início nos últimos 6 meses.</li>
+        <li><ParamBadge name="pagina" /> — página de 10 lançamentos; a última é a que vem com menos de 10.</li>
+        <li><ParamBadge name="tipo" />, <ParamBadge name="subfiltros[]" />, <ParamBadge name="situacao" /> e <ParamBadge name="tipo_usuario[]" /> — os filtros da tela de extrato.</li>
+        <li><ParamBadge name="taxista_id" />, <ParamBadge name="cliente_id" />, <ParamBadge name="empresa_id" />, <ParamBadge name="solicitacao_id" />, <ParamBadge name="registro_manual_id" />, <ParamBadge name="categoria_id" /> e <ParamBadge name="tipo_pagamento_id" /> — recortam o extrato por pessoa, corrida, registro manual, categoria ou tipo de pagamento da central.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> cada lançamento traz <code>tipo_operacao</code> (código estável, com o prefixo <code>estorno_</code> nos estornos) e <code>operacao_descricao</code>. O endpoint exige Api-Key e autenticação HTTP Basic de um gestor da central, e tem limite próprio de 40 requisições por minuto.
+    </div>
+  </Entry>
+
   <Entry date="8 out 2026" label="Em breve" labelColor="#ea580c">
     <h2 id="cupons-sucesso-parcial" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Sucesso parcial na criação de cupons
