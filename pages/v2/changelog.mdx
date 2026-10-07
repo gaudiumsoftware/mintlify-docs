@@ -154,6 +154,38 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="13 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="notificacoes-falhas-por-destinatario" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Falhas por destinatário nas notificações em lista
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      As notificações para listas de passageiros e de condutores passam a informar quem ficou de fora do
+      envio e por quê. Antes, um ID inexistente, de outra bandeira ou sem aplicativo era descartado em
+      silêncio e a resposta era <code>200</code>. Agora os demais continuam sendo notificados, e a resposta
+      traz uma falha por ID, no mesmo formato do <code>POST /cupons</code>.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/notificacoes/push" href="/pages/v2/referencia/notificacao/endpoint/post-push" />
+    <EndpointBadge method="POST" path="/api/v2/integracao/notificacoes/in-app-messaging" href="/pages/v2/referencia/notificacao/endpoint/post-in-app-messaging" />
+    <EndpointBadge method="POST" path="/api/v2/integracao/notificacoes/condutor/push" href="/pages/v2/referencia/notificacao/endpoint/post-condutor-push" />
+    <EndpointBadge method="POST" path="/api/v2/integracao/notificacoes/condutor/in-app-messaging" href="/pages/v2/referencia/notificacao/endpoint/post-condutor-in-app-messaging" />
+
+    <ChangeSection type="changed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>Resposta <code>200</code> quando todos os IDs são notificados, com o mesmo corpo de antes, e <code>207</code> quando algum fica de fora: <ParamBadge name="falhas" /> traz, na ordem da requisição, o <ParamBadge name="passageiro_id" /> ou o <ParamBadge name="condutor_id" /> como foi enviado e os <ParamBadge name="errors" />, com <ParamBadge name="field" /> no formato <code>passageiros.N</code> ou <code>condutores.N</code>.</li>
+        <li>Os motivos de falha são: <code>code</code> <code>0</code> para ID que não é inteiro positivo, <code>6</code> para ID inexistente ou de outra bandeira, com a mesma mensagem nos dois casos, e <code>147</code> para ID da bandeira sem aplicativo com token de notificação registrado.</li>
+        <li><ParamBadge name="passageiros" /> e <ParamBadge name="condutores" /> — um ID que não é numérico deixa de recusar a lista inteira com <code>400</code> e passa a voltar como falha. ID repetido conta uma vez e não gera falha.</li>
+        <li>Quando nenhum ID pode ser notificado, a resposta continua <code>404</code>, agora com um erro por ID em <ParamBadge name="errors" />.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="fixed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>O exemplo de resposta <code>200</code> das notificações de passageiros mostrava <code>data.status</code>, que a API não devolve. O exemplo passou a ser a resposta real, com <ParamBadge name="success" /> e <ParamBadge name="message" />.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="8 out 2026" label="Em breve" labelColor="#ea580c">
     <h2 id="cupons-sucesso-parcial" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Sucesso parcial na criação de cupons
