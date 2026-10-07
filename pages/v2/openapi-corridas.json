@@ -3334,7 +3334,7 @@
                         }
                       }
                     },
-                    "description": "Horários de atuação da tarifa extra. Quando enviada, substitui a lista inteira. A tarifa padrão não aceita horários, e a extra não aceita `null`. Omitido, mantém o valor atual. No máximo 36 horários por tarifa.",
+                    "description": "Horários de atuação da tarifa extra. Quando enviada, substitui a lista inteira. A tarifa padrão não aceita horários, e a extra não aceita `null`. Omitido, mantém o valor atual. No máximo 36 horários quando a lista muda; reenviar a lista atual sem alteração é aceito mesmo acima disso (tarifa configurada no painel com mais blocos).",
                     "maxItems": 36
                   }
                 }
