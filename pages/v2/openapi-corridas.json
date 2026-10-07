@@ -9120,7 +9120,7 @@
     "/notificacoes/in-app-messaging": {
       "post": {
         "summary": "Enviar notificação in-app",
-        "description": "Envia notificação via in-app messaging para uma lista de passageiros.\n\nSó recebem a notificação os passageiros da bandeira da chave de API que tenham aplicativo com token de notificação registrado. Um passageiro que não pode ser notificado não impede o envio para os demais. Nesse caso, a resposta é `207`, com `data.falhas` listando cada passageiro que ficou de fora, na ordem em que veio na requisição, com o `passageiro_id` como foi enviado e os `errors`. O campo do erro aponta a posição do ID em `passageiros` (`passageiros.N`, a partir de zero). Os motivos são:\n\n- `code` `0`: o ID não é um número inteiro positivo.\n- `code` `6`: o passageiro não existe ou não pertence à bandeira da chave de API. Os dois casos têm a mesma mensagem.\n- `code` `147`: o passageiro é da bandeira, mas não tem aplicativo com token de notificação registrado.\n\nUm ID repetido é considerado uma única vez, na primeira posição, e não gera falha. Quando nenhum passageiro pode ser notificado, a resposta é `404`, com um erro por ID em `errors`. Uma falha da requisição inteira, como o envio indisponível, responde com o próprio status e sem `data.falhas`.",
+        "description": "Envia notificação via in-app messaging para uma lista de passageiros.\n\nSó recebem a notificação os passageiros da bandeira da chave de API que tenham aplicativo com token de notificação registrado. Um passageiro que não pode ser notificado não impede o envio para os demais. Nesse caso, a resposta é `207`, com `data.falhas` listando cada passageiro que ficou de fora, na ordem em que veio na requisição, com o `passageiro_id` como foi enviado e os `errors`. O campo do erro aponta a posição do ID em `passageiros` (`passageiros.N`, a partir de zero). Os motivos são:\n\n- `code` `0`: o ID não é um número inteiro positivo.\n- `code` `6`: o passageiro não existe ou não pertence à bandeira da chave de API. Os dois casos têm a mesma mensagem.\n- `code` `147`: o passageiro é da bandeira, mas não tem aplicativo com token de notificação registrado.\n\nUm ID repetido é considerado uma única vez, na primeira posição, e não gera falha. Quando nenhum passageiro pode ser notificado, a resposta é `404`, com um erro por ID em `errors`; se nenhum ID da lista é inteiro positivo, a resposta é `400`, no mesmo formato. Uma falha da requisição inteira, como o envio indisponível, responde com o próprio status e sem `data.falhas`.",
         "requestBody": {
           "required": true,
           "content": {
@@ -9135,7 +9135,7 @@
                 "properties": {
                   "passageiros": {
                     "type": "array",
-                    "description": "Lista de passageiros que receberão a notificação. Deve conter ao menos um item. Limite máximo de 1000 itens. IDs repetidos são considerados uma única vez. Um ID que não é inteiro positivo não recusa a lista: ele volta como falha em `data.falhas`.",
+                    "description": "Lista de passageiros que receberão a notificação. Deve conter ao menos um item. Limite máximo de 1000 itens. IDs repetidos são considerados uma única vez. Um ID que não é inteiro positivo não recusa a lista: ele volta como falha em `data.falhas`. Se nenhum ID da lista é inteiro positivo, a lista é recusada com `400`.",
                     "minItems": 1,
                     "maxItems": 1000,
                     "items": {
@@ -9326,6 +9326,24 @@
                         }
                       ]
                     }
+                  },
+                  "nenhum_id_inteiro_positivo": {
+                    "summary": "Nenhum ID da lista é inteiro positivo",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Campo passageiros deve ser um número inteiro positivo.",
+                          "field": "passageiros.0"
+                        },
+                        {
+                          "code": 0,
+                          "message": "Campo passageiros deve ser um número inteiro positivo.",
+                          "field": "passageiros.1"
+                        }
+                      ]
+                    }
                   }
                 }
               }
@@ -9379,7 +9397,7 @@
     "/notificacoes/push": {
       "post": {
         "summary": "Enviar notificação push",
-        "description": "Envia notificação push para uma lista de passageiros.\n\nSó recebem a notificação os passageiros da bandeira da chave de API que tenham aplicativo com token de notificação registrado. Um passageiro que não pode ser notificado não impede o envio para os demais. Nesse caso, a resposta é `207`, com `data.falhas` listando cada passageiro que ficou de fora, na ordem em que veio na requisição, com o `passageiro_id` como foi enviado e os `errors`. O campo do erro aponta a posição do ID em `passageiros` (`passageiros.N`, a partir de zero). Os motivos são:\n\n- `code` `0`: o ID não é um número inteiro positivo.\n- `code` `6`: o passageiro não existe ou não pertence à bandeira da chave de API. Os dois casos têm a mesma mensagem.\n- `code` `147`: o passageiro é da bandeira, mas não tem aplicativo com token de notificação registrado.\n\nUm ID repetido é considerado uma única vez, na primeira posição, e não gera falha. Quando nenhum passageiro pode ser notificado, a resposta é `404`, com um erro por ID em `errors`. Uma falha da requisição inteira, como o envio indisponível, responde com o próprio status e sem `data.falhas`.",
+        "description": "Envia notificação push para uma lista de passageiros.\n\nSó recebem a notificação os passageiros da bandeira da chave de API que tenham aplicativo com token de notificação registrado. Um passageiro que não pode ser notificado não impede o envio para os demais. Nesse caso, a resposta é `207`, com `data.falhas` listando cada passageiro que ficou de fora, na ordem em que veio na requisição, com o `passageiro_id` como foi enviado e os `errors`. O campo do erro aponta a posição do ID em `passageiros` (`passageiros.N`, a partir de zero). Os motivos são:\n\n- `code` `0`: o ID não é um número inteiro positivo.\n- `code` `6`: o passageiro não existe ou não pertence à bandeira da chave de API. Os dois casos têm a mesma mensagem.\n- `code` `147`: o passageiro é da bandeira, mas não tem aplicativo com token de notificação registrado.\n\nUm ID repetido é considerado uma única vez, na primeira posição, e não gera falha. Quando nenhum passageiro pode ser notificado, a resposta é `404`, com um erro por ID em `errors`; se nenhum ID da lista é inteiro positivo, a resposta é `400`, no mesmo formato. Uma falha da requisição inteira, como o envio indisponível, responde com o próprio status e sem `data.falhas`.",
         "requestBody": {
           "required": true,
           "content": {
@@ -9393,7 +9411,7 @@
                 "properties": {
                   "passageiros": {
                     "type": "array",
-                    "description": "Lista de passageiros que receberão a notificação. Deve conter ao menos um item. Limite máximo de 1000 itens. IDs repetidos são considerados uma única vez. Um ID que não é inteiro positivo não recusa a lista: ele volta como falha em `data.falhas`.",
+                    "description": "Lista de passageiros que receberão a notificação. Deve conter ao menos um item. Limite máximo de 1000 itens. IDs repetidos são considerados uma única vez. Um ID que não é inteiro positivo não recusa a lista: ele volta como falha em `data.falhas`. Se nenhum ID da lista é inteiro positivo, a lista é recusada com `400`.",
                     "minItems": 1,
                     "maxItems": 1000,
                     "items": {
@@ -9525,6 +9543,24 @@
                         {
                           "field": "mensagem",
                           "message": "Campo obrigatório."
+                        }
+                      ]
+                    }
+                  },
+                  "nenhum_id_inteiro_positivo": {
+                    "summary": "Nenhum ID da lista é inteiro positivo",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Campo passageiros deve ser um número inteiro positivo.",
+                          "field": "passageiros.0"
+                        },
+                        {
+                          "code": 0,
+                          "message": "Campo passageiros deve ser um número inteiro positivo.",
+                          "field": "passageiros.1"
                         }
                       ]
                     }
@@ -9677,7 +9713,7 @@
     "/notificacoes/condutor/push": {
       "post": {
         "summary": "Enviar notificação push para condutores",
-        "description": "Envia notificação push para uma lista de condutores.\n\nSó recebem a notificação os condutores da bandeira da chave de API (ou de suas filiais) que tenham aplicativo com token de notificação registrado. Um condutor que não pode ser notificado não impede o envio para os demais. Nesse caso, a resposta é `207`, com `data.falhas` listando cada condutor que ficou de fora, na ordem em que veio na requisição, com o `condutor_id` como foi enviado e os `errors`. O campo do erro aponta a posição do ID em `condutores` (`condutores.N`, a partir de zero). Os motivos são:\n\n- `code` `0`: o ID não é um número inteiro positivo.\n- `code` `6`: o condutor não existe ou não pertence à bandeira da chave de API. Os dois casos têm a mesma mensagem.\n- `code` `147`: o condutor é da bandeira, mas não tem aplicativo com token de notificação registrado.\n\nUm ID repetido é considerado uma única vez, na primeira posição, e não gera falha. Quando nenhum condutor pode ser notificado, a resposta é `404`, com um erro por ID em `errors`. Uma falha da requisição inteira, como o envio indisponível, responde com o próprio status e sem `data.falhas`.",
+        "description": "Envia notificação push para uma lista de condutores.\n\nSó recebem a notificação os condutores da bandeira da chave de API (ou de suas filiais) que tenham aplicativo com token de notificação registrado. Um condutor que não pode ser notificado não impede o envio para os demais. Nesse caso, a resposta é `207`, com `data.falhas` listando cada condutor que ficou de fora, na ordem em que veio na requisição, com o `condutor_id` como foi enviado e os `errors`. O campo do erro aponta a posição do ID em `condutores` (`condutores.N`, a partir de zero). Os motivos são:\n\n- `code` `0`: o ID não é um número inteiro positivo.\n- `code` `6`: o condutor não existe ou não pertence à bandeira da chave de API. Os dois casos têm a mesma mensagem.\n- `code` `147`: o condutor é da bandeira, mas não tem aplicativo com token de notificação registrado.\n\nUm ID repetido é considerado uma única vez, na primeira posição, e não gera falha. Quando nenhum condutor pode ser notificado, a resposta é `404`, com um erro por ID em `errors`; se nenhum ID da lista é inteiro positivo, a resposta é `400`, no mesmo formato. Uma falha da requisição inteira, como o envio indisponível, responde com o próprio status e sem `data.falhas`.",
         "requestBody": {
           "required": true,
           "content": {
@@ -9691,7 +9727,7 @@
                 "properties": {
                   "condutores": {
                     "type": "array",
-                    "description": "Lista de condutores que receberão a notificação. Deve conter ao menos um item. Limite máximo de 1000 itens. IDs repetidos são considerados uma única vez. Um ID que não é inteiro positivo não recusa a lista: ele volta como falha em `data.falhas`.",
+                    "description": "Lista de condutores que receberão a notificação. Deve conter ao menos um item. Limite máximo de 1000 itens. IDs repetidos são considerados uma única vez. Um ID que não é inteiro positivo não recusa a lista: ele volta como falha em `data.falhas`. Se nenhum ID da lista é inteiro positivo, a lista é recusada com `400`.",
                     "minItems": 1,
                     "maxItems": 1000,
                     "items": {
@@ -9881,6 +9917,24 @@
                         {
                           "code": 0,
                           "message": "'mensagem': Deve ter no máximo 255 caracteres."
+                        }
+                      ]
+                    }
+                  },
+                  "nenhum_id_inteiro_positivo": {
+                    "summary": "Nenhum ID da lista é inteiro positivo",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Campo condutores deve ser um número inteiro positivo.",
+                          "field": "condutores.0"
+                        },
+                        {
+                          "code": 0,
+                          "message": "Campo condutores deve ser um número inteiro positivo.",
+                          "field": "condutores.1"
                         }
                       ]
                     }
@@ -10164,7 +10218,7 @@
     "/notificacoes/condutor/in-app-messaging": {
       "post": {
         "summary": "Enviar notificação in-app para condutores",
-        "description": "Envia notificação via in-app messaging para uma lista de condutores.\n\nA mensagem é exibida como um modal dentro do aplicativo do condutor, com título, conteúdo, imagem opcional e um botão de redirecionamento opcional. Mensagem recebida com o aplicativo fechado fica guardada e aparece na próxima abertura; enquanto o condutor não a fechar, ela volta a aparecer a cada troca de tela.\n\nSó recebem a notificação os condutores da bandeira da chave de API (ou de suas filiais) que tenham aplicativo com token de notificação registrado. Um condutor que não pode ser notificado não impede o envio para os demais. Nesse caso, a resposta é `207`, com `data.falhas` listando cada condutor que ficou de fora, na ordem em que veio na requisição, com o `condutor_id` como foi enviado e os `errors`. O campo do erro aponta a posição do ID em `condutores` (`condutores.N`, a partir de zero). Os motivos são:\n\n- `code` `0`: o ID não é um número inteiro positivo.\n- `code` `6`: o condutor não existe ou não pertence à bandeira da chave de API. Os dois casos têm a mesma mensagem.\n- `code` `147`: o condutor é da bandeira, mas não tem aplicativo com token de notificação registrado.\n\nUm ID repetido é considerado uma única vez, na primeira posição, e não gera falha. Quando nenhum condutor pode ser notificado, a resposta é `404`, com um erro por ID em `errors`. Uma falha da requisição inteira, como o envio indisponível, responde com o próprio status e sem `data.falhas`.",
+        "description": "Envia notificação via in-app messaging para uma lista de condutores.\n\nA mensagem é exibida como um modal dentro do aplicativo do condutor, com título, conteúdo, imagem opcional e um botão de redirecionamento opcional. Mensagem recebida com o aplicativo fechado fica guardada e aparece na próxima abertura; enquanto o condutor não a fechar, ela volta a aparecer a cada troca de tela.\n\nSó recebem a notificação os condutores da bandeira da chave de API (ou de suas filiais) que tenham aplicativo com token de notificação registrado. Um condutor que não pode ser notificado não impede o envio para os demais. Nesse caso, a resposta é `207`, com `data.falhas` listando cada condutor que ficou de fora, na ordem em que veio na requisição, com o `condutor_id` como foi enviado e os `errors`. O campo do erro aponta a posição do ID em `condutores` (`condutores.N`, a partir de zero). Os motivos são:\n\n- `code` `0`: o ID não é um número inteiro positivo.\n- `code` `6`: o condutor não existe ou não pertence à bandeira da chave de API. Os dois casos têm a mesma mensagem.\n- `code` `147`: o condutor é da bandeira, mas não tem aplicativo com token de notificação registrado.\n\nUm ID repetido é considerado uma única vez, na primeira posição, e não gera falha. Quando nenhum condutor pode ser notificado, a resposta é `404`, com um erro por ID em `errors`; se nenhum ID da lista é inteiro positivo, a resposta é `400`, no mesmo formato. Uma falha da requisição inteira, como o envio indisponível, responde com o próprio status e sem `data.falhas`.",
         "requestBody": {
           "required": true,
           "content": {
@@ -10179,7 +10233,7 @@
                 "properties": {
                   "condutores": {
                     "type": "array",
-                    "description": "Lista de condutores que receberão a notificação. Deve conter ao menos um item. Limite máximo de 1000 itens. IDs repetidos são considerados uma única vez. Um ID que não é inteiro positivo não recusa a lista: ele volta como falha em `data.falhas`.",
+                    "description": "Lista de condutores que receberão a notificação. Deve conter ao menos um item. Limite máximo de 1000 itens. IDs repetidos são considerados uma única vez. Um ID que não é inteiro positivo não recusa a lista: ele volta como falha em `data.falhas`. Se nenhum ID da lista é inteiro positivo, a lista é recusada com `400`.",
                     "minItems": 1,
                     "maxItems": 1000,
                     "items": {
@@ -10463,6 +10517,24 @@
                         {
                           "code": 0,
                           "message": "'solicitacao_id': Deve ser numérico."
+                        }
+                      ]
+                    }
+                  },
+                  "nenhum_id_inteiro_positivo": {
+                    "summary": "Nenhum ID da lista é inteiro positivo",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Campo condutores deve ser um número inteiro positivo.",
+                          "field": "condutores.0"
+                        },
+                        {
+                          "code": 0,
+                          "message": "Campo condutores deve ser um número inteiro positivo.",
+                          "field": "condutores.1"
                         }
                       ]
                     }
