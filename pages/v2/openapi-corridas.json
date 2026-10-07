@@ -6020,7 +6020,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "Esta área está configurada por faixas de distância. Altere os valores em PUT /dinamicas/area/{id}/faixas."
+                          "message": "Esta área está configurada por faixas de distância. Altere os valores em PUT /dinamicas/area/{id}/faixas; para voltar ao valor único, envie 'faixas' vazia nesse endpoint."
                         }
                       ]
                     }
@@ -6348,7 +6348,7 @@
     "/dinamicas/area/{id}/faixas": {
       "get": {
         "summary": "Consultar faixas de distância da dinâmica",
-        "description": "Retorna as faixas de distância da dinâmica da área, com o valor base de cada faixa e os valores por categoria. Área sem faixas devolve `faixas` vazia; o valor dela é o de `GET /dinamicas/area`.\n\n`versao` identifica a configuração vigente e muda a cada alteração da dinâmica da área, por qualquer canal. Envie-a no `PUT` para não sobrescrever uma alteração feita depois da sua leitura.\n\n`categorias_elegiveis` lista as categorias que aceitam valor próprio, na ordem em que a central as vê, e vem vazia quando a central não tem valor por categoria liberado.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "description": "Retorna as faixas de distância da dinâmica da área, com o valor base de cada faixa e os valores por categoria. Área sem faixas devolve `faixas` vazia; o valor dela é o de `GET /dinamicas/area`.\n\n`versao` identifica a configuração vigente e muda a cada alteração de valores, faixas ou tipo de cálculo, por qualquer canal. Ativar ou desativar a área não muda a `versao`. Envie-a no `PUT` para não sobrescrever uma alteração feita depois da sua leitura.\n\n`categorias_elegiveis` lista as categorias que aceitam valor próprio, na ordem em que a central as vê, e vem vazia quando a central não tem valor por categoria liberado.\n\nNa área com valores por categoria, a categoria de `categorias_elegiveis` que não aparece em `valores`, como uma criada depois da última alteração, fica sem dinâmica nesta área até entrar num `PUT`.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
         "parameters": [
           {
             "name": "id",
@@ -6452,7 +6452,7 @@
       },
       "put": {
         "summary": "Substituir faixas de distância da dinâmica",
-        "description": "Substitui o conjunto inteiro de faixas de distância da dinâmica da área. Envie as faixas em ordem crescente informando só o limite final de cada uma (`km_maximo`): a primeira começa em 0 km, cada faixa começa no limite da anterior e a última é sempre aberta, então o `km_maximo` dela é ignorado.\n\nRegras, as mesmas da tela da central:\n- de 2 a 10 faixas, ou a partir de 1 quando há valores por categoria;\n- `km_maximo` crescente, com no máximo uma casa decimal;\n- um único `tipo_calculo` para todas as faixas. Com `M`, os valores ficam entre 1.1 e 5; com `F`, entre 0.5 e 99.9, e o valor adicional precisa estar liberado para a central;\n- com `valores` por categoria, todas as categorias de `categorias_elegiveis` precisam estar em todas as faixas, e o `valor` de cada faixa precisa ser igual ao da primeira categoria elegível, que é a base da matriz;\n- área em automação que altera o fator não aceita faixas.\n\nLista `faixas` vazia volta a área para valor único, mantendo o valor da primeira faixa. Para mudar também o `tipo_calculo`, use depois `PATCH /dinamicas/area/{id}`.\n\nEnviar o mesmo conjunto que já está configurado não cria versão nova e responde \"Nenhuma alteração detectada.\". O `id` da área não muda com este endpoint. Já o `PATCH` de nome ou de vértices cria uma área nova: depois deles, use o `id` devolvido.\n\nCom `versao`, a resposta é 409 se a dinâmica tiver sido alterada depois da sua leitura. Uma alteração em andamento na mesma área também responde 409; reenvie em instantes.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "description": "Substitui o conjunto inteiro de faixas de distância da dinâmica da área. Envie as faixas em ordem crescente informando só o limite final de cada uma (`km_maximo`): a primeira começa em 0 km, cada faixa começa no limite da anterior e a última é sempre aberta, então o `km_maximo` dela é ignorado.\n\nRegras, as mesmas da tela da central:\n- de 2 a 10 faixas, ou a partir de 1 quando há valores por categoria;\n- `km_maximo` crescente, com no máximo uma casa decimal;\n- um único `tipo_calculo` para todas as faixas. Com `M`, os valores ficam entre 1.1 e 5, com no máximo uma casa decimal; com `F`, entre 0.5 e 99.9, com no máximo duas, e o valor adicional precisa estar liberado para a central;\n- com `valores` por categoria, todas as categorias de `categorias_elegiveis` precisam estar em todas as faixas, e o `valor` de cada faixa precisa ser igual ao da primeira categoria elegível, que é a base da matriz;\n- área em automação que altera o fator não aceita faixas.\n\nLista `faixas` vazia volta a área para valor único, mantendo o valor da primeira faixa. Para mudar também o `tipo_calculo`, use depois `PATCH /dinamicas/area/{id}`.\n\nEnviar o mesmo conjunto que já está configurado não cria versão nova e responde \"Nenhuma alteração detectada.\". O `id` da área não muda com este endpoint. Já o `PATCH` de nome ou de vértices cria uma área nova: depois deles, use o `id` devolvido.\n\nCom `versao`, a resposta é 409 se a dinâmica tiver sido alterada depois da sua leitura e o conjunto enviado for diferente do vigente. Uma alteração em andamento na mesma área também responde 409; reenvie em instantes.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
         "parameters": [
           {
             "name": "id",
@@ -6505,7 +6505,7 @@
                             "number",
                             "null"
                           ],
-                          "description": "Limite final da faixa em km, exclusivo, com no máximo uma casa decimal. Ignorado na última faixa.",
+                          "description": "Limite final da faixa em km, exclusivo, com no máximo uma casa decimal e até 9999999. Ignorado na última faixa.",
                           "example": 5
                         },
                         "valor": {
@@ -6671,13 +6671,25 @@
                       ]
                     }
                   },
+                  "valor_casas_decimais": {
+                    "summary": "Valor com mais casas decimais do que o tipo_calculo aceita",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'faixas.0.valor': Deve ter no máximo uma casa decimal com tipo_calculo M e duas com F."
+                        }
+                      ]
+                    }
+                  },
                   "valor_obrigatorio": {
                     "summary": "Faixa sem valor",
                     "value": {
                       "success": false,
                       "errors": [
                         {
-                          "code": 0,
+                          "code": 2,
                           "message": "'faixas.0.valor': Preenchimento obrigatório"
                         }
                       ]
@@ -6834,7 +6846,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "Para alterar 'tipo_calculo' sem faixas, use PATCH /dinamicas/area/{id}."
+                          "message": "Para alterar 'tipo_calculo', envie antes 'faixas' vazia com o 'tipo_calculo' atual e depois use PATCH /dinamicas/area/{id}."
                         }
                       ]
                     }
