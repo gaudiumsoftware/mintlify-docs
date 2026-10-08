@@ -7396,7 +7396,7 @@
     "/financeiro/extrato": {
       "get": {
         "summary": "Consultar extrato de créditos",
-        "description": "Lista os lançamentos do extrato de créditos da central, com os mesmos filtros e a mesma classificação da tela MachinePay > Extrato do painel. Os lançamentos vêm do mais recente para o mais antigo, 10 por página e sem total: a última página é a que vem com menos de 10 itens.\n\nO período (`data_ini` a `data_fim`) tem no máximo 31 dias e `data_ini` precisa estar nos últimos 6 meses. Quando `subfiltros` é informado (e não é `todos`), ele define os lançamentos e o `tipo` é ignorado.\n\n**`tipo_operacao`** de cada lançamento. Estorno leva o prefixo `estorno_` (ex.: `estorno_recarga`), e `operacao_descricao` traz o texto legível (ex.: `Estorno (Recarga via central)`):\n\n| Valor | Lançamento |\n|---|---|\n| `recarga` | Recarga de créditos (via central, pix, bônus de deslocamento ou desconto na primeira solicitação) |\n| `saque` | Saque de créditos (via central ou pix, inclusive em processamento) |\n| `taxa_saque` | Taxa de saque via pix |\n| `taxa_central` | Taxa da central cobrada na corrida |\n| `taxa_cancelamento` | Taxa de cancelamento |\n| `cashback` | Cashback ou bônus para novo passageiro |\n| `desafio` | Recompensa por desafio |\n| `indicacao` | Recompensa por indicação |\n| `gorjeta` | Gorjeta |\n| `passe_livre` | Compra ou reembolso de passe livre |\n| `impulsionamento_central` | Impulsionamento da solicitação pela central |\n| `cupom` | Cupom creditado |\n| `voucher` | Ganhos em voucher |\n| `ticket` | Ganhos em e-ticket |\n| `faturado` | Ganhos em faturado |\n| `cartao` | Ganhos em cartão no app |\n| `pix_app` | Ganhos em pix no app |\n| `ganho` | Ganho de créditos (carteira de créditos ou bônus dedicado recebido) |\n| `consumido` | Consumo de créditos (carteira de créditos, taxa da central em centrais só de entregas ou bônus dedicado enviado) |\n| `pagamento_pendente` | Pagamento pendente |\n\n**`subfiltros`** aceitos:\n\n| Valor | Lançamentos |\n|---|---|\n| `todos` | Sem subfiltro: vale o `tipo` |\n| `ganhos-app` | Ganhos em cartão no app |\n| `ganhos-pix` | Ganhos em pix no app |\n| `ganhos-faturado` | Ganhos em faturado |\n| `ganhos-voucher` | Ganhos em voucher |\n| `ganhos-eticket` | Ganhos em e-ticket |\n| `ganhos-carteira-credito` | Ganhos em carteira de créditos |\n| `ganhos-presencial` | Corridas e entregas com pagamento presencial |\n| `ganhos-cupom` | Cupons creditados |\n| `consumo-empresas` | Consumo de créditos por empresas |\n| `consumo-taxas-central` | Taxas da central |\n| `cashback` | Cashback e bônus de passageiro |\n| `desafios` | Recompensas por desafio |\n| `indicacao` | Recompensas por indicação |\n| `bonus_dedicado` | Bônus dedicado |\n| `taxas-repassadas` | Taxas de cancelamento repassadas |\n| `recarga-pix` | Recargas via pix |\n| `recarga-central` | Recargas via central |\n| `saque-central` | Saques via central |\n| `saque-pix` | Saques via pix |\n\n`processamento_mchpay` vem `NOK` quando o processamento dos lançamentos está atrasado: os mais recentes ainda podem não aparecer.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "description": "Lista os lançamentos do extrato de créditos da central, com os mesmos filtros e a mesma classificação da tela MachinePay > Extrato do painel. Os lançamentos vêm do mais recente para o mais antigo, 10 por página e sem total: a última página é a que vem com menos de 10 itens.\n\nO período (`data_ini` a `data_fim`) tem no máximo 31 dias e `data_ini` precisa estar nos últimos 6 meses. Quando `subfiltros` é informado (e não é `todos`), ele define os lançamentos e o `tipo` é ignorado.\n\n**`tipo_operacao`** de cada lançamento. Estorno leva o prefixo `estorno_` (ex.: `estorno_recarga`), e `operacao_descricao` traz o texto legível (ex.: `Estorno (Recarga via central)`):\n\n| Valor | Lançamento |\n|---|---|\n| `recarga` | Recarga de créditos (via central, pix, bônus de deslocamento ou desconto na primeira solicitação) |\n| `saque` | Saque de créditos (via central ou pix, inclusive em processamento) |\n| `taxa_saque` | Taxa de saque via pix |\n| `taxa_central` | Taxa da central cobrada na corrida |\n| `taxa_cancelamento` | Taxa de cancelamento |\n| `cashback` | Cashback ou bônus para novo passageiro |\n| `desafio` | Recompensa por desafio |\n| `indicacao` | Recompensa por indicação |\n| `gorjeta` | Gorjeta |\n| `passe_livre` | Compra ou reembolso de passe livre |\n| `impulsionamento_central` | Impulsionamento da solicitação pela central |\n| `cupom` | Cupom creditado |\n| `voucher` | Ganhos em voucher |\n| `ticket` | Ganhos em e-ticket |\n| `faturado` | Ganhos em faturado |\n| `cartao` | Ganhos em cartão no app |\n| `pix_app` | Ganhos em pix no app |\n| `ganho` | Ganho de créditos (carteira de créditos ou bônus dedicado recebido) |\n| `consumido` | Consumo de créditos (carteira de créditos, taxa da central em centrais só de entregas ou bônus dedicado enviado) |\n| `pagamento_pendente` | Pagamento pendente |\n\n**`subfiltros`** aceitos:\n\n| Valor | Lançamentos |\n|---|---|\n| `todos` | Sem subfiltro: vale o `tipo` |\n| `ganhos-app` | Ganhos em cartão no app |\n| `ganhos-pix` | Ganhos em pix no app |\n| `ganhos-faturado` | Ganhos em faturado |\n| `ganhos-voucher` | Ganhos em voucher |\n| `ganhos-eticket` | Ganhos em e-ticket |\n| `ganhos-carteira-credito` | Ganhos em carteira de créditos |\n| `ganhos-presencial` | Corridas e entregas com pagamento presencial |\n| `ganhos-cupom` | Cupons creditados |\n| `consumo-empresas` | Consumo de créditos por empresas |\n| `consumo-taxas-central` | Taxas da central |\n| `cashback` | Cashback e bônus de passageiro |\n| `desafios` | Recompensas por desafio |\n| `indicacao` | Recompensas por indicação |\n| `bonus_dedicado` | Bônus dedicado |\n| `taxas-repassadas` | Taxas de cancelamento repassadas |\n| `recarga-pix` | Recargas via pix |\n| `recarga-central` | Recargas via central |\n| `saque-central` | Saques via central |\n| `saque-pix` | Saques via pix |\n\n`processamento_mchpay` vem `NOK` quando o processamento dos lançamentos está atrasado: os mais recentes ainda podem não aparecer.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da central, sem empresa vinculada, com a permissão `API - Carteira de créditos`, e o MachinePay habilitado na central. Parâmetro enviado vazio (ex.: `registro_manual_id=`) vale como não informado.",
         "parameters": [
           {
             "name": "data_ini",
@@ -7532,7 +7532,7 @@
           {
             "name": "cliente_id",
             "in": "query",
-            "description": "Extrato de um passageiro da central.",
+            "description": "Extrato de um passageiro da central. Não combina com `taxista_id`.",
             "schema": {
               "type": "integer",
               "minimum": 1,
@@ -7756,6 +7756,18 @@
                       ]
                     }
                   },
+                  "cliente_com_condutor": {
+                    "summary": "cliente_id junto com taxista_id",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'cliente_id': Não pode ser combinado com 'taxista_id'."
+                        }
+                      ]
+                    }
+                  },
                   "categoria_outra_bandeira": {
                     "summary": "Categoria ou tipo de pagamento que não é da central",
                     "value": {
@@ -7787,6 +7799,42 @@
                       "message": "Usuário e/ou senhas inválidos."
                     }
                   ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Gestor sem acesso ao extrato",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "sem_permissao": {
+                    "summary": "Gestor sem a permissão API - Carteira de créditos, ou gestor de empresa",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O usuário informado não tem permissão para realizar essa operação."
+                        }
+                      ]
+                    }
+                  },
+                  "sem_machinepay": {
+                    "summary": "Central sem MachinePay habilitado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O MachinePay não está habilitado para esta central."
+                        }
+                      ]
+                    }
+                  }
                 }
               }
             }
