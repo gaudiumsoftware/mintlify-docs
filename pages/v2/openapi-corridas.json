@@ -2447,6 +2447,434 @@
         }
       }
     },
+    "/configuracoes/areas": {
+      "post": {
+        "summary": "Criar área",
+        "description": "Cria uma área de operação da central autenticada, matriz ou filial, com o polígono em GeoJSON. É a mesma área que a tela de Áreas do painel cria, sem central associada: ela aparece em [`GET /configuracoes/areas-geograficas`](/pages/v2/referencia/configuracoes/endpoint/areas-geograficas), na listagem de áreas de cupom e na tela de Áreas.\n\nA área pertence sempre à central da Api-Key. Campos fora do body documentado, como `tipo`, `bandeira_id` ou `bandeira_responsavel_id`, são ignorados.\n\nO `nome` é único entre as áreas da central, sem diferenciar maiúsculas, minúsculas e acentos: `Centro` e `centro` são o mesmo nome. Duas criações simultâneas com o mesmo nome criam uma área só; a outra recebe `409` e pode reenviar.\n\nO polígono aceita de 3 a 2.500 vértices distintos. Quanto mais vértices, mais lenta a gravação: um polígono perto do limite pode levar mais de um minuto.\n\nCom `area_bloqueio` igual a `true`, a área vira área de bloqueio da central, no horário informado ou o dia todo quando o horário é omitido. Central que faz somente entregas não tem área de bloqueio.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira. Gestor com empresa vinculada não cria área.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "nome",
+                  "prioridade",
+                  "poligono"
+                ],
+                "properties": {
+                  "nome": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "description": "Nome da área, até 100 caracteres. Espaços nas pontas são removidos.",
+                    "example": "Centro"
+                  },
+                  "prioridade": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5,
+                    "description": "Prioridade da área, de 1 a 5.",
+                    "example": 3
+                  },
+                  "cor_linha": {
+                    "type": "string",
+                    "pattern": "^#[0-9A-Fa-f]{6}$",
+                    "description": "Cor da borda no mapa, no formato `#RRGGBB`. Quando omitida, vale `#000000`.",
+                    "example": "#1E88E5"
+                  },
+                  "cor_preenchimento": {
+                    "type": "string",
+                    "pattern": "^#[0-9A-Fa-f]{6}$",
+                    "description": "Cor do preenchimento no mapa, no formato `#RRGGBB`. Quando omitida, vale `#FFFF00`.",
+                    "example": "#90CAF9"
+                  },
+                  "area_bloqueio": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Informe `true` para tornar a área uma área de bloqueio da central.",
+                    "example": true
+                  },
+                  "hora_bloqueio_inicio": {
+                    "type": "string",
+                    "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+                    "description": "Início do bloqueio, no formato `HH:mm`. Só vale com `area_bloqueio` igual a `true`, e junto com `hora_bloqueio_fim`.",
+                    "example": "22:00"
+                  },
+                  "hora_bloqueio_fim": {
+                    "type": "string",
+                    "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+                    "description": "Fim do bloqueio, no formato `HH:mm`, diferente do início. Só vale com `area_bloqueio` igual a `true`, e junto com `hora_bloqueio_inicio`.",
+                    "example": "06:00"
+                  },
+                  "poligono": {
+                    "type": "object",
+                    "description": "Polígono GeoJSON (RFC 7946) com um único anel.",
+                    "required": [
+                      "type",
+                      "coordinates"
+                    ],
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "Polygon"
+                        ],
+                        "description": "Tipo de geometria GeoJSON. Deve ser `Polygon`."
+                      },
+                      "coordinates": {
+                        "type": "array",
+                        "description": "Array com exatamente um anel de coordenadas (`coordinates[0]`), fechado (a primeira posição igual à última), com 3 a 2.500 vértices distintos sem contar o fechamento. Cada posição é um par `[lng, lat]`, com `lng` entre -180 e 180 e `lat` entre -90 e 90. Os vértices são gravados na ordem enviada.",
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "array",
+                            "items": {
+                              "type": "number"
+                            },
+                            "minItems": 2,
+                            "maxItems": 2
+                          },
+                          "minItems": 4,
+                          "maxItems": 2501
+                        },
+                        "minItems": 1,
+                        "maxItems": 1
+                      }
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "area_simples": {
+                  "summary": "Área com cores padrão",
+                  "value": {
+                    "nome": "Centro",
+                    "prioridade": 3,
+                    "poligono": {
+                      "type": "Polygon",
+                      "coordinates": [
+                        [
+                          [
+                            -46.6558,
+                            -23.5615
+                          ],
+                          [
+                            -46.65,
+                            -23.5615
+                          ],
+                          [
+                            -46.65,
+                            -23.557
+                          ],
+                          [
+                            -46.6558,
+                            -23.557
+                          ],
+                          [
+                            -46.6558,
+                            -23.5615
+                          ]
+                        ]
+                      ]
+                    }
+                  }
+                },
+                "area_de_bloqueio": {
+                  "summary": "Área de bloqueio noturno",
+                  "value": {
+                    "nome": "Centro noturno",
+                    "prioridade": 4,
+                    "cor_linha": "#1E88E5",
+                    "cor_preenchimento": "#90CAF9",
+                    "area_bloqueio": true,
+                    "hora_bloqueio_inicio": "22:00",
+                    "hora_bloqueio_fim": "06:00",
+                    "poligono": {
+                      "type": "Polygon",
+                      "coordinates": [
+                        [
+                          [
+                            -46.6558,
+                            -23.5615
+                          ],
+                          [
+                            -46.65,
+                            -23.5615
+                          ],
+                          [
+                            -46.65,
+                            -23.557
+                          ],
+                          [
+                            -46.6558,
+                            -23.557
+                          ],
+                          [
+                            -46.6558,
+                            -23.5615
+                          ]
+                        ]
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Área criada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "area_simples": {
+                    "summary": "Área com cores padrão",
+                    "value": {
+                      "success": true,
+                      "data": {
+                        "id": 14,
+                        "nome": "Centro",
+                        "prioridade": 3,
+                        "cor_linha": "#000000",
+                        "cor_preenchimento": "#FFFF00",
+                        "area_bloqueio": false,
+                        "hora_bloqueio_inicio": null,
+                        "hora_bloqueio_fim": null,
+                        "poligono": {
+                          "type": "Polygon",
+                          "coordinates": [
+                            [
+                              [
+                                -46.6558,
+                                -23.5615
+                              ],
+                              [
+                                -46.65,
+                                -23.5615
+                              ],
+                              [
+                                -46.65,
+                                -23.557
+                              ],
+                              [
+                                -46.6558,
+                                -23.557
+                              ],
+                              [
+                                -46.6558,
+                                -23.5615
+                              ]
+                            ]
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "area_de_bloqueio": {
+                    "summary": "Área de bloqueio noturno",
+                    "value": {
+                      "success": true,
+                      "data": {
+                        "id": 22,
+                        "nome": "Centro noturno",
+                        "prioridade": 4,
+                        "cor_linha": "#1E88E5",
+                        "cor_preenchimento": "#90CAF9",
+                        "area_bloqueio": true,
+                        "hora_bloqueio_inicio": "22:00",
+                        "hora_bloqueio_fim": "06:00",
+                        "poligono": {
+                          "type": "Polygon",
+                          "coordinates": [
+                            [
+                              [
+                                -46.6558,
+                                -23.5615
+                              ],
+                              [
+                                -46.65,
+                                -23.5615
+                              ],
+                              [
+                                -46.65,
+                                -23.557
+                              ],
+                              [
+                                -46.6558,
+                                -23.557
+                              ],
+                              [
+                                -46.6558,
+                                -23.5615
+                              ]
+                            ]
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Body inválido ou gestor sem acesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "campos_invalidos": {
+                    "summary": "Campos obrigatórios e formatos inválidos",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'nome': Preenchimento obrigatório"
+                        },
+                        {
+                          "code": 0,
+                          "message": "'prioridade': Deve ser um número inteiro entre 1 e 5."
+                        },
+                        {
+                          "code": 0,
+                          "message": "'cor_linha': Deve ser uma cor no formato #RRGGBB."
+                        },
+                        {
+                          "code": 0,
+                          "message": "'poligono.coordinates': O anel deve ser fechado (primeira posição igual à última)."
+                        }
+                      ]
+                    }
+                  },
+                  "vertices_acima_do_limite": {
+                    "summary": "Polígono acima de 2.500 vértices",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'poligono.coordinates': O polígono deve ter no máximo 2500 vértices, sem contar o fechamento do anel."
+                        }
+                      ]
+                    }
+                  },
+                  "horario_sem_bloqueio": {
+                    "summary": "Horário enviado sem area_bloqueio",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'area_bloqueio': O horário de bloqueio só pode ser informado com area_bloqueio igual a true."
+                        }
+                      ]
+                    }
+                  },
+                  "bloqueio_somente_entregas": {
+                    "summary": "Área de bloqueio em central que faz somente entregas",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'area_bloqueio': Bandeira que faz somente entregas não tem área de bloqueio."
+                        }
+                      ]
+                    }
+                  },
+                  "gestor_de_empresa": {
+                    "summary": "Gestor com empresa vinculada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 68,
+                          "message": "O usuário informado não tem permissão para realizar essa operação."
+                        }
+                      ]
+                    }
+                  },
+                  "json_invalido": {
+                    "summary": "JSON malformado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "JSON inválido"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Gestor não autenticado pelo HTTP Basic",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": "B5",
+                      "message": "Usuário e/ou senhas inválidos."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Nome já usado por outra área da central",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "nome_em_uso": {
+                    "summary": "Já existe área com o nome",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Já existe uma área com este nome."
+                        }
+                      ]
+                    }
+                  },
+                  "criacao_em_andamento": {
+                    "summary": "Outra criação com o mesmo nome em andamento",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Outra criação de área com este nome está em andamento. Tente novamente em instantes."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/configuracoes/categorias": {
       "get": {
         "summary": "Listar categorias",
