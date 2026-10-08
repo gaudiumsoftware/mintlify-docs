@@ -154,6 +154,30 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="15 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="criar-area" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Criação de área
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novo endpoint que cria uma área de operação da central autenticada, matriz ou filial, com o
+      polígono em GeoJSON. É a mesma área que a tela de Áreas do painel cria, e ela aparece no
+      <code>GET /configuracoes/areas-geograficas</code>.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/configuracoes/areas" href="/pages/v2/entregas/configuracoes/endpoint/post-areas" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="nome" />, <ParamBadge name="prioridade" /> (1 a 5) e <ParamBadge name="poligono" /> obrigatórios; <ParamBadge name="cor_linha" /> e <ParamBadge name="cor_preenchimento" /> opcionais, no formato <code>#RRGGBB</code>.</li>
+        <li><ParamBadge name="poligono" /> — GeoJSON <code>Polygon</code> com um anel fechado, de 3 a 2.500 vértices distintos.</li>
+        <li><ParamBadge name="area_bloqueio" />, com <ParamBadge name="hora_bloqueio_inicio" /> e <ParamBadge name="hora_bloqueio_fim" /> opcionais (<code>HH:mm</code>), só vale para central que também faz corridas; central que faz somente entregas recebe <code>400</code>.</li>
+        <li>Resposta <code>201</code> com <ParamBadge name="id" />, os campos gravados e o polígono em GeoJSON.</li>
+        <li>Nome já usado por outra área da central, sem diferenciar maiúsculas, minúsculas e acentos, responde <code>409</code>. Gestor com empresa vinculada recebe <code>400</code> com <code>code</code> 68.</li>
+        <li>Limite próprio de rate limit, 200 * faixa requisições por minuto. Detalhes na <a href="/pages/v2/entregas/introducao#rate-limit">introdução</a>.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="1 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="retorno-dados-fechamento-entrega" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Retorno e dados de fechamento na consulta da entrega
