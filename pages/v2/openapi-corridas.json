@@ -2784,7 +2784,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "'area_bloqueio': Bandeira que faz somente entregas não tem área de bloqueio."
+                          "message": "'area_bloqueio': Central que faz somente entregas não tem área de bloqueio."
                         }
                       ]
                     }

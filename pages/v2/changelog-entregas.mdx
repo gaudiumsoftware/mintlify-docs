@@ -170,7 +170,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
         <li><ParamBadge name="nome" />, <ParamBadge name="prioridade" /> (1 a 5) e <ParamBadge name="poligono" /> obrigatórios; <ParamBadge name="cor_linha" /> e <ParamBadge name="cor_preenchimento" /> opcionais, no formato <code>#RRGGBB</code>.</li>
         <li><ParamBadge name="poligono" /> — GeoJSON <code>Polygon</code> com um anel fechado, de 3 a 2.500 vértices distintos.</li>
-        <li><ParamBadge name="area_bloqueio" />, com <ParamBadge name="hora_bloqueio_inicio" /> e <ParamBadge name="hora_bloqueio_fim" /> opcionais (<code>HH:mm</code>), torna a área uma área de bloqueio da central. Central que faz somente entregas recebe <code>400</code>.</li>
+        <li><ParamBadge name="area_bloqueio" />, com <ParamBadge name="hora_bloqueio_inicio" /> e <ParamBadge name="hora_bloqueio_fim" /> opcionais (<code>HH:mm</code>), só vale para central que também faz corridas; central que faz somente entregas recebe <code>400</code>.</li>
         <li>Resposta <code>201</code> com <ParamBadge name="id" />, os campos gravados e o polígono em GeoJSON.</li>
         <li>Nome já usado por outra área da central, sem diferenciar maiúsculas, minúsculas e acentos, responde <code>409</code>. Gestor com empresa vinculada recebe <code>400</code> com <code>code</code> 68.</li>
         <li>Limite próprio de rate limit, 200 * faixa requisições por minuto. Detalhes na <a href="/pages/v2/entregas/introducao#rate-limit">introdução</a>.</li>
