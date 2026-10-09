@@ -167,7 +167,7 @@ export const EndpointBadge = ({ method, path, href }) => (
     <ChangeSection type="added">
       <p style={{ marginBottom: "10px" }}>Novo endpoint com os parâmetros de query:</p>
       <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-        <li><ParamBadge name="data_ini" /> e <ParamBadge name="data_fim" /> — período obrigatório, de até 31 dias, com início nos últimos 6 meses.</li>
+        <li><ParamBadge name="data_ini" /> e <ParamBadge name="data_fim" /> — período de até 31 dias, com início nos últimos 6 meses. Opcional com <ParamBadge name="solicitacao_id" /> ou <ParamBadge name="registro_manual_id" />, que usam o período da própria solicitação ou do registro.</li>
         <li><ParamBadge name="pagina" /> — página de 10 lançamentos; a última é a que vem com menos de 10.</li>
         <li><ParamBadge name="tipo" />, <ParamBadge name="subfiltros[]" />, <ParamBadge name="situacao" /> e <ParamBadge name="tipo_usuario[]" /> — os filtros da tela de extrato.</li>
         <li><ParamBadge name="taxista_id" />, <ParamBadge name="cliente_id" />, <ParamBadge name="empresa_id" />, <ParamBadge name="solicitacao_id" />, <ParamBadge name="registro_manual_id" />, <ParamBadge name="categoria_id" /> e <ParamBadge name="tipo_pagamento_id" /> — recortam o extrato por pessoa, corrida, registro manual, categoria ou tipo de pagamento da central.</li>
@@ -183,7 +183,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       fontSize: "13px",
       lineHeight: "1.6",
     }}>
-      <strong>Nota:</strong> cada lançamento traz <code>tipo_operacao</code> (código estável, com o prefixo <code>estorno_</code> nos estornos) e <code>operacao_descricao</code>. O endpoint exige Api-Key e autenticação HTTP Basic de um gestor da central, e tem limite próprio de 40 requisições por minuto.
+      <strong>Nota:</strong> cada lançamento traz <code>tipo_operacao</code> (código estável, com o prefixo <code>estorno_</code> nos estornos) e <code>operacao_descricao</code>. O endpoint exige Api-Key e autenticação HTTP Basic de um gestor da central com a permissão <code>API - Carteira de créditos</code>, e tem limite próprio de 40 requisições por minuto.
     </div>
   </Entry>
 
