@@ -7396,29 +7396,27 @@
     "/financeiro/extrato": {
       "get": {
         "summary": "Consultar extrato de créditos",
-        "description": "Lista os lançamentos do extrato de créditos da central, com os mesmos filtros e a mesma classificação da tela MachinePay > Extrato do painel. Os lançamentos vêm do mais recente para o mais antigo, 10 por página e sem total: a última página é a que vem com menos de 10 itens.\n\nO período (`data_ini` a `data_fim`) tem no máximo 31 dias e `data_ini` precisa estar nos últimos 6 meses. Quando `subfiltros` é informado (e não é `todos`), ele define os lançamentos e o `tipo` é ignorado.\n\n**`tipo_operacao`** de cada lançamento. Estorno leva o prefixo `estorno_` (ex.: `estorno_recarga`), e `operacao_descricao` traz o texto legível (ex.: `Estorno (Recarga via central)`):\n\n| Valor | Lançamento |\n|---|---|\n| `recarga` | Recarga de créditos (via central, pix, bônus de deslocamento ou desconto na primeira solicitação) |\n| `saque` | Saque de créditos (via central ou pix, inclusive em processamento) |\n| `taxa_saque` | Taxa de saque via pix |\n| `taxa_central` | Taxa da central cobrada na corrida |\n| `taxa_cancelamento` | Taxa de cancelamento |\n| `cashback` | Cashback ou bônus para novo passageiro |\n| `desafio` | Recompensa por desafio |\n| `indicacao` | Recompensa por indicação |\n| `gorjeta` | Gorjeta |\n| `passe_livre` | Compra ou reembolso de passe livre |\n| `impulsionamento_central` | Impulsionamento da solicitação pela central |\n| `cupom` | Cupom creditado |\n| `voucher` | Ganhos em voucher |\n| `ticket` | Ganhos em e-ticket |\n| `faturado` | Ganhos em faturado |\n| `cartao` | Ganhos em cartão no app |\n| `pix_app` | Ganhos em pix no app |\n| `ganho` | Ganho de créditos (carteira de créditos ou bônus dedicado recebido) |\n| `consumido` | Consumo de créditos (carteira de créditos, taxa da central em centrais só de entregas ou bônus dedicado enviado) |\n| `pagamento_pendente` | Pagamento pendente |\n\n**`subfiltros`** aceitos:\n\n| Valor | Lançamentos |\n|---|---|\n| `todos` | Sem subfiltro: vale o `tipo` |\n| `ganhos-app` | Ganhos em cartão no app |\n| `ganhos-pix` | Ganhos em pix no app |\n| `ganhos-faturado` | Ganhos em faturado |\n| `ganhos-voucher` | Ganhos em voucher |\n| `ganhos-eticket` | Ganhos em e-ticket |\n| `ganhos-carteira-credito` | Ganhos em carteira de créditos |\n| `ganhos-presencial` | Corridas e entregas com pagamento presencial |\n| `ganhos-cupom` | Cupons creditados |\n| `consumo-empresas` | Consumo de créditos por empresas |\n| `consumo-taxas-central` | Taxas da central |\n| `cashback` | Cashback e bônus de passageiro |\n| `desafios` | Recompensas por desafio |\n| `indicacao` | Recompensas por indicação |\n| `bonus_dedicado` | Bônus dedicado |\n| `taxas-repassadas` | Taxas de cancelamento repassadas |\n| `recarga-pix` | Recargas via pix |\n| `recarga-central` | Recargas via central |\n| `saque-central` | Saques via central |\n| `saque-pix` | Saques via pix |\n\n`processamento_mchpay` vem `NOK` quando o processamento dos lançamentos está atrasado: os mais recentes ainda podem não aparecer.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da central, sem empresa vinculada, com a permissão `API - Carteira de créditos`, e o MachinePay habilitado na central. Parâmetro enviado vazio (ex.: `registro_manual_id=`) vale como não informado.",
+        "description": "Lista os lançamentos do extrato de créditos da central, com os mesmos filtros e a mesma classificação da tela MachinePay > Extrato do painel. Os lançamentos vêm do mais recente para o mais antigo, 10 por página e sem total: a última página é a que vem com menos de 10 itens.\n\nO período (`data_ini` a `data_fim`) tem no máximo 31 dias e `data_ini` precisa estar nos últimos 6 meses. Quando `subfiltros` é informado (e não é `todos`), ele define os lançamentos e o `tipo` é ignorado.\n\n**`tipo_operacao`** de cada lançamento. Estorno leva o prefixo `estorno_` (ex.: `estorno_recarga`), e `operacao_descricao` traz o texto legível (ex.: `Estorno (Recarga via central)`):\n\n| Valor | Lançamento |\n|---|---|\n| `recarga` | Recarga de créditos (via central, pix, bônus de deslocamento ou desconto na primeira solicitação) |\n| `saque` | Saque de créditos (via central ou pix, inclusive em processamento) |\n| `taxa_saque` | Taxa de saque via pix |\n| `taxa_central` | Taxa da central cobrada na corrida |\n| `taxa_cancelamento` | Taxa de cancelamento |\n| `cashback` | Cashback ou bônus para novo passageiro |\n| `desafio` | Recompensa por desafio |\n| `indicacao` | Recompensa por indicação |\n| `gorjeta` | Gorjeta |\n| `passe_livre` | Compra ou reembolso de passe livre |\n| `impulsionamento_central` | Impulsionamento da solicitação pela central |\n| `cupom` | Cupom creditado |\n| `voucher` | Ganhos em voucher |\n| `ticket` | Ganhos em e-ticket |\n| `faturado` | Ganhos em faturado |\n| `cartao` | Ganhos em cartão no app |\n| `pix_app` | Ganhos em pix no app |\n| `ganho` | Ganho de créditos (carteira de créditos ou bônus dedicado recebido) |\n| `consumido` | Consumo de créditos (carteira de créditos, taxa da central em centrais só de entregas ou bônus dedicado enviado) |\n| `pagamento_pendente` | Pagamento pendente |\n\n**`subfiltros`** aceitos:\n\n| Valor | Lançamentos |\n|---|---|\n| `todos` | Sem subfiltro: vale o `tipo` |\n| `ganhos-app` | Ganhos em cartão no app |\n| `ganhos-pix` | Ganhos em pix no app |\n| `ganhos-faturado` | Ganhos em faturado |\n| `ganhos-carteira-credito` | Ganhos em carteira de créditos |\n| `ganhos-presencial` | Corridas e entregas com pagamento presencial |\n| `ganhos-cupom` | Cupons creditados |\n| `consumo-empresas` | Consumo de créditos por empresas |\n| `consumo-taxas-central` | Taxas da central |\n| `cashback` | Cashback e bônus de passageiro |\n| `desafios` | Recompensas por desafio |\n| `indicacao` | Recompensas por indicação |\n| `bonus_dedicado` | Bônus dedicado |\n| `taxas-repassadas` | Taxas de cancelamento repassadas |\n| `recarga-pix` | Recargas via pix |\n| `recarga-central` | Recargas via central |\n| `saque-central` | Saques via central |\n| `saque-pix` | Saques via pix |\n\n`processamento_mchpay` vem `NOK` quando o processamento dos lançamentos está atrasado: os mais recentes ainda podem não aparecer.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da central, sem empresa vinculada, com a permissão `API - Carteira de créditos`, e o MachinePay habilitado na central. Parâmetro enviado vazio (ex.: `registro_manual_id=`) vale como não informado.",
         "parameters": [
           {
             "name": "data_ini",
             "in": "query",
-            "description": "Início do período (`YYYY-MM-DD`), no fuso da central. Precisa estar nos últimos 6 meses.",
+            "description": "Início do período (`YYYY-MM-DD`), no fuso da central. Precisa estar nos últimos 6 meses. Obrigatório, exceto com `solicitacao_id` ou `registro_manual_id`.",
             "schema": {
               "type": "string",
               "format": "date",
               "example": "2026-10-01"
-            },
-            "required": true
+            }
           },
           {
             "name": "data_fim",
             "in": "query",
-            "description": "Fim do período (`YYYY-MM-DD`), no fuso da central. No máximo 31 dias depois de `data_ini`.",
+            "description": "Fim do período (`YYYY-MM-DD`), no fuso da central. No máximo 31 dias depois de `data_ini`. Obrigatório, exceto com `solicitacao_id` ou `registro_manual_id`.",
             "schema": {
               "type": "string",
               "format": "date",
               "example": "2026-10-07"
-            },
-            "required": true
+            }
           },
           {
             "name": "pagina",
@@ -7462,8 +7460,6 @@
                   "ganhos-app",
                   "ganhos-pix",
                   "ganhos-faturado",
-                  "ganhos-voucher",
-                  "ganhos-eticket",
                   "ganhos-carteira-credito",
                   "ganhos-presencial",
                   "ganhos-cupom",
@@ -7488,7 +7484,7 @@
           {
             "name": "situacao",
             "in": "query",
-            "description": "Com subfiltros: `T` todos, `R` recebidos, `E` retirados.",
+            "description": "Com subfiltros: `T` todos, `R` recebidos (créditos), `E` retirados (débitos). Vale para os subfiltros de ganhos, consumo, benefícios e taxas; nos de recarga e saque não tem efeito.",
             "schema": {
               "type": "string",
               "enum": [
@@ -7552,7 +7548,7 @@
           {
             "name": "solicitacao_id",
             "in": "query",
-            "description": "Lançamentos de uma corrida ou entrega da central. Substitui o período pelo da solicitação.",
+            "description": "Lançamentos de uma corrida ou entrega da central, no período da própria solicitação: `data_ini` e `data_fim` são opcionais e, se enviadas, ignoradas. A solicitação precisa ser dos últimos 6 meses. Não combina com `registro_manual_id`.",
             "schema": {
               "type": "integer",
               "minimum": 1,
@@ -7562,7 +7558,7 @@
           {
             "name": "registro_manual_id",
             "in": "query",
-            "description": "Lançamentos de uma recarga ou saque manual da central. Substitui o período pelo do registro.",
+            "description": "Lançamentos de uma recarga ou saque manual da central, a partir da data do registro: `data_ini` e `data_fim` são opcionais e, se enviadas, ignoradas. O registro precisa ser dos últimos 6 meses.",
             "schema": {
               "type": "integer",
               "minimum": 1,
@@ -7752,6 +7748,30 @@
                         {
                           "code": 0,
                           "message": "'tipo': Deve estar dentre os valores: T, C, B, R, S, P."
+                        }
+                      ]
+                    }
+                  },
+                  "registro_com_solicitacao": {
+                    "summary": "registro_manual_id junto com solicitacao_id",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'registro_manual_id': Não pode ser combinado com 'solicitacao_id'."
+                        }
+                      ]
+                    }
+                  },
+                  "solicitacao_fora_da_janela": {
+                    "summary": "Solicitação ou registro manual de antes dos últimos 6 meses",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'solicitacao_id': O extrato só está disponível para os últimos 6 meses."
                         }
                       ]
                     }
