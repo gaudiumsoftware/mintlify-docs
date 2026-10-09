@@ -293,6 +293,7 @@ Os valores da tabela são **limites base**. O limite efetivo de cada grupo é o 
 | In-app messaging de condutor (individual) | `/api/v2/integracao/notificacoes/condutor/in-app-messaging/individual` | 200 * faixa requisições por minuto |
 | Push de condutor (individual) | `/api/v2/integracao/notificacoes/condutor/push/individual` | 200 * faixa requisições por minuto |
 | Cupons | `/api/v2/integracao/cupons` | 60 * faixa requisições por minuto |
+| Cupons em lote | `/api/v2/integracao/cupons/lote` | 20 * faixa requisições por minuto |
 | Webhooks | `/api/v2/integracao/webhooks`<br />`/api/v2/integracao/webhooks/*` | 60 * faixa requisições por minuto |
 | Mensagens da corrida (envio) | `/api/v2/integracao/mensagens/corridas/passageiro`<br />`/api/v2/integracao/mensagens/corridas/condutor` | 900 * faixa requisições por minuto |
 | Padrão | `/api/v2/integracao/*` | 1000 * faixa requisições por minuto |
@@ -312,6 +313,8 @@ Alguns endpoints têm, além do limite do grupo, um limite **por recurso informa
 | Mensagem na corrida | `/api/v2/integracao/mensagens/corridas/passageiro`<br />`/api/v2/integracao/mensagens/corridas/condutor` | `solicitacao_id` no body (`POST`) | 30 por minuto por corrida |
 
 Nas notificações, o envio individual conta por `passageiro_id`, e no envio em lote o conjunto de passageiros informado em `passageiros` é tratado como um único recurso: o mesmo conjunto só pode receber 4 envios por minuto. Lotes com mais de 100 passageiros contam apenas no limite do grupo.
+
+A criação de cupons em lote (`/api/v2/integracao/cupons/lote`) não entra no limite por gerador: cada requisição conta uma vez no grupo "Cupons em lote", qualquer que seja a quantidade de cupons e de geradores do lote.
 
 Requisições sem identificador (por exemplo, listagens por filtro) contam apenas no limite do grupo. Os limites valem ao mesmo tempo: exceder qualquer um deles retorna `429`. O contador por recurso é separado para cada `api-key`, então o consumo de um integrador não afeta o de outro.
 
