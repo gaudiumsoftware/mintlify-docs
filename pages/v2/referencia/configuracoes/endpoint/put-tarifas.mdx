@@ -1,0 +1,8 @@
+---
+title: 'Editar tarifa da categoria'
+openapi: 'pages/v2/openapi-corridas.json PUT /configuracoes/categorias/{id}/tarifas/{tarifaId}'
+---
+
+<Warning>
+  **O id da tarifa muda quando os valores são editados.** Cada alteração de valores cria uma nova versão da tarifa, com **id novo**, e encerra a versão anterior. A resposta traz `id` (o novo) e `id_anterior` (o id que foi alterado; `null` quando não nasceu versão nova). Passe a usar o `id` devolvido: um PUT ou DELETE no id antigo responde **409** (tarifa encerrada). Alterar só `horarios` mantém o id.
+</Warning>
