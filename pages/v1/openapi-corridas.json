@@ -31,7 +31,7 @@
           {
             "name": "id",
             "in": "query",
-            "description": "ID do cliente de que se deseja saber informações, caso seja informado, os demais parâmetros serão ignorados. Caso não seja informado, retornará todos os clientes conforme os limites informados. O limite padrão é 20 e o máximo é 100.",
+            "description": "ID do cliente de que se deseja saber informações. Quando informado, `status_cliente` e paginação são ignorados, e os demais filtros se combinam com ele: o cliente precisa atender a todos. Caso não seja informado, retornará todos os clientes conforme os limites informados. O limite padrão é 20 e o máximo é 100.",
             "schema": {
               "type": "integer"
             }
