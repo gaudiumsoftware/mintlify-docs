@@ -597,6 +597,42 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "cpf_cnpj_invalido": {
+                    "summary": "cpf_cnpj que não é CPF nem CNPJ válido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 148,
+                          "message": "'cpf_cnpj': CPF ou CNPJ inválido."
+                        }
+                      ]
+                    }
+                  },
+                  "cpf_cnpj_com_cpf": {
+                    "summary": "cpf_cnpj junto com cpf",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 147,
+                          "message": "'cpf_cnpj': Não pode ser usado junto com o filtro cpf."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
