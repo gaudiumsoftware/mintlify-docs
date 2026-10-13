@@ -196,7 +196,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       <ChangeSection type="added">
         <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
           <li>Mesmo campo <ParamBadge name="cnpj" />, em cada cliente da resposta da v1.</li>
-          <li>Parâmetro de query <ParamBadge name="cpf_cnpj" />, com o mesmo comportamento da v2.</li>
+          <li>Parâmetro de query <ParamBadge name="cpf_cnpj" /> — CPF ou CNPJ, com ou sem máscara, inclusive o CNPJ alfanumérico, com correspondência exata só no documento do tipo informado. Ignora <code>status_cliente</code> e paginação. Retorna 400 quando o valor não é um CPF nem um CNPJ válido, ou quando vem junto com <code>cpf</code>.</li>
           <li><ParamBadge name="cpf" />, <ParamBadge name="email" />, <ParamBadge name="telefone" /> e <ParamBadge name="nome" />, que a v1 já aceitava, passam a constar na referência da v1.</li>
         </ul>
       </ChangeSection>
