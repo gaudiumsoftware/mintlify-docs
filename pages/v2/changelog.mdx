@@ -203,6 +203,114 @@ export const EndpointBadge = ({ method, path, href }) => (
     </div>
   </Entry>
 
+  <Entry date="14 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="historico-punicoes-condutores" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Histórico de punições dos condutores
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novo endpoint para consultar as punições aplicadas aos condutores da central, manuais ou automáticas.
+      Até agora esse histórico só existia como registro interno de auditoria, sem consulta pela API.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/condutores/historico-punicoes" href="/pages/v2/referencia/condutores/endpoint/get-historico-punicoes" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Parâmetros aceitos na consulta, todos opcionais:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="taxista_id" /> — ID do condutor. Retorna apenas as punições dele.</li>
+        <li><ParamBadge name="busca" /> — nome, telefone ou e-mail do condutor, com pelo menos 3 caracteres.</li>
+        <li><ParamBadge name="origem" /> — <code>A</code> para punições automáticas ou <code>M</code> para as aplicadas por um gestor.</li>
+        <li><ParamBadge name="status" /> — <code>E</code> (em andamento), <code>C</code> (concluída) ou <code>R</code> (revogada).</li>
+        <li><ParamBadge name="dt_ini" /> e <ParamBadge name="dt_end" /> — período da data de aplicação, no formato <code>AAAA-MM-DD HH:MM:SS</code> e no horário da central.</li>
+        <li><ParamBadge name="order" /> — <code>t.data_hora asc</code> ou <code>t.data_hora desc</code> (padrão).</li>
+        <li><ParamBadge name="limite" /> e <ParamBadge name="pagina" /> — paginação, como nos demais endpoints de condutores. O padrão é 20 itens por página e o máximo é 100.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Campos devolvidos em cada item:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="id" /> e <ParamBadge name="condutor" /> — identificação da punição e dados do condutor (<ParamBadge name="id" />, <ParamBadge name="nome" />, <ParamBadge name="telefone" /> e <ParamBadge name="email" />).</li>
+        <li><ParamBadge name="data_hora" />, <ParamBadge name="motivo" /> e <ParamBadge name="origem" /> — quando a punição foi aplicada, o motivo e se foi automática (<code>A</code>) ou manual (<code>M</code>).</li>
+        <li><ParamBadge name="impedido_ate" /> e <ParamBadge name="duracao_minutos" /> — até quando o condutor fica impedido e a duração programada, em minutos.</li>
+        <li><ParamBadge name="gatilho" /> — as ordens de serviço que geraram a punição automática (por exemplo, <code>O.S. 987654, 987655</code>) ou o nome do gestor que aplicou a manual.</li>
+        <li><ParamBadge name="situacao" /> e <ParamBadge name="data_revogacao" /> — <code>E</code>, <code>C</code> ou <code>R</code>. Vem <code>null</code> em <ParamBadge name="data_revogacao" /> quando a punição não foi revogada.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "14px",
+      lineHeight: "1.6",
+    }}>
+      Cada item é uma punição aplicada. Uma punição liberada antes do fim continua sendo um único item, com
+      situação <code>R</code> e a data da liberação em <ParamBadge name="data_revogacao" />. Os horários seguem o fuso
+      da central, sem indicação de fuso. Só há histórico das punições aplicadas a partir do lançamento. O endpoint tem limite de 10 requisições por minuto por{" "}
+      <code>api-key</code> — veja a seção <a href="/pages/v2/referencia/introducao#rate-limit">Rate limit</a>.
+    </div>
+  </Entry>
+
+  <Entry date="8 out 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 id="cupons-sucesso-parcial" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Sucesso parcial na criação de cupons
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      A criação de cupons em lote deixa de ser tudo ou nada. Cupom com erro não impede os demais: os
+      válidos são criados e os recusados voltam na resposta, cada um com o motivo. O
+      <code>POST /cupons</code> passa a seguir a mesma ideia para os clientes de <code>cliente_ids</code>.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/cupons/lote" href="/pages/v2/referencia/cupons/endpoint/post-lote" />
+
+    <ChangeSection type="changed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>Resposta <code>201</code> quando todos os cupons são criados e <code>207</code> quando algum é recusado, inclusive quando todos são, com o mesmo body: <ParamBadge name="cupons" /> traz <ParamBadge name="indice" />, <ParamBadge name="id" /> e <ParamBadge name="codigo" /> de cada cupom criado, e <ParamBadge name="falhas" /> traz <ParamBadge name="indice" />, <ParamBadge name="cliente_id" />, <ParamBadge name="gerador_cupom_id" /> e <ParamBadge name="errors" /> de cada cupom recusado.</li>
+        <li>Cada erro continua com <ParamBadge name="field" /> no formato <code>cupons.N.campo</code> e o mesmo <code>code</code> do <code>POST /cupons</code>. O <code>400</code> fica para o erro no próprio lote, como mais de 100 cupons, e nesse caso nenhum cupom é criado.</li>
+        <li>Os cupons que excedem a cota do gerador são recusados, e os demais do lote são criados.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/cupons" href="/pages/v2/referencia/cupons/endpoint/post" />
+
+      <ChangeSection type="changed">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="cliente_ids" /> — cliente inexistente, de outra bandeira ou com id não numérico deixa de recusar o cupom inteiro. O cupom é criado para os clientes válidos, e a resposta passa a ser <code>207</code>, com <ParamBadge name="falhas" /> trazendo <ParamBadge name="cliente_id" /> e <ParamBadge name="errors" /> de cada cliente não vinculado.</li>
+          <li>Quando nenhum cliente de <ParamBadge name="cliente_ids" /> é válido, o cupom não é criado e a resposta é <code>400</code>, com um erro por cliente.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+  </Entry>
+
+  <Entry date="6 out 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="cupons-em-lote" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Criação de cupons em lote
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novo endpoint que cria vários cupons de desconto numa única requisição, tudo ou nada: ou todos os
+      cupons são criados, ou nenhum. Cada item segue o formato e as regras do <code>POST /cupons</code>,
+      com o próprio <code>gerador_cupom_id</code> e, no lugar da lista <code>cliente_ids</code>, um único
+      <code>cliente_id</code> opcional.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/cupons/lote" href="/pages/v2/referencia/cupons/endpoint/post-lote" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="cupons" /> — array de 1 a 100 cupons por requisição, cada um no formato do body do <code>POST /cupons</code>.</li>
+        <li><ParamBadge name="cliente_id" /> — opcional, por cupom: o único cliente que poderá usar o cupom. A lista <code>cliente_ids</code> do <code>POST /cupons</code> não é aceita no lote.</li>
+        <li>Resposta <code>201</code> com <ParamBadge name="id" /> e <ParamBadge name="codigo" /> de cada cupom, na ordem enviada.</li>
+        <li>Todos os erros de todos os itens voltam juntos, com <ParamBadge name="field" /> no formato <code>cupons.N.campo</code> e os mesmos <code>code</code> do <code>POST /cupons</code>. Nenhum cupom é criado quando há erro.</li>
+        <li>A cota de cada gerador é conferida somando os cupons já criados e os do lote; código repetido no lote ou já em uso é recusado.</li>
+        <li>Limite próprio de rate limit, 20 * faixa requisições por minuto, sem o limite por gerador. Detalhes na <a href="/pages/v2/referencia/introducao#rate-limit">introdução</a>.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="6 out 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="dados-engajamento-clientes" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Dados de engajamento na consulta de clientes
@@ -327,7 +435,7 @@ export const EndpointBadge = ({ method, path, href }) => (
     </div>
   </Entry>
 
-  <Entry date="1 out 2026" label="Em breve" labelColor="#ea580c">
+  <Entry date="1 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="desativar-cupom" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Desativar cupom
     </h2>
@@ -349,7 +457,7 @@ export const EndpointBadge = ({ method, path, href }) => (
     </ChangeSection>
   </Entry>
 
-  <Entry date="1 out 2026" label="Em breve" labelColor="#ea580c">
+  <Entry date="1 out 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="ids-e-chat-na-criacao-da-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Identificadores e estado do chat na criação da corrida
     </h2>
@@ -376,7 +484,7 @@ export const EndpointBadge = ({ method, path, href }) => (
     </ChangeSection>
   </Entry>
 
-  <Entry date="1 out 2026" label="Em breve" labelColor="#ea580c">
+  <Entry date="1 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="mensagens-corrida-condutor" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Conversa da corrida pelo lado do condutor
     </h2>
@@ -404,7 +512,7 @@ export const EndpointBadge = ({ method, path, href }) => (
     </ChangeSection>
   </Entry>
 
-  <Entry date="1 out 2026" label="Em breve" labelColor="#ea580c">
+  <Entry date="1 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="chat-ativo-criar-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Parâmetro que habilita o chat da corrida
     </h2>
@@ -430,7 +538,7 @@ export const EndpointBadge = ({ method, path, href }) => (
     </ChangeSection>
   </Entry>
 
-  <Entry date="1 out 2026" label="Em breve" labelColor="#ea580c">
+  <Entry date="1 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="mensagens-conversa-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Conversa da corrida entre passageiro e condutor
     </h2>
@@ -473,7 +581,7 @@ export const EndpointBadge = ({ method, path, href }) => (
     </div>
   </Entry>
 
-  <Entry date="01 out 2026" label="Em breve" labelColor="#ea580c">
+  <Entry date="1 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="webhook-mensagens-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Webhook de mensagens da corrida
     </h2>
@@ -525,7 +633,7 @@ export const EndpointBadge = ({ method, path, href }) => (
     </ChangeSection>
   </Entry>
 
-   <Entry date="29 set 2026" label="Em breve" labelColor="#ea580c">
+  <Entry date="29 set 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="evento-engajamento-abertura-app" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Evento de engajamento de abertura do app
     </h2>
