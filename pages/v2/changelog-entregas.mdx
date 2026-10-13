@@ -159,7 +159,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       Extrato de créditos da central
     </h2>
     <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
-      Consulte pela API os lançamentos do extrato de créditos da central, com os mesmos filtros e a mesma classificação da tela de extrato do painel.
+      Consulte pela API os lançamentos do extrato de créditos da central, com a mesma classificação e os filtros da tela de extrato do painel.
     </p>
 
     <EndpointBadge method="GET" path="/api/v2/integracao/financeiro/extrato" href="/pages/v2/entregas/financeiro/endpoint/get-extrato" />
@@ -169,8 +169,8 @@ export const EndpointBadge = ({ method, path, href }) => (
       <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
         <li><ParamBadge name="data_ini" /> e <ParamBadge name="data_fim" /> — período de até 31 dias, com início nos últimos 6 meses. Opcional com <ParamBadge name="solicitacao_id" /> ou <ParamBadge name="registro_manual_id" />, que usam o período da própria solicitação ou do registro.</li>
         <li><ParamBadge name="pagina" /> — página de 10 lançamentos; a última é a que vem com menos de 10.</li>
-        <li><ParamBadge name="tipo" />, <ParamBadge name="subfiltros[]" />, <ParamBadge name="situacao" /> e <ParamBadge name="tipo_usuario[]" /> — os filtros da tela de extrato.</li>
-        <li><ParamBadge name="taxista_id" />, <ParamBadge name="cliente_id" />, <ParamBadge name="empresa_id" />, <ParamBadge name="solicitacao_id" />, <ParamBadge name="registro_manual_id" />, <ParamBadge name="categoria_id" /> e <ParamBadge name="tipo_pagamento_id" /> — recortam o extrato por pessoa, corrida, registro manual, categoria ou tipo de pagamento da central.</li>
+        <li><ParamBadge name="tipo" />, <ParamBadge name="subfiltros[]" />, <ParamBadge name="situacao" /> e <ParamBadge name="tipo_usuario[]" /> — os filtros da tela de extrato; <ParamBadge name="situacao" /> e <ParamBadge name="tipo_usuario[]" /> exigem um subfiltro disponível para a central.</li>
+        <li><ParamBadge name="taxista_id" />, <ParamBadge name="cliente_id" />, <ParamBadge name="empresa_id" />, <ParamBadge name="solicitacao_id" /> e <ParamBadge name="registro_manual_id" /> — recortam o extrato por pessoa, corrida ou registro manual da central.</li>
       </ul>
     </ChangeSection>
 
