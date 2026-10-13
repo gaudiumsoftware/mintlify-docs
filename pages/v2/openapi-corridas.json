@@ -475,7 +475,7 @@
           {
             "name": "ultimo_acesso_apos",
             "in": "query",
-            "description": "Filtra clientes com último acesso ao app a partir desta data (inclusive). Formato ISO-8601 UTC. É um filtro de segmento: preserva a paginação e é combinável com `status_cliente` e com as buscas diretas (`cpf_cnpj`, `cpf`, `email` e `telefone`). Exclui clientes com último acesso nulo — para buscar quem nunca acessou o app, use `nunca_acessou`.",
+            "description": "Filtra clientes com último acesso ao app a partir desta data (inclusive). Formato ISO-8601 UTC. É um filtro de segmento: na listagem, preserva a paginação e é combinável com `status_cliente`. Também se combina com as buscas diretas (`cpf_cnpj`, `cpf`, `email` e `telefone`), que ignoram paginação e `status_cliente`. Exclui clientes com último acesso nulo — para buscar quem nunca acessou o app, use `nunca_acessou`.",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -484,7 +484,7 @@
           {
             "name": "ultimo_acesso_antes_de",
             "in": "query",
-            "description": "Filtra clientes com último acesso ao app antes desta data (exclusive). Formato ISO-8601 UTC. É um filtro de segmento: preserva a paginação e é combinável com `status_cliente` e com as buscas diretas (`cpf_cnpj`, `cpf`, `email` e `telefone`). Exclui clientes com último acesso nulo — para buscar quem nunca acessou o app, use `nunca_acessou`.",
+            "description": "Filtra clientes com último acesso ao app antes desta data (exclusive). Formato ISO-8601 UTC. É um filtro de segmento: na listagem, preserva a paginação e é combinável com `status_cliente`. Também se combina com as buscas diretas (`cpf_cnpj`, `cpf`, `email` e `telefone`), que ignoram paginação e `status_cliente`. Exclui clientes com último acesso nulo — para buscar quem nunca acessou o app, use `nunca_acessou`.",
             "schema": {
               "type": "string",
               "format": "date-time"
