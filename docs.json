@@ -66,9 +66,11 @@
                     "pages": [
                       "pages/v2/referencia/dinamicas/endpoint/get-area",
                       "pages/v2/referencia/dinamicas/endpoint/get-vertices",
+                      "pages/v2/referencia/dinamicas/endpoint/get-faixas",
                       "pages/v2/referencia/dinamicas/endpoint/get-sem-area",
                       "pages/v2/referencia/dinamicas/endpoint/patch-area",
                       "pages/v2/referencia/dinamicas/endpoint/patch-vertices",
+                      "pages/v2/referencia/dinamicas/endpoint/put-faixas",
                       "pages/v2/referencia/dinamicas/endpoint/patch-sem-area"
                     ]
                   },
@@ -125,9 +127,13 @@
                       "pages/v2/referencia/configuracoes/endpoint/patch",
                       "pages/v2/referencia/configuracoes/endpoint/tipos-documento",
                       "pages/v2/referencia/configuracoes/endpoint/areas-geograficas",
+                      "pages/v2/referencia/configuracoes/endpoint/post-areas",
                       "pages/v2/referencia/configuracoes/endpoint/categorias",
                       "pages/v2/referencia/configuracoes/endpoint/put-categorias",
                       "pages/v2/referencia/configuracoes/endpoint/get-categorias-tarifas",
+                      "pages/v2/referencia/configuracoes/endpoint/post-tarifas",
+                      "pages/v2/referencia/configuracoes/endpoint/put-tarifas",
+                      "pages/v2/referencia/configuracoes/endpoint/delete-tarifas",
                       "pages/v2/referencia/configuracoes/endpoint/saque-automatico-ativacao"
                     ]
                   },
@@ -403,9 +409,11 @@
                     "group": "Dinâmicas",
                     "pages": [
                       "pages/v2/entregas/dinamicas/endpoint/get-area",
+                      "pages/v2/entregas/dinamicas/endpoint/get-faixas",
                       "pages/v2/entregas/dinamicas/endpoint/get-sem-area",
                       "pages/v2/entregas/dinamicas/endpoint/patch-area",
                       "pages/v2/entregas/dinamicas/endpoint/patch-vertices",
+                      "pages/v2/entregas/dinamicas/endpoint/put-faixas",
                       "pages/v2/entregas/dinamicas/endpoint/patch-sem-area"
                     ]
                   },
@@ -450,9 +458,13 @@
                       "pages/v2/entregas/configuracoes/endpoint/patch",
                       "pages/v2/entregas/configuracoes/endpoint/tipos-documento",
                       "pages/v2/entregas/configuracoes/endpoint/areas-geograficas",
+                      "pages/v2/entregas/configuracoes/endpoint/post-areas",
                       "pages/v2/entregas/configuracoes/endpoint/categorias",
                       "pages/v2/entregas/configuracoes/endpoint/put-categorias",
                       "pages/v2/entregas/configuracoes/endpoint/get-categorias-tarifas",
+                      "pages/v2/entregas/configuracoes/endpoint/post-tarifas",
+                      "pages/v2/entregas/configuracoes/endpoint/put-tarifas",
+                      "pages/v2/entregas/configuracoes/endpoint/delete-tarifas",
                       "pages/v2/entregas/configuracoes/endpoint/saque-automatico-ativacao"
                     ]
                   },

@@ -2,3 +2,7 @@
 title: 'Listar tarifas da categoria'
 openapi: 'pages/v2/openapi-corridas.json GET /configuracoes/categorias/{id}/tarifas'
 ---
+
+<Warning>
+  **Mudança incompatível em relação à versão de 29 set 2026.** O gestor do Basic precisa ter a permissão de API de categoria (`api_integracao_categoria`) no cargo da bandeira; sem ela, a resposta é **403**. A resposta traz só os campos que se aplicam ao método de cálculo de cada tarifa e à operação da bandeira. Em Corridas saem `tipo_cobranca_retorno`, `valor_retorno_adicional` e `taxa_retorno_porcentagem`. Ajuste a leitura para tratar campos ausentes.
+</Warning>
