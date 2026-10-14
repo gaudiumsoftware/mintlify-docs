@@ -29,7 +29,8 @@
                   {
                     "group": "Introdução",
                     "pages": [
-                      "pages/v2/referencia/introducao"
+                      "pages/v2/referencia/introducao",
+                      "pages/v2/referencia/codigos-de-erro"
                     ]
                   },
                   {
@@ -207,7 +208,8 @@
               {
                 "group": "Introdução",
                 "pages": [
-                  "pages/v1/referencia/introducao"
+                  "pages/v1/referencia/introducao",
+                  "pages/v1/referencia/codigos-de-erro"
                 ]
               },
               {
@@ -353,7 +355,8 @@
                   {
                     "group": "Introdução",
                     "pages": [
-                      "pages/v2/entregas/introducao"
+                      "pages/v2/entregas/introducao",
+                      "pages/v2/entregas/codigos-de-erro"
                     ]
                   },
                   {
@@ -510,7 +513,8 @@
               {
                 "group": "Introdução",
                 "pages": [
-                  "pages/v1/entregas/introducao"
+                  "pages/v1/entregas/introducao",
+                  "pages/v1/entregas/codigos-de-erro"
                 ]
               },
               {

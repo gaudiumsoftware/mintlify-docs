@@ -239,6 +239,22 @@ Caso a chave API não seja informada, um erro padrão será retornado:
 }
 ```
 
+Os demais erros trazem um `code` em cada item de `errors`:
+
+```json
+{
+  "success": false,
+  "errors": [
+    {
+      "code": 25,
+      "message": "Solicitação não encontrada."
+    }
+  ]
+}
+```
+
+Trate o erro pelo `code`, e não pelo texto: a `message` muda conforme o tipo da central e alguns textos trazem valores dinâmicos. A lista completa está em [Códigos de erro](/pages/v2/referencia/codigos-de-erro).
+
 ---
 
 ## Ambientes de integração com a API
