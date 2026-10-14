@@ -1304,7 +1304,7 @@
             }
           },
           "429": {
-            "description": "Limite de requisições excedido. Os limites estão na tabela de rate limit da introdução.",
+            "description": "Limite de requisições excedido. Os limites estão na página [Rate limit](/pages/v2/referencia/rate-limit).",
             "content": {
               "application/json": {
                 "schema": {
@@ -11702,7 +11702,7 @@
             }
           },
           "429": {
-            "description": "Limite de requisições excedido. Os limites estão na tabela de rate limit da introdução.",
+            "description": "Limite de requisições excedido. Os limites estão na página [Rate limit](/pages/v2/referencia/rate-limit).",
             "content": {
               "application/json": {
                 "schema": {
@@ -12341,7 +12341,7 @@
             }
           },
           "429": {
-            "description": "Limite de requisições excedido. Os limites estão na tabela de rate limit da introdução.",
+            "description": "Limite de requisições excedido. Os limites estão na página [Rate limit](/pages/v2/referencia/rate-limit).",
             "content": {
               "application/json": {
                 "schema": {
