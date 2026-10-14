@@ -341,7 +341,7 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 | `6` | Destinatário não encontrado ou não pertence à bandeira autenticada. | ID da lista inexistente ou de outra central. Volta como falha do ID em data.falhas (HTTP 207), ou em errors (HTTP 404) quando nenhum ID é notificado. |
 | `157` | Destinatário sem dispositivo registrado para receber notificações. | ID da central sem aplicativo com token de notificação registrado. Volta como falha do ID em data.falhas (HTTP 207), ou em errors (HTTP 404) quando nenhum ID é notificado. Passa a ser devolvido em 15 de outubro de 2026. |
 
-## Validação do corpo da requisição (só V2)
+## Validação do corpo da requisição (só v2)
 
 | code | Mensagem | Quando ocorre |
 |---|---|---|
@@ -361,6 +361,8 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 | `232` *Em breve* | '\{campo\}': Deve ser alfanumérico. | cnpj do condutor com caracteres inválidos. |
 | `233` *Em breve* | '\{campo\}': Formato inválido. | Valor fora do formato esperado pelo campo. No filtro `nome` da listagem de condutores, que exige ao menos 3 caracteres, a mensagem é outra. |
 
+O `231` está reservado para a validação de telefone, mas nenhum endpoint usa essa regra hoje, então ele não é devolvido.
+
 ## Códigos com mais de um significado
 
 Alguns códigos foram publicados com mais de um significado e não podem ser renumerados sem quebrar integrações existentes. Nesses casos, use o endpoint chamado para saber qual é o erro.
@@ -372,3 +374,5 @@ Alguns códigos foram publicados com mais de um significado e não podem ser ren
 | `125` | Nome de passageiro inválido, na criação de corrida; motorista sem veículo, na atualização do motorista. |
 | `135` | Limite de uso único com vários clientes, na criação de cupom (v1); status inválido para exclusão, na exclusão de parada de entrega (v2). |
 | `136` | Valor máximo do cupom inválido, na criação de cupom; código de confirmação obrigatório, na criação de entrega; entrega não encontrada, na exclusão de parada (v2). |
+
+O `6`, o `33` e o `68` aparecem em mais de uma seção, mas com um significado só, aplicado a recursos diferentes: registro não encontrado, entrega que ficaria sem parada e usuário sem permissão.
