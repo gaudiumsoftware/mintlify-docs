@@ -5267,6 +5267,90 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Erro de validação ou recusa de regra de negócio. Trate pelo `code`; a lista completa está em [Códigos de erro](/pages/v2/referencia/codigos-de-erro).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "sem_motoristas": {
+                    "summary": "Sem motoristas por perto",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 149,
+                          "message": "Não há motoristas por perto"
+                        }
+                      ]
+                    }
+                  },
+                  "corrida_em_andamento": {
+                    "summary": "Passageiro com corrida em andamento",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 153,
+                          "message": "Você já está com uma corrida em atendimento."
+                        }
+                      ]
+                    }
+                  },
+                  "passageiro_suspenso": {
+                    "summary": "Passageiro suspenso",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 169,
+                          "message": "Seu cadastro está suspenso. Para reativar entre em contato conosco."
+                        }
+                      ]
+                    }
+                  },
+                  "motorista_offline": {
+                    "summary": "Motorista indicado offline",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 192,
+                          "message": "O motorista está offline no momento"
+                        }
+                      ]
+                    }
+                  },
+                  "fora_da_area": {
+                    "summary": "Fora da área atendida",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 234,
+                          "message": "No momento, nosso serviço não está disponível na sua região."
+                        }
+                      ]
+                    }
+                  },
+                  "cupom_expirado": {
+                    "summary": "Cupom inexistente ou expirado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 158,
+                          "message": "O código promocional inserido já expirou ou é inválido."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -5749,6 +5833,90 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Erro de validação ou recusa de regra de negócio. Trate pelo `code`; a lista completa está em [Códigos de erro](/pages/v2/referencia/codigos-de-erro).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "trajeto_indisponivel": {
+                    "summary": "Trajeto indisponível",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 147,
+                          "message": "Não é possível realizar este trajeto. Selecione outro endereço."
+                        }
+                      ]
+                    }
+                  },
+                  "sem_motoristas": {
+                    "summary": "Sem motoristas por perto",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 149,
+                          "message": "Não há motoristas por perto"
+                        }
+                      ]
+                    }
+                  },
+                  "sem_motoristas_filtro": {
+                    "summary": "Sem motoristas para os filtros",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 150,
+                          "message": "Não há motoristas disponíveis para esta solicitação"
+                        }
+                      ]
+                    }
+                  },
+                  "fora_da_area": {
+                    "summary": "Fora da área atendida",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 234,
+                          "message": "No momento, nosso serviço não está disponível na sua região."
+                        }
+                      ]
+                    }
+                  },
+                  "cupom_expirado": {
+                    "summary": "Cupom inexistente ou expirado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 158,
+                          "message": "O código promocional inserido já expirou ou é inválido."
+                        }
+                      ]
+                    }
+                  },
+                  "cupom_valor_maximo": {
+                    "summary": "Estimativa acima do valor máximo do cupom",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 165,
+                          "message": "Este cupom é válido para corridas de até R$ 30,00. Sua estimativa atual está acima desse valor."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -5878,6 +6046,102 @@
                         "tarifa_nome": "Tarifa padrão"
                       }
                     ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação ou recusa de regra de negócio. Trate pelo `code`; a lista completa está em [Códigos de erro](/pages/v2/referencia/codigos-de-erro).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "trajeto_indisponivel": {
+                    "summary": "Trajeto indisponível",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 147,
+                          "message": "Não é possível realizar este trajeto. Selecione outro endereço."
+                        }
+                      ]
+                    }
+                  },
+                  "sem_motoristas": {
+                    "summary": "Sem motoristas por perto",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 149,
+                          "message": "Não há motoristas por perto"
+                        }
+                      ]
+                    }
+                  },
+                  "sem_motoristas_filtro": {
+                    "summary": "Sem motoristas para os filtros",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 150,
+                          "message": "Não há motoristas disponíveis para esta solicitação"
+                        }
+                      ]
+                    }
+                  },
+                  "fora_da_area": {
+                    "summary": "Fora da área atendida",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 234,
+                          "message": "No momento, nosso serviço não está disponível na sua região."
+                        }
+                      ]
+                    }
+                  },
+                  "cupom_expirado": {
+                    "summary": "Cupom inexistente ou expirado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 158,
+                          "message": "O código promocional inserido já expirou ou é inválido."
+                        }
+                      ]
+                    }
+                  },
+                  "cupom_valor_maximo": {
+                    "summary": "Estimativa acima do valor máximo do cupom",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 165,
+                          "message": "Este cupom é válido para corridas de até R$ 30,00. Sua estimativa atual está acima desse valor."
+                        }
+                      ]
+                    }
+                  },
+                  "tipo_invalido": {
+                    "summary": "Tipo de dado inválido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 218,
+                          "message": "'lat_partida': Deve ser numérico."
+                        }
+                      ]
+                    }
                   }
                 }
               }
@@ -6094,6 +6358,66 @@
                     "tipo": "programada",
                     "passageiro_id": 543,
                     "chat_ativo": true
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação ou recusa de regra de negócio. Trate pelo `code`; a lista completa está em [Códigos de erro](/pages/v2/referencia/codigos-de-erro).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "agendamento_proximo": {
+                    "summary": "Agendamento dentro da antecedência mínima",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 179,
+                          "message": "Agendamento muito próximo à hora atual. Solicitação recusada."
+                        }
+                      ]
+                    }
+                  },
+                  "categoria_sem_agendamento": {
+                    "summary": "Categoria não aceita agendamento",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 181,
+                          "message": "Essa categoria não está disponível para agendamento"
+                        }
+                      ]
+                    }
+                  },
+                  "passageiro_suspenso": {
+                    "summary": "Passageiro suspenso",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 169,
+                          "message": "Seu cadastro está suspenso. Para reativar entre em contato conosco."
+                        }
+                      ]
+                    }
+                  },
+                  "cupom_expirado": {
+                    "summary": "Cupom inexistente ou expirado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 158,
+                          "message": "O código promocional inserido já expirou ou é inválido."
+                        }
+                      ]
+                    }
                   }
                 }
               }
@@ -6356,6 +6680,54 @@
                         "tarifa_nome": "Tarifa padrão"
                       }
                     ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação ou recusa de regra de negócio. Trate pelo `code`; a lista completa está em [Códigos de erro](/pages/v2/referencia/codigos-de-erro).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "trajeto_indisponivel": {
+                    "summary": "Trajeto indisponível",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 147,
+                          "message": "Não é possível realizar este trajeto. Selecione outro endereço."
+                        }
+                      ]
+                    }
+                  },
+                  "fora_da_area": {
+                    "summary": "Fora da área atendida",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 234,
+                          "message": "No momento, nosso serviço não está disponível na sua região."
+                        }
+                      ]
+                    }
+                  },
+                  "cupom_expirado": {
+                    "summary": "Cupom inexistente ou expirado",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 158,
+                          "message": "O código promocional inserido já expirou ou é inválido."
+                        }
+                      ]
+                    }
                   }
                 }
               }
@@ -6708,6 +7080,66 @@
                 "example": {
                   "success": true,
                   "message": "Corrida cancelada com sucesso"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação ou recusa de regra de negócio. Trate pelo `code`; a lista completa está em [Códigos de erro](/pages/v2/referencia/codigos-de-erro).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "nao_cancelavel": {
+                    "summary": "Corrida que não pode mais ser cancelada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 151,
+                          "message": "Não é possível cancelar uma solicitação que já foi finalizada, cancelada ou não atendida"
+                        }
+                      ]
+                    }
+                  },
+                  "motivo_inexistente": {
+                    "summary": "Motivo de cancelamento inexistente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 26,
+                          "message": "Motivo do cancelamento não encontrado."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Corrida não encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "corrida_nao_encontrada": {
+                    "summary": "Corrida não encontrada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 25,
+                          "message": "Solicitação não encontrada."
+                        }
+                      ]
+                    }
+                  }
                 }
               }
             }
