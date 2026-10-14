@@ -269,7 +269,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       Cada item é uma punição aplicada. Uma punição liberada antes do fim continua sendo um único item, com
       situação <code>R</code> e a data da liberação em <ParamBadge name="data_revogacao" />. Os horários seguem o fuso
       da central, sem indicação de fuso. Só há histórico das punições aplicadas a partir do lançamento. O endpoint tem limite de 10 requisições por minuto por{" "}
-      <code>api-key</code> — veja a seção <a href="/pages/v2/referencia/introducao#rate-limit">Rate limit</a>.
+      <code>api-key</code> — veja a seção <a href="/pages/v2/referencia/rate-limit">Rate limit</a>.
     </div>
   </Entry>
 
@@ -325,7 +325,7 @@ export const EndpointBadge = ({ method, path, href }) => (
         <li>Resposta <code>201</code> com <ParamBadge name="id" /> e <ParamBadge name="codigo" /> de cada cupom, na ordem enviada.</li>
         <li>Todos os erros de todos os itens voltam juntos, com <ParamBadge name="field" /> no formato <code>cupons.N.campo</code> e os mesmos <code>code</code> do <code>POST /cupons</code>. Nenhum cupom é criado quando há erro.</li>
         <li>A cota de cada gerador é conferida somando os cupons já criados e os do lote; código repetido no lote ou já em uso é recusado.</li>
-        <li>Limite próprio de rate limit, 20 * faixa requisições por minuto, sem o limite por gerador. Detalhes na <a href="/pages/v2/referencia/introducao#rate-limit">introdução</a>.</li>
+        <li>Limite próprio de rate limit, 20 * faixa requisições por minuto, sem o limite por gerador. Detalhes na <a href="/pages/v2/referencia/rate-limit">introdução</a>.</li>
       </ul>
     </ChangeSection>
   </Entry>
@@ -897,7 +897,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       A posição vem do serviço de localização em tempo real, a mesma fonte do mapa de condutores do painel.
       Condutor sem posição publicada recentemente não aparece na lista, mesmo estando livre. O retorno não é
       paginado: traz todos os condutores que atendem aos filtros. O endpoint tem limite de 10
-      requisições por minuto por <code>api-key</code> — veja a seção <a href="/pages/v2/referencia/introducao#rate-limit">Rate limit</a>.
+      requisições por minuto por <code>api-key</code> — veja a seção <a href="/pages/v2/referencia/rate-limit">Rate limit</a>.
     </div>
   </Entry>
 
