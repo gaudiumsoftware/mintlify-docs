@@ -194,9 +194,10 @@ export const EndpointBadge = ({ method, path, href }) => (
 
     <ChangeSection type="changed">
       <p style={{ marginBottom: "10px" }}>
-        Os erros de validação do corpo, em todas as rotas da v2, passam de <code>0</code> a um código por regra
+        Os erros do validador padrão do corpo da v2 passam de <code>0</code> a um código por regra
         (<code>218</code> a <code>233</code>): campo numérico, texto, booleano, lista, tamanho máximo, valor fora da
-        lista aceita e formatos de data, hora e documento. Campo obrigatório continua com <code>2</code>.
+        lista aceita e formatos de data, hora e documento. Campo obrigatório continua com <code>2</code>. Regras
+        próprias de alguns endpoints, como valor mínimo ou faixa, continuam com <code>0</code>.
       </p>
     </ChangeSection>
 

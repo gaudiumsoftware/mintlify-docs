@@ -22,7 +22,7 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 
 > **Trate o erro pelo `code`, e não pelo texto**: a `message` muda conforme o tipo da central ("motorista" pode vir como "taxista", "mototaxista" ou "entregador"; "passageiro" como "cliente"), e alguns textos trazem valores dinâmicos, como `{campo}`, `{valor}` e `{maximo}`.
 
-> **Códigos novos**: os códigos marcados com *Em breve* passam a ser devolvidos em 22 de outubro de 2026. Até lá, esses erros chegam com `code: 0` e a mesma mensagem.
+> **Códigos novos**: os códigos marcados com *Em breve* passam a ser devolvidos em 22 de outubro de 2026, exceto o `157`, que passa a ser devolvido em 15 de outubro de 2026. Até lá, esses erros chegam com `code: 0` e a mesma mensagem.
 
 ## Códigos especiais
 
@@ -194,8 +194,8 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 | `117` | Não é permitido atualizar este motorista | Motorista de teste/demonstração não pode ser alterado. |
 | `124` | E-mails temporários não podem ser usados para criar uma conta. | E-mail novo do motorista é de provedor temporário. |
 | `125` | Motorista não associado a veículo. | Atualização de motorista sem veículo vinculado. Código com mais de um significado; veja abaixo. |
-| `128` | CERCA_ELETRONICA_NAO_HABILITADA | Central sem a funcionalidade de cerca eletrônica (áreas de permissão). A mensagem chega como o identificador em maiúsculas. |
-| `129` | O \{condutor\} não possui área vinculada. | Desvincular área de motorista que não tem área. O texto chega com o marcador `{condutor}` sem substituição. |
+| `128` | CERCA_ELETRONICA_NAO_HABILITADA | Central sem a funcionalidade de cerca eletrônica (áreas de permissão). Hoje, a mensagem chega como o identificador em maiúsculas. |
+| `129` | O \{condutor\} não possui área vinculada. | Desvincular área de motorista que não tem área. Hoje, o texto chega com o marcador `{condutor}` sem substituição. |
 | `130` | Nome inválido. | Nome do motorista recusado pela validação do cadastro. |
 | `133` | O motorista está atualmente em um período de dedicação e não pode aceitar esta solicitação. | Motorista indicado está dedicado a outra empresa no momento. |
 | `134` | O motorista especificado não pode ser chamado por não fazer parte do período de dedicação da empresa. | Empresa exige motoristas dedicados e o indicado não é. |
@@ -274,9 +274,9 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 | `23` | Centro de Custo não pertence a empresa. | Centro de custo informado é de outra empresa. |
 | `38` | Empresa inválida | Empresa inativa, de outra central, ou diferente da empresa do usuário autenticado. |
 | `43` | Tipo de pagamento inválido para essa empresa. | Forma de pagamento da entrega não habilitada para a empresa informada. Código com mais de um significado; veja abaixo. |
-| `74` | ERRO_AO_SALVAR_FUNCIONARIO | Falha ao cadastrar o passageiro como funcionário da empresa na abertura corporativa. A mensagem chega como o identificador em maiúsculas. |
+| `74` | ERRO_AO_SALVAR_FUNCIONARIO | Falha ao cadastrar o passageiro como funcionário da empresa na abertura corporativa. Hoje, a mensagem chega como o identificador em maiúsculas. |
 | `112` | Empresa não possui cadastro ou não está ativa | Entrega aberta para empresa inativa. |
-| `127` | FUNCIONARIO_INVALIDO | Funcionário desligado ou inativo pedindo corrida com voucher/e-Ticket. A mensagem chega como o identificador em maiúsculas. |
+| `127` | FUNCIONARIO_INVALIDO | Funcionário desligado ou inativo pedindo corrida com voucher/e-Ticket. Hoje, a mensagem chega como o identificador em maiúsculas. |
 | `200` *Em breve* | Cliente não habilitado para corridas corporativas. | Passageiro sem vínculo ativo com a empresa. |
 | `201` *Em breve* | Tipo de pagamento inconsistente. | Voucher e e-Ticket juntos, ou forma de pagamento incompatível com corrida corporativa. |
 | `202` *Em breve* | Tipo de pagamento não previsto. | Funcionário não pode usar voucher ou e-Ticket. |
@@ -297,9 +297,9 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 | `33` | A entrega precisa ter pelo menos uma parada | Entrega aberta ou estimada com lista de paradas vazia. |
 | `33` | Não é possível excluir a última entrega da solicitação. | Tentativa de excluir a única parada da entrega. Só na v2. |
 | `97` | Solicitação foi agrupada, realize o filtro pela solicitação agrupadora | A solicitação consultada foi agrupada em outra; a resposta traz solicitacao_agrupadora_id. |
-| `118` | Código de confirmação não permitido, configuração desabilitada. | Parada com codigo_confirmacao quando a central/empresa não usa código de confirmação. Neste erro, `errors` vem como um objeto, e não como lista. |
-| `120` | Não foi possível realizar a solicitação da Delivery Much | Pedido do provedor Delivery Much com a integração desabilitada na empresa. Neste erro, `errors` vem como um objeto, e não como lista. |
-| `126` | Uma solicitação pode conter no máximo \{limite\} entregas. Sua solicitação contém \{qtd\}. Reduza o número de entregas para prosseguir. | Mais entregas/paradas que o limite configurado para a empresa. Na estimativa, a mensagem chega como `erro_limite_paradas_excedido`. |
+| `118` | Código de confirmação não permitido, configuração desabilitada. | Parada com codigo_confirmacao quando a central/empresa não usa código de confirmação. Hoje, neste erro, `errors` vem como um objeto, e não como lista. |
+| `120` | Não foi possível realizar a solicitação da Delivery Much | Pedido do provedor Delivery Much com a integração desabilitada na empresa. Hoje, neste erro, `errors` vem como um objeto, e não como lista. |
+| `126` | Uma solicitação pode conter no máximo \{limite\} entregas. Sua solicitação contém \{qtd\}. Reduza o número de entregas para prosseguir. | Mais entregas/paradas que o limite configurado para a empresa. Na estimativa, hoje a mensagem chega como `erro_limite_paradas_excedido`. |
 | `135` | Status inválido para exclusão. | Excluir parada de entrega cancelada, finalizada, não atendida ou de programada já disparada/cancelada. Só na v2. Código com mais de um significado; veja abaixo. |
 | `136` | Código de confirmação obrigatório em todas as paradas quando exigir_codigo_confirmacao é enviado como verdadeiro. | exigir_codigo_confirmacao verdadeiro e alguma parada sem codigo_confirmacao (e sem url_confirmacao). Código com mais de um significado; veja abaixo. |
 | `136` | Entrega não encontrada. | Parada ou entrega inexistente, de outra central ou de outra empresa. Só na v2. Código com mais de um significado; veja abaixo. |
@@ -339,7 +339,7 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 | code | Mensagem | Quando ocorre |
 |---|---|---|
 | `6` | Destinatário não encontrado ou não pertence à bandeira autenticada. | ID da lista inexistente ou de outra central. Volta como falha do ID em data.falhas (HTTP 207), ou em errors (HTTP 404) quando nenhum ID é notificado. |
-| `157` | Destinatário sem dispositivo registrado para receber notificações. | ID da central sem aplicativo com token de notificação registrado. Volta como falha do ID em data.falhas (HTTP 207), ou em errors (HTTP 404) quando nenhum ID é notificado. Passa a ser devolvido em 15 de outubro de 2026. |
+| `157` *Em breve* | Destinatário sem dispositivo registrado para receber notificações. | ID da central sem aplicativo com token de notificação registrado. Volta como falha do ID em data.falhas (HTTP 207), ou em errors (HTTP 404) quando nenhum ID é notificado. |
 
 ## Validação do corpo da requisição (só v2)
 
@@ -362,6 +362,8 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 | `233` *Em breve* | '\{campo\}': Formato inválido. | Valor fora do formato esperado pelo campo. No filtro `nome` da listagem de condutores, que exige ao menos 3 caracteres, a mensagem é outra. |
 
 O `231` está reservado para a validação de telefone, mas nenhum endpoint usa essa regra hoje, então ele não é devolvido.
+
+Esses códigos valem para o validador padrão do corpo. Regras próprias de alguns endpoints, como valor mínimo ou faixa, ainda chegam com `code: 0`.
 
 ## Códigos com mais de um significado
 

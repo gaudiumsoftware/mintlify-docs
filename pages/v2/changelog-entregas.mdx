@@ -166,9 +166,10 @@ export const EndpointBadge = ({ method, path, href }) => (
 
     <ChangeSection type="changed">
       <p style={{ marginBottom: "10px" }}>
-        Em todas as rotas da v2, cada regra de validação do corpo tem o próprio código (<code>218</code> a
+        No validador padrão do corpo da v2, cada regra tem o próprio código (<code>218</code> a
         <code> 233</code>): campo numérico, texto, booleano, lista, tamanho máximo, valor fora da lista aceita e
-        formatos de data, hora e documento. Campo obrigatório continua com <code>2</code>.
+        formatos de data, hora e documento. Campo obrigatório continua com <code>2</code>. Regras próprias de alguns
+        endpoints, como valor mínimo ou faixa, continuam com <code>0</code>.
       </p>
     </ChangeSection>
 
