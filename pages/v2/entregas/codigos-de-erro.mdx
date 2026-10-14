@@ -334,6 +334,13 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 | `101` | Já existe um webhook cadastrado com esses parâmetros. Por favor, escolha outros | Mesma URL já cadastrada para posição no mesmo escopo, ou limite de webhooks por tipo atingido. |
 | `119` | ID do webhook inválido | id do webhook inexistente ou de outra central/empresa. |
 
+## Notificações em lista (só v2)
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `6` | Destinatário não encontrado ou não pertence à bandeira autenticada. | ID da lista inexistente ou de outra central. Volta como falha do ID em data.falhas (HTTP 207), ou em errors (HTTP 404) quando nenhum ID é notificado. |
+| `157` | Destinatário sem dispositivo registrado para receber notificações. | ID da central sem aplicativo com token de notificação registrado. Volta como falha do ID em data.falhas (HTTP 207), ou em errors (HTTP 404) quando nenhum ID é notificado. Passa a ser devolvido em 15 de outubro de 2026. |
+
 ## Validação do corpo da requisição (só V2)
 
 | code | Mensagem | Quando ocorre |
