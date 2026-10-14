@@ -7543,19 +7543,7 @@
                         }
                       ]
                     }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Corrida não encontrada.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "examples": {
+                  },
                   "corrida_nao_encontrada": {
                     "summary": "Corrida não encontrada",
                     "value": {
