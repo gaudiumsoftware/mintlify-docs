@@ -222,6 +222,62 @@ export const EndpointBadge = ({ method, path, href }) => (
     </div>
   </Entry>
 
+  <Entry date="20 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="criar-area" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Criação de área
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novo endpoint que cria uma área de operação da central autenticada, matriz ou filial, com o
+      polígono em GeoJSON. É a mesma área que a tela de Áreas do painel cria, e ela aparece no
+      <code>GET /configuracoes/areas-geograficas</code>.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/configuracoes/areas" href="/pages/v2/referencia/configuracoes/endpoint/post-areas" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="nome" />, <ParamBadge name="prioridade" /> (1 a 5) e <ParamBadge name="poligono" /> obrigatórios; <ParamBadge name="cor_linha" /> e <ParamBadge name="cor_preenchimento" /> opcionais, no formato <code>#RRGGBB</code>.</li>
+        <li><ParamBadge name="poligono" /> — GeoJSON <code>Polygon</code> com um anel fechado, de 3 a 2.500 vértices distintos.</li>
+        <li><ParamBadge name="area_bloqueio" />, com <ParamBadge name="hora_bloqueio_inicio" /> e <ParamBadge name="hora_bloqueio_fim" /> opcionais (<code>HH:mm</code>), torna a área uma área de bloqueio da central. Central que faz somente entregas recebe <code>400</code>.</li>
+        <li>Resposta <code>201</code> com <ParamBadge name="id" />, os campos gravados e o polígono em GeoJSON.</li>
+        <li>Nome já usado por outra área da central, sem diferenciar maiúsculas, minúsculas e acentos, responde <code>409</code>. Gestor com empresa vinculada recebe <code>400</code> com <code>code</code> 68.</li>
+        <li>Limite próprio de rate limit, 200 * faixa requisições por minuto. Detalhes na página <a href="/pages/v2/referencia/rate-limit">Rate limit</a>.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
+  <Entry date="15 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="notificacoes-falhas-por-destinatario" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Falhas por destinatário nas notificações em lista
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      As notificações para listas de passageiros e de condutores passam a informar quem ficou de fora do
+      envio e por quê. Antes, um ID inexistente, de outra bandeira ou sem aplicativo era descartado em
+      silêncio e a resposta era <code>200</code>. Agora os demais continuam sendo notificados, e a resposta
+      traz uma falha por ID, no mesmo formato do <code>POST /cupons</code>.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/notificacoes/push" href="/pages/v2/referencia/notificacao/endpoint/post-push" />
+    <EndpointBadge method="POST" path="/api/v2/integracao/notificacoes/in-app-messaging" href="/pages/v2/referencia/notificacao/endpoint/post-in-app-messaging" />
+    <EndpointBadge method="POST" path="/api/v2/integracao/notificacoes/condutor/push" href="/pages/v2/referencia/notificacao/endpoint/post-condutor-push" />
+    <EndpointBadge method="POST" path="/api/v2/integracao/notificacoes/condutor/in-app-messaging" href="/pages/v2/referencia/notificacao/endpoint/post-condutor-in-app-messaging" />
+
+    <ChangeSection type="changed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>Resposta <code>200</code> quando todos os IDs são notificados, com o mesmo corpo de antes, e <code>207</code> quando algum fica de fora: <ParamBadge name="falhas" /> traz, na ordem da requisição, o <ParamBadge name="passageiro_id" /> ou o <ParamBadge name="condutor_id" /> como foi enviado e os <ParamBadge name="errors" />, com <ParamBadge name="field" /> no formato <code>passageiros.N</code> ou <code>condutores.N</code>.</li>
+        <li>Os motivos de falha são: <code>code</code> <code>0</code> para ID que não é inteiro positivo, <code>6</code> para ID inexistente ou de outra bandeira, com a mesma mensagem nos dois casos, e <code>157</code> para ID da bandeira sem aplicativo com token de notificação registrado.</li>
+        <li><ParamBadge name="passageiros" /> e <ParamBadge name="condutores" /> — um ID que não é numérico deixa de recusar a lista inteira com <code>400</code> e passa a voltar como falha. A lista só é recusada com <code>400</code> quando nenhum ID é inteiro positivo, com um erro por ID. ID repetido conta uma vez e não gera falha.</li>
+        <li>Quando nenhum ID pode ser notificado, a resposta continua <code>404</code>, agora com um erro por ID em <ParamBadge name="errors" />.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="fixed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>O exemplo de resposta <code>200</code> das notificações de passageiros mostrava <code>data.status</code>, que a API não devolve. O exemplo passou a ser a resposta real, com <ParamBadge name="success" /> e <ParamBadge name="message" />.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="14 out 2026" label="Em breve" labelColor="#ea580c">
     <h2 id="historico-punicoes-condutores" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Histórico de punições dos condutores
@@ -325,7 +381,7 @@ export const EndpointBadge = ({ method, path, href }) => (
         <li>Resposta <code>201</code> com <ParamBadge name="id" /> e <ParamBadge name="codigo" /> de cada cupom, na ordem enviada.</li>
         <li>Todos os erros de todos os itens voltam juntos, com <ParamBadge name="field" /> no formato <code>cupons.N.campo</code> e os mesmos <code>code</code> do <code>POST /cupons</code>. Nenhum cupom é criado quando há erro.</li>
         <li>A cota de cada gerador é conferida somando os cupons já criados e os do lote; código repetido no lote ou já em uso é recusado.</li>
-        <li>Limite próprio de rate limit, 20 * faixa requisições por minuto, sem o limite por gerador. Detalhes na <a href="/pages/v2/referencia/rate-limit">introdução</a>.</li>
+        <li>Limite próprio de rate limit, 20 * faixa requisições por minuto, sem o limite por gerador. Detalhes na página <a href="/pages/v2/referencia/rate-limit">Rate limit</a>.</li>
       </ul>
     </ChangeSection>
   </Entry>
