@@ -810,7 +810,7 @@
       },
       "post": {
         "summary": "Criar dinâmica por área",
-        "description": "Cria uma dinâmica por área na bandeira autenticada: a área desenhada pelo `poligono` e o fator aplicado às entregas que começam (`tipo_fator` `P`) ou terminam (`tipo_fator` `R`) dentro dela. A dinâmica passa a valer no preço logo após a criação, igual a uma dinâmica criada pelo painel.\n\nO polígono aceita no máximo 200 vértices, sem contar o fechamento do anel. A validação devolve todos os erros encontrados de uma vez na lista `errors`, um por campo (ou por posição do polígono). A prioridade da área e a cor da linha são definidas pela plataforma; quando `cor_preenchimento` é omitida, a área fica vermelha (`#ff0000`) para acréscimo e azul (`#0000ff`) para desconto.\n\nO endpoint não é idempotente: reenviar a mesma requisição cria outra dinâmica. Para escalonar o fator por distância, crie a dinâmica e use `PUT /dinamicas/area/{id}/faixas`.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "description": "Cria uma dinâmica por área na bandeira autenticada: a área desenhada pelo `poligono` e o fator aplicado às entregas que começam (`tipo_fator` `P`) ou terminam (`tipo_fator` `R`) dentro dela. A dinâmica passa a valer no preço logo após a criação, igual a uma dinâmica criada pelo painel.\n\nO polígono aceita no máximo 200 vértices, sem contar o fechamento do anel. A validação devolve todos os erros encontrados de uma vez na lista `errors`, um por campo (ou por posição do polígono), com o nome do campo no início da mensagem. A exceção é o valor do `fator` fora do limite, que vem sem o prefixo do campo, igual ao `PATCH /dinamicas/area/{id}`. A prioridade da área e a cor da linha são definidas pela plataforma; quando `cor_preenchimento` é omitida, a área fica vermelha (`#ff0000`) para acréscimo e azul (`#0000ff`) para desconto.\n\nO endpoint não é idempotente: reenviar a mesma requisição cria outra dinâmica. Para escalonar o fator por distância, crie a dinâmica e use `PUT /dinamicas/area/{id}/faixas`.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
         "requestBody": {
           "required": true,
           "content": {
@@ -828,7 +828,7 @@
                   "nome": {
                     "type": "string",
                     "maxLength": 100,
-                    "description": "Nome da área, com até 100 caracteres. Aceita letras, números, acentos (Latin-1, como ç, ñ, ã) e a pontuação do teclado, além de “ ” ˆ ˜ — o mesmo conjunto que a tela de Dinâmica mantém. Não aceita `< > \" ' & \\`, emoji, quebra de linha nem símbolos fora desse conjunto, como `€ — – … ’ ™`.",
+                    "description": "Nome da área, com até 100 caracteres. Aceita letras, números, acentos (Latin-1, como ç, ñ, ã) e a pontuação do teclado, além de `“ ” ˆ ˜` (o mesmo conjunto que a tela de Dinâmica mantém). Não aceita `< > \" ' & \\`, emoji, quebra de linha nem símbolos fora desse conjunto, como `€ — – … ’ ™`.",
                     "example": "Centro"
                   },
                   "poligono": {
@@ -876,7 +876,7 @@
                       "P",
                       "R"
                     ],
-                    "description": "Momento em que o fator é aplicado: `P` — Partida, aplicado na origem/coleta da entrega; `R` — Parada, aplicado no destino/parada da entrega. `R` só é aceito quando o plano da central inclui dinâmica na entrega; sem ela, a resposta é `400`.",
+                    "description": "Momento em que o fator é aplicado: `P` — Partida, aplicado na origem/coleta da entrega; `R` — Parada, aplicado no destino/parada da entrega. `R` só é aceito quando o plano da central inclui a **dinâmica na parada**; sem ela, a resposta é `400` com \"Dinâmica na parada (R) não está disponível no plano da central.\"",
                     "example": "P"
                   },
                   "fator": {
@@ -1405,7 +1405,7 @@
                 "properties": {
                   "nome": {
                     "type": "string",
-                    "description": "Novo nome da área. Um nome diferente do atual segue a regra do `POST /dinamicas/area`: aceita letras, números, acentos (Latin-1, como ç, ñ, ã) e a pontuação do teclado, além de “ ” ˆ ˜ — o mesmo conjunto que a tela de Dinâmica mantém. Não aceita `< > \" ' & \\`, emoji, quebra de linha nem símbolos fora desse conjunto, como `€ — – … ’ ™`. Reenviar o nome atual sem mudança é aceito."
+                    "description": "Novo nome da área. Um nome diferente do atual segue a regra do `POST /dinamicas/area`: aceita letras, números, acentos (Latin-1, como ç, ñ, ã) e a pontuação do teclado, além de `“ ” ˆ ˜` (o mesmo conjunto que a tela de Dinâmica mantém). Não aceita `< > \" ' & \\`, emoji, quebra de linha nem símbolos fora desse conjunto, como `€ — – … ’ ™`. Reenviar o nome atual sem mudança é aceito."
                   },
                   "fator": {
                     "type": "number",
