@@ -810,7 +810,7 @@
       },
       "post": {
         "summary": "Criar dinâmica por área",
-        "description": "Cria uma dinâmica por área na bandeira autenticada: a área desenhada pelo `poligono` e o fator aplicado às corridas que começam (`tipo_fator` `P`) ou terminam (`tipo_fator` `R`) dentro dela. A dinâmica passa a valer no preço logo após a criação, igual a uma dinâmica criada pelo painel.\n\nO polígono aceita no máximo 200 vértices, sem contar o fechamento do anel. A validação devolve todos os erros encontrados de uma vez na lista `errors`, um por campo (ou por posição do polígono). A prioridade da área e a cor da linha são definidas pela plataforma; quando `cor_preenchimento` é omitida, a área fica vermelha (`#ff0000`) para acréscimo e azul (`#0000ff`) para desconto.\n\nO endpoint não é idempotente: reenviar a mesma requisição cria outra dinâmica. Para escalonar o fator por distância, crie a dinâmica e use `PUT /dinamicas/area/{id}/faixas`.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "description": "Cria uma dinâmica por área na bandeira autenticada: a área desenhada pelo `poligono` e o fator aplicado às entregas que começam (`tipo_fator` `P`) ou terminam (`tipo_fator` `R`) dentro dela. A dinâmica passa a valer no preço logo após a criação, igual a uma dinâmica criada pelo painel.\n\nO polígono aceita no máximo 200 vértices, sem contar o fechamento do anel. A validação devolve todos os erros encontrados de uma vez na lista `errors`, um por campo (ou por posição do polígono). A prioridade da área e a cor da linha são definidas pela plataforma; quando `cor_preenchimento` é omitida, a área fica vermelha (`#ff0000`) para acréscimo e azul (`#0000ff`) para desconto.\n\nO endpoint não é idempotente: reenviar a mesma requisição cria outra dinâmica. Para escalonar o fator por distância, crie a dinâmica e use `PUT /dinamicas/area/{id}/faixas`.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
         "requestBody": {
           "required": true,
           "content": {
@@ -867,7 +867,7 @@
                       "F",
                       "M"
                     ],
-                    "description": "Forma de cálculo do fator: `F` — Valor adicional, soma um valor fixo em R$ ao preço da corrida; `M` — Fator multiplicador, multiplica o preço da corrida pelo fator informado.",
+                    "description": "Forma de cálculo do fator: `F` — Valor adicional, soma um valor fixo em R$ ao preço da entrega; `M` — Fator multiplicador, multiplica o preço da entrega pelo fator informado.",
                     "example": "M"
                   },
                   "tipo_fator": {
@@ -876,12 +876,12 @@
                       "P",
                       "R"
                     ],
-                    "description": "Momento em que o fator é aplicado: `P` — Partida, aplicado na origem/embarque da corrida; `R` — Parada, aplicado no destino/parada da corrida. `R` só é aceito quando o plano da central inclui dinâmica na entrega; sem ela, a resposta é `400`.",
+                    "description": "Momento em que o fator é aplicado: `P` — Partida, aplicado na origem/coleta da entrega; `R` — Parada, aplicado no destino/parada da entrega. `R` só é aceito quando o plano da central inclui dinâmica na entrega; sem ela, a resposta é `400`.",
                     "example": "P"
                   },
                   "fator": {
                     "type": "number",
-                    "description": "Valor do fator (numérico). O significado depende de `tipo_calculo`: com `M`, é o multiplicador aplicado ao preço da corrida (entre 1.1 e 5, com até uma casa decimal); com `F`, é o valor fixo em R$ somado ao preço da corrida (entre 0.5 e 99.9, com até duas casas decimais). Valores de desconto (multiplicador entre 0.1 e 0.9, ou valor adicional entre -99.9 e -0.5) só são aceitos quando a central tem a dinâmica de desconto liberada.",
+                    "description": "Valor do fator (numérico). O significado depende de `tipo_calculo`: com `M`, é o multiplicador aplicado ao preço da entrega (entre 1.1 e 5, com até uma casa decimal); com `F`, é o valor fixo em R$ somado ao preço da entrega (entre 0.5 e 99.9, com até duas casas decimais). Valores de desconto (multiplicador entre 0.1 e 0.9, ou valor adicional entre -99.9 e -0.5) só são aceitos quando a central tem a dinâmica de desconto liberada.",
                     "example": 1.5
                   },
                   "cor_preenchimento": {
