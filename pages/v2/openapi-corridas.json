@@ -8349,7 +8349,7 @@
       },
       "post": {
         "summary": "Criar dinâmica por área",
-        "description": "Cria uma dinâmica por área na bandeira autenticada: a área desenhada pelo `poligono` e o fator aplicado às corridas que começam (`tipo_fator` `P`) ou terminam (`tipo_fator` `R`) dentro dela. A dinâmica passa a valer no preço logo após a criação, igual a uma dinâmica criada pelo painel.\n\nO polígono aceita no máximo 200 vértices, sem contar o fechamento do anel. A prioridade da área e a cor da linha são definidas pela plataforma; quando `cor_preenchimento` é omitida, a área fica vermelha (`#ff0000`) para acréscimo e azul (`#0000ff`) para desconto.\n\nO endpoint não é idempotente: reenviar a mesma requisição cria outra dinâmica. Para escalonar o fator por distância, crie a dinâmica e use `PUT /dinamicas/area/{id}/faixas`.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "description": "Cria uma dinâmica por área na bandeira autenticada: a área desenhada pelo `poligono` e o fator aplicado às corridas que começam (`tipo_fator` `P`) ou terminam (`tipo_fator` `R`) dentro dela. A dinâmica passa a valer no preço logo após a criação, igual a uma dinâmica criada pelo painel.\n\nO polígono aceita no máximo 200 vértices, sem contar o fechamento do anel. A validação devolve todos os erros encontrados de uma vez na lista `errors`, um por campo (ou por posição do polígono). A prioridade da área e a cor da linha são definidas pela plataforma; quando `cor_preenchimento` é omitida, a área fica vermelha (`#ff0000`) para acréscimo e azul (`#0000ff`) para desconto.\n\nO endpoint não é idempotente: reenviar a mesma requisição cria outra dinâmica. Para escalonar o fator por distância, crie a dinâmica e use `PUT /dinamicas/area/{id}/faixas`.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
         "requestBody": {
           "required": true,
           "content": {
@@ -8420,7 +8420,7 @@
                   },
                   "fator": {
                     "type": "number",
-                    "description": "Valor do fator (numérico). O significado depende de `tipo_calculo`: com `M`, é o multiplicador aplicado ao preço da corrida (entre 1.1 e 5); com `F`, é o valor fixo em R$ somado ao preço da corrida (entre 0.5 e 99.9). Valores de desconto (multiplicador entre 0.1 e 0.9 ou valor adicional negativo) só são aceitos quando a central tem a dinâmica de desconto liberada.",
+                    "description": "Valor do fator (numérico). O significado depende de `tipo_calculo`: com `M`, é o multiplicador aplicado ao preço da corrida (entre 1.1 e 5, com até uma casa decimal); com `F`, é o valor fixo em R$ somado ao preço da corrida (entre 0.5 e 99.9, com até duas casas decimais). Valores de desconto (multiplicador entre 0.1 e 0.9, ou valor adicional entre -99.9 e -0.5) só são aceitos quando a central tem a dinâmica de desconto liberada.",
                     "example": 1.5
                   },
                   "cor_preenchimento": {
@@ -8641,6 +8641,82 @@
                         {
                           "code": 0,
                           "message": "'poligono.coordinates': O polígono deve ter no máximo 200 vértices, sem contar o fechamento do anel."
+                        }
+                      ]
+                    }
+                  },
+                  "nome_acima_do_limite": {
+                    "summary": "Nome com mais de 100 caracteres",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'nome': Deve ter no máximo 100 caracteres."
+                        }
+                      ]
+                    }
+                  },
+                  "nome_em_branco": {
+                    "summary": "Nome só com espaços",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'nome': Não pode conter apenas espaços."
+                        }
+                      ]
+                    }
+                  },
+                  "fator_casas_decimais": {
+                    "summary": "Fator com casas decimais a mais",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'fator': Deve ter no máximo uma casa decimal com tipo_calculo M e duas com F."
+                        }
+                      ]
+                    }
+                  },
+                  "anel_aberto": {
+                    "summary": "Polígono com anel aberto",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'poligono.coordinates': O anel deve ser fechado (primeira posição igual à última)."
+                        }
+                      ]
+                    }
+                  },
+                  "coordenada_fora_da_faixa": {
+                    "summary": "Coordenada fora da faixa (um erro por posição)",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'poligono.coordinates.0.0': lng deve estar entre -180 e 180."
+                        },
+                        {
+                          "code": 0,
+                          "message": "'poligono.coordinates.0.3': lng deve estar entre -180 e 180."
+                        }
+                      ]
+                    }
+                  },
+                  "json_invalido": {
+                    "summary": "Corpo que não é um objeto JSON válido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "JSON inválido"
                         }
                       ]
                     }
