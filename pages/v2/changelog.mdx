@@ -166,7 +166,7 @@ export const EndpointBadge = ({ method, path, href }) => (
 
     <ChangeSection type="added">
       <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-        <li><ParamBadge name="passenger" /> — em todo status, com <ParamBadge name="client_id" />, <ParamBadge name="name" /> e <ParamBadge name="phone" />. O nome e o telefone são os do passageiro da corrida — na entrega, de quem a solicitou —, que nem sempre é o titular da conta; o <ParamBadge name="client_id" /> é sempre o da conta.</li>
+        <li><ParamBadge name="passenger" /> — em todo status, com <ParamBadge name="client_id" />, <ParamBadge name="name" /> e <ParamBadge name="phone" />. O nome e o telefone são os do passageiro da corrida, que nem sempre é o titular da conta; o <ParamBadge name="client_id" /> é sempre o da conta.</li>
         <li><ParamBadge name="driver" /> — em todo status, com <ParamBadge name="driver_id" />, <ParamBadge name="name" />, <ParamBadge name="phone" />, <ParamBadge name="cpf" />, <ParamBadge name="vtr" /> e <ParamBadge name="category" />. Vem nulo enquanto a solicitação não tem condutor.</li>
         <li><ParamBadge name="vehicle" /> — apenas no status <code>A</code>, com <ParamBadge name="model" />, <ParamBadge name="plate" />, <ParamBadge name="color" /> e <ParamBadge name="color_hex" />. Condutor sem veículo vinculado recebe os quatro campos nulos.</li>
         <li><ParamBadge name="driver.pix_key" /> — apenas no status <code>A</code>, para quem paga o condutor por fora da plataforma. É dado pessoal: trate como trata CPF. Nos demais status a chave não aparece no bloco.</li>
