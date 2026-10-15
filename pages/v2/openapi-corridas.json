@@ -8285,7 +8285,7 @@
     "/desafios-passageiro": {
       "post": {
         "summary": "Criar desafio de passageiro",
-        "description": "Cria um desafio de passageiro para uma lista fechada de clientes da central. Só os clientes da lista veem o desafio no app, contam corridas nele e recebem o push diário; a lista é gravada na criação e não muda depois, nem por cadastro novo nem por troca de área.\n\nRegras importantes:\n- `selecao.tipo` aceita só `lista`, com de 1 a 10.000 `cliente_ids`. Id repetido conta uma vez.\n- Entra na lista o cliente da central da Api-Key (da área dela ou cadastrado nela sem área), ativo e do app. Os demais voltam em `data.recusados`, cada um com o `motivo`: `cliente_nao_encontrado` (id inexistente ou de outra central), `cliente_inativo` ou `cliente_fora_do_app`.\n- A resposta é `201` quando todos os ids entram e `207` quando algum é recusado. `data.selecao.quantidade_clientes_desafiados` é o total que entrou.\n- Nenhum id aceito responde `400` e o desafio não é criado.\n- `data_hora_inicio` e `data_hora_fim` são em UTC (ISO 8601) e são gravadas no fuso da central. O início precisa estar no futuro, o fim depois do início, e as duas até `2038-01-19T03:14:07Z`.\n- A central tem no máximo um desafio de passageiro ativo ou programado; com um em andamento, a criação responde `409`.\n- A recompensa é em créditos (`valor`, creditado na carteira do passageiro ao bater a meta) ou personalizada (`descricao`, entregue pela central e aprovada no painel), com as mesmas regras do painel.\n- Não há push na criação: o push do primeiro dia faz o lançamento.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira. O cargo do gestor deve ter a permissão `Gerenciar desafios`, e a central precisa ter o desafio de passageiro liberado.",
+        "description": "Cria um desafio de passageiro para uma lista fechada de clientes da central. Só os clientes da lista veem o desafio no app, contam corridas nele e recebem o push diário; a lista é gravada na criação e não muda depois, nem por cadastro novo nem por troca de área.\n\nRegras importantes:\n- `selecao.tipo` aceita só `lista`, com de 1 a 10.000 `cliente_ids`. Id repetido conta uma vez.\n- Entra na lista o cliente da central da Api-Key (da área dela ou cadastrado nela sem área), ativo e do app. Os demais voltam em `data.recusados`, cada um com o `motivo`: `cliente_nao_encontrado` (id inexistente ou de outra central), `cliente_inativo` ou `cliente_fora_do_app`.\n- A resposta é `201` quando todos os ids entram e `207` quando algum é recusado. `data.selecao.quantidade_clientes_desafiados` é o total que entrou.\n- Nenhum id aceito responde `400` e o desafio não é criado.\n- `data_hora_inicio` e `data_hora_fim` são em UTC (ISO 8601) e são gravadas no fuso da central. O início precisa estar no futuro, o fim depois do início e fora da meia-noite no horário da central (como no painel), e as duas até `2038-01-19T03:14:07Z`.\n- A central tem no máximo um desafio de passageiro ativo ou programado; com um em andamento, a criação responde `409`.\n- A recompensa é em créditos (`valor`, creditado na carteira do passageiro ao bater a meta) ou personalizada (`descricao`, entregue pela central e aprovada no painel), com as mesmas regras do painel.\n- Não há push na criação: o push do primeiro dia faz o lançamento.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira. O cargo do gestor deve ter a permissão `Gerenciar desafios`, e a central precisa ter o desafio de passageiro liberado.",
         "requestBody": {
           "required": true,
           "content": {
@@ -8565,6 +8565,18 @@
                         }
                       ]
                     }
+                  },
+                  "fim_a_meia_noite": {
+                    "summary": "Fim à meia-noite no horário da central",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'data_hora_fim': A hora final não pode ser 00:00."
+                        }
+                      ]
+                    }
                   }
                 }
               }
@@ -8633,7 +8645,7 @@
     "/desafios-passageiro/{id}": {
       "delete": {
         "summary": "Cancelar desafio de passageiro",
-        "description": "Cancela um desafio de passageiro da central, com o mesmo efeito do cancelamento no painel: a contagem de corridas para, o progresso e as recompensas já creditadas ficam, e quem já tinha corrida contabilizada e ainda não tinha concluído recebe o push de desafio encerrado.\n\nRegras importantes:\n- Vale para qualquer desafio de passageiro da central, criado pela API ou pelo painel.\n- Desafio já cancelado responde `200` sem disparar o push de novo. Repetir a chamada é seguro.\n- Desafio inexistente ou de outra central responde `404`.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira, com a permissão `Gerenciar desafios`, como o `POST /desafios-passageiro`.",
+        "description": "Cancela um desafio de passageiro da central, com o mesmo efeito do cancelamento no painel: a contagem de corridas para, o progresso e as recompensas já creditadas ficam, e quem já tinha corrida contabilizada e ainda não tinha concluído recebe o push de desafio encerrado.\n\nRegras importantes:\n- Vale para qualquer desafio de passageiro da central, criado pela API ou pelo painel.\n- Desafio já cancelado responde `200` sem disparar o push de novo. Repetir a chamada é seguro.\n- Desafio já encerrado (passou de `data_hora_fim`) não é cancelado e responde `409`, como no painel: o cancelamento travaria a aprovação das recompensas personalizadas.\n- Desafio inexistente ou de outra central responde `404`.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira, com a permissão `Gerenciar desafios`, como o `POST /desafios-passageiro`.",
         "parameters": [
           {
             "name": "id",
@@ -8715,6 +8727,25 @@
                     {
                       "code": 238,
                       "message": "Desafio de passageiro não encontrado ou não pertence à central autenticada."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Desafio já encerrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 239,
+                      "message": "O desafio de passageiro já foi encerrado e não pode ser cancelado."
                     }
                   ]
                 }

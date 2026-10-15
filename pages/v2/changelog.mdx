@@ -197,7 +197,7 @@ export const EndpointBadge = ({ method, path, href }) => (
         <li><ParamBadge name="selecao" /> com <code>tipo</code> <code>lista</code> e de 1 a 10.000 <ParamBadge name="cliente_ids" />. Entram os clientes ativos e do app da central autenticada.</li>
         <li>Resposta <code>201</code> quando todos os ids entram e <code>207</code> quando algum é recusado, com o <code>motivo</code> de cada um em <ParamBadge name="recusados" />. Nenhum id aceito responde <code>400</code>.</li>
         <li>Central com desafio ativo ou programado responde <code>409</code>; central sem o desafio de passageiro liberado responde <code>403</code>.</li>
-        <li>O <code>DELETE</code> tem o mesmo efeito do cancelamento no painel, inclusive o push de desafio encerrado. Desafio de outra central responde <code>404</code>.</li>
+        <li>O <code>DELETE</code> tem o mesmo efeito do cancelamento no painel, inclusive o push de desafio encerrado. Desafio de outra central responde <code>404</code>; desafio já encerrado responde <code>409</code>.</li>
         <li>Requer gestor com a permissão <code>Gerenciar desafios</code>.</li>
       </ul>
     </ChangeSection>
