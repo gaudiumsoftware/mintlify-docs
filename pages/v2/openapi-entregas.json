@@ -849,10 +849,16 @@
                       "coordinates": {
                         "type": "array",
                         "description": "Lista com exatamente um anel de posições `[longitude, latitude]`.",
+                        "minItems": 1,
+                        "maxItems": 1,
                         "items": {
                           "type": "array",
+                          "minItems": 4,
+                          "maxItems": 201,
                           "items": {
                             "type": "array",
+                            "minItems": 2,
+                            "maxItems": 2,
                             "items": {
                               "type": "number"
                             }
