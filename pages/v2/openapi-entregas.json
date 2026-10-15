@@ -2604,7 +2604,7 @@
                         },
                         "trimestre": {
                           "type": "object",
-                          "description": "Trimestre vigente do programa de níveis, no qual os pontos são contados.",
+                          "description": "Trimestre vigente do programa de níveis, no qual os pontos são contados. O trimestre é definido pelo calendário UTC: o próximo começa à meia-noite UTC do primeiro dia (21h da véspera em Brasília), e os pontos passam a contar nele.",
                           "properties": {
                             "ano": {
                               "type": "integer"
