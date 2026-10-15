@@ -1317,7 +1317,7 @@
                 "properties": {
                   "nome": {
                     "type": "string",
-                    "description": "Novo nome da área. Não aceita `< > \" ' & \\`, emoji nem quebra de linha."
+                    "description": "Novo nome da área. Um nome diferente do atual não aceita `< > \" ' & \\`, emoji nem quebra de linha; reenviar o nome atual sem mudança é aceito."
                   },
                   "fator": {
                     "type": "number",
