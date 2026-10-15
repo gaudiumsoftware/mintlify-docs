@@ -93,7 +93,7 @@ O **Webhook de Status** é acionado sempre que uma solicitação passa por uma *
 
 ## Exemplo do Payload
 
-Em todo status, o payload traz os blocos `passenger`, com quem viaja, e `driver`, com o condutor da solicitação.
+Em todo status, o payload traz os blocos `passenger`, com o passageiro da corrida — na entrega, com quem a solicitou —, e `driver`, com o condutor da solicitação.
 
 ```json
 {
@@ -205,7 +205,7 @@ No status Aceita (`A`), e só nele, o payload traz também o bloco `vehicle`, co
 | `status_label` | ENUM | SIM | Status descritivo |
 | `stop_id` | INT | NÃO | Identificador da parada (preenchido apenas no status `STOP_FINISHED`) |
 | `links` | Object | SIM | URLs relacionadas ao evento. Inclui sempre `request` e pode incluir `enterprise` e `driver` (se aplicável) |
-| `passenger` | Object | SIM | Quem viaja. As três chaves vêm sempre, com valor ou nulas. |
+| `passenger` | Object | SIM | Passageiro da corrida, ou quem solicitou a entrega. As três chaves vêm sempre, com valor ou nulas. |
 | `driver` | Object | NÃO | Condutor da solicitação. Nulo enquanto a solicitação não tem condutor. |
 | `vehicle` | Object | NÃO | Veículo do condutor. Enviado apenas no status `ACCEPTED` ( `A`). |
 
@@ -217,15 +217,15 @@ No status Aceita (`A`), e só nele, o payload traz também o bloco `vehicle`, co
 
 ### Bloco `passenger`
 
-Enviado em todo status. As três chaves vêm sempre; o que não existe no cadastro vem nulo.
+Enviado em todo status, em corrida e em entrega. As três chaves vêm sempre; o que não existe no cadastro vem nulo.
 
 | Campo | Formato | Requerido | Descrição |
 | :--- | :--- | :--- | :--- |
 | `client_id` | INT | SIM | Identificador do cliente dono da conta que abriu a solicitação. |
-| `name` | String | NÃO | Nome de quem viaja. Nulo quando nenhuma das fontes tem o nome. |
-| `phone` | String | NÃO | Telefone de quem viaja. Nulo quando nenhuma das fontes tem o telefone. |
+| `name` | String | NÃO | Nome do passageiro da corrida, ou de quem solicitou a entrega. Nulo quando nenhuma das fontes tem o nome. |
+| `phone` | String | NÃO | Telefone do passageiro da corrida, ou de quem solicitou a entrega. Nulo quando nenhuma das fontes tem o telefone. |
 
-`name` e `phone` são o passageiro **da corrida**, que nem sempre é o titular da conta: quando a solicitação foi aberta para outra pessoa, vêm os dados dela; caso contrário, vêm do cadastro do cliente. O `client_id` é sempre o da conta. Compare os dois lados se precisar saber se a corrida é para terceiro — o payload entrega o dado, não o rótulo.
+`name` e `phone` são o passageiro **da corrida** — na entrega, quem a solicitou —, que nem sempre é o titular da conta: quando a solicitação foi aberta para outra pessoa, vêm os dados dela; caso contrário, vêm do cadastro do cliente. O `client_id` é sempre o da conta. Compare os dois lados se precisar saber se a corrida é para terceiro — o payload entrega o dado, não o rótulo.
 
 ### Bloco `driver`
 
