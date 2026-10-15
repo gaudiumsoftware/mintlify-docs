@@ -2683,7 +2683,7 @@
                   "success": false,
                   "errors": [
                     {
-                      "code": 0,
+                      "code": 73,
                       "message": "'id': Deve ser numérico."
                     }
                   ]
@@ -2741,7 +2741,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 0,
+                          "code": 63,
                           "message": "Você não tem permissão para realizar essa operação."
                         }
                       ]
@@ -2753,7 +2753,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 0,
+                          "code": 19,
                           "message": "Não é possível utilizar a API com a sua licença."
                         }
                       ]
@@ -2765,7 +2765,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 0,
+                          "code": 158,
                           "message": "Programa de níveis indisponível."
                         }
                       ]
@@ -2786,7 +2786,7 @@
                   "success": false,
                   "errors": [
                     {
-                      "code": 0,
+                      "code": 56,
                       "message": "Condutor não encontrado"
                     }
                   ]
@@ -2818,7 +2818,7 @@
                   "success": false,
                   "errors": [
                     {
-                      "code": 0,
+                      "code": 159,
                       "message": "Falha na operação"
                     }
                   ]
