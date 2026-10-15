@@ -2787,7 +2787,7 @@
                   "errors": [
                     {
                       "code": 0,
-                      "message": "Condutor inválido."
+                      "message": "Condutor não encontrado"
                     }
                   ]
                 }
