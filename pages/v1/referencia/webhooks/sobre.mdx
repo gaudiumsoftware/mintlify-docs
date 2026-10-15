@@ -99,7 +99,6 @@ Em todo status, o payload traz os blocos `passenger`, com o passageiro da corrid
 {
  "datetime": "2025-08-29T13:24:40Z",
  "event_id": "550e8400-e29b-41d4-a716-446655440000",
- "company_id": 8,
  "request_id": 12345,
  "status_code": "ER",
  "status_label": "STOP_FINISHED",
@@ -131,10 +130,9 @@ No status Aceita (`A`), e só nele, o payload traz também o bloco `vehicle`, co
 {
  "datetime": "2025-08-29T13:20:05Z",
  "event_id": "550e8400-e29b-41d4-a716-446655440000",
- "company_id": 8,
  "request_id": 12345,
  "status_code": "A",
- "status_label": "ACEITA",
+ "status_label": "ACCEPTED",
  "stop_id": null,
  "passenger": {
    "client_id": 4321,
@@ -183,7 +181,7 @@ No status Aceita (`A`), e só nele, o payload traz também o bloco `vehicle`, co
 | `N` | `NOT_SERVED` | Solicitação não atendida ou buscando condutor |
 | `A` | `ACCEPTED` | Solicitação aceita |
 | `E` | `IN_PROGRESS` | Solicitação em andamento |
-| `C` | `CANCELLED` | Solicitação cancelada |
+| `C` | `CANCELED` | Solicitação cancelada |
 | `F` | `FINISHED` | Solicitação finalizada |
 | `U` | `GROUPED` | Solicitação agrupada em andamento |
 
@@ -199,7 +197,6 @@ No status Aceita (`A`), e só nele, o payload traz também o bloco `vehicle`, co
 | :--- | :--- | :--- | :--- |
 | `datetime` | ISO-8601 | SIM | Data e hora do evento gerado pela Machine. |
 | `event_id` | UUID | SIM | Identificação única do evento (idempotência). |
-| `company_id` | INT | SIM | Identificador da central |
 | `request_id` | INT | SIM | Identificador da solicitação |
 | `status_code` | VARCHAR(2) | SIM | Código do status |
 | `status_label` | ENUM | SIM | Status descritivo |
@@ -207,13 +204,14 @@ No status Aceita (`A`), e só nele, o payload traz também o bloco `vehicle`, co
 | `links` | Object | SIM | URLs relacionadas ao evento. Inclui sempre `request` e pode incluir `enterprise` e `driver` (se aplicável) |
 | `passenger` | Object | SIM | Passageiro da corrida, ou quem solicitou a entrega. As três chaves vêm sempre, com valor ou nulas. |
 | `driver` | Object | NÃO | Condutor da solicitação. Nulo enquanto a solicitação não tem condutor. |
-| `vehicle` | Object | NÃO | Veículo do condutor. Enviado apenas no status `ACCEPTED` ( `A`). |
+| `vehicle` | Object | NÃO | Veículo do condutor. Enviado apenas no status `ACCEPTED` (`A`). |
 
 ### Links no Payload
 
 - `links.request` -> acesso aos detalhes da solicitação
 - `links.enterprise` -> (opcional) referência à empresa
 - `links.driver` -> (opcional) referência ao condutor
+- `links.client` -> (opcional) referência ao cliente titular da conta
 
 ### Bloco `passenger`
 
@@ -239,13 +237,13 @@ Enviado em todo status, e nulo enquanto a solicitação não tem condutor (por e
 | `cpf` | String | NÃO | CPF do condutor. Nulo quando não há CPF no cadastro. |
 | `vtr` | String | NÃO | Número da viatura no cadastro do condutor. Nulo quando não há viatura. |
 | `category` | String | NÃO | Categoria do condutor, como cadastrada pela central. |
-| `pix_key` | String | NÃO | Chave PIX do condutor. **Enviada apenas no status `ACCEPTED` ( `A`)**; nos demais status a chave não aparece no bloco. Nula quando o condutor não tem chave cadastrada. |
+| `pix_key` | String | NÃO | Chave PIX do condutor. **Enviada apenas no status `ACCEPTED` (`A`)**; nos demais status a chave não aparece no bloco. Nula quando o condutor não tem chave cadastrada. |
 
 > ⚠️ **`pix_key` é dado pessoal**: ele é enviado para que você possa pagar o condutor por fora da plataforma. Trate-o como trata CPF — não registre em log e não repasse a quem não precisa dele.
 
 ### Bloco `vehicle`
 
-Enviado **apenas** no status `ACCEPTED` ( `A`), que é quando o carro que vai chegar fica definido. Nos demais status a chave `vehicle` não aparece no payload.
+Enviado **apenas** no status `ACCEPTED` (`A`), que é quando o carro que vai chegar fica definido. Nos demais status a chave `vehicle` não aparece no payload.
 
 | Campo | Formato | Requerido | Descrição |
 | :--- | :--- | :--- | :--- |
