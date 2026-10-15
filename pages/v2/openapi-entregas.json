@@ -2625,7 +2625,7 @@
                             },
                             "dias_restantes": {
                               "type": "integer",
-                              "description": "Dias até o fim do trimestre."
+                              "description": "Dias que faltam até o fim do trimestre, contando o dia atual e `data_fim`, pelo horário UTC. No último dia do trimestre vem `1`."
                             }
                           }
                         }
@@ -2659,7 +2659,7 @@
                       "trimestre": 4,
                       "data_inicio": "2026-10-01",
                       "data_fim": "2026-12-31",
-                      "dias_restantes": 70
+                      "dias_restantes": 71
                     }
                   },
                   "__links": {
