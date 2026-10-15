@@ -4907,7 +4907,10 @@
                           "description": "Id atual da tarifa. Muda quando os valores são alterados: use este id daqui em diante."
                         },
                         "id_anterior": {
-                          "type": ["integer", "null"],
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
                           "description": "Id da versão encerrada por esta edição; `null` quando não nasceu versão nova."
                         },
                         "data_inicio": {
