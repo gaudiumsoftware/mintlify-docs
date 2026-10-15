@@ -8346,6 +8346,305 @@
             }
           }
         }
+      },
+      "post": {
+        "summary": "Criar dinâmica por área",
+        "description": "Cria uma dinâmica por área na bandeira autenticada: a área desenhada pelo `poligono` e o fator aplicado às corridas que começam (`tipo_fator` `P`) ou terminam (`tipo_fator` `R`) dentro dela. A dinâmica passa a valer no preço logo após a criação, igual a uma dinâmica criada pelo painel.\n\nO polígono aceita no máximo 200 vértices, sem contar o fechamento do anel. A prioridade da área e a cor da linha são definidas pela plataforma; quando `cor_preenchimento` é omitida, a área fica vermelha (`#ff0000`) para acréscimo e azul (`#0000ff`) para desconto.\n\nO endpoint não é idempotente: reenviar a mesma requisição cria outra dinâmica. Para escalonar o fator por distância, crie a dinâmica e use `PUT /dinamicas/area/{id}/faixas`.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "nome",
+                  "poligono",
+                  "tipo_calculo",
+                  "tipo_fator",
+                  "fator"
+                ],
+                "properties": {
+                  "nome": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "description": "Nome da área, com até 100 caracteres.",
+                    "example": "Centro"
+                  },
+                  "poligono": {
+                    "type": "object",
+                    "description": "Área da dinâmica em GeoJSON (RFC 7946): um `Polygon` com um único anel fechado (a primeira posição igual à última), de 3 a 200 vértices distintos, com cada posição em `[longitude, latitude]`.",
+                    "required": [
+                      "type",
+                      "coordinates"
+                    ],
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "Polygon"
+                        ],
+                        "example": "Polygon"
+                      },
+                      "coordinates": {
+                        "type": "array",
+                        "description": "Lista com exatamente um anel de posições `[longitude, latitude]`.",
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "array",
+                            "items": {
+                              "type": "number"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "tipo_calculo": {
+                    "type": "string",
+                    "enum": [
+                      "F",
+                      "M"
+                    ],
+                    "description": "Forma de cálculo do fator: `F` — Valor adicional, soma um valor fixo em R$ ao preço da corrida; `M` — Fator multiplicador, multiplica o preço da corrida pelo fator informado.",
+                    "example": "M"
+                  },
+                  "tipo_fator": {
+                    "type": "string",
+                    "enum": [
+                      "P",
+                      "R"
+                    ],
+                    "description": "Momento em que o fator é aplicado: `P` — Partida, aplicado na origem/embarque da corrida; `R` — Parada, aplicado no destino/parada da corrida.",
+                    "example": "P"
+                  },
+                  "fator": {
+                    "type": "number",
+                    "description": "Valor do fator (numérico). O significado depende de `tipo_calculo`: com `M`, é o multiplicador aplicado ao preço da corrida (entre 1.1 e 5); com `F`, é o valor fixo em R$ somado ao preço da corrida (entre 0.5 e 99.9). Valores de desconto (multiplicador entre 0.1 e 0.9 ou valor adicional negativo) só são aceitos quando a central tem a dinâmica de desconto liberada.",
+                    "example": 1.5
+                  },
+                  "cor_preenchimento": {
+                    "type": "string",
+                    "pattern": "^#[0-9A-Fa-f]{6}$",
+                    "description": "Cor de preenchimento da área no painel, no formato `#RRGGBB`. Opcional.",
+                    "example": "#ff0000"
+                  },
+                  "ativo": {
+                    "description": "Indica se a dinâmica é criada ativa. Também aceita `1` e `0`. Padrão: `true`.",
+                    "oneOf": [
+                      {
+                        "type": "boolean"
+                      },
+                      {
+                        "type": "integer",
+                        "enum": [
+                          0,
+                          1
+                        ]
+                      }
+                    ],
+                    "example": true
+                  }
+                }
+              },
+              "example": {
+                "nome": "Centro",
+                "poligono": {
+                  "type": "Polygon",
+                  "coordinates": [
+                    [
+                      [
+                        -46.62,
+                        -23.55
+                      ],
+                      [
+                        -46.62691,
+                        -23.540489
+                      ],
+                      [
+                        -46.63809,
+                        -23.544122
+                      ],
+                      [
+                        -46.63809,
+                        -23.555878
+                      ],
+                      [
+                        -46.62691,
+                        -23.559511
+                      ],
+                      [
+                        -46.62,
+                        -23.55
+                      ]
+                    ]
+                  ]
+                },
+                "tipo_calculo": "M",
+                "tipo_fator": "P",
+                "fator": 1.5
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dinâmica criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": 12,
+                    "nome": "Centro",
+                    "fator": 1.5,
+                    "tipo_calculo": "M",
+                    "tipo_fator": "P",
+                    "ativo": true,
+                    "cor_preenchimento": "#ff0000",
+                    "poligono": {
+                      "type": "Polygon",
+                      "coordinates": [
+                        [
+                          [
+                            -46.62,
+                            -23.55
+                          ],
+                          [
+                            -46.62691,
+                            -23.540489
+                          ],
+                          [
+                            -46.63809,
+                            -23.544122
+                          ],
+                          [
+                            -46.63809,
+                            -23.555878
+                          ],
+                          [
+                            -46.62691,
+                            -23.559511
+                          ],
+                          [
+                            -46.62,
+                            -23.55
+                          ]
+                        ]
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro de validação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "campo_obrigatorio": {
+                    "summary": "Campo obrigatório ausente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 2,
+                          "message": "'nome': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "tipo_fator_invalido": {
+                    "summary": "Tipo de fator inválido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'tipo_fator': Deve estar dentre os valores: P, R"
+                        }
+                      ]
+                    }
+                  },
+                  "fator_invalido": {
+                    "summary": "Campo fator inválido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'fator': O campo 'fator' deve ser numérico."
+                        }
+                      ]
+                    }
+                  },
+                  "fator_fora_do_limite": {
+                    "summary": "Fator fora do limite permitido",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "O valor do campo 'fator' está fora do limite permitido para o tipo de cálculo informado."
+                        }
+                      ]
+                    }
+                  },
+                  "cor_invalida": {
+                    "summary": "Cor fora do formato #RRGGBB",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'cor_preenchimento': Deve ser uma cor no formato #RRGGBB."
+                        }
+                      ]
+                    }
+                  },
+                  "poligono_acima_do_limite": {
+                    "summary": "Polígono com mais de 200 vértices",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'poligono.coordinates': O polígono deve ter no máximo 200 vértices, sem contar o fechamento do anel."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Falha na operação"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/dinamicas/area/{id}": {
