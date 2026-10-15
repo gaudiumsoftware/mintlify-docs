@@ -2520,6 +2520,315 @@
         }
       }
     },
+    "/condutores/{id}/score": {
+      "get": {
+        "summary": "Consultar score do condutor",
+        "description": "Retorna o score do condutor no programa de níveis da central: os pontos do trimestre vigente, o nível atual, o próximo nível com as metas, a taxa de aceitação e a janela do trimestre.\n\nO condutor precisa ser da central autenticada ou, quando ela é agrupadora, de uma central filha. O score é sempre o da central do próprio condutor, onde os níveis foram configurados.\n\nResponde `403` quando a central do condutor não usa o programa de níveis ou está com ele pausado.\n\nPara acessar este endpoint, o usuário autenticado deve ser um gestor da central, sem empresa vinculada, com a permissão de integração de condutores, e a central deve ter a licença de integração via API ativa.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do condutor.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "condutor_id": {
+                          "type": "integer",
+                          "description": "ID do condutor consultado."
+                        },
+                        "pontos": {
+                          "type": "integer",
+                          "description": "Pontos do condutor no trimestre vigente."
+                        },
+                        "nivel": {
+                          "type": "object",
+                          "description": "Nível atual do condutor. Condutor ainda sem avaliação fica no nível 1.",
+                          "properties": {
+                            "numero": {
+                              "type": "integer",
+                              "description": "Posição do nível na escada da central, a partir de 1."
+                            },
+                            "nome": {
+                              "type": "string",
+                              "description": "Nome do nível, como configurado pela central."
+                            }
+                          }
+                        },
+                        "proximo_nivel": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Próximo nível da escada. Vem `null` quando o condutor já está no último nível.",
+                          "properties": {
+                            "numero": {
+                              "type": "integer"
+                            },
+                            "nome": {
+                              "type": "string"
+                            },
+                            "meta_pontos": {
+                              "type": "integer",
+                              "description": "Pontos exigidos para chegar ao nível."
+                            },
+                            "meta_taxa_aceitacao": {
+                              "type": "integer",
+                              "description": "Taxa de aceitação mínima, em porcentagem, exigida para chegar ao nível."
+                            },
+                            "pontos_restantes": {
+                              "type": "integer",
+                              "description": "Pontos que faltam para chegar ao nível."
+                            }
+                          }
+                        },
+                        "taxa_aceitacao": {
+                          "type": "number",
+                          "nullable": true,
+                          "description": "Taxa de aceitação do condutor, em porcentagem. Vem `null` quando o condutor ainda não recebeu ofertas suficientes para o cálculo ou quando o dado está indisponível. Nunca vem `0` no lugar de `null`."
+                        },
+                        "trimestre": {
+                          "type": "object",
+                          "description": "Trimestre vigente do programa de níveis, no qual os pontos são contados.",
+                          "properties": {
+                            "ano": {
+                              "type": "integer"
+                            },
+                            "trimestre": {
+                              "type": "integer",
+                              "description": "De 1 a 4."
+                            },
+                            "data_inicio": {
+                              "type": "string",
+                              "format": "date",
+                              "description": "Primeiro dia do trimestre, `AAAA-MM-DD`."
+                            },
+                            "data_fim": {
+                              "type": "string",
+                              "format": "date",
+                              "description": "Último dia do trimestre, `AAAA-MM-DD`."
+                            },
+                            "dias_restantes": {
+                              "type": "integer",
+                              "description": "Dias até o fim do trimestre."
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "__links": {
+                      "type": "object",
+                      "description": "Links HATEOAS do domínio, indexados pelo rel."
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "condutor_id": 5574,
+                    "pontos": 420,
+                    "nivel": {
+                      "numero": 2,
+                      "nome": "Prata"
+                    },
+                    "proximo_nivel": {
+                      "numero": 3,
+                      "nome": "Ouro",
+                      "meta_pontos": 600,
+                      "meta_taxa_aceitacao": 80,
+                      "pontos_restantes": 180
+                    },
+                    "taxa_aceitacao": 87.5,
+                    "trimestre": {
+                      "ano": 2026,
+                      "trimestre": 4,
+                      "data_inicio": "2026-10-01",
+                      "data_fim": "2026-12-31",
+                      "dias_restantes": 70
+                    }
+                  },
+                  "__links": {
+                    "self": {
+                      "href": "api/v2/integracao/condutores/{id}/score",
+                      "metodo": "get"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID do condutor inválido",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "'id': Deve ser numérico."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Api-Key ou credenciais do gestor inválidas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "api_key_invalida": {
+                    "summary": "Api-Key inválida",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": "B4",
+                          "message": "Você não está autorizado a acessar este recurso."
+                        }
+                      ]
+                    }
+                  },
+                  "gestor_invalido": {
+                    "summary": "Usuário ou senha do Basic Auth inválidos",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": "B5",
+                          "message": "Usuário e/ou senhas inválidos."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Gestor sem acesso, central sem licença de integração ou programa de níveis indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "sem_permissao": {
+                    "summary": "Gestor vinculado a uma empresa ou sem a permissão de integração de condutores",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Você não tem permissão para realizar essa operação."
+                        }
+                      ]
+                    }
+                  },
+                  "licenca_invalida": {
+                    "summary": "Central sem a licença de integração via API",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não é possível utilizar a API com a sua licença."
+                        }
+                      ]
+                    }
+                  },
+                  "score_indisponivel": {
+                    "summary": "Central do condutor sem o programa de níveis ativo",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Programa de níveis indisponível."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Condutor inexistente ou de outra central",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Condutor inválido."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido. Os limites estão na tabela de rate limit da introdução.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Falha na operação"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/condutores/{id}": {
       "get": {
         "summary": "Obter condutor",

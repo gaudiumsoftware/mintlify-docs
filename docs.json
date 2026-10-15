@@ -80,6 +80,7 @@
                       "pages/v2/referencia/condutores/endpoint/get",
                       "pages/v2/referencia/condutores/endpoint/get-posicoes",
                       "pages/v2/referencia/condutores/endpoint/get-historico-punicoes",
+                      "pages/v2/referencia/condutores/endpoint/get-score",
                       "pages/v2/referencia/condutores/endpoint/get-by-id",
                       "pages/v2/referencia/condutores/endpoint/patch-by-id",
                       "pages/v2/referencia/condutores/endpoint/put-by-id",
@@ -416,6 +417,7 @@
                     "pages": [
                       "pages/v2/entregas/condutores/endpoint/get",
                       "pages/v2/entregas/condutores/endpoint/get-historico-punicoes",
+                      "pages/v2/entregas/condutores/endpoint/get-score",
                       "pages/v2/entregas/condutores/endpoint/get-by-id",
                       "pages/v2/entregas/condutores/endpoint/patch-by-id",
                       "pages/v2/entregas/condutores/endpoint/put-by-id",
