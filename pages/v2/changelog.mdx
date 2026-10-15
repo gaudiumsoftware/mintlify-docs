@@ -167,6 +167,7 @@ export const EndpointBadge = ({ method, path, href }) => (
 
     <EndpointBadge method="POST" path="/api/v2/integracao/dinamicas/area" href="/pages/v2/referencia/dinamicas/endpoint/post-area" />
     <EndpointBadge method="PATCH" path="/api/v2/integracao/dinamicas/area/{id}/vertices" href="/pages/v2/referencia/dinamicas/endpoint/patch-vertices" />
+    <EndpointBadge method="PATCH" path="/api/v2/integracao/dinamicas/area/{id}" href="/pages/v2/referencia/dinamicas/endpoint/patch-area" />
 
     <ChangeSection type="added">
       <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -180,6 +181,7 @@ export const EndpointBadge = ({ method, path, href }) => (
     <ChangeSection type="changed">
       <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "6px" }}>
         <li>A alteração de vértices aceita no máximo 200 vértices. Área que já tem mais de 200 pode ser editada com até a quantidade atual, sem crescer; acima do limite, a resposta é <code>400</code>.</li>
+        <li>O <ParamBadge name="nome" /> da dinâmica, na criação e na alteração, não aceita <code>{"< > \" ' & \\"}</code>, emoji nem quebra de linha; com esses caracteres, a resposta é <code>400</code>.</li>
       </ul>
     </ChangeSection>
   </Entry>

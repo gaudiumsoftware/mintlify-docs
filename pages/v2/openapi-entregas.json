@@ -828,7 +828,7 @@
                   "nome": {
                     "type": "string",
                     "maxLength": 100,
-                    "description": "Nome da área, com até 100 caracteres.",
+                    "description": "Nome da área, com até 100 caracteres. Não aceita `< > \" ' & \\`, emoji nem quebra de linha.",
                     "example": "Centro"
                   },
                   "poligono": {
@@ -1018,6 +1018,18 @@
                         {
                           "code": 2,
                           "message": "'nome': Preenchimento obrigatório"
+                        }
+                      ]
+                    }
+                  },
+                  "nome_caracteres_invalidos": {
+                    "summary": "Nome com caracteres não aceitos",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'nome': Não aceita os caracteres < > \" ' & \\, emoji nem quebra de linha."
                         }
                       ]
                     }
@@ -1305,7 +1317,7 @@
                 "properties": {
                   "nome": {
                     "type": "string",
-                    "description": "Novo nome da área."
+                    "description": "Novo nome da área. Não aceita `< > \" ' & \\`, emoji nem quebra de linha."
                   },
                   "fator": {
                     "type": "number",
@@ -1464,6 +1476,18 @@
                         {
                           "code": 0,
                           "message": "Esta área está configurada por faixas de distância. Altere os valores em PUT /dinamicas/area/{id}/faixas; para voltar ao valor único, envie 'faixas' vazia nesse endpoint."
+                        }
+                      ]
+                    }
+                  },
+                  "nome_caracteres_invalidos": {
+                    "summary": "Nome com caracteres não aceitos",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'nome': Não aceita os caracteres < > \" ' & \\, emoji nem quebra de linha."
                         }
                       ]
                     }
