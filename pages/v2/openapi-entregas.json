@@ -2673,7 +2673,7 @@
             }
           },
           "400": {
-            "description": "ID do condutor inválido",
+            "description": "ID do condutor não numérico ou igual a zero",
             "content": {
               "application/json": {
                 "schema": {
