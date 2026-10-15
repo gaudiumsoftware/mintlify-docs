@@ -876,7 +876,7 @@
                       "P",
                       "R"
                     ],
-                    "description": "Momento em que o fator é aplicado: `P` — Partida, aplicado na origem/embarque da corrida; `R` — Parada, aplicado no destino/parada da corrida.",
+                    "description": "Momento em que o fator é aplicado: `P` — Partida, aplicado na origem/embarque da corrida; `R` — Parada, aplicado no destino/parada da corrida. `R` só é aceito quando o plano da central inclui dinâmica na entrega; sem ela, a resposta é `400`.",
                     "example": "P"
                   },
                   "fator": {
@@ -1042,6 +1042,18 @@
                         {
                           "code": 0,
                           "message": "'tipo_fator': Deve estar dentre os valores: P, R"
+                        }
+                      ]
+                    }
+                  },
+                  "parada_indisponivel": {
+                    "summary": "Dinâmica na parada indisponível no plano",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'tipo_fator': Dinâmica na parada (R) não está disponível no plano da central."
                         }
                       ]
                     }
