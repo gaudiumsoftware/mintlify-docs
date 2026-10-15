@@ -187,6 +187,98 @@ export const EndpointBadge = ({ method, path, href }) => (
   </Entry>
 
   <Entry date="20 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="evento-engajamento-estimativa-nao-solicitada" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Evento de engajamento da estimativa não solicitada
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Os webhooks de engajamento podem assinar um novo evento, entregue quando o passageiro simula uma corrida
+      no app e não a pede dentro de uma janela configurável. O evento traz o embarque, o destino e os preços que
+      o passageiro viu, por categoria e por forma de pagamento.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/engajamento/{id}/permissoes" href="/pages/v2/referencia/engajamento/permissoes/endpoint/post" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="estimativa_passageiro_app_nao_solicitada" /> — novo valor aceito em <ParamBadge name="eventos" />. Só a simulação do app com passageiro identificado e com destino gera o evento, uma vez por webhook.</li>
+        <li><strong>Limitação:</strong> o preço enviado não considera o saldo da carteira do passageiro, porque o uso do saldo é decidido no aparelho.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="PUT" path="/api/v2/integracao/engajamento/{id}/permissoes" href="/pages/v2/referencia/engajamento/permissoes/endpoint/put" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="estimativa_passageiro_app_nao_solicitada" /> — mesmo evento, na bandeira única enviada em <ParamBadge name="bandeira" />.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/engajamento" href="/pages/v2/referencia/engajamento/endpoint/post" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="janela_estimativa_segundos" /> — opcional, inteiro de 30 a 300: quantos segundos depois da simulação o evento <code>estimativa_passageiro_app_nao_solicitada</code> sai. Só vale para esse evento: os demais eventos de engajamento continuam saindo na hora. Ausente ou nulo vale 30. Fora da faixa, texto ou decimal é recusado com 400.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="PUT" path="/api/v2/integracao/engajamento/{id}" href="/pages/v2/referencia/engajamento/endpoint/put" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="janela_estimativa_segundos" /> — mesma faixa. Ausente mantém a janela gravada, e nulo volta ao padrão de 30.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/v2/integracao/engajamento" href="/pages/v2/referencia/engajamento/endpoint/get" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="janela_estimativa_segundos" /> — a janela gravada de cada webhook para o evento <code>estimativa_passageiro_app_nao_solicitada</code>, ou 30 quando não configurada.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+  </Entry>
+
+  <Entry date="20 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="webhook-status-dados-da-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Dados da corrida no Webhook de Status
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      O Webhook de Status passa a entregar o passageiro e o condutor dentro do próprio POST, e no status
+      Aceita também o carro que vai chegar e a chave PIX do condutor. Os campos são aditivos: nada do que
+      já era enviado mudou de nome, formato ou valor. O contrato completo está em <a href="/pages/v2/referencia/webhooks/sobre">Webhooks &gt; Sobre</a>.
+    </p>
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="passenger" /> — em todo status, com <ParamBadge name="client_id" />, <ParamBadge name="name" /> e <ParamBadge name="phone" />. O nome e o telefone são os do passageiro da corrida, que nem sempre é o titular da conta; o <ParamBadge name="client_id" /> é sempre o da conta.</li>
+        <li><ParamBadge name="driver" /> — em todo status, com <ParamBadge name="driver_id" />, <ParamBadge name="name" />, <ParamBadge name="phone" />, <ParamBadge name="cpf" />, <ParamBadge name="vtr" /> e <ParamBadge name="category" />. Vem nulo enquanto a solicitação não tem condutor.</li>
+        <li><ParamBadge name="vehicle" /> — apenas no status <code>A</code>, com <ParamBadge name="model" />, <ParamBadge name="plate" />, <ParamBadge name="color" /> e <ParamBadge name="color_hex" />. Condutor sem veículo vinculado recebe os quatro campos nulos.</li>
+        <li><ParamBadge name="driver.pix_key" /> — apenas no status <code>A</code>, para quem paga o condutor por fora da plataforma. É dado pessoal: trate como trata CPF. Nos demais status a chave não aparece no bloco.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> quem já consome o Webhook de Status não precisa mudar nada — <code>datetime</code>, <code>event_id</code>, <code>request_id</code>, <code>status_code</code>, <code>status_label</code>, <code>stop_id</code> e <code>links</code> continuam iguais. Para esperar o veículo e a chave PIX, teste <code>status_code == "A"</code>, e não a presença da chave no payload.
+    </div>
+  </Entry>
+
+  <Entry date="20 out 2026" label="Em breve" labelColor="#ea580c">
     <h2 id="criar-area" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Criação de área
     </h2>
