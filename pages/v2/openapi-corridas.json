@@ -8367,7 +8367,7 @@
                   "nome": {
                     "type": "string",
                     "maxLength": 100,
-                    "description": "Nome da área, com até 100 caracteres. Não aceita `< > \" ' & \\`, emoji nem quebra de linha.",
+                    "description": "Nome da área, com até 100 caracteres. Aceita letras, números, acentos (Latin-1, como ç, ñ, ã) e a pontuação do teclado, além de “ ” ˆ ˜ — o mesmo conjunto que a tela de Dinâmica mantém. Não aceita `< > \" ' & \\`, emoji, quebra de linha nem símbolos fora desse conjunto, como `€ — – … ’ ™`.",
                     "example": "Centro"
                   },
                   "poligono": {
@@ -8568,7 +8568,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "'nome': Não aceita os caracteres < > \" ' & \\, emoji nem quebra de linha."
+                          "message": "'nome': Use só letras, números, acentos e a pontuação do teclado, como na tela de Dinâmica. Não aceita < > \" ' & \\, emoji, quebra de linha nem símbolos como € — … ’."
                         }
                       ]
                     }
@@ -8772,7 +8772,7 @@
                 "properties": {
                   "nome": {
                     "type": "string",
-                    "description": "Novo nome da área. Um nome diferente do atual não aceita `< > \" ' & \\`, emoji nem quebra de linha; reenviar o nome atual sem mudança é aceito."
+                    "description": "Novo nome da área. Um nome diferente do atual segue a regra do `POST /dinamicas/area`: aceita letras, números, acentos (Latin-1, como ç, ñ, ã) e a pontuação do teclado, além de “ ” ˆ ˜ — o mesmo conjunto que a tela de Dinâmica mantém. Não aceita `< > \" ' & \\`, emoji, quebra de linha nem símbolos fora desse conjunto, como `€ — – … ’ ™`. Reenviar o nome atual sem mudança é aceito."
                   },
                   "fator": {
                     "type": "number",
@@ -8942,7 +8942,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "'nome': Não aceita os caracteres < > \" ' & \\, emoji nem quebra de linha."
+                          "message": "'nome': Use só letras, números, acentos e a pontuação do teclado, como na tela de Dinâmica. Não aceita < > \" ' & \\, emoji, quebra de linha nem símbolos como € — … ’."
                         }
                       ]
                     }

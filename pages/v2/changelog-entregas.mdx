@@ -181,7 +181,7 @@ export const EndpointBadge = ({ method, path, href }) => (
     <ChangeSection type="changed">
       <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "6px" }}>
         <li>A alteração de vértices aceita no máximo 200 vértices. Área que já tem mais de 200 pode ser editada com até a quantidade atual, sem crescer; acima do limite, a resposta é <code>400</code>.</li>
-        <li>O <ParamBadge name="nome" /> da dinâmica, na criação e na alteração, não aceita <code>{"< > \" ' & \\"}</code>, emoji nem quebra de linha; com esses caracteres, a resposta é <code>400</code>.</li>
+        <li>O <ParamBadge name="nome" /> da dinâmica, na criação e na alteração, aceita só letras, números, acentos e a pontuação do teclado, o mesmo conjunto que a tela de Dinâmica mantém; não aceita <code>{"< > \" ' & \\"}</code>, emoji, quebra de linha nem símbolos como <code>€ — … ’</code>, e com eles a resposta é <code>400</code>.</li>
       </ul>
     </ChangeSection>
   </Entry>
