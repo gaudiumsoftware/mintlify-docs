@@ -8349,7 +8349,7 @@
       },
       "post": {
         "summary": "Criar dinâmica por área",
-        "description": "Cria uma dinâmica por área na bandeira autenticada: a área desenhada pelo `poligono` e o fator aplicado às corridas que começam (`tipo_fator` `P`) ou terminam (`tipo_fator` `R`) dentro dela. A dinâmica passa a valer no preço logo após a criação, igual a uma dinâmica criada pelo painel.\n\nO polígono aceita no máximo 200 vértices, sem contar o fechamento do anel. A validação devolve todos os erros encontrados de uma vez na lista `errors`, um por campo (ou por posição do polígono), com o nome do campo no início da mensagem. A exceção é o valor do `fator` fora do limite, que vem sem o prefixo do campo, igual ao `PATCH /dinamicas/area/{id}`. A prioridade da área e a cor da linha são definidas pela plataforma; quando `cor_preenchimento` é omitida, a área fica vermelha (`#ff0000`) para acréscimo e azul (`#0000ff`) para desconto.\n\nO endpoint não é idempotente: reenviar a mesma requisição cria outra dinâmica. Para escalonar o fator por distância, crie a dinâmica e use `PUT /dinamicas/area/{id}/faixas`.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "description": "Cria uma dinâmica por área na bandeira autenticada: a área desenhada pelo `poligono` e o fator aplicado às corridas que começam (`tipo_fator` `P`) ou terminam (`tipo_fator` `R`) dentro dela. A dinâmica passa a valer no preço logo após a criação, igual a uma dinâmica criada pelo painel.\n\nO polígono aceita no máximo 200 vértices, sem contar o fechamento do anel. A validação devolve todos os erros encontrados de uma vez na lista `errors`, um por campo (ou por posição do polígono), com o nome do campo no início da mensagem. A exceção é o valor do `fator` fora do limite, que vem sem o prefixo do campo, igual ao `PATCH /dinamicas/area/{id}`. A prioridade da área e a cor da linha são definidas pela plataforma; quando `cor_preenchimento` é omitida, a área fica vermelha (`#ff0000`) para acréscimo e azul (`#0000ff`) para desconto.\n\nO endpoint não é idempotente: reenviar a mesma requisição cria outra dinâmica. Para escalonar o fator por distância, crie a dinâmica e use `PUT /dinamicas/area/{id}/faixas`.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.\n\nNa resposta, `tipo_calculo` e `tipo_fator` vêm como código (`M`/`F`, `P`/`R`), como no corpo enviado; o `GET /dinamicas/area` devolve os rótulos por extenso.",
         "requestBody": {
           "required": true,
           "content": {
@@ -8493,7 +8493,53 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "description": "Identificador da área criada; é o `id` usado nos outros endpoints de dinâmica."
+                        },
+                        "nome": {
+                          "type": "string"
+                        },
+                        "fator": {
+                          "type": "number",
+                          "description": "Valor gravado, multiplicador (`M`) ou valor adicional (`F`)."
+                        },
+                        "tipo_calculo": {
+                          "type": "string",
+                          "enum": [
+                            "F",
+                            "M"
+                          ],
+                          "description": "Código do tipo de cálculo. O `GET /dinamicas/area` devolve o rótulo por extenso (\"Fator multiplicador\", \"Valor adicional\")."
+                        },
+                        "tipo_fator": {
+                          "type": "string",
+                          "enum": [
+                            "P",
+                            "R"
+                          ]
+                        },
+                        "ativo": {
+                          "type": "boolean"
+                        },
+                        "cor_preenchimento": {
+                          "type": "string"
+                        },
+                        "poligono": {
+                          "type": "object",
+                          "description": "GeoJSON `Polygon` gravado, com o anel fechado."
+                        }
+                      }
+                    }
+                  }
                 },
                 "example": {
                   "success": true,
@@ -9223,7 +9269,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "O campo 'type' deve ser 'Polygon'"
+                          "message": "'type': Deve ser 'Polygon'."
                         }
                       ]
                     }
@@ -9235,7 +9281,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "O polígono deve conter ao menos 3 vértices distintos"
+                          "message": "'coordinates': O anel deve conter ao menos 4 posições (mínimo 3 vértices distintos + fechamento)."
                         }
                       ]
                     }
@@ -9259,7 +9305,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "As coordenadas devem ser numéricas, com 'lng' entre -180 e 180 e 'lat' entre -90 e 90"
+                          "message": "'coordinates.0.0': lat deve estar entre -90 e 90."
                         }
                       ]
                     }
@@ -9271,7 +9317,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "JSON_INVALIDO"
+                          "message": "JSON inválido"
                         }
                       ]
                     }
