@@ -810,7 +810,7 @@
       },
       "post": {
         "summary": "Criar dinâmica por área",
-        "description": "Cria uma dinâmica por área na bandeira autenticada: a área desenhada pelo `poligono` e o fator aplicado às entregas que começam (`tipo_fator` `P`) ou terminam (`tipo_fator` `R`) dentro dela. A dinâmica passa a valer no preço logo após a criação, igual a uma dinâmica criada pelo painel.\n\nO polígono aceita no máximo 200 vértices, sem contar o fechamento do anel. A validação devolve todos os erros encontrados de uma vez na lista `errors`, um por campo (ou por posição do polígono), com o nome do campo no início da mensagem. A exceção é o valor do `fator` fora do limite, que vem sem o prefixo do campo, igual ao `PATCH /dinamicas/area/{id}`. A prioridade da área e a cor da linha são definidas pela plataforma; quando `cor_preenchimento` é omitida, a área fica vermelha (`#ff0000`) para acréscimo e azul (`#0000ff`) para desconto.\n\nO endpoint não é idempotente: reenviar a mesma requisição cria outra dinâmica. Para escalonar o fator por distância, crie a dinâmica e use `PUT /dinamicas/area/{id}/faixas`.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.\n\nNa resposta, `tipo_calculo` e `tipo_fator` vêm como código (`M`/`F`, `P`/`R`), como no corpo enviado; o `GET /dinamicas/area` devolve os rótulos por extenso.",
+        "description": "Cria uma dinâmica por área na bandeira autenticada: a área desenhada pelo `poligono` e o fator aplicado às entregas que começam (`tipo_fator` `P`) ou terminam (`tipo_fator` `R`) dentro dela. A dinâmica passa a valer no preço logo após a criação, igual a uma dinâmica criada pelo painel.\n\nO polígono aceita no máximo 200 vértices, sem contar o fechamento do anel. A validação do corpo devolve todos os erros encontrados de uma vez na lista `errors`, com o nome do campo no início da mensagem (uma posição do polígono pode gerar um erro para `lng` e outro para `lat`). A dinâmica na parada e o limite do valor do `fator` são conferidos depois, só com o corpo válido, e vêm sozinhos; o erro do `fator` fora do limite vem sem o prefixo do campo, igual ao `PATCH /dinamicas/area/{id}`. A prioridade da área e a cor da linha são definidas pela plataforma; quando `cor_preenchimento` é omitida, a área fica vermelha (`#ff0000`) para acréscimo e azul (`#0000ff`) para desconto.\n\nO endpoint não é idempotente: reenviar a mesma requisição cria outra dinâmica. Para escalonar o fator por distância, crie a dinâmica e use `PUT /dinamicas/area/{id}/faixas`.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.\n\nNa resposta, `tipo_calculo` e `tipo_fator` vêm como código (`M`/`F`, `P`/`R`), como no corpo enviado; o `GET /dinamicas/area` devolve os rótulos por extenso.",
         "requestBody": {
           "required": true,
           "content": {
@@ -833,7 +833,7 @@
                   },
                   "poligono": {
                     "type": "object",
-                    "description": "Área da dinâmica em GeoJSON (RFC 7946): um `Polygon` com um único anel fechado (a primeira posição igual à última), de 3 a 200 vértices distintos, com cada posição em `[longitude, latitude]`.",
+                    "description": "Área da dinâmica em GeoJSON (RFC 7946): um `Polygon` com um único anel fechado (a primeira posição igual à última), com ao menos 3 vértices distintos e no máximo 200 posições sem contar o fechamento, com cada posição em `[longitude, latitude]`.",
                     "required": [
                       "type",
                       "coordinates"
@@ -1543,7 +1543,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "Informe ao menos um dos campos: 'nome', 'fator', 'tipo_calculo', 'tipo_fator' ou 'ativo'"
+                          "message": "'campos': Informe ao menos um dos campos: 'nome', 'fator', 'tipo_calculo', 'tipo_fator' ou 'ativo'."
                         }
                       ]
                     }
@@ -1555,7 +1555,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "O campo 'fator' deve ser numérico"
+                          "message": "'fator': O campo 'fator' deve ser numérico."
                         }
                       ]
                     }
@@ -1567,7 +1567,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "O campo 'fator' está fora do limite permitido"
+                          "message": "O valor do campo 'fator' está fora do limite permitido para o tipo de cálculo informado."
                         }
                       ]
                     }
@@ -1579,7 +1579,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "O campo 'fator' é obrigatório ao alterar o 'tipo_calculo'"
+                          "message": "O campo 'fator' é obrigatório ao alterar 'tipo_calculo'."
                         }
                       ]
                     }
@@ -1603,7 +1603,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "JSON_INVALIDO"
+                          "message": "JSON inválido"
                         }
                       ]
                     }
@@ -1853,7 +1853,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "'coordinates.0.0': lat deve estar entre -90 e 90."
+                          "message": "'coordinates.0.1': lat deve estar entre -90 e 90."
                         }
                       ]
                     }
