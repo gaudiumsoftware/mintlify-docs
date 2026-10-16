@@ -341,6 +341,15 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 | `6` | Destinatário não encontrado ou não pertence à bandeira autenticada. | ID da lista inexistente ou de outra central. Volta como falha do ID em data.falhas (HTTP 207), ou em errors (HTTP 404) quando nenhum ID é notificado. |
 | `157` *Em breve* | Destinatário sem dispositivo registrado para receber notificações. | ID da central sem aplicativo com token de notificação registrado. Volta como falha do ID em data.falhas (HTTP 207), ou em errors (HTTP 404) quando nenhum ID é notificado. |
 
+## Score do condutor (só v2)
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `235` *Em breve* | Programa de níveis indisponível. | Central do condutor sem o programa de níveis ativo: fora do beta ou com o programa pausado. HTTP 403. |
+| `236` *Em breve* | Falha na operação | O serviço de score não respondeu ou respondeu com erro. HTTP 500, sem dado parcial. |
+
+No mesmo endpoint, `id` não numérico ou igual a zero responde `218`, condutor inexistente ou de outra central responde `56`, e gestor de empresa ou sem a permissão de integração de condutores responde `63`.
+
 ## Validação do corpo da requisição (só v2)
 
 | code | Mensagem | Quando ocorre |
