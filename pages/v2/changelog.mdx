@@ -347,6 +347,28 @@ export const EndpointBadge = ({ method, path, href }) => (
     </div>
   </Entry>
 
+  <Entry date="16 out 2026">
+    <h2 id="correcoes-documentacao-v2" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Correções na documentação da API v2
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Formatos, valores aceitos, limites e exemplos que a documentação descrevia diferente do que a API faz.
+      A API não mudou.
+    </p>
+
+    <ChangeSection type="fixed">
+      <ul style={{ margin: 0, paddingLeft: "18px" }}>
+        <li>Centros de custo da empresa: o path é <code>/corridas/empresas/{"{id}"}/centro-custo</code>.</li>
+        <li>Condutores: a busca por <code>cpf</code> é exata, e a atualização de áreas de bloqueio aceita até 100 condutores.</li>
+        <li>Empresas: o cadastro exige <code>endereco.uf</code>, <code>aceita_ticket</code> e <code>aceita_voucher</code>; a atualização em lote aceita até 200 empresas, e <code>tipos_pagamento</code> vazio mantém as formas atuais.</li>
+        <li>Dinâmicas: a última faixa recusa <code>km_maximo</code> preenchido.</li>
+        <li>Áreas geográficas: a listagem traz as áreas de filial e as cercas eletrônicas.</li>
+        <li>Webhook de status: o status <code>T</code> (<code>REDISTRIBUTED</code>).</li>
+        <li>Introdução: o parâmetro de paginação é <code>pagina</code>, e os erros de chave trazem <code>code</code>.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="15 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="criar-area" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Criação de área

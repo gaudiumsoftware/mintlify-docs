@@ -197,7 +197,7 @@ curl --request GET \
   --header 'api-key: SUA_CHAVE_API'
 ```
 
-Requisições sem chave ou com chave inválida retornam `400` ou `403`.
+Requisições sem chave retornam `400` (código `B1`) e requisições com chave inválida retornam `401` (código `B4`).
 
 ---
 
@@ -226,7 +226,7 @@ Usamos como retorno os códigos HTTP padrão para indicar tanto o sucesso de uma
 
 - 500: Erro interno, contate o nosso suporte.
 
-Caso ocorra algum erro na autenticação básica, um erro padrão de código 1 informando “usuário e/ou senhas inválidas”, será retornado.
+Caso ocorra algum erro na autenticação básica, a resposta traz o código `1` (HTTP `400`) ou, nos endpoints que validam o usuário na própria v2, o código `B5` (HTTP `401`), com a mensagem “Usuário e/ou senhas inválidos.”.
 
 Caso a chave API não seja informada, um erro padrão será retornado:
 
@@ -234,12 +234,15 @@ Caso a chave API não seja informada, um erro padrão será retornado:
 {
   "success": false,
   "errors": [
-    "Chave da app não informada."
+    {
+      "code": "B1",
+      "message": "Chave da api não informada."
+    }
   ]
 }
 ```
 
-Os demais erros trazem um `code` em cada item de `errors`:
+Os demais erros seguem o mesmo formato, com um `code` em cada item de `errors`:
 
 ```json
 {
@@ -286,12 +289,12 @@ Os limites de requisições por minuto e os headers de controle estão na págin
 ## Paginação
 
 Alguns endpoints de listagem retornam todos os registros disponíveis. Porém, alguns possuem paginação,
-controlável pelos parâmetros `limite` e `página`:
+controlável pelos parâmetros `limite` e `pagina`:
 
 - `limite`: número de registros por página (default 20, máximo 100)
-- `página`: página atual (default 1)
+- `pagina`: página atual (default 1)
 
 Exemplo:
 ```
-/endpoints?limite=10&página=2
+/endpoints?limite=10&pagina=2
 ```
