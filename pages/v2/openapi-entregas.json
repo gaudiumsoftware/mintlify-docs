@@ -3240,7 +3240,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 235,
+                          "code": 236,
                           "message": "Programa de níveis indisponível."
                         }
                       ]
@@ -3293,7 +3293,7 @@
                   "success": false,
                   "errors": [
                     {
-                      "code": 236,
+                      "code": 237,
                       "message": "Falha na operação"
                     }
                   ]
