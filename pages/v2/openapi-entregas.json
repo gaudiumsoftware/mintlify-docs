@@ -7957,6 +7957,25 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Falha ao recalcular a estimativa da entrega. A exclusão da parada é desfeita.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Falha na operação"
+                    }
+                  ]
+                }
+              }
+            }
           }
         }
       }
@@ -8442,6 +8461,25 @@
               }
             }
           },
+          "406": {
+            "description": "Status não aceito para agrupamento: alguma entrega está redistribuindo (`T`), em andamento (`E`), finalizada (`F`), cancelada (`C`) ou já agrupada (`U`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Solicitação não possui o status aceitável para agrupamento"
+                    }
+                  ]
+                }
+              }
+            }
+          },
           "409": {
             "description": "Conflito — o agrupamento não possui o mínimo de pedidos necessário",
             "content": {
@@ -8682,6 +8720,25 @@
                     {
                       "code": 0,
                       "message": "Solicitação não encontrada"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Status não aceito para agrupamento: alguma entrega está redistribuindo (`T`), em andamento (`E`), finalizada (`F`), cancelada (`C`) ou já agrupada (`U`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Solicitação não possui o status aceitável para agrupamento"
                     }
                   ]
                 }
@@ -10294,6 +10351,25 @@
                       ]
                     }
                   }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha ao recalcular a estimativa da entrega. A exclusão da parada é desfeita.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Falha na operação"
+                    }
+                  ]
                 }
               }
             }
