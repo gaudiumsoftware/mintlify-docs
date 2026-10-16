@@ -268,6 +268,7 @@ export const EndpointBadge = ({ method, path, href }) => (
 
     <ChangeSection type="fixed">
       <ul style={{ margin: 0, paddingLeft: "18px" }}>
+        <li>Criação de entrega e de entrega programada: os campos <ParamBadge name="empresa_id" />, <ParamBadge name="categoria_id" />, <ParamBadge name="categoria_nome" />, <ParamBadge name="condutor" /> e <ParamBadge name="retorno" />, que a API já aceitava. A entrega imediata documenta também <ParamBadge name="ignorar_condutores_proximos" />, e a programada, <ParamBadge name="antecedencia" />.</li>
         <li>Entrega programada: <code>data</code> em <code>DD/MM/AAAA</code>, <code>hora</code> em <code>HH:MM:SS</code> ou <code>HH:MM</code>, e os campos obrigatórios marcados.</li>
         <li>Edição de entrega programada: a resposta traz <code>data.id_mch</code>, a <code>url_confirmacao</code> precisa ser reenviada em cada edição e usuário ou senha inválidos devolvem <code>400</code> com código <code>1</code>.</li>
         <li>Consulta de entregas: <code>status_solicitacao</code> aceita <code>S</code>, <code>T</code> e <code>R</code>, e não aceita <code>L</code>; <code>tipo_pagamento</code> aceita <code>I</code>, e não aceita <code>W</code>.</li>

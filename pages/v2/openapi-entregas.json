@@ -7990,6 +7990,13 @@
             "application/json": {
               "example": {
                 "forma_pagamento": "D",
+                "empresa_id": 1520,
+                "categoria_id": 3,
+                "categoria_nome": "Moto",
+                "condutor": {
+                  "tipo_identificacao": "I",
+                  "identificacao": 1234
+                },
                 "partida": {
                   "endereco": "Rua Evandro Câmara, 717",
                   "bairro": "Monte Carmelo",
@@ -8018,6 +8025,8 @@
                     "valor_cobrar": 852.37
                   }
                 ],
+                "retorno": false,
+                "ignorar_condutores_proximos": false,
                 "info_antes_aceite": "Portaria fecha às 18h",
                 "exigir_codigo_confirmacao": true
               },
@@ -8027,6 +8036,51 @@
                   "forma_pagamento": {
                     "type": "string",
                     "description": "As formas de pagamento possíveis são: Dinheiro (`D`), Débito (`B`), Crédito (`C`), Pix (`X`), Picpay (`P`), Whatsapp (`H`), Faturado (`F`), Carteira de créditos (`R`)"
+                  },
+                  "empresa_id": {
+                    "type": "integer",
+                    "description": "ID da empresa da entrega. Para o usuário autenticado como empresa, vale a empresa dele, e o campo pode ser omitido. Sem `partida`, o ponto de partida é o endereço cadastrado da empresa.",
+                    "example": 1520
+                  },
+                  "categoria_id": {
+                    "type": "integer",
+                    "description": "ID da categoria da entrega. Tem precedência sobre `categoria_nome`. Categorias com tarifa por bairro, com negociação de valor ou com cálculo individual por entrega são recusadas.",
+                    "example": 3
+                  },
+                  "categoria_nome": {
+                    "type": "string",
+                    "description": "Nome da categoria da entrega, usado quando `categoria_id` não é enviado.",
+                    "example": "Moto"
+                  },
+                  "condutor": {
+                    "type": "object",
+                    "description": "Envia a entrega para um condutor específico. Sem `condutor`, a entrega segue o despacho da central. Com `tipo_identificacao` informado, a `identificacao` é obrigatória e precisa apontar para um único condutor da bandeira.",
+                    "properties": {
+                      "tipo_identificacao": {
+                        "type": "string",
+                        "description": "Forma de identificação do condutor: CPF (C), VTR (V), Telefone (T), Placa (P) ou ID (I).",
+                        "enum": [
+                          "C",
+                          "V",
+                          "T",
+                          "P",
+                          "I"
+                        ],
+                        "example": "I"
+                      },
+                      "identificacao": {
+                        "oneOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "integer"
+                          }
+                        ],
+                        "description": "Valor do atributo de identificação: número quando `tipo_identificacao` é `I`, texto nos demais tipos.",
+                        "example": 1234
+                      }
+                    }
                   },
                   "partida": {
                     "type": "object",
@@ -8114,6 +8168,16 @@
                         }
                       }
                     }
+                  },
+                  "retorno": {
+                    "type": "boolean",
+                    "description": "Envie `true` para a entrega voltar ao endereço de partida depois da última parada. O padrão é `false`.",
+                    "example": false
+                  },
+                  "ignorar_condutores_proximos": {
+                    "type": "boolean",
+                    "description": "Envie `true` para a entrega não ser recusada por falta de condutores próximos à partida. Só faz diferença quando a central está configurada para não aceitar solicitações sem condutores próximos.",
+                    "example": false
                   },
                   "info_antes_aceite": {
                     "type": "string",
@@ -9785,6 +9849,13 @@
             "application/json": {
               "example": {
                 "forma_pagamento": "D",
+                "empresa_id": 1520,
+                "categoria_id": 3,
+                "categoria_nome": "Moto",
+                "condutor": {
+                  "tipo_identificacao": "I",
+                  "identificacao": 1234
+                },
                 "partida": {
                   "endereco": "Rua Evandro Câmara, 717",
                   "bairro": "Monte Carmelo",
@@ -9813,8 +9884,10 @@
                     "valor_cobrar": 852.37
                   }
                 ],
+                "retorno": false,
                 "data": "31/12/2026",
                 "hora": "14:30:00",
+                "antecedencia": 30,
                 "info_antes_aceite": "Portaria fecha às 18h",
                 "exigir_codigo_confirmacao": true
               },
@@ -9824,6 +9897,51 @@
                   "forma_pagamento": {
                     "type": "string",
                     "description": "As formas de pagamento possíveis são: Dinheiro (`D`), Débito (`B`), Crédito (`C`), Pix (`X`), Picpay (`P`), Whatsapp (`H`), Faturado (`F`), Carteira de créditos (`R`)"
+                  },
+                  "empresa_id": {
+                    "type": "integer",
+                    "description": "ID da empresa da entrega. Para o usuário autenticado como empresa, vale a empresa dele, e o campo pode ser omitido. Sem `partida`, o ponto de partida é o endereço cadastrado da empresa.",
+                    "example": 1520
+                  },
+                  "categoria_id": {
+                    "type": "integer",
+                    "description": "ID da categoria da entrega. Tem precedência sobre `categoria_nome`. Categorias com tarifa por bairro, com negociação de valor ou com cálculo individual por entrega são recusadas.",
+                    "example": 3
+                  },
+                  "categoria_nome": {
+                    "type": "string",
+                    "description": "Nome da categoria da entrega, usado quando `categoria_id` não é enviado.",
+                    "example": "Moto"
+                  },
+                  "condutor": {
+                    "type": "object",
+                    "description": "Envia a entrega para um condutor específico. Sem `condutor`, a entrega segue o despacho da central. Com `tipo_identificacao` informado, a `identificacao` é obrigatória e precisa apontar para um único condutor da bandeira.",
+                    "properties": {
+                      "tipo_identificacao": {
+                        "type": "string",
+                        "description": "Forma de identificação do condutor: CPF (C), VTR (V), Telefone (T), Placa (P) ou ID (I).",
+                        "enum": [
+                          "C",
+                          "V",
+                          "T",
+                          "P",
+                          "I"
+                        ],
+                        "example": "I"
+                      },
+                      "identificacao": {
+                        "oneOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "integer"
+                          }
+                        ],
+                        "description": "Valor do atributo de identificação: número quando `tipo_identificacao` é `I`, texto nos demais tipos.",
+                        "example": 1234
+                      }
+                    }
                   },
                   "partida": {
                     "type": "object",
@@ -9911,6 +10029,11 @@
                       }
                     }
                   },
+                  "retorno": {
+                    "type": "boolean",
+                    "description": "Envie `true` para a entrega voltar ao endereço de partida depois da última parada. O padrão é `false`.",
+                    "example": false
+                  },
                   "data": {
                     "type": "string",
                     "description": "Data da entrega programada no formato `DD/MM/AAAA`."
@@ -9918,6 +10041,11 @@
                   "hora": {
                     "type": "string",
                     "description": "Hora da entrega programada no formato `HH:MM:SS` ou `HH:MM`."
+                  },
+                  "antecedencia": {
+                    "type": "integer",
+                    "description": "Minutos de antecedência do disparo em relação a `data` e `hora`: a entrega é disparada em `data` e `hora` menos a antecedência, e esse momento precisa estar no futuro. O padrão é `0`.",
+                    "example": 30
                   },
                   "info_antes_aceite": {
                     "type": "string",
