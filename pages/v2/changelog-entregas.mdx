@@ -154,6 +154,38 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="20 out 2026">
+    <h2 id="criar-dinamica-area" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Criação de dinâmica por área
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novo endpoint que cria uma dinâmica por área na central autenticada: a área desenhada em GeoJSON
+      e o fator aplicado às entregas que começam ou terminam nela. A dinâmica passa a valer no preço
+      logo após a criação, igual a uma criada pelo painel. O polígono das dinâmicas passa a ter limite
+      de vértices, também na alteração de vértices.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/dinamicas/area" href="/pages/v2/entregas/dinamicas/endpoint/post-area" />
+    <EndpointBadge method="PATCH" path="/api/v2/integracao/dinamicas/area/{id}/vertices" href="/pages/v2/entregas/dinamicas/endpoint/patch-vertices" />
+    <EndpointBadge method="PATCH" path="/api/v2/integracao/dinamicas/area/{id}" href="/pages/v2/entregas/dinamicas/endpoint/patch-area" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="nome" /> (até 100 caracteres), <ParamBadge name="poligono" />, <ParamBadge name="tipo_calculo" /> (<code>M</code> ou <code>F</code>), <ParamBadge name="tipo_fator" /> (<code>P</code> ou <code>R</code>) e <ParamBadge name="fator" /> obrigatórios; <ParamBadge name="cor_preenchimento" /> (<code>#RRGGBB</code>) e <ParamBadge name="ativo" /> opcionais. O <ParamBadge name="fator" /> aceita até uma casa decimal com <code>M</code> e até duas com <code>F</code>.</li>
+        <li><ParamBadge name="poligono" /> — GeoJSON <code>Polygon</code> com um anel fechado, ao menos 3 vértices distintos e no máximo 200 posições sem contar o fechamento.</li>
+        <li>Sem <ParamBadge name="cor_preenchimento" />, a área fica vermelha para acréscimo e azul para desconto, como no painel.</li>
+        <li>Resposta <code>201</code> com <ParamBadge name="id" />, os campos gravados e o polígono em GeoJSON. O endpoint não é idempotente: reenviar a requisição cria outra dinâmica.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="changed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "6px" }}>
+        <li>A alteração de vértices aceita no máximo 200 vértices. Área que já tem mais de 200 pode ser editada com até a quantidade atual, sem crescer; acima do limite, a resposta é <code>400</code>.</li>
+        <li>O <ParamBadge name="nome" /> da dinâmica, na criação e ao trocar o nome, aceita só letras, números, acentos e a pontuação do teclado, o mesmo conjunto que a tela de Dinâmica mantém; não aceita <code>{"< > \" ' & \\"}</code>, emoji, quebra de linha nem símbolos como <code>€ — … ’</code>, e com eles a resposta é <code>400</code>.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="20 out 2026" label="Em breve" labelColor="#ea580c">
     <h2 id="webhook-status-dados-da-entrega" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Dados da entrega no Webhook de Status
