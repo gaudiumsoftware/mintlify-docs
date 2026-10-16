@@ -1383,7 +1383,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 0,
+                          "code": 223,
                           "message": "'ativo': Deve ser um valor booleano (true ou false)."
                         }
                       ]
@@ -1590,7 +1590,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 0,
+                          "code": 223,
                           "message": "'ativo': Deve ser um valor booleano (true ou false)."
                         }
                       ]
@@ -2271,7 +2271,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 0,
+                          "code": 222,
                           "message": "'tipo_calculo': Deve estar dentre os valores: F, M"
                         }
                       ]
@@ -2854,7 +2854,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 0,
+                          "code": 218,
                           "message": "'taxista_id': Deve ser numérico."
                         }
                       ]
@@ -2866,7 +2866,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 0,
+                          "code": 219,
                           "message": "'busca': Deve ser do tipo texto (string)."
                         }
                       ]
@@ -2961,7 +2961,7 @@
             }
           },
           "429": {
-            "description": "Limite de requisições excedido. Os limites estão na tabela de rate limit da introdução.",
+            "description": "Limite de requisições excedido. Os limites estão na página [Rate limit](/pages/v2/entregas/rate-limit).",
             "content": {
               "application/json": {
                 "schema": {
@@ -6884,7 +6884,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 0,
+                          "code": 223,
                           "message": "'permitir_solicitacao_espera': Deve ser um valor booleano (true ou false)."
                         }
                       ]
@@ -8676,7 +8676,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 0,
+                          "code": 218,
                           "message": "'solicitacao_agrupadora': Deve ser numérico."
                         }
                       ]
@@ -8898,7 +8898,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 0,
+                          "code": 218,
                           "message": "'solicitacao_agrupadora': Deve ser numérico."
                         }
                       ]
@@ -11940,7 +11940,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 0,
+                          "code": 222,
                           "message": "'tipo_identificacao': Deve estar dentre os valores: C, V, T, P, I"
                         }
                       ]
@@ -12034,7 +12034,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 0,
+                          "code": 222,
                           "message": "'tipo_identificacao': Deve estar dentre os valores: C, V, T, P, I"
                         }
                       ]
@@ -12121,7 +12121,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 0,
+                          "code": 222,
                           "message": "'tipo_identificacao': Deve estar dentre os valores: C, V, T, P, I"
                         }
                       ]
