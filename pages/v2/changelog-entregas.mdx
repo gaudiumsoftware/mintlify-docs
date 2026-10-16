@@ -193,7 +193,71 @@ export const EndpointBadge = ({ method, path, href }) => (
     </div>
   </Entry>
 
+  <Entry date="20 out 2026">
+    <h2 id="criar-dinamica-area" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Criação de dinâmica por área
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novo endpoint que cria uma dinâmica por área na central autenticada: a área desenhada em GeoJSON
+      e o fator aplicado às entregas que começam ou terminam nela. A dinâmica passa a valer no preço
+      logo após a criação, igual a uma criada pelo painel. O polígono das dinâmicas passa a ter limite
+      de vértices, também na alteração de vértices.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/dinamicas/area" href="/pages/v2/entregas/dinamicas/endpoint/post-area" />
+    <EndpointBadge method="PATCH" path="/api/v2/integracao/dinamicas/area/{id}/vertices" href="/pages/v2/entregas/dinamicas/endpoint/patch-vertices" />
+    <EndpointBadge method="PATCH" path="/api/v2/integracao/dinamicas/area/{id}" href="/pages/v2/entregas/dinamicas/endpoint/patch-area" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="nome" /> (até 100 caracteres), <ParamBadge name="poligono" />, <ParamBadge name="tipo_calculo" /> (<code>M</code> ou <code>F</code>), <ParamBadge name="tipo_fator" /> (<code>P</code> ou <code>R</code>) e <ParamBadge name="fator" /> obrigatórios; <ParamBadge name="cor_preenchimento" /> (<code>#RRGGBB</code>) e <ParamBadge name="ativo" /> opcionais. O <ParamBadge name="fator" /> aceita até uma casa decimal com <code>M</code> e até duas com <code>F</code>.</li>
+        <li><ParamBadge name="poligono" /> — GeoJSON <code>Polygon</code> com um anel fechado, ao menos 3 vértices distintos e no máximo 200 posições sem contar o fechamento.</li>
+        <li>Sem <ParamBadge name="cor_preenchimento" />, a área fica vermelha para acréscimo e azul para desconto, como no painel.</li>
+        <li>Resposta <code>201</code> com <ParamBadge name="id" />, os campos gravados e o polígono em GeoJSON. O endpoint não é idempotente: reenviar a requisição cria outra dinâmica.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="changed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "6px" }}>
+        <li>A alteração de vértices aceita no máximo 200 vértices. Área que já tem mais de 200 pode ser editada com até a quantidade atual, sem crescer; acima do limite, a resposta é <code>400</code>.</li>
+        <li>O <ParamBadge name="nome" /> da dinâmica, na criação e ao trocar o nome, aceita só letras, números, acentos e a pontuação do teclado, o mesmo conjunto que a tela de Dinâmica mantém; não aceita <code>{"< > \" ' & \\"}</code>, emoji, quebra de linha nem símbolos como <code>€ — … ’</code>, e com eles a resposta é <code>400</code>.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="20 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="webhook-status-dados-da-entrega" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Dados da entrega no Webhook de Status
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      O Webhook de Status passa a entregar quem pediu a entrega e o condutor que vai realizá-la dentro do
+      próprio POST, e no status Aceita também o veículo e a chave PIX do condutor. Os campos são aditivos: nada do que
+      já era enviado mudou de nome, formato ou valor. O contrato completo está em <a href="/pages/v2/entregas/webhooks/sobre">Webhooks &gt; Sobre</a>.
+    </p>
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="passenger" /> — em todo status, com <ParamBadge name="client_id" />, <ParamBadge name="name" /> e <ParamBadge name="phone" />. O nome e o telefone são os de quem solicitou a entrega, que nem sempre é o titular da conta; o <ParamBadge name="client_id" /> é sempre o da conta.</li>
+        <li><ParamBadge name="driver" /> — em todo status, com <ParamBadge name="driver_id" />, <ParamBadge name="name" />, <ParamBadge name="phone" />, <ParamBadge name="cpf" />, <ParamBadge name="vtr" /> e <ParamBadge name="category" />. Vem nulo enquanto a solicitação não tem condutor.</li>
+        <li><ParamBadge name="vehicle" /> — apenas no status <code>A</code>, com <ParamBadge name="model" />, <ParamBadge name="plate" />, <ParamBadge name="color" /> e <ParamBadge name="color_hex" />. Condutor sem veículo vinculado recebe os quatro campos nulos.</li>
+        <li><ParamBadge name="driver.pix_key" /> — apenas no status <code>A</code>, para quem paga o condutor por fora da plataforma. É dado pessoal: trate como trata CPF. Nos demais status a chave não aparece no bloco.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> quem já consome o Webhook de Status não precisa mudar nada — <code>datetime</code>, <code>event_id</code>, <code>request_id</code>, <code>status_code</code>, <code>status_label</code>, <code>stop_id</code> e <code>links</code> continuam iguais. Para esperar o veículo e a chave PIX, teste <code>status_code == "A"</code>, e não a presença da chave no payload.
+    </div>
+  </Entry>
+
+  <Entry date="15 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="criar-area" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Criação de área
     </h2>
@@ -217,7 +281,40 @@ export const EndpointBadge = ({ method, path, href }) => (
     </ChangeSection>
   </Entry>
 
-  <Entry date="14 out 2026" label="Em breve" labelColor="#ea580c">
+  <Entry date="15 out 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="extrato-creditos-central" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Extrato de créditos da central
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Consulte pela API os lançamentos do extrato de créditos da central, com a mesma classificação e os filtros da tela de extrato do painel.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/financeiro/extrato" href="/pages/v2/entregas/financeiro/endpoint/get-extrato" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Novo endpoint com os parâmetros de query:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="data_ini" /> e <ParamBadge name="data_fim" /> — período de até 31 dias, com início nos últimos 6 meses. Opcional com <ParamBadge name="solicitacao_id" /> ou <ParamBadge name="registro_manual_id" />, que usam o período da própria solicitação ou do registro.</li>
+        <li><ParamBadge name="pagina" /> — página de 10 lançamentos; a última é a que vem com menos de 10.</li>
+        <li><ParamBadge name="tipo" />, <ParamBadge name="subfiltros[]" />, <ParamBadge name="situacao" /> e <ParamBadge name="tipo_usuario[]" /> — os filtros da tela de extrato; <ParamBadge name="situacao" /> e <ParamBadge name="tipo_usuario[]" /> exigem um subfiltro disponível para a central.</li>
+        <li><ParamBadge name="taxista_id" />, <ParamBadge name="cliente_id" />, <ParamBadge name="empresa_id" />, <ParamBadge name="solicitacao_id" /> e <ParamBadge name="registro_manual_id" /> — recortam o extrato por pessoa, corrida ou registro manual da central.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> cada lançamento traz <code>tipo_operacao</code> (código estável, com o prefixo <code>estorno_</code> nos estornos) e <code>operacao_descricao</code>. O endpoint exige Api-Key e autenticação HTTP Basic de um gestor da central com a permissão <code>API - Carteira de créditos</code>, e tem limite próprio de 40 requisições por minuto.
+    </div>
+  </Entry>
+
+  <Entry date="13 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="historico-punicoes-condutores" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Histórico de punições dos condutores
     </h2>
