@@ -22,7 +22,7 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 
 > **Trate o erro pelo `code`, e não pelo texto**: a `message` muda conforme o tipo da central ("motorista" pode vir como "taxista", "mototaxista" ou "entregador"; "passageiro" como "cliente"), e alguns textos trazem valores dinâmicos, como `{campo}`, `{valor}` e `{maximo}`.
 
-> **Códigos novos**: os códigos marcados com *Em breve* passam a ser devolvidos em 22 de outubro de 2026, exceto o `157`, que passa a ser devolvido em 15 de outubro de 2026. Até lá, esses erros chegam com `code: 0` e a mesma mensagem.
+> **Códigos novos**: os códigos marcados com *Em breve* passam a ser devolvidos em 22 de outubro de 2026, exceto o `157`, que passa a ser devolvido em 15 de outubro de 2026, e o `235`, que ainda não tem data. Até lá, esses erros chegam com `code: 0` e a mesma mensagem, menos o caso do `235`, que hoje responde com HTTP 500.
 
 ## Códigos especiais
 
@@ -306,6 +306,7 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 | `140` | A entrega não possui estimativa individual gravada; não é possível excluir a parada. | Programada com tarifa por entrega em que alguma entrega restante não tem estimativa gravada. Só na v2. |
 | `141` | Os valores das entregas não conferem com as paradas informadas. | Agrupamento com tarifa por entrega em que uma entrega sem estimativa gravada não pôde ser precificada. Só na v2. |
 | `142` | URL de confirmação inválida, informe um endereço https válido e acessível. | url_confirmacao da parada não é https válida. |
+| `235` *Em breve* | A empresa não possui cidade cadastrada. Cadastre a cidade da empresa ou envie o endereço de partida (partida.endereco e partida.bairro) na requisição. | Entrega aberta com empresa_id e sem partida.endereco ou partida.bairro, de empresa sem cidade cadastrada. A partida seria montada com o endereço da empresa. |
 
 ## Créditos e saque
 
