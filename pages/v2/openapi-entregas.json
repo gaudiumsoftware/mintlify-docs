@@ -1420,7 +1420,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "JSON_INVALIDO"
+                          "message": "JSON inválido"
                         }
                       ]
                     }
@@ -2022,7 +2022,7 @@
       },
       "put": {
         "summary": "Substituir faixas de distância da dinâmica",
-        "description": "Substitui o conjunto inteiro de faixas de distância da dinâmica da área. Envie as faixas em ordem crescente informando só o limite final de cada uma (`km_maximo`): a primeira começa em 0 km, cada faixa começa no limite da anterior e a última é sempre aberta, então o `km_maximo` dela é ignorado.\n\nRegras, as mesmas da tela da central:\n- de 2 a 10 faixas, ou a partir de 1 quando há valores por categoria;\n- `km_maximo` crescente, com no máximo uma casa decimal;\n- um único `tipo_calculo` para todas as faixas. Com `M`, os valores ficam entre 1.1 e 5, com no máximo uma casa decimal; com `F`, entre 0.5 e 99.9, com no máximo duas, e o valor adicional precisa estar liberado para a central;\n- com `valores` por categoria, todas as categorias de `categorias_elegiveis` precisam estar em todas as faixas, e o `valor` de cada faixa precisa ser igual ao da primeira categoria elegível, que é a base da matriz;\n- área em automação que altera o fator não aceita faixas.\n\nLista `faixas` vazia volta a área para valor único, mantendo o valor da primeira faixa. Para mudar também o `tipo_calculo`, use depois `PATCH /dinamicas/area/{id}`.\n\nEnviar o mesmo conjunto que já está configurado não cria versão nova e responde \"Nenhuma alteração detectada.\". O `id` da área não muda com este endpoint. Já o `PATCH` de nome ou de vértices cria uma área nova: depois deles, use o `id` devolvido.\n\nCom `versao`, a resposta é 409 se a dinâmica tiver sido alterada depois da sua leitura e o conjunto enviado for diferente do vigente. Uma alteração em andamento na mesma área também responde 409; reenvie em instantes.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "description": "Substitui o conjunto inteiro de faixas de distância da dinâmica da área. Envie as faixas em ordem crescente informando só o limite final de cada uma (`km_maximo`): a primeira começa em 0 km, cada faixa começa no limite da anterior e a última é sempre aberta: envie o `km_maximo` dela nulo ou omita o campo. Um valor ali é recusado com 400 (`A última faixa é sempre aberta: envie km_maximo nulo ou omita o campo.`).\n\nRegras, as mesmas da tela da central:\n- de 2 a 10 faixas, ou a partir de 1 quando há valores por categoria;\n- `km_maximo` crescente, com no máximo uma casa decimal;\n- um único `tipo_calculo` para todas as faixas. Com `M`, os valores ficam entre 1.1 e 5, com no máximo uma casa decimal; com `F`, entre 0.5 e 99.9, com no máximo duas, e o valor adicional precisa estar liberado para a central;\n- com `valores` por categoria, todas as categorias de `categorias_elegiveis` precisam estar em todas as faixas, e o `valor` de cada faixa precisa ser igual ao da primeira categoria elegível, que é a base da matriz;\n- área em automação que altera o fator não aceita faixas.\n\nLista `faixas` vazia volta a área para valor único, mantendo o valor da primeira faixa. Para mudar também o `tipo_calculo`, use depois `PATCH /dinamicas/area/{id}`.\n\nEnviar o mesmo conjunto que já está configurado não cria versão nova e responde \"Nenhuma alteração detectada.\". O `id` da área não muda com este endpoint. Já o `PATCH` de nome ou de vértices cria uma área nova: depois deles, use o `id` devolvido.\n\nCom `versao`, a resposta é 409 se a dinâmica tiver sido alterada depois da sua leitura e o conjunto enviado for diferente do vigente. Uma alteração em andamento na mesma área também responde 409; reenvie em instantes.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
         "parameters": [
           {
             "name": "id",
@@ -2562,7 +2562,7 @@
           {
             "name": "cpf",
             "in": "query",
-            "description": "CPF do condutor. Aceita valor completo ou parcial, com ou sem máscara, por exemplo: `123.456.789-09` ou `12345`.",
+            "description": "CPF completo do condutor, com ou sem máscara, por exemplo: `123.456.789-09` ou `12345678909`. A busca é exata: um CPF parcial não encontra o condutor.",
             "schema": {
               "oneOf": [
                 {
@@ -3807,8 +3807,8 @@
                 "properties": {
                   "condutores": {
                     "type": "array",
-                    "description": "Lista de IDs numéricos de condutores. Limite máximo de 1000 itens.",
-                    "maxItems": 1000,
+                    "description": "Lista de IDs numéricos de condutores. Limite máximo de 100 itens.",
+                    "maxItems": 100,
                     "items": {
                       "type": "integer"
                     }
@@ -3993,7 +3993,7 @@
     "/configuracoes/areas-geograficas": {
       "get": {
         "summary": "Listar áreas geográficas",
-        "description": "Responsável por listar as áreas de bloqueio disponíveis para central.",
+        "description": "Lista as áreas geográficas da central que não são áreas de tarifa: as áreas de filial e as cercas eletrônicas. São essas áreas que podem ser usadas nos bloqueios e nas permissões dos condutores.",
         "parameters": [
           {
             "name": "limite",
@@ -6612,7 +6612,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "JSON_INVALIDO"
+                          "message": "JSON inválido"
                         }
                       ]
                     }
@@ -7465,7 +7465,7 @@
                 "properties": {
                   "status_solicitacao": {
                     "type": "string",
-                    "description": "Status da entrega, podendo ser: D - Distribuindo, G - Aguardando aceite, A - Aceita, E - Em andamento, F - Finalizada, N - Não atendida, C - Cancelada, P - Pendente, L - Aguardando a liberação",
+                    "description": "Status da entrega, podendo ser: D - Distribuindo, G - Aguardando aceite, A - Aceita, E - Em andamento, F - Finalizada, N - Não atendida, C - Cancelada, P - Pendente, S - Em espera, T - Redistribuindo, R - Aguardando pagamento",
                     "enum": [
                       "D",
                       "G",
@@ -7475,20 +7475,22 @@
                       "N",
                       "C",
                       "P",
-                      "L"
+                      "S",
+                      "T",
+                      "R"
                     ]
                   },
                   "tipo_pagamento": {
                     "type": "string",
-                    "description": "Pagamento utilizado na entrega, podendo ser: D - Dinheiro, V - Voucher, T - Ticket, W - Wappa, C - Cartão de crédito, B - Cartão de débito, A - Cartão App, X - Pix, P - PicPay, H - Whatsapp, R - Carteira de créditos, F - Faturado",
+                    "description": "Pagamento utilizado na entrega, podendo ser: D - Dinheiro, V - Voucher, T - Ticket, C - Cartão de crédito, B - Cartão de débito, A - Cartão App, I - Pix pelo app, X - Pix, P - PicPay, H - Whatsapp, R - Carteira de créditos, F - Faturado",
                     "enum": [
                       "D",
                       "V",
                       "T",
-                      "W",
                       "C",
                       "B",
                       "A",
+                      "I",
                       "X",
                       "P",
                       "H",
@@ -7893,7 +7895,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Sucesso. O campo `estimativa` reflete os novos valores calculados com base nas entregas restantes. Pode ser `null` caso o serviço de rotas esteja indisponível.",
+            "description": "Sucesso. O campo `estimativa` reflete os novos valores calculados com base nas entregas restantes. Se o recálculo não for possível, a exclusão é desfeita e a resposta é 500 com `code` 0 e a mensagem `Falha na operação`.",
             "content": {
               "application/json": {
                 "example": {
@@ -7939,23 +7941,19 @@
                         }
                       ]
                     }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Não encontrado",
-            "content": {
-              "application/json": {
-                "example": {
-                  "success": false,
-                  "errors": [
-                    {
-                      "code": 136,
-                      "message": "Entrega não encontrada."
+                  },
+                  "entrega_nao_encontrada": {
+                    "summary": "Entrega não encontrada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 136,
+                          "message": "Entrega não encontrada."
+                        }
+                      ]
                     }
-                  ]
+                  }
                 }
               }
             }
@@ -7972,7 +7970,7 @@
           "content": {
             "application/json": {
               "example": {
-                "forma_pagamento": "D (As formas de pagamento possíveis são: Dinheiro (`D`), Débito (`B`), Crédito (`C`), Pix (`X`), Picpay (`P`), Whatsapp (`H`), Faturado (`F`), Carteira de créditos (`R`))",
+                "forma_pagamento": "D",
                 "partida": {
                   "endereco": "Rua Evandro Câmara, 717",
                   "bairro": "Monte Carmelo",
@@ -8038,7 +8036,8 @@
                       "lng": {
                         "type": "string"
                       }
-                    }
+                    },
+                    "description": "Obrigatória, com `endereco` e `bairro`, exceto quando a entrega é de uma empresa: aí a partida é o endereço cadastrado da empresa."
                   },
                   "paradas": {
                     "type": "array",
@@ -8105,7 +8104,11 @@
                     "type": "boolean",
                     "description": "Torna obrigatória a inserção do código de confirmação pelo condutor nesta solicitação, independente das configurações do cadastro da empresa (ou da central) — vale tanto sobre \"Tornar os códigos de confirmação de entrega obrigatórios\" quanto sobre \"Solicitar código de confirmação de entrega dos pedidos\". Envie `true` para exigir; omitir o campo ou enviar `false` mantém o que está configurado — o parâmetro nunca dispensa uma exigência já configurada. Ao enviar `true`, o `codigo_confirmacao` passa a ser obrigatório em todas as paradas: sem ele o condutor não teria o que informar para concluir a entrega, e a solicitação é recusada com `400 CODIGO_CONFIRMACAO_OBRIGATORIO` (código 136). Pedidos do iFood continuam exigindo o código, por ser regra da própria integração. Uma vez criada com `true`, a exigência não é removível: não há ação de operador que a dispense (o \"prosseguir sem código\" da plataforma atende os pedidos do iFood e os abertos com `url_confirmacao`) e a edição da entrega não altera o parâmetro. O código fica visível no painel da empresa, no link de acompanhamento do cliente e em `GET /entregas/{id}/links-rastreio`; se for preciso concluir sem ele, resta cancelar a entrega."
                   }
-                }
+                },
+                "required": [
+                  "forma_pagamento",
+                  "paradas"
+                ]
               }
             }
           }
@@ -8289,7 +8292,7 @@
     "/entregas/{id}/agrupar": {
       "post": {
         "summary": "Agrupar entregas em andamento",
-        "description": "Agrupa uma ou mais entregas em andamento na entrega agrupadora informada em `{id}`. A empresa, a categoria, o tipo de pagamento e o retorno são obtidos automaticamente da entrega agrupadora. A estimativa da corrida (valor, distância e tempo) e a ordenação das paradas também são calculadas pelo servidor. A entrega agrupadora deve estar em andamento (não finalizada, cancelada ou não atendida).",
+        "description": "Agrupa uma ou mais entregas em andamento na entrega agrupadora informada em `{id}`. A empresa, a categoria, o tipo de pagamento e o retorno são obtidos automaticamente da entrega agrupadora. A estimativa da corrida (valor, distância e tempo) e a ordenação das paradas também são calculadas pelo servidor. A entrega agrupadora e as entregas agrupadas não podem estar redistribuindo (`T`), em andamento (`E`), finalizadas (`F`), canceladas (`C`) ou já agrupadas (`U`): nesses casos a resposta é 406. Entregas não atendidas (`N`) podem ser agrupadas. A agrupadora precisa ter o status de maior prioridade do grupo, na ordem A, S, G, P, D, N.",
         "parameters": [
           {
             "name": "id",
@@ -8500,7 +8503,7 @@
     "/entregas/{id}/agrupar/programadas": {
       "post": {
         "summary": "Agrupar entregas programadas a solicitações em andamento",
-        "description": "Agrupa uma ou mais entregas programadas na entrega agrupadora em andamento informada em `{id}`. Opcionalmente, também é possível agrupar entregas em andamento (`solicitacoes_agrupadas`). A empresa, a categoria, o tipo de pagamento e o retorno são obtidos automaticamente da entrega agrupadora. A estimativa da corrida e a ordenação das paradas também são calculadas pelo servidor.",
+        "description": "Agrupa uma ou mais entregas programadas na entrega agrupadora em andamento informada em `{id}`. Opcionalmente, também é possível agrupar entregas em andamento (`solicitacoes_agrupadas`). A empresa, a categoria, o tipo de pagamento e o retorno são obtidos automaticamente da entrega agrupadora. A estimativa da corrida e a ordenação das paradas também são calculadas pelo servidor. A entrega agrupadora e as entregas agrupadas não podem estar redistribuindo (`T`), em andamento (`E`), finalizadas (`F`), canceladas (`C`) ou já agrupadas (`U`): nesses casos a resposta é 406. Entregas não atendidas (`N`) podem ser agrupadas. A agrupadora precisa ter o status de maior prioridade do grupo, na ordem A, S, G, P, D, N.",
         "parameters": [
           {
             "name": "id",
@@ -9533,7 +9536,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Sucesso",
+            "description": "Sucesso. `codigo_confirmacao` é o código de 4 dígitos da parada, em texto, ou `null` quando a parada não tem código.",
             "content": {
               "application/json": {
                 "example": {
@@ -9542,17 +9545,17 @@
                     {
                       "parada_id": "46868",
                       "link_rastreio": "https://link-rastreio/pedido/rastreio/fd15b167",
-                      "codigo_confirmacao": 3622
+                      "codigo_confirmacao": "3622"
                     },
                     {
                       "parada_id": "46869",
                       "link_rastreio": "https://link-rastreio/pedido/rastreio/2372c587",
-                      "codigo_confirmacao": 2335
+                      "codigo_confirmacao": "2335"
                     },
                     {
                       "parada_id": "46870",
                       "link_rastreio": "https://link-rastreio/pedido/rastreio/577e0a2f",
-                      "codigo_confirmacao": 1056
+                      "codigo_confirmacao": "1056"
                     }
                   ]
                 }
@@ -9724,7 +9727,7 @@
           "content": {
             "application/json": {
               "example": {
-                "forma_pagamento": "D (As formas de pagamento possíveis são: Dinheiro (`D`), Débito (`B`), Crédito (`C`), Pix (`X`), Picpay (`P`), Whatsapp (`H`), Faturado (`F`), Carteira de créditos (`R`))",
+                "forma_pagamento": "D",
                 "partida": {
                   "endereco": "Rua Evandro Câmara, 717",
                   "bairro": "Monte Carmelo",
@@ -9843,7 +9846,7 @@
                         },
                         "url_confirmacao": {
                           "type": "string",
-                          "description": "URL do seu sistema que valida o código de confirmação desta parada. Use quando o código fica no seu lado — por exemplo, um PDV integrado ao iFood — e não pode ser enviado na criação da entrega. Com a URL informada, o app pede os 4 dígitos ao condutor e, na confirmação, enviamos um `POST` com corpo JSON contendo `codigo_confirmacao`, `solicitacao_id`, `solicitacao_parada_id` e `id_externo`; responda `2xx` para confirmar a entrega e `4xx` para recusar o código. Requisitos: `https`, no máximo 500 caracteres e endereço público — fora disso a entrega é recusada com `400 URL_CONFIRMACAO_INVALIDA` (código 142). O tempo limite é de 10 segundos e não há reenvio: se o seu sistema não responder, a entrega não é confirmada e a liberação fica a cargo da central. Aceita apenas na criação da entrega e não é retornada nas consultas."
+                          "description": "URL do seu sistema que valida o código de confirmação desta parada. Use quando o código fica no seu lado — por exemplo, um PDV integrado ao iFood — e não pode ser enviado na criação da entrega. Com a URL informada, o app pede os 4 dígitos ao condutor e, na confirmação, enviamos um `POST` com corpo JSON contendo `codigo_confirmacao`, `solicitacao_id`, `solicitacao_parada_id` e `id_externo`; responda `2xx` para confirmar a entrega e `4xx` para recusar o código. Requisitos: `https`, no máximo 500 caracteres e endereço público — fora disso a entrega é recusada com `400 URL_CONFIRMACAO_INVALIDA` (código 142). O tempo limite é de 10 segundos e não há reenvio: se o seu sistema não responder, a entrega não é confirmada e a liberação fica a cargo da central. Aceita na criação e na edição da entrega programada e não é retornada nas consultas."
                         },
                         "valor_cobrar": {
                           "type": "number"
@@ -9853,11 +9856,11 @@
                   },
                   "data": {
                     "type": "string",
-                    "description": "Data da entrega programada. Formato YYYY-MM-DD"
+                    "description": "Data da entrega programada no formato `DD/MM/AAAA`."
                   },
                   "hora": {
                     "type": "string",
-                    "description": "Hora da entrega programada. Formato HH:MM:SS"
+                    "description": "Hora da entrega programada no formato `HH:MM:SS` ou `HH:MM`."
                   },
                   "info_antes_aceite": {
                     "type": "string",
@@ -9867,7 +9870,13 @@
                     "type": "boolean",
                     "description": "Torna obrigatória a inserção do código de confirmação pelo condutor nesta solicitação, independente das configurações do cadastro da empresa (ou da central) — vale tanto sobre \"Tornar os códigos de confirmação de entrega obrigatórios\" quanto sobre \"Solicitar código de confirmação de entrega dos pedidos\". Envie `true` para exigir; omitir o campo ou enviar `false` mantém o que está configurado — o parâmetro nunca dispensa uma exigência já configurada. Ao enviar `true`, o `codigo_confirmacao` passa a ser obrigatório em todas as paradas: sem ele o condutor não teria o que informar para concluir a entrega, e a solicitação é recusada com `400 CODIGO_CONFIRMACAO_OBRIGATORIO` (código 136). Pedidos do iFood continuam exigindo o código, por ser regra da própria integração. Uma vez criada com `true`, a exigência não é removível: não há ação de operador que a dispense (o \"prosseguir sem código\" da plataforma atende os pedidos do iFood e os abertos com `url_confirmacao`) e a edição da entrega não altera o parâmetro. O código fica visível no painel da empresa, no link de acompanhamento do cliente e em `GET /entregas/{id}/links-rastreio`; se for preciso concluir sem ele, resta cancelar a entrega. Em entregas programadas, o valor informado é aplicado à solicitação gerada no momento do disparo."
                   }
-                }
+                },
+                "required": [
+                  "data",
+                  "hora",
+                  "forma_pagamento",
+                  "paradas"
+                ]
               }
             }
           }
@@ -10037,7 +10046,7 @@
                   },
                   "hora": {
                     "type": "string",
-                    "description": "Hora do disparo no formato `HH:MM:SS`."
+                    "description": "Hora do disparo no formato `HH:MM:SS` ou `HH:MM`."
                   },
                   "forma_pagamento": {
                     "type": "string",
@@ -10117,7 +10126,11 @@
                         },
                         "codigo_confirmacao": {
                           "type": "string",
-                          "description": "Código de confirmação da entrega, com **4 dígitos** (de `0001` a `9999`), informado pelo condutor no app no momento da entrega. Se a entrega foi criada com `url_confirmacao`, quem valida o código é o seu sistema e este campo é ignorado — a URL não é alterada por este endpoint."
+                          "description": "Código de confirmação da entrega, com **4 dígitos** (de `0001` a `9999`), informado pelo condutor no app no momento da entrega. Se a parada usa `url_confirmacao`, quem valida o código é o seu sistema e este campo é ignorado."
+                        },
+                        "url_confirmacao": {
+                          "type": "string",
+                          "description": "URL do seu sistema que valida o código de confirmação desta parada, com as mesmas regras da criação. As paradas são recriadas a partir do corpo enviado: reenvie a URL em cada edição. Uma parada enviada sem `url_confirmacao` deixa de usar a validação no seu sistema."
                         },
                         "id_externo": {
                           "type": "string"
@@ -10137,7 +10150,9 @@
               "application/json": {
                 "example": {
                   "success": true,
-                  "id_mch": 90976
+                  "data": {
+                    "id_mch": 90976
+                  }
                 }
               }
             }
@@ -10146,28 +10161,45 @@
             "description": "Requisição inválida",
             "content": {
               "application/json": {
-                "example": {
-                  "success": false,
-                  "errors": [
-                    {
-                      "code": 0,
-                      "message": "Descrição do erro"
+                "examples": {
+                  "requisicao_invalida": {
+                    "summary": "Requisição inválida",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Descrição do erro"
+                        }
+                      ]
                     }
-                  ]
+                  },
+                  "usuario_invalido": {
+                    "summary": "Usuário ou senha inválidos",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 1,
+                          "message": "Usuário e/ou senhas inválidos."
+                        }
+                      ]
+                    }
+                  }
                 }
               }
             }
           },
           "401": {
-            "description": "Não autorizado",
+            "description": "Chave de API inválida",
             "content": {
               "application/json": {
                 "example": {
                   "success": false,
                   "errors": [
                     {
-                      "code": 0,
-                      "message": "Usuário e/ou senhas inválidos."
+                      "code": "B4",
+                      "message": "Você não está autorizado a acessar este recurso."
                     }
                   ]
                 }
@@ -10203,7 +10235,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Sucesso. O campo `estimativa` reflete os novos valores calculados com base nas entregas restantes. Pode ser `null` caso o serviço de rotas esteja indisponível.",
+            "description": "Sucesso. O campo `estimativa` reflete os novos valores calculados com base nas entregas restantes. Se o recálculo não for possível, a exclusão é desfeita e a resposta é 500 com `code` 0 e a mensagem `Falha na operação`.",
             "content": {
               "application/json": {
                 "example": {
@@ -10249,23 +10281,19 @@
                         }
                       ]
                     }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Não encontrado",
-            "content": {
-              "application/json": {
-                "example": {
-                  "success": false,
-                  "errors": [
-                    {
-                      "code": 136,
-                      "message": "Entrega não encontrada."
+                  },
+                  "entrega_nao_encontrada": {
+                    "summary": "Entrega não encontrada",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 136,
+                          "message": "Entrega não encontrada."
+                        }
+                      ]
                     }
-                  ]
+                  }
                 }
               }
             }
@@ -10276,7 +10304,7 @@
     "/entregas/programadas/{id}/cancelar": {
       "post": {
         "summary": "Cancelar entrega programada",
-        "description": "Cancela (mudando para status C), a solicitação programada informada. A solicitação não pode estar com o status aguardando (A).",
+        "description": "Cancela (mudando para status C), a solicitação programada informada. Só é possível cancelar a solicitação programada que está aguardando o disparo (situação `A`).",
         "parameters": [
           {
             "name": "id",
@@ -10372,7 +10400,7 @@
     "/entregas/empresas/creditos/saldo": {
       "get": {
         "summary": "Obter saldo da empresa",
-        "description": "As empresas podem possuir carteiras de crédito, com isso, esse endpoint permite verificar o saldo em créditos para a empresa em questão.\nO tipo de identificação, é uma forma de identificação da empresa, desta forma de acordo com o tipo de identificação, o valor da identificação da empresa irá respeitar a regra do tipo enviado.\n- `F`: CPF da empresa\n- `J`: CNPJ da empresa\n- `T`: Telefone do condutor\n- `C`: Número do contrato\n- `I`: Identificador da empresa",
+        "description": "As empresas podem possuir carteiras de crédito, com isso, esse endpoint permite verificar o saldo em créditos para a empresa em questão.\nO tipo de identificação, é uma forma de identificação da empresa, desta forma de acordo com o tipo de identificação, o valor da identificação da empresa irá respeitar a regra do tipo enviado.\n- `F`: CPF da empresa\n- `J`: CNPJ da empresa\n- `T`: Telefone da empresa\n- `C`: Número do contrato\n- `I`: Identificador da empresa",
         "parameters": [
           {
             "name": "tipo_identificacao",
@@ -10420,7 +10448,7 @@
     "/entregas/empresas/creditos/recargas": {
       "post": {
         "summary": "Recarregar créditos da empresa",
-        "description": "As empresas podem possuir carteiras de crédito, com isso, esse endpoint permite adicionar créditos para a empresa em questão.\nO tipo de identificação, é uma forma de identificação da empresa, desta forma de acordo com o tipo de identificação, o valor da identificação da empresa irá respeitar a regra do tipo enviado.\n- `F`: CPF da empresa\n- `J`: CNPJ da empresa\n- `T`: Telefone do condutor\n- `C`: Número do contrato\n- `I`: Identificador da empresa",
+        "description": "As empresas podem possuir carteiras de crédito, com isso, esse endpoint permite adicionar créditos para a empresa em questão.\nO tipo de identificação, é uma forma de identificação da empresa, desta forma de acordo com o tipo de identificação, o valor da identificação da empresa irá respeitar a regra do tipo enviado.\n- `F`: CPF da empresa\n- `J`: CNPJ da empresa\n- `T`: Telefone da empresa\n- `C`: Número do contrato\n- `I`: Identificador da empresa",
         "requestBody": {
           "required": true,
           "content": {
@@ -10477,7 +10505,7 @@
     "/entregas/empresas/creditos/saques": {
       "post": {
         "summary": "Sacar créditos da empresa",
-        "description": "As empresas podem possuir carteiras de crédito, com isso, esse endpoint permite sacar créditos para a empresa em questão.\nO tipo de identificação, é uma forma de identificação da empresa, desta forma de acordo com o tipo de identificação, o valor da identificação da empresa irá respeitar a regra do tipo enviado.\n- `F`: CPF da empresa\n- `J`: CNPJ da empresa\n- `T`: Telefone do condutor\n- `C`: Número do contrato\n- `I`: Identificador da empresa",
+        "description": "As empresas podem possuir carteiras de crédito, com isso, esse endpoint permite sacar créditos para a empresa em questão.\nO tipo de identificação, é uma forma de identificação da empresa, desta forma de acordo com o tipo de identificação, o valor da identificação da empresa irá respeitar a regra do tipo enviado.\n- `F`: CPF da empresa\n- `J`: CNPJ da empresa\n- `T`: Telefone da empresa\n- `C`: Número do contrato\n- `I`: Identificador da empresa",
         "requestBody": {
           "required": true,
           "content": {
@@ -10624,6 +10652,8 @@
                   "situacao_cadastral",
                   "categorias",
                   "tipos_pagamento",
+                  "aceita_ticket",
+                  "aceita_voucher",
                   "cobrar_retorno",
                   "obrigar_finalizacao_com_retorno_pela_empresa",
                   "solicitacao_rapida"
@@ -10659,6 +10689,7 @@
                     "type": "object",
                     "required": [
                       "logradouro",
+                      "uf",
                       "cidade",
                       "bairro",
                       "cep"
@@ -10681,14 +10712,7 @@
                         "type": "string"
                       },
                       "cep": {
-                        "oneOf": [
-                          {
-                            "type": "integer"
-                          },
-                          {
-                            "type": "string"
-                          }
-                        ]
+                        "type": "string"
                       }
                     }
                   },
@@ -10700,14 +10724,7 @@
                     ],
                     "properties": {
                       "ddd": {
-                        "oneOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "integer"
-                          }
-                        ]
+                        "type": "string"
                       },
                       "numero": {
                         "type": "string"
@@ -10747,6 +10764,14 @@
                       ]
                     },
                     "description": "Array vazio indica todos os tipos. B: Débito (máquina), C: Crédito (máquina), D: Dinheiro, F: Faturado, H: Whatsapp, P: Picpay, R: Carteira de Créditos, X: Pix"
+                  },
+                  "aceita_ticket": {
+                    "type": "boolean",
+                    "description": "Indica se a empresa aceita pagamento por ticket."
+                  },
+                  "aceita_voucher": {
+                    "type": "boolean",
+                    "description": "Indica se a empresa aceita pagamento por voucher."
                   },
                   "area_atuacao_empresa_id": {
                     "type": "integer"
@@ -10792,6 +10817,7 @@
                 "nome_fantasia": "Teste",
                 "endereco": {
                   "logradouro": "Rua 1",
+                  "uf": "SP",
                   "cidade": "Barretos",
                   "bairro": "Centro",
                   "cep": "14783-215"
@@ -10803,6 +10829,8 @@
                 "situacao_cadastral": "A",
                 "categorias": [],
                 "tipos_pagamento": [],
+                "aceita_ticket": false,
+                "aceita_voucher": false,
                 "cobrar_retorno": false,
                 "obrigar_finalizacao_com_retorno_pela_empresa": false,
                 "solicitacao_rapida": {
@@ -10960,8 +10988,8 @@
                   },
                   "empresas": {
                     "type": "array",
-                    "description": "IDs das empresas a serem atualizadas. Limite máximo de 1000 itens.",
-                    "maxItems": 1000,
+                    "description": "IDs das empresas a serem atualizadas. Limite máximo de 200 itens.",
+                    "maxItems": 200,
                     "items": {
                       "type": "integer"
                     }
@@ -10989,7 +11017,7 @@
                         "X"
                       ]
                     },
-                    "description": "Array vazio indica todos os tipos. B: Débito (máquina), C: Crédito (máquina), D: Dinheiro, F: Faturado, H: Whatsapp, P: Picpay, R: Carteira de Créditos, X: Pix"
+                    "description": "Array vazio ou ausente mantém as formas de pagamento atuais. B: Débito (máquina), C: Crédito (máquina), D: Dinheiro, F: Faturado, H: Whatsapp, P: Picpay, R: Carteira de Créditos, X: Pix"
                   },
                   "area_atuacao_empresa_id": {
                     "type": "integer"

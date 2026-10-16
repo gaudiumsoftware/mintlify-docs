@@ -712,7 +712,7 @@
           {
             "name": "cpf",
             "in": "query",
-            "description": "CPF do condutor. Aceita valor completo ou parcial, com ou sem máscara, por exemplo: `123.456.789-09` ou `12345`.",
+            "description": "CPF completo do condutor, com ou sem máscara, por exemplo: `123.456.789-09` ou `12345678909`. A busca é exata: um CPF parcial não encontra o condutor.",
             "schema": {
               "oneOf": [
                 {
@@ -1355,8 +1355,8 @@
                 "properties": {
                   "condutores": {
                     "type": "array",
-                    "description": "Lista de IDs numéricos de condutores. Limite máximo de 1000 itens.",
-                    "maxItems": 1000,
+                    "description": "Lista de IDs numéricos de condutores. Limite máximo de 100 itens.",
+                    "maxItems": 100,
                     "items": {
                       "type": "integer"
                     }
@@ -2704,7 +2704,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "JSON_INVALIDO"
+                          "message": "JSON inválido"
                         }
                       ]
                     }
@@ -2719,7 +2719,7 @@
     "/configuracoes/areas-geograficas": {
       "get": {
         "summary": "Listar áreas geográficas",
-        "description": "Responsável por listar as áreas de bloqueio disponíveis para central.",
+        "description": "Lista as áreas geográficas da central que não são áreas de tarifa: as áreas de filial e as cercas eletrônicas. São essas áreas que podem ser usadas nos bloqueios e nas permissões dos condutores.",
         "parameters": [
           {
             "name": "limite",
@@ -6076,7 +6076,7 @@
         }
       }
     },
-    "/corridas/empresas/{id}/centros-custo": {
+    "/corridas/empresas/{id}/centro-custo": {
       "get": {
         "summary": "Listar centros de custo da empresa",
         "description": "Lista centros de custo de uma empresa para uso no domínio de corridas.",
@@ -9900,7 +9900,7 @@
       },
       "put": {
         "summary": "Substituir faixas de distância da dinâmica",
-        "description": "Substitui o conjunto inteiro de faixas de distância da dinâmica da área. Envie as faixas em ordem crescente informando só o limite final de cada uma (`km_maximo`): a primeira começa em 0 km, cada faixa começa no limite da anterior e a última é sempre aberta, então o `km_maximo` dela é ignorado.\n\nRegras, as mesmas da tela da central:\n- de 2 a 10 faixas, ou a partir de 1 quando há valores por categoria;\n- `km_maximo` crescente, com no máximo uma casa decimal;\n- um único `tipo_calculo` para todas as faixas. Com `M`, os valores ficam entre 1.1 e 5, com no máximo uma casa decimal; com `F`, entre 0.5 e 99.9, com no máximo duas, e o valor adicional precisa estar liberado para a central;\n- com `valores` por categoria, todas as categorias de `categorias_elegiveis` precisam estar em todas as faixas, e o `valor` de cada faixa precisa ser igual ao da primeira categoria elegível, que é a base da matriz;\n- área em automação que altera o fator não aceita faixas.\n\nLista `faixas` vazia volta a área para valor único, mantendo o valor da primeira faixa. Para mudar também o `tipo_calculo`, use depois `PATCH /dinamicas/area/{id}`.\n\nEnviar o mesmo conjunto que já está configurado não cria versão nova e responde \"Nenhuma alteração detectada.\". O `id` da área não muda com este endpoint. Já o `PATCH` de nome ou de vértices cria uma área nova: depois deles, use o `id` devolvido.\n\nCom `versao`, a resposta é 409 se a dinâmica tiver sido alterada depois da sua leitura e o conjunto enviado for diferente do vigente. Uma alteração em andamento na mesma área também responde 409; reenvie em instantes.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "description": "Substitui o conjunto inteiro de faixas de distância da dinâmica da área. Envie as faixas em ordem crescente informando só o limite final de cada uma (`km_maximo`): a primeira começa em 0 km, cada faixa começa no limite da anterior e a última é sempre aberta: envie o `km_maximo` dela nulo ou omita o campo. Um valor ali é recusado com 400 (`A última faixa é sempre aberta: envie km_maximo nulo ou omita o campo.`).\n\nRegras, as mesmas da tela da central:\n- de 2 a 10 faixas, ou a partir de 1 quando há valores por categoria;\n- `km_maximo` crescente, com no máximo uma casa decimal;\n- um único `tipo_calculo` para todas as faixas. Com `M`, os valores ficam entre 1.1 e 5, com no máximo uma casa decimal; com `F`, entre 0.5 e 99.9, com no máximo duas, e o valor adicional precisa estar liberado para a central;\n- com `valores` por categoria, todas as categorias de `categorias_elegiveis` precisam estar em todas as faixas, e o `valor` de cada faixa precisa ser igual ao da primeira categoria elegível, que é a base da matriz;\n- área em automação que altera o fator não aceita faixas.\n\nLista `faixas` vazia volta a área para valor único, mantendo o valor da primeira faixa. Para mudar também o `tipo_calculo`, use depois `PATCH /dinamicas/area/{id}`.\n\nEnviar o mesmo conjunto que já está configurado não cria versão nova e responde \"Nenhuma alteração detectada.\". O `id` da área não muda com este endpoint. Já o `PATCH` de nome ou de vértices cria uma área nova: depois deles, use o `id` devolvido.\n\nCom `versao`, a resposta é 409 se a dinâmica tiver sido alterada depois da sua leitura e o conjunto enviado for diferente do vigente. Uma alteração em andamento na mesma área também responde 409; reenvie em instantes.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
         "parameters": [
           {
             "name": "id",
@@ -10540,7 +10540,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "JSON_INVALIDO"
+                          "message": "JSON inválido"
                         }
                       ]
                     }
@@ -10645,6 +10645,8 @@
                   "situacao_cadastral",
                   "categorias",
                   "tipos_pagamento",
+                  "aceita_ticket",
+                  "aceita_voucher",
                   "cobrar_retorno",
                   "obrigar_finalizacao_com_retorno_pela_empresa",
                   "solicitacao_rapida"
@@ -10680,6 +10682,7 @@
                     "type": "object",
                     "required": [
                       "logradouro",
+                      "uf",
                       "cidade",
                       "bairro",
                       "cep"
@@ -10702,14 +10705,7 @@
                         "type": "string"
                       },
                       "cep": {
-                        "oneOf": [
-                          {
-                            "type": "integer"
-                          },
-                          {
-                            "type": "string"
-                          }
-                        ]
+                        "type": "string"
                       }
                     }
                   },
@@ -10721,14 +10717,7 @@
                     ],
                     "properties": {
                       "ddd": {
-                        "oneOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "integer"
-                          }
-                        ]
+                        "type": "string"
                       },
                       "numero": {
                         "type": "string"
@@ -10768,6 +10757,14 @@
                       ]
                     },
                     "description": "Array vazio indica todos os tipos. B: Débito (máquina), C: Crédito (máquina), D: Dinheiro, F: Faturado, H: Whatsapp, P: Picpay, R: Carteira de Créditos, X: Pix"
+                  },
+                  "aceita_ticket": {
+                    "type": "boolean",
+                    "description": "Indica se a empresa aceita pagamento por ticket."
+                  },
+                  "aceita_voucher": {
+                    "type": "boolean",
+                    "description": "Indica se a empresa aceita pagamento por voucher."
                   },
                   "area_atuacao_empresa_id": {
                     "type": "integer"
@@ -10813,6 +10810,7 @@
                 "nome_fantasia": "Teste",
                 "endereco": {
                   "logradouro": "Rua 1",
+                  "uf": "SP",
                   "cidade": "Barretos",
                   "bairro": "Centro",
                   "cep": "14783-215"
@@ -10824,6 +10822,8 @@
                 "situacao_cadastral": "A",
                 "categorias": [],
                 "tipos_pagamento": [],
+                "aceita_ticket": false,
+                "aceita_voucher": false,
                 "cobrar_retorno": false,
                 "obrigar_finalizacao_com_retorno_pela_empresa": false,
                 "solicitacao_rapida": {
@@ -10872,8 +10872,8 @@
                   },
                   "empresas": {
                     "type": "array",
-                    "description": "IDs das empresas a serem atualizadas. Limite máximo de 1000 itens.",
-                    "maxItems": 1000,
+                    "description": "IDs das empresas a serem atualizadas. Limite máximo de 200 itens.",
+                    "maxItems": 200,
                     "items": {
                       "type": "integer"
                     }
@@ -10901,7 +10901,7 @@
                         "X"
                       ]
                     },
-                    "description": "Array vazio indica todos os tipos. B: Débito (máquina), C: Crédito (máquina), D: Dinheiro, F: Faturado, H: Whatsapp, P: Picpay, R: Carteira de Créditos, X: Pix"
+                    "description": "Array vazio ou ausente mantém as formas de pagamento atuais. B: Débito (máquina), C: Crédito (máquina), D: Dinheiro, F: Faturado, H: Whatsapp, P: Picpay, R: Carteira de Créditos, X: Pix"
                   },
                   "area_atuacao_empresa_id": {
                     "type": "integer"
