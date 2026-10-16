@@ -68,6 +68,7 @@
                       "pages/v2/referencia/dinamicas/endpoint/get-vertices",
                       "pages/v2/referencia/dinamicas/endpoint/get-faixas",
                       "pages/v2/referencia/dinamicas/endpoint/get-sem-area",
+                      "pages/v2/referencia/dinamicas/endpoint/post-area",
                       "pages/v2/referencia/dinamicas/endpoint/patch-area",
                       "pages/v2/referencia/dinamicas/endpoint/patch-vertices",
                       "pages/v2/referencia/dinamicas/endpoint/put-faixas",
@@ -103,6 +104,12 @@
                       "pages/v2/referencia/empresas/endpoint/post",
                       "pages/v2/referencia/empresas/endpoint/put",
                       "pages/v2/referencia/empresas/endpoint/put-batch"
+                    ]
+                  },
+                  {
+                    "group": "Financeiro",
+                    "pages": [
+                      "pages/v2/referencia/financeiro/endpoint/get-extrato"
                     ]
                   },
                   {
@@ -406,6 +413,7 @@
                       "pages/v2/entregas/dinamicas/endpoint/get-area",
                       "pages/v2/entregas/dinamicas/endpoint/get-faixas",
                       "pages/v2/entregas/dinamicas/endpoint/get-sem-area",
+                      "pages/v2/entregas/dinamicas/endpoint/post-area",
                       "pages/v2/entregas/dinamicas/endpoint/patch-area",
                       "pages/v2/entregas/dinamicas/endpoint/patch-vertices",
                       "pages/v2/entregas/dinamicas/endpoint/put-faixas",
@@ -440,6 +448,12 @@
                       "pages/v2/entregas/empresas/endpoint/post",
                       "pages/v2/entregas/empresas/endpoint/put",
                       "pages/v2/entregas/empresas/endpoint/put-batch"
+                    ]
+                  },
+                  {
+                    "group": "Financeiro",
+                    "pages": [
+                      "pages/v2/entregas/financeiro/endpoint/get-extrato"
                     ]
                   },
                   {
