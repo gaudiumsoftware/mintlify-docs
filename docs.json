@@ -106,6 +106,12 @@
                     ]
                   },
                   {
+                    "group": "Financeiro",
+                    "pages": [
+                      "pages/v2/referencia/financeiro/endpoint/get-extrato"
+                    ]
+                  },
+                  {
                     "group": "Cupons",
                     "pages": [
                       "pages/v2/referencia/cupons/endpoint/post",
@@ -440,6 +446,12 @@
                       "pages/v2/entregas/empresas/endpoint/post",
                       "pages/v2/entregas/empresas/endpoint/put",
                       "pages/v2/entregas/empresas/endpoint/put-batch"
+                    ]
+                  },
+                  {
+                    "group": "Financeiro",
+                    "pages": [
+                      "pages/v2/entregas/financeiro/endpoint/get-extrato"
                     ]
                   },
                   {
