@@ -4046,7 +4046,7 @@
     "/solicitacaoStatus": {
       "get": {
         "summary": "Status da solicitação",
-        "description": "Informa o status da solicitação informada. Os status podem ser: Distribuindo (D), Aguardando aceite (G), Pendente (P), Não atendida (N), Aceita (A), Em espera (S), Em andamento (E), Finalizada (F) ou Cancelada (C).",
+        "description": "Informa o status da solicitação informada. Os status podem ser: Distribuindo (D), Aguardando aceite (G), Pendente (P), Não atendida (N), Aceita (A), Em espera (S), Em andamento (E), Finalizada (F) ou Cancelada (C). Para centrais habilitadas, a resposta também traz a fase da solicitação aceita (fase) e quando o entregador ficou próximo, chegou e entrou em espera prolongada.",
         "parameters": [
           {
             "name": "id_mch",
@@ -4064,12 +4064,69 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "response": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "D",
+                            "G",
+                            "P",
+                            "N",
+                            "A",
+                            "S",
+                            "E",
+                            "F",
+                            "C"
+                          ]
+                        },
+                        "fase": {
+                          "type": "string",
+                          "nullable": true,
+                          "enum": [
+                            "a_caminho",
+                            "proximo",
+                            "no_local",
+                            "espera_prolongada"
+                          ],
+                          "description": "Fase da solicitação aceita (status A): a_caminho (o entregador está indo ao local de partida), proximo (o entregador está nos arredores), no_local (o entregador chegou) ou espera_prolongada (a espera passou do tempo previsto). Vale a fase mais avançada já registrada; nem todo atendimento registra a fase proximo, então a fase pode ir de a_caminho direto para no_local. Nos demais status, null. Disponível para centrais habilitadas pela Machine. Sem a habilitação, a resposta traz só o status."
+                        },
+                        "data_hora_proximo": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true,
+                          "description": "Data e hora (UTC, ISO 8601) em que o entregador chegou aos arredores do local de partida, ou null. Disponível para centrais habilitadas pela Machine. Sem a habilitação, a resposta traz só o status."
+                        },
+                        "data_hora_chegada": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true,
+                          "description": "Data e hora (UTC, ISO 8601) em que o entregador chegou ao local de partida, ou null. Disponível para centrais habilitadas pela Machine. Sem a habilitação, a resposta traz só o status."
+                        },
+                        "data_hora_espera_prolongada": {
+                          "type": "string",
+                          "format": "date-time",
+                          "nullable": true,
+                          "description": "Data e hora (UTC, ISO 8601) do último aviso de espera prolongada no local de partida, ou null. Disponível para centrais habilitadas pela Machine. Sem a habilitação, a resposta traz só o status."
+                        }
+                      }
+                    }
+                  }
                 },
                 "example": {
                   "success": true,
                   "response": {
-                    "status": "A"
+                    "status": "A",
+                    "fase": "no_local",
+                    "data_hora_proximo": "2026-10-16T14:07:12Z",
+                    "data_hora_chegada": "2026-10-16T14:07:35Z",
+                    "data_hora_espera_prolongada": null
                   }
                 }
               }
