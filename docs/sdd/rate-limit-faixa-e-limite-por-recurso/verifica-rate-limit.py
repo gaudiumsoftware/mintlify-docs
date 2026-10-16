@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Compara a seção "Rate limit" de uma introdução com o ratelimit-rules.yml da main do mchapigw.
+"""Compara a página "Rate limit" de cada aba com o ratelimit-rules.yml da main do mchapigw.
 
-Uso: python3 verifica-rate-limit.py pages/v2/referencia/introducao.mdx [...]
+Uso: python3 verifica-rate-limit.py pages/v2/referencia/rate-limit.mdx [...]
 
 Para cada linha da tabela de grupos, o limite documentado deve ser igual ao count de
 action: block da regra api-key que casa cada path. Para cada linha da tabela de
@@ -46,6 +46,9 @@ def regra_do_path(por_header, path):
 
 
 def secao_rate_limit(texto):
+    # Na página rate-limit.mdx o conteúdo inteiro é a seção; a introdução antiga tinha o título.
+    if "## Rate limit" not in texto:
+        return texto
     ini = texto.index("## Rate limit")
     fim = texto.index("\n## ", ini + 1)
     return texto[ini:fim]

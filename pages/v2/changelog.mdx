@@ -154,6 +154,75 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="22 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="codigos-de-erro" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Códigos de erro próprios
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      As recusas da estimativa, da criação e do cancelamento de corrida que voltavam com <code>code: 0</code> passam a
+      ter código próprio, assim como os erros de validação do corpo da requisição. A documentação ganha a página
+      <a href="/pages/v2/referencia/codigos-de-erro"> Códigos de erro</a>, com a lista completa.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/corridas/estimativas" href="/pages/v2/referencia/corridas/endpoint/post-estimativas" />
+    <EndpointBadge method="POST" path="/api/v2/integracao/corridas" href="/pages/v2/referencia/corridas/endpoint/post-criar" />
+    <EndpointBadge method="POST" path="/api/v2/integracao/corridas/{id}/cancelar" href="/pages/v2/referencia/corridas/endpoint/post-cancelar" />
+
+    <ChangeSection type="changed">
+      <p style={{ marginBottom: "10px" }}>Códigos que já estão valendo:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><code>147</code> e <code>148</code> — trajeto indisponível e falha ao calcular a rota.</li>
+        <li><code>149</code> e <code>150</code> — sem motoristas por perto e sem motoristas que atendam aos filtros.</li>
+        <li><code>151</code> e <code>152</code> — corrida que não pode mais ser cancelada e falha ao gravar o cancelamento.</li>
+        <li><code>153</code> — passageiro já tem uma corrida em atendimento.</li>
+        <li><code>154</code> a <code>156</code> — nenhuma categoria disponível, sem tarifa para o trajeto e percurso acima do limite da tarifa.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="changed">
+      <p style={{ marginBottom: "10px" }}>Códigos que entram com esta atualização:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><code>234</code> — partida fora da área atendida pela central.</li>
+        <li><code>158</code> a <code>166</code> — cupom expirado, de outra central, fora da área, esgotado, acima do limite de uso, exclusivo para a primeira corrida, não aplicável, acima do valor máximo ou sem destino.</li>
+        <li><code>167</code> a <code>175</code> — situação do passageiro: inexistente, de outra central, suspenso, inativo, aguardando ativação, bloqueado, deletado, em deleção ou suspenso por avaliação.</li>
+        <li><code>176</code> a <code>185</code> — data e hora do agendamento, categoria que não aceita agendamento ou só aceita, categoria exclusiva, tarifa e estimativa expiradas.</li>
+        <li><code>186</code> a <code>199</code> — motorista indicado na solicitação que não existe, não atende a corrida ou está indisponível.</li>
+        <li><code>200</code> a <code>211</code> — corrida corporativa, voucher, e-Ticket e saldo de funcionário ou centro de custo.</li>
+        <li><code>212</code> a <code>217</code> — central fora de operação, coordenada fora da faixa e cidade inválida.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="changed">
+      <p style={{ marginBottom: "10px" }}>
+        Os erros do validador padrão do corpo da v2 passam de <code>0</code> a um código por regra
+        (<code>218</code> a <code>233</code>): campo numérico, texto, booleano, lista, tamanho máximo, valor fora da
+        lista aceita e formatos de data, hora e documento. Campo obrigatório continua com <code>2</code>. Regras
+        próprias de alguns endpoints, como valor mínimo ou faixa, continuam com <code>0</code>.
+      </p>
+    </ChangeSection>
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: 0 }}>
+        Exemplos de erro na estimativa, na criação e no cancelamento de corrida, e a página
+        <a href="/pages/v2/referencia/codigos-de-erro"> Códigos de erro</a>.
+      </p>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "14px",
+      lineHeight: "1.6",
+    }}>
+      Até a publicação, esses erros continuam chegando com <code>code: 0</code> e a mesma mensagem. Trate o erro pelo
+      <code> code</code>, e não pelo texto: a <code>message</code> muda conforme o tipo da central e alguns textos trazem
+      valores dinâmicos.
+    </div>
+  </Entry>
+
   <Entry date="20 out 2026">
     <h2 id="criar-dinamica-area" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Criação de dinâmica por área
@@ -297,7 +366,7 @@ export const EndpointBadge = ({ method, path, href }) => (
         <li><ParamBadge name="area_bloqueio" />, com <ParamBadge name="hora_bloqueio_inicio" /> e <ParamBadge name="hora_bloqueio_fim" /> opcionais (<code>HH:mm</code>), torna a área uma área de bloqueio da central. Central que faz somente entregas recebe <code>400</code>.</li>
         <li>Resposta <code>201</code> com <ParamBadge name="id" />, os campos gravados e o polígono em GeoJSON.</li>
         <li>Nome já usado por outra área da central, sem diferenciar maiúsculas, minúsculas e acentos, responde <code>409</code>. Gestor com empresa vinculada recebe <code>400</code> com <code>code</code> 68.</li>
-        <li>Limite próprio de rate limit, 200 * faixa requisições por minuto. Detalhes na <a href="/pages/v2/referencia/introducao#rate-limit">introdução</a>.</li>
+        <li>Limite próprio de rate limit, 200 * faixa requisições por minuto. Detalhes na página <a href="/pages/v2/referencia/rate-limit">Rate limit</a>.</li>
       </ul>
     </ChangeSection>
   </Entry>
@@ -414,7 +483,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       Cada item é uma punição aplicada. Uma punição liberada antes do fim continua sendo um único item, com
       situação <code>R</code> e a data da liberação em <ParamBadge name="data_revogacao" />. Os horários seguem o fuso
       da central, sem indicação de fuso. Só há histórico das punições aplicadas a partir do lançamento. O endpoint tem limite de 10 requisições por minuto por{" "}
-      <code>api-key</code> — veja a seção <a href="/pages/v2/referencia/introducao#rate-limit">Rate limit</a>.
+      <code>api-key</code> — veja a seção <a href="/pages/v2/referencia/rate-limit">Rate limit</a>.
     </div>
   </Entry>
 
@@ -470,7 +539,7 @@ export const EndpointBadge = ({ method, path, href }) => (
         <li>Resposta <code>201</code> com <ParamBadge name="id" /> e <ParamBadge name="codigo" /> de cada cupom, na ordem enviada.</li>
         <li>Todos os erros de todos os itens voltam juntos, com <ParamBadge name="field" /> no formato <code>cupons.N.campo</code> e os mesmos <code>code</code> do <code>POST /cupons</code>. Nenhum cupom é criado quando há erro.</li>
         <li>A cota de cada gerador é conferida somando os cupons já criados e os do lote; código repetido no lote ou já em uso é recusado.</li>
-        <li>Limite próprio de rate limit, 20 * faixa requisições por minuto, sem o limite por gerador. Detalhes na <a href="/pages/v2/referencia/introducao#rate-limit">introdução</a>.</li>
+        <li>Limite próprio de rate limit, 20 * faixa requisições por minuto, sem o limite por gerador. Detalhes na página <a href="/pages/v2/referencia/rate-limit">Rate limit</a>.</li>
       </ul>
     </ChangeSection>
   </Entry>
@@ -1042,7 +1111,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       A posição vem do serviço de localização em tempo real, a mesma fonte do mapa de condutores do painel.
       Condutor sem posição publicada recentemente não aparece na lista, mesmo estando livre. O retorno não é
       paginado: traz todos os condutores que atendem aos filtros. O endpoint tem limite de 10
-      requisições por minuto por <code>api-key</code> — veja a seção <a href="/pages/v2/referencia/introducao#rate-limit">Rate limit</a>.
+      requisições por minuto por <code>api-key</code> — veja a seção <a href="/pages/v2/referencia/rate-limit">Rate limit</a>.
     </div>
   </Entry>
 
