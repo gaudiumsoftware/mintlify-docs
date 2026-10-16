@@ -3158,7 +3158,7 @@
                   "success": false,
                   "errors": [
                     {
-                      "code": 73,
+                      "code": 218,
                       "message": "'id': Deve ser numérico."
                     }
                   ]
@@ -3240,7 +3240,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 158,
+                          "code": 235,
                           "message": "Programa de níveis indisponível."
                         }
                       ]
@@ -3293,7 +3293,7 @@
                   "success": false,
                   "errors": [
                     {
-                      "code": 159,
+                      "code": 236,
                       "message": "Falha na operação"
                     }
                   ]
