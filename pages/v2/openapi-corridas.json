@@ -8512,7 +8512,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 0,
+                          "code": 222,
                           "message": "'selecao.tipo': Deve estar dentre os valores: lista"
                         }
                       ]
@@ -8524,7 +8524,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 0,
+                          "code": 225,
                           "message": "'selecao.cliente_ids': Deve ter no máximo 10000 itens."
                         }
                       ]
@@ -8548,7 +8548,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 237,
+                          "code": 242,
                           "message": "Nenhum dos clientes informados pode participar do desafio."
                         }
                       ]
@@ -8612,7 +8612,7 @@
                   "success": false,
                   "errors": [
                     {
-                      "code": 235,
+                      "code": 240,
                       "message": "O desafio de passageiro não está liberado para esta central."
                     }
                   ]
@@ -8631,7 +8631,7 @@
                   "success": false,
                   "errors": [
                     {
-                      "code": 236,
+                      "code": 241,
                       "message": "A central já tem um desafio de passageiro ativo ou programado."
                     }
                   ]
@@ -8725,7 +8725,7 @@
                   "success": false,
                   "errors": [
                     {
-                      "code": 238,
+                      "code": 243,
                       "message": "Desafio de passageiro não encontrado ou não pertence à central autenticada."
                     }
                   ]
@@ -8744,7 +8744,7 @@
                   "success": false,
                   "errors": [
                     {
-                      "code": 239,
+                      "code": 244,
                       "message": "O desafio de passageiro já foi encerrado e não pode ser cancelado."
                     }
                   ]
