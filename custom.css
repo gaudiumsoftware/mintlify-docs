@@ -1,8 +1,10 @@
-/* Página inicial: sem seletor de versão e sem tabs de Corridas/Entregas */
+/* Página inicial: sem seletor de produto, sem seletor de versão e sem tabs */
 html[data-current-path="/"] .nav-tabs,
 html[data-current-path="/"] [data-component-part="version-select-trigger"],
+html[data-current-path="/"] [data-component-part="products-selector-trigger"],
 html[data-current-path="/pages/v2/welcome"] .nav-tabs,
-html[data-current-path="/pages/v2/welcome"] [data-component-part="version-select-trigger"] {
+html[data-current-path="/pages/v2/welcome"] [data-component-part="version-select-trigger"],
+html[data-current-path="/pages/v2/welcome"] [data-component-part="products-selector-trigger"] {
   display: none !important;
 }
 
