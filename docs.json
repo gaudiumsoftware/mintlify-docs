@@ -15,16 +15,16 @@
   ],
   "favicon": "/logo/machine-logo-transparente.png",
   "navigation": {
-    "tabs": [
+    "products": [
       {
-        "tab": "Corridas",
+        "product": "Corridas",
         "versions": [
           {
             "version": "v2",
             "tag": "Nova",
             "tabs": [
               {
-                "tab": "Corridas",
+                "tab": "Referência",
                 "groups": [
                   {
                     "group": "Introdução",
@@ -353,14 +353,14 @@
         ]
       },
       {
-        "tab": "Entregas",
+        "product": "Entregas",
         "versions": [
           {
             "version": "v2",
             "tag": "Nova",
             "tabs": [
               {
-                "tab": "Entregas",
+                "tab": "Referência",
                 "groups": [
                   {
                     "group": "Introdução",
