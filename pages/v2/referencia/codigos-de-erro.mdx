@@ -277,6 +277,7 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 | `74` | ERRO_AO_SALVAR_FUNCIONARIO | Falha ao cadastrar o passageiro como funcionário da empresa na abertura corporativa. Hoje, a mensagem chega como o identificador em maiúsculas. |
 | `112` | Empresa não possui cadastro ou não está ativa | Entrega aberta para empresa inativa. |
 | `127` | FUNCIONARIO_INVALIDO | Funcionário desligado ou inativo pedindo corrida com voucher/e-Ticket. Hoje, a mensagem chega como o identificador em maiúsculas. |
+| `235` | A empresa não possui cidade cadastrada. Cadastre a cidade da empresa ou envie o endereço de partida (partida.endereco e partida.bairro) na requisição. | Entrega sem `partida.endereco` e `partida.bairro` para uma empresa sem cidade cadastrada, que seria usada como partida. |
 | `200` *Em breve* | Cliente não habilitado para corridas corporativas. | Passageiro sem vínculo ativo com a empresa. |
 | `201` *Em breve* | Tipo de pagamento inconsistente. | Voucher e e-Ticket juntos, ou forma de pagamento incompatível com corrida corporativa. |
 | `202` *Em breve* | Tipo de pagamento não previsto. | Funcionário não pode usar voucher ou e-Ticket. |
