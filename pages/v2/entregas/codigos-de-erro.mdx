@@ -30,7 +30,7 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 |---|---|
 | `0` | Erro inesperado no processamento ("Falha na operação"), ou erro que ainda não tem código próprio. Nesse caso, a `message` descreve o motivo. |
 | sem `code` | Na v1, os erros de chave de acesso e de método HTTP chegam como uma lista de textos: `"errors": ["Chave da API inválida."]`. |
-| `B1`, `B4`, `B5`, `B6` | Na v2, os erros de chave de acesso e de usuário trazem um `code` em texto. Veja a tabela abaixo. |
+| `B1`, `B4`, `B5`, `B6` | Na v2, os erros de chave de acesso e de usuário trazem um `code` em texto. A exceção é a `api-key` não reconhecida, que chega com HTTP `403` e corpo em texto puro, sem `code`. Veja a tabela abaixo. |
 | `401`, `404` e `503` | Em algumas rotas da v2 que não repassam a operação para a v1 (como mensagens da corrida e posição de condutores), o `code` repete o status HTTP: credenciais inválidas (`401`), corrida que não pertence à central (`404`) e serviço indisponível (`503`). |
 
 ### Autenticação na v2
@@ -38,7 +38,8 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 | code | HTTP | Mensagem | Quando ocorre |
 |---|---|---|---|
 | `B1` | 400 | Chave da api não informada. | Nenhuma chave enviada no header. |
-| `B4` | 401 | Você não está autorizado a acessar este recurso. | `api-key` inexistente. |
+| sem `code` | 403 | `-` (texto puro, sem o envelope JSON) | `api-key` não reconhecida. É a resposta usual para uma chave inválida. |
+| `B4` | 401 | Você não está autorizado a acessar este recurso. | `api-key` inexistente, em situações excepcionais. Normalmente, uma chave não reconhecida recebe o `403` sem `code` da linha acima. |
 | `B5` | 401 | Usuário e/ou senhas inválidos. | Login ou senha do Basic Auth inválidos. |
 | `B6` | 403 | Você não tem permissão para acessar este recurso. | Rota exclusiva de empresa chamada por usuário sem empresa vinculada. |
 
