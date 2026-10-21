@@ -30,7 +30,7 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 |---|---|
 | `0` | Erro inesperado no processamento ("Falha na operação"), ou erro que ainda não tem código próprio. Nesse caso, a `message` descreve o motivo. |
 | sem `code` | Na v1, os erros de chave de acesso e de método HTTP chegam como uma lista de textos: `"errors": ["Chave da API inválida."]`. |
-| `B1` a `B6` | Na v2, os erros de chave de acesso e de usuário trazem um `code` em texto. Veja a tabela abaixo. |
+| `B1`, `B4`, `B5`, `B6` | Na v2, os erros de chave de acesso e de usuário trazem um `code` em texto. Veja a tabela abaixo. |
 | `401`, `404` e `503` | Em algumas rotas da v2 que não repassam a operação para a v1 (como mensagens da corrida e posição de condutores), o `code` repete o status HTTP: credenciais inválidas (`401`), corrida que não pertence à central (`404`) e serviço indisponível (`503`). |
 
 ### Autenticação na v2
@@ -275,7 +275,6 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 | `74` | ERRO_AO_SALVAR_FUNCIONARIO | Falha ao cadastrar o passageiro como funcionário da empresa na abertura corporativa. Hoje, a mensagem chega como o identificador em maiúsculas. |
 | `112` | Empresa não possui cadastro ou não está ativa | Entrega aberta para empresa inativa. |
 | `127` | FUNCIONARIO_INVALIDO | Funcionário desligado ou inativo pedindo corrida com voucher/e-Ticket. Hoje, a mensagem chega como o identificador em maiúsculas. |
-| `235` | A empresa não possui cidade cadastrada. Cadastre a cidade da empresa ou envie o endereço de partida (partida.endereco e partida.bairro) na requisição. | Entrega sem `partida.endereco` e `partida.bairro` para uma empresa sem cidade cadastrada, que seria usada como partida. |
 | `200` *Em breve* | Cliente não habilitado para corridas corporativas. | Passageiro sem vínculo ativo com a empresa. |
 | `201` *Em breve* | Tipo de pagamento inconsistente. | Voucher e e-Ticket juntos, ou forma de pagamento incompatível com corrida corporativa. |
 | `202` *Em breve* | Tipo de pagamento não previsto. | Funcionário não pode usar voucher ou e-Ticket. |
@@ -288,6 +287,7 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 | `209` *Em breve* | Seu saldo é insuficiente para efetuar corridas corporativas. | Saldo do funcionário insuficiente. |
 | `210` *Em breve* | Centro de custo não possui limite cadastrado para corridas corporativas. | Centro de custo sem limite cadastrado. |
 | `211` *Em breve* | Saldo do centro de custo é insuficiente para efetuar corridas corporativas. | Saldo do centro de custo insuficiente. |
+| `235` | A empresa não possui cidade cadastrada. Cadastre a cidade da empresa ou envie o endereço de partida (partida.endereco e partida.bairro) na requisição. | Entrega sem `partida.endereco` e `partida.bairro` para uma empresa sem cidade cadastrada, que seria usada como partida. |
 
 ## Entregas
 

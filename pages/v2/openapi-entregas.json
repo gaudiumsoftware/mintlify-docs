@@ -48,7 +48,7 @@
               "integer",
               "string"
             ],
-            "description": "Código do erro. É numérico na maioria dos casos e texto (`B1` a `B6`) nos erros de chave e de usuário da v2. Trate o erro por este campo, não pela mensagem."
+            "description": "Código do erro. É numérico na maioria dos casos e texto (`B1`, `B4`, `B5` e `B6`) nos erros de chave e de usuário da v2. Trate o erro por este campo, não pela mensagem."
           },
           "message": {
             "type": "string",
@@ -74,8 +74,32 @@
           },
           "errors": {
             "type": "array",
+            "description": "Lista de erros. O formato usual de cada item é `{code, message}`. Algumas operações devolvem o item como `{field, error}`, como texto solto ou dentro de uma lista aninhada; a descrição e os exemplos de cada resposta indicam o formato.",
             "items": {
-              "$ref": "#/components/schemas/ErroItem"
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ErroItem"
+                },
+                {
+                  "$ref": "#/components/schemas/ErroCampo"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/components/schemas/ErroItem"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
+              ]
             }
           }
         }
@@ -90,6 +114,24 @@
           "success": {
             "type": "boolean",
             "const": false
+          }
+        }
+      },
+      "ErroCampo": {
+        "type": "object",
+        "description": "Erro de um campo do corpo, sem `code`. Algumas operações devolvem este formato.",
+        "required": [
+          "field",
+          "error"
+        ],
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "Campo da requisição que causou o erro."
+          },
+          "error": {
+            "type": "string",
+            "description": "Descrição do erro em português."
           }
         }
       }
