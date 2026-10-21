@@ -194,6 +194,12 @@
                         ]
                       }
                     ]
+                  },
+                  {
+                    "group": "Login único",
+                    "pages": [
+                      "pages/v2/referencia/login-unico/endpoint/post-validar"
+                    ]
                   }
                 ]
               },
@@ -509,6 +515,12 @@
                       "pages/v2/entregas/consumidores/endpoint/enderecos-post",
                       "pages/v2/entregas/consumidores/endpoint/enderecos-patch",
                       "pages/v2/entregas/consumidores/endpoint/enderecos-delete"
+                    ]
+                  },
+                  {
+                    "group": "Login único",
+                    "pages": [
+                      "pages/v2/entregas/login-unico/endpoint/post-validar"
                     ]
                   }
                 ]
