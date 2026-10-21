@@ -93,15 +93,29 @@ O **Webhook de Status** é acionado sempre que uma solicitação passa por uma *
 
 ## Exemplo do Payload
 
+Em todo status, o payload traz os blocos `passenger`, com quem solicitou a entrega, e `driver`, com o condutor da solicitação.
+
 ```json
 {
- "datetime": "2025-08-29T13:20:05Z",
+ "datetime": "2025-08-29T13:24:40Z",
  "event_id": "550e8400-e29b-41d4-a716-446655440000",
- "company_id": 8,
  "request_id": 12345,
- "status_code": "A",
- "status_label": "ACEITA",
+ "status_code": "ER",
+ "status_label": "STOP_FINISHED",
  "stop_id": 567,
+ "passenger": {
+   "client_id": 4321,
+   "name": "Maria Souza",
+   "phone": "5511999998888"
+ },
+ "driver": {
+   "driver_id": 321,
+   "name": "João da Silva",
+   "phone": "5511988887777",
+   "cpf": "12345678901",
+   "vtr": "0421",
+   "category": "Executivo"
+ },
  "links": {
    "request": "https://api.taximachine.com.br/api/v1/request/12345",
    "driver": "https://api.taximachine.com.br/api/integracao/condutor?id=321",
@@ -109,6 +123,46 @@ O **Webhook de Status** é acionado sempre que uma solicitação passa por uma *
  }
 }
 ```
+
+No status Aceita (`A`), e só nele, o payload traz também o bloco `vehicle`, com o carro que vai chegar, e o campo `driver.pix_key`.
+
+```json
+{
+ "datetime": "2025-08-29T13:20:05Z",
+ "event_id": "550e8400-e29b-41d4-a716-446655440000",
+ "request_id": 12345,
+ "status_code": "A",
+ "status_label": "ACCEPTED",
+ "stop_id": null,
+ "passenger": {
+   "client_id": 4321,
+   "name": "Maria Souza",
+   "phone": "5511999998888"
+ },
+ "driver": {
+   "driver_id": 321,
+   "name": "João da Silva",
+   "phone": "5511988887777",
+   "cpf": "12345678901",
+   "vtr": "0421",
+   "category": "Executivo",
+   "pix_key": "joao.silva@exemplo.com.br"
+ },
+ "vehicle": {
+   "model": "Corolla XEi",
+   "plate": "ABC1D23",
+   "color": "Prata",
+   "color_hex": "c0c0c0"
+ },
+ "links": {
+   "request": "https://api.taximachine.com.br/api/v1/request/12345",
+   "driver": "https://api.taximachine.com.br/api/integracao/condutor?id=321",
+   "enterprise": "https://api.taximachine.com.br/api/integracao/empresa?empresa_id=987"
+ }
+}
+```
+
+> ℹ️ **Os blocos são aditivos**: `passenger`, `driver` e `vehicle` foram acrescentados ao payload sem alterar nenhum dos campos que já existiam. Quem já consome o webhook continua recebendo `datetime`, `event_id`, `request_id`, `status_code`, `status_label`, `stop_id` e `links` com o mesmo nome, formato e valor de antes, e não precisa mudar nada.
 
 ## Exemplo de apresentação do `status_label`
 
@@ -127,9 +181,10 @@ O **Webhook de Status** é acionado sempre que uma solicitação passa por uma *
 | `N` | `NOT_SERVED` | Solicitação não atendida ou buscando condutor |
 | `A` | `ACCEPTED` | Solicitação aceita |
 | `E` | `IN_PROGRESS` | Solicitação em andamento |
-| `C` | `CANCELLED` | Solicitação cancelada |
+| `C` | `CANCELED` | Solicitação cancelada |
 | `F` | `FINISHED` | Solicitação finalizada |
 | `U` | `GROUPED` | Solicitação agrupada em andamento |
+| `T` | `REDISTRIBUTED` | Solicitação sendo redistribuída para outro condutor |
 
 #### Como usar
 
@@ -143,18 +198,89 @@ O **Webhook de Status** é acionado sempre que uma solicitação passa por uma *
 | :--- | :--- | :--- | :--- |
 | `datetime` | ISO-8601 | SIM | Data e hora do evento gerado pela Machine. |
 | `event_id` | UUID | SIM | Identificação única do evento (idempotência). |
-| `company_id` | INT | SIM | Identificador da central |
 | `request_id` | INT | SIM | Identificador da solicitação |
 | `status_code` | VARCHAR(2) | SIM | Código do status |
 | `status_label` | ENUM | SIM | Status descritivo |
 | `stop_id` | INT | NÃO | Identificador da parada (preenchido apenas no status `STOP_FINISHED`) |
 | `links` | Object | SIM | URLs relacionadas ao evento. Inclui sempre `request` e pode incluir `enterprise` e `driver` (se aplicável) |
+| `passenger` | Object | SIM | Quem solicitou a entrega. As três chaves vêm sempre, com valor ou nulas. |
+| `driver` | Object | NÃO | Condutor da solicitação. Nulo enquanto a solicitação não tem condutor. |
+| `vehicle` | Object | NÃO | Veículo do condutor. Enviado apenas no status `ACCEPTED` (`A`). |
 
 ### Links no Payload
 
 - `links.request` -> acesso aos detalhes da solicitação
 - `links.enterprise` -> (opcional) referência à empresa
 - `links.driver` -> (opcional) referência ao condutor
+
+### Bloco `passenger`
+
+Enviado em todo status. As três chaves vêm sempre; o que não existe no cadastro vem nulo.
+
+| Campo | Formato | Requerido | Descrição |
+| :--- | :--- | :--- | :--- |
+| `client_id` | INT | SIM | Identificador do cliente dono da conta que abriu a solicitação. |
+| `name` | String | NÃO | Nome de quem solicitou a entrega. Nulo quando nenhuma das fontes tem o nome. |
+| `phone` | String | NÃO | Telefone de quem solicitou a entrega. Nulo quando nenhuma das fontes tem o telefone. |
+
+`name` e `phone` são o contato **da entrega**, que nem sempre é o titular da conta: quando a solicitação foi aberta em nome de outra pessoa, vêm os dados dela; caso contrário, vêm do cadastro do cliente. O `client_id` é sempre o da conta. Compare os dois lados se precisar saber se a entrega foi pedida para terceiro — o payload entrega o dado, não o rótulo.
+
+### Bloco `driver`
+
+Enviado em todo status, e nulo enquanto a solicitação não tem condutor (por exemplo em `DISTRIBUTING`, `WAITING_ACCEPTANCE` e `PENDING`).
+
+| Campo | Formato | Requerido | Descrição |
+| :--- | :--- | :--- | :--- |
+| `driver_id` | INT | SIM | Identificador do condutor na plataforma Machine. É o mesmo id de `links.driver`. |
+| `name` | String | SIM | Nome do condutor. |
+| `phone` | String | SIM | Telefone do cadastro do condutor. |
+| `cpf` | String | NÃO | CPF do condutor. Nulo quando não há CPF no cadastro. |
+| `vtr` | String | NÃO | Número da viatura no cadastro do condutor. Nulo quando não há viatura. |
+| `category` | String | NÃO | Categoria do condutor, como cadastrada pela central. |
+| `pix_key` | String | NÃO | Chave PIX do condutor. **Enviada apenas no status `ACCEPTED` (`A`)**; nos demais status a chave não aparece no bloco. Nula quando o condutor não tem chave cadastrada. |
+
+> ⚠️ **`pix_key` é dado pessoal**: ele é enviado para que você possa pagar o condutor por fora da plataforma. Trate-o como trata CPF — não registre em log e não repasse a quem não precisa dele.
+
+### Bloco `vehicle`
+
+Enviado **apenas** no status `ACCEPTED` (`A`), que é quando o carro que vai chegar fica definido. Nos demais status a chave `vehicle` não aparece no payload.
+
+| Campo | Formato | Requerido | Descrição |
+| :--- | :--- | :--- | :--- |
+| `model` | String | NÃO | Modelo do veículo. |
+| `plate` | String | NÃO | Placa do veículo. |
+| `color` | String | NÃO | Nome da cor do veículo, em português. |
+| `color_hex` | String | NÃO | Cor do veículo em hexadecimal, como está no cadastro. |
+
+Condutor sem veículo vinculado recebe o bloco com os quatro campos nulos — não é erro, é cadastro sem carro.
+
+`color` e `color_hex` descrevem a mesma cor em dois formatos. Use `color` para exibir ao usuário e `color_hex` para o resto. Se uma cor nova for cadastrada na plataforma antes de aparecer aqui, `color` vem nula e `color_hex` continua preenchida.
+
+| `color_hex` | `color` |
+| :--- | :--- |
+| `ffffff` | Branco |
+| `c0c0c0` | Prata |
+| `ffff00` | Amarelo |
+| `0000cd` | Azul |
+| `ff8c00` | Laranja |
+| `ff0000` | Vermelho |
+| `000000` | Preto |
+| `808080` | Cinza |
+| `00994c` | Verde |
+| `964b00` | Marrom |
+| `ff69b4` | Rosa |
+| `800080` | Roxo |
+| `ffd700` | Dourado |
+| `f5f5dc` | Bege |
+| `831d1c` | Grena |
+| `67a03d` | Fantasia |
+
+### Como consumir os blocos novos
+
+- **Trate campos desconhecidos com tolerância.** Campos novos podem ser acrescentados aos blocos sem aviso.
+- **Decida por `status_code`, não pela presença da chave.** `vehicle` e `driver.pix_key` acompanham o status `A`; a regra para esperá-los é `status_code == "A"`.
+- **Distinga nulo de ausente.** Campo nulo é dado que não existe no cadastro; chave ausente é bloco que não se aplica àquele status.
+- **Não confunda `driver` nulo com condutor sem dados.** `driver: null` significa que a solicitação ainda não tem condutor.
 
 ---
 

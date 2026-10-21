@@ -15,21 +15,23 @@
   ],
   "favicon": "/logo/machine-logo-transparente.png",
   "navigation": {
-    "tabs": [
+    "products": [
       {
-        "tab": "Corridas",
+        "product": "Corridas",
         "versions": [
           {
             "version": "v2",
             "tag": "Nova",
             "tabs": [
               {
-                "tab": "Corridas",
+                "tab": "Referência",
                 "groups": [
                   {
                     "group": "Introdução",
                     "pages": [
-                      "pages/v2/referencia/introducao"
+                      "pages/v2/referencia/introducao",
+                      "pages/v2/referencia/rate-limit",
+                      "pages/v2/referencia/codigos-de-erro"
                     ]
                   },
                   {
@@ -68,6 +70,7 @@
                       "pages/v2/referencia/dinamicas/endpoint/get-vertices",
                       "pages/v2/referencia/dinamicas/endpoint/get-faixas",
                       "pages/v2/referencia/dinamicas/endpoint/get-sem-area",
+                      "pages/v2/referencia/dinamicas/endpoint/post-area",
                       "pages/v2/referencia/dinamicas/endpoint/patch-area",
                       "pages/v2/referencia/dinamicas/endpoint/patch-vertices",
                       "pages/v2/referencia/dinamicas/endpoint/put-faixas",
@@ -80,6 +83,7 @@
                       "pages/v2/referencia/condutores/endpoint/get",
                       "pages/v2/referencia/condutores/endpoint/get-posicoes",
                       "pages/v2/referencia/condutores/endpoint/get-historico-punicoes",
+                      "pages/v2/referencia/condutores/endpoint/get-score",
                       "pages/v2/referencia/condutores/endpoint/get-by-id",
                       "pages/v2/referencia/condutores/endpoint/patch-by-id",
                       "pages/v2/referencia/condutores/endpoint/put-by-id",
@@ -102,6 +106,12 @@
                       "pages/v2/referencia/empresas/endpoint/post",
                       "pages/v2/referencia/empresas/endpoint/put",
                       "pages/v2/referencia/empresas/endpoint/put-batch"
+                    ]
+                  },
+                  {
+                    "group": "Financeiro",
+                    "pages": [
+                      "pages/v2/referencia/financeiro/endpoint/get-extrato"
                     ]
                   },
                   {
@@ -215,7 +225,9 @@
               {
                 "group": "Introdução",
                 "pages": [
-                  "pages/v1/referencia/introducao"
+                  "pages/v1/referencia/introducao",
+                  "pages/v1/referencia/rate-limit",
+                  "pages/v1/referencia/codigos-de-erro"
                 ]
               },
               {
@@ -349,19 +361,21 @@
         ]
       },
       {
-        "tab": "Entregas",
+        "product": "Entregas",
         "versions": [
           {
             "version": "v2",
             "tag": "Nova",
             "tabs": [
               {
-                "tab": "Entregas",
+                "tab": "Referência",
                 "groups": [
                   {
                     "group": "Introdução",
                     "pages": [
-                      "pages/v2/entregas/introducao"
+                      "pages/v2/entregas/introducao",
+                      "pages/v2/entregas/rate-limit",
+                      "pages/v2/entregas/codigos-de-erro"
                     ]
                   },
                   {
@@ -412,6 +426,7 @@
                       "pages/v2/entregas/dinamicas/endpoint/get-area",
                       "pages/v2/entregas/dinamicas/endpoint/get-faixas",
                       "pages/v2/entregas/dinamicas/endpoint/get-sem-area",
+                      "pages/v2/entregas/dinamicas/endpoint/post-area",
                       "pages/v2/entregas/dinamicas/endpoint/patch-area",
                       "pages/v2/entregas/dinamicas/endpoint/patch-vertices",
                       "pages/v2/entregas/dinamicas/endpoint/put-faixas",
@@ -423,6 +438,7 @@
                     "pages": [
                       "pages/v2/entregas/condutores/endpoint/get",
                       "pages/v2/entregas/condutores/endpoint/get-historico-punicoes",
+                      "pages/v2/entregas/condutores/endpoint/get-score",
                       "pages/v2/entregas/condutores/endpoint/get-by-id",
                       "pages/v2/entregas/condutores/endpoint/patch-by-id",
                       "pages/v2/entregas/condutores/endpoint/put-by-id",
@@ -445,6 +461,12 @@
                       "pages/v2/entregas/empresas/endpoint/post",
                       "pages/v2/entregas/empresas/endpoint/put",
                       "pages/v2/entregas/empresas/endpoint/put-batch"
+                    ]
+                  },
+                  {
+                    "group": "Financeiro",
+                    "pages": [
+                      "pages/v2/entregas/financeiro/endpoint/get-extrato"
                     ]
                   },
                   {
@@ -519,7 +541,9 @@
               {
                 "group": "Introdução",
                 "pages": [
-                  "pages/v1/entregas/introducao"
+                  "pages/v1/entregas/introducao",
+                  "pages/v1/entregas/rate-limit",
+                  "pages/v1/entregas/codigos-de-erro"
                 ]
               },
               {

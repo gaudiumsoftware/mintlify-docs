@@ -1,0 +1,391 @@
+---
+title: 'Códigos de erro'
+description: 'Lista dos códigos devolvidos no campo code dos erros da API de integração.'
+icon: 'circle-exclamation'
+---
+
+Os erros da API de integração chegam no formato abaixo, com um ou mais itens em `errors`:
+
+```json
+{
+  "success": false,
+  "errors": [
+    {
+      "code": 149,
+      "message": "Não há motoristas por perto"
+    }
+  ]
+}
+```
+
+Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operação para a v1 devolvem o `code` da v1 sem alteração.
+
+> **Trate o erro pelo `code`, e não pelo texto**: a `message` muda conforme o tipo da central ("motorista" pode vir como "taxista", "mototaxista" ou "entregador"; "passageiro" como "cliente"), e alguns textos trazem valores dinâmicos, como `{campo}`, `{valor}` e `{maximo}`.
+
+> **Códigos novos**: os códigos marcados com *Em breve* passam a ser devolvidos em 22 de outubro de 2026, exceto o `157`, que passa a ser devolvido em 15 de outubro de 2026. Até lá, esses erros chegam com `code: 0` e a mesma mensagem.
+
+## Códigos especiais
+
+| code | Quando ocorre |
+|---|---|
+| `0` | Erro inesperado no processamento ("Falha na operação"), ou erro que ainda não tem código próprio. Nesse caso, a `message` descreve o motivo. |
+| sem `code` | Na v1, os erros de chave de acesso e de método HTTP chegam como uma lista de textos: `"errors": ["Chave da API inválida."]`. |
+| `B1` a `B6` | Na v2, os erros de chave de acesso e de usuário trazem um `code` em texto. Veja a tabela abaixo. |
+| `401`, `404` e `503` | Em algumas rotas da v2 que não repassam a operação para a v1 (como mensagens da corrida e posição de condutores), o `code` repete o status HTTP: credenciais inválidas (`401`), corrida que não pertence à central (`404`) e serviço indisponível (`503`). |
+
+### Autenticação na v2
+
+| code | HTTP | Mensagem | Quando ocorre |
+|---|---|---|---|
+| `B1` | 400 | Chave da api não informada. | Nenhuma chave enviada no header. |
+| `B2` | 400 | Desculpe, não foi possível entender sua solicitação. | `api-key` e `app-key` enviadas juntas. |
+| `B3` | 401 | Você não está autorizado a acessar este recurso. | Só a `app-key` foi enviada, sem a `api-key`. |
+| `B4` | 401 | Você não está autorizado a acessar este recurso. | `api-key` inexistente. |
+| `B5` | 401 | Usuário e/ou senhas inválidos. | Login ou senha do Basic Auth inválidos. |
+| `B6` | 403 | Você não tem permissão para acessar este recurso. | Rota exclusiva de empresa chamada por usuário sem empresa vinculada. |
+
+## Autenticação e permissão
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `1` | Usuário e/ou senhas inválidos. | Login ou senha do Basic Auth inválidos, ou usuário inativo. |
+| `19` | Não é possível utilizar a API com a sua licença. | Plano da central sem a funcionalidade de integração via API (ou da API V2, nos endpoints de empresas/condutores em lote). |
+| `63` | Você não tem permissão para realizar essa operação. | Usuário de empresa chamando endpoint exclusivo da central. |
+| `67` | O usuário informado não pode realizar essa operação. | Tipo de usuário não pode chamar a operação (ex.: usuário de empresa em operação de central). |
+| `68` | O usuário informado não tem permissão para realizar essa operação. | Usuário sem a permissão de integração exigida pelo endpoint. |
+| `68` | O usuário informado não tem permissão para realizar essa operação. | Usuário sem a permissão de cupom, ou central que não faz somente entregas na exclusão de parada. Só na v2. |
+
+## Dados da requisição
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `2` | Campo '\{a\}' é obrigatório. | Campo obrigatório ausente no corpo ou na query (inclui nome do passageiro novo e a observação quando a central a exige). |
+| `8` | ID Externo já utilizado. | id_externo já usado em outra solicitação da central. |
+| `9` | ID Externo maior que o limite. (36 caracteres) | id_externo com mais de 36 caracteres. |
+| `10` | Forma de pagamento inválida. | Forma de pagamento desconhecida ou não habilitada para a integração. |
+| `11` | Filtro não disponível: \{campo\}. | Filtro de atendimento (porta-malas, animais, cadeirante, retorno etc.) pedido, mas desativado na central. |
+| `24` | Formato da entrada incorreto. | Corpo JSON vazio ou ilegível, ou campo fora do formato esperado (id da solicitação, valor de crédito, tipos_pagamentos, data/hora). |
+| `32` | Dados de paradas insuficientes | paradas não é lista, vem vazia em corrida ou alguma parada sem endereço/bairro. |
+| `39` | O intervalo máximo de consulta é de 31 dias | Período de consulta maior que 31 dias. |
+| `40` | A data de fim não pode ser menor que a data de início | Data final anterior à inicial no filtro de consulta. |
+| `41` | As datas de início e fim não podem ser iguais | Data inicial igual à final no filtro de consulta. |
+| `73` | Parâmetro \{param\} inválido | Parâmetro com valor inválido (ids não inteiros, latlng_paradas, valor_cobrar, exigir_codigo_confirmacao, cliente_ids, empresa_id enviado por usuário de empresa). |
+| `79` | Formato do campo \{campo\} incorreto. | Data/hora/telefone fora do formato esperado (validação que acumula erros). |
+| `96` | Tipo do ID Externo inválido. | id_externo com mais de 15 caracteres enviado como número. |
+| `98` | Status indisponível para busca | Filtro de listagem pelo status 'agrupada'. Código com mais de um significado; veja abaixo. |
+| `103` | O número máximo de paradas é \{maximo\} | Mais paradas que o limite da central na estimativa. |
+| `104` | JSON inválido | Corpo não é um JSON válido ou veio vazio. |
+| `108` | Campo \{campo\} é inválido. \{extra\}. | Campo com valor inválido (mensagem, taxa do motorista, destinatário) ou erro de validação do cadastro do motorista sem código próprio. |
+| `109` | Campo \{campo\} deve ser um número inteiro positivo. | id/area_id/destinatario_id não inteiro positivo. |
+| `238` *Em breve* | 'cpf_cnpj': Não pode ser usado junto com o filtro cpf. | Consulta de clientes com os filtros `cpf_cnpj` e `cpf` ao mesmo tempo. |
+| `239` *Em breve* | 'cpf_cnpj': CPF ou CNPJ inválido. | Filtro `cpf_cnpj` da consulta de clientes que não é CPF nem CNPJ válido. |
+
+## Endereço e rota
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `12` | Latitude de partida não informado. | Só a longitude de partida foi enviada. |
+| `13` | Longitude de partida não informado. | Só a latitude de partida foi enviada. |
+| `14` | Não foi possível determinar a geolocalização do passageiro pelo endereço informado. | Sem coordenadas de partida e o endereço de partida não foi localizado. |
+| `15` | Latitude de desejo não informado. | Só a longitude de destino foi enviada. |
+| `16` | Longitude de desejo não informado. | Só a latitude de destino foi enviada. |
+| `17` | Não foi possível determinar a geolocalização de desejo pelo endereço informado. | Sem coordenadas de destino e o endereço de destino não foi localizado. |
+| `34` | Endereço de parada não encontrado | Parada sem coordenadas cujo endereço não foi localizado. |
+| `147` | Não é possível realizar este trajeto. Selecione outro endereço. | Partida e destino muito próximos, ou não existe rota entre os pontos. |
+| `148` | Não foi possível realizar as estimativas | Falha do serviço de mapas ao calcular a rota. |
+| `213` *Em breve* | Geolocalização inválida. | Latitude de partida fora da faixa válida. Mesmo texto de 214 a 216. |
+| `214` *Em breve* | Geolocalização inválida. | Longitude de partida fora da faixa válida. Mesmo texto de 213, 215 e 216. |
+| `215` *Em breve* | Geolocalização inválida. | Latitude de destino fora da faixa válida. Mesmo texto de 213, 214 e 216. |
+| `216` *Em breve* | Geolocalização inválida. | Longitude de destino fora da faixa válida. Mesmo texto de 213 a 215. |
+| `217` *Em breve* | Cidade inválida. | Cidade de partida não reconhecida. |
+
+## Passageiro
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `4` | Encontrados vários cliente para o telefone de cadastro. | Mais de um passageiro cadastrado com o telefone informado. |
+| `28` | Erro ao salvar usuário | Falha ao criar o acesso do passageiro novo durante a abertura. |
+| `29` | Erro ao salvar cliente | Falha ao cadastrar o passageiro novo durante a abertura. |
+| `30` | Telefone com formato inválido. | Telefone do passageiro (abertura) ou do motorista (atualização) em formato inválido. |
+| `125` | Nome de cliente inválido | Nome do passageiro novo rejeitado (caracteres não permitidos). Código com mais de um significado; veja abaixo. |
+| `153` | Você já está com uma corrida em atendimento. | Passageiro já tem corrida em andamento. |
+| `167` *Em breve* | Cliente inválido. | Passageiro não encontrado. |
+| `168` *Em breve* | Cliente não cadastrado. | Passageiro de outra central. |
+| `169` *Em breve* | Seu cadastro está suspenso. Para reativar entre em contato conosco. | Passageiro suspenso. |
+| `170` *Em breve* | Seu cadastro está inativo. Caso queira reativá-lo, favor entrar em contato com o nosso escritório. | Passageiro inativo. |
+| `171` *Em breve* | Aguardando ativação. Verifique seu email e ative. | Cadastro do passageiro ainda não ativado. |
+| `172` *Em breve* | Detectamos um problema em seu cadastro. Entre em contato com um de nossos operadores para resolver. | Passageiro bloqueado. |
+| `173` *Em breve* | Essa conta foi deletada e não pode realizar esta ação. | Conta do passageiro deletada. |
+| `174` *Em breve* | Sua conta está em processo de deleção e será excluída em 30 dias após a solicitação de deleção. Não será possível acessá-la ou criar uma nova com os mesmos dados. | Conta do passageiro em processo de exclusão. |
+| `175` *Em breve* | Sua conta foi suspensa por avaliação baixa, não estando dentro das exigências para utilizar a plataforma. Entre em contato conosco para entender e resolver o problema. | Passageiro suspenso por avaliação baixa. |
+
+## Criação e disponibilidade da corrida
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `18` | É necessário esperar \{tempo\} segundos para abrir novas corridas para esse cliente. | Muitas corridas abertas para o mesmo passageiro em pouco tempo. |
+| `27` | Solicitação não finalizada. | Recibo pedido para corrida que ainda não foi finalizada. |
+| `31` | Tipo de operação inválido | Central não opera o tipo pedido (corrida ou entrega), ou empresa de tipo de operação diferente. |
+| `149` | Não há motoristas por perto | Nenhum motorista próximo, quando a central exige motoristas próximos. |
+| `150` | Não há motoristas disponíveis para esta solicitação | Há motoristas próximos, mas nenhum atende aos filtros. |
+| `212` *Em breve* | Bandeira \{central\} não está em operação no momento. | Central fora de operação. |
+| `234` *Em breve* | No momento, nosso serviço não está disponível na sua região. | Partida fora da área atendida pela central. |
+
+## Categoria e tarifa
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `20` | Categoria informada não existe. | categoria_id ou categoria_nome não corresponde a uma categoria ativa da central. |
+| `42` | Não é permitido escolher uma categoria com cálculo por Bairro. | Categoria informada (ou a padrão, na estimativa) usa tarifa por bairro. Na estimativa, a mensagem pode ser "Categorias indisponíveis. É necessário ter ao menos uma categoria padrão que não utilize tarifa por bairro". |
+| `138` | Categoria que permite negociação só é permitido pelo aplicativo do passageiro | Categoria com negociação de tarifa. |
+| `139` | A categoria informada usa cálculo individual por entrega, que não é suportado nesta API. | Categoria de entrega com cálculo individual por entrega (informada, padrão ou da integração do provedor). Na estimativa e na criação, a mensagem pode ser "Categoria indisponível". |
+| `154` | Categoria indisponível | Categoria não disponível para a corrida, ou nenhuma categoria disponível na estimativa. Na estimativa, a mensagem pode ser "Nenhuma categoria disponível no momento.". |
+| `155` | Tarifa não encontrada | Não há tarifa para o trajeto/categoria. Na estimativa, a mensagem pode ser "Nenhuma tarifa disponível para esta viagem.". |
+| `156` | O percurso excede o limite de distância estabelecido pela tarifa. | Distância acima do limite da tarifa. Na estimativa com várias categorias, a mensagem é "Categoria indisponível no momento. Altere as preferências de viagem e tente novamente.". |
+| `183` *Em breve* | A opção selecionada não está mais disponível no momento. Por favor, escolha outra categoria | Categoria exclusiva que o passageiro não pode usar no momento. |
+| `184` *Em breve* | Tarifa expirada. Solicite a corrida novamente. | A tarifa mudou desde a estimativa. |
+| `185` *Em breve* | Estimativa expirada. Solicite a corrida novamente. | A estimativa enviada venceu ou não pôde ser recalculada. |
+
+## Agendamento
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `72` | Não foi possível encontrar a solicitação programada | Consulta de programada sem resultado. |
+| `75` | Programada não existe | id_mch_programada inexistente ou de outra empresa. |
+| `76` | Não é possível cancelar uma programada que não esteja aguardando o disparo | Programada que já foi disparada, cancelada ou não está mais aguardando. |
+| `77` | Não foi possível cancelar a programada | Falha interna ao gravar o cancelamento da programada. |
+| `110` | Solicitação programada foi agrupada, realize o filtro pela solicitações agrupadoras | Programada consultada foi agrupada em outra programada. |
+| `111` | Solicitação programada foi agrupada com uma solicitação em andamento, realize o filtro pela solicitação agrupadora | Programada consultada foi agrupada com uma solicitação em andamento. |
+| `121` | A solicitação que você tentou alterar está sendo utilizada no processo de junção automática e será liberada em instantes. | Programada em processo de junção automática. |
+| `122` | A solicitação que você tentou alterar foi agrupada automaticamente e nenhuma alteração pode ser feita. | Programada já agrupada automaticamente. |
+| `176` *Em breve* | Data inválida | Data do agendamento inválida. |
+| `177` *Em breve* | Hora inválida | Hora do agendamento inválida. |
+| `178` *Em breve* | Data/hora de disparo já passou. Solicitação recusada. | Data/hora do agendamento já passou. |
+| `179` *Em breve* | Agendamento muito próximo à hora atual. Solicitação recusada. | Agendamento dentro da antecedência mínima da central. |
+| `180` *Em breve* | Data programada é inválida | Data e hora do agendamento ilegíveis. |
+| `181` *Em breve* | Essa categoria não está disponível para agendamento | Categoria não aceita corrida agendada. |
+| `182` *Em breve* | A categoria não está disponível para solicitação imediata | Categoria só aceita agendamento. |
+
+## Motorista
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `5` | Tipo de identificação inválida. | Tipo de identificação do motorista (ou da empresa, nos endpoints de créditos de empresa) fora dos valores aceitos. |
+| `6` | Identificação não encontrada. | Motorista ou empresa não encontrado pela identificação informada; no cupom, algum cliente_ids não existe na central. |
+| `7` | Identificação encontrada para mais de um motorista. | A identificação informada corresponde a mais de um motorista. |
+| `30` | Telefone com formato inválido. | Validação do cadastro do motorista recusa o telefone na atualização. |
+| `43` | Data inválida | Data de nascimento do motorista recusada pela validação do cadastro. Código com mais de um significado; veja abaixo. |
+| `44` | Status inválido. | status_condutor/status_taxista fora dos valores aceitos. |
+| `45` | `sexo` é inválido | Sexo do motorista fora das opções aceitas. |
+| `46` | E-mail inválido. | E-mail do motorista recusado pela validação do cadastro. |
+| `47` | Mensagem da validação do cadastro do motorista sobre o vínculo | Vínculo do motorista recusado pela validação do cadastro (ex.: mais de 1 caractere). |
+| `48` | veiculo_tipo é inválido | veiculo_tipo fora dos tipos de veículo da central. |
+| `49` | Cor inválida | Cor do veículo fora do formato hexadecimal de 6 caracteres. |
+| `50` | ano_modelo é inválido | ano_modelo não numérico. |
+| `51` | Porta-malas grande é inválido | porta_malas_grande não booleano. |
+| `52` | Adaptado para cadeirante é inválido | adaptado_cadeirante não booleano. |
+| `53` | Categoria indisponível | Alguma categoria enviada para o motorista não é aceita. |
+| `54` | CPF inválido. | CPF do motorista recusado pela validação do cadastro. |
+| `56` | Motorista não encontrado | Motorista (id) não existe na central. |
+| `57` | possui_vinculo é obrigatório | vinculo enviado sem possui_vinculo verdadeiro. |
+| `58` | placa, modelo, cor, ano_modelo são obrigatórios para este tipo de veículo | Troca para tipo de veículo que exige dados do veículo sem enviar placa, modelo, cor e ano_modelo. |
+| `59` | tipo é obrigatório | Envio de documento do motorista sem o campo tipo. |
+| `60` | tipo é inválido | Tipo de documento do motorista desconhecido. |
+| `61` | Tipo de arquivo inválido. | Arquivo do documento em formato não aceito. |
+| `62` | Arquivo vazio. | Envio de documento sem arquivo. |
+| `117` | Não é permitido atualizar este motorista | Motorista de teste/demonstração não pode ser alterado. |
+| `124` | E-mails temporários não podem ser usados para criar uma conta. | E-mail novo do motorista é de provedor temporário. |
+| `125` | Motorista não associado a veículo. | Atualização de motorista sem veículo vinculado. Código com mais de um significado; veja abaixo. |
+| `128` | CERCA_ELETRONICA_NAO_HABILITADA | Central sem a funcionalidade de cerca eletrônica (áreas de permissão). Hoje, a mensagem chega como o identificador em maiúsculas. |
+| `129` | O \{condutor\} não possui área vinculada. | Desvincular área de motorista que não tem área. Hoje, o texto chega com o marcador `{condutor}` sem substituição. |
+| `130` | Nome inválido. | Nome do motorista recusado pela validação do cadastro. |
+| `133` | O motorista está atualmente em um período de dedicação e não pode aceitar esta solicitação. | Motorista indicado está dedicado a outra empresa no momento. |
+| `134` | O motorista especificado não pode ser chamado por não fazer parte do período de dedicação da empresa. | Empresa exige motoristas dedicados e o indicado não é. |
+| `186` *Em breve* | Motorista não cadastrado. | Motorista indicado não existe. |
+| `187` *Em breve* | O condutor selecionado não pode realizar esta viagem por não pertencer a uma central parceira. | Motorista de outra central sem parceria. |
+| `188` *Em breve* | O motorista não atende a corridas corporativas. | Motorista parceiro não atende corrida corporativa. |
+| `189` *Em breve* | O motorista atende apenas a corridas corporativas. | Motorista parceiro só atende corrida corporativa. |
+| `190` *Em breve* | Não é possível iniciar a corrida. O motorista não consegue atender na sua região. | Motorista parceiro não atende a região. |
+| `191` *Em breve* | Motorista não está disponível. | Motorista indicado inativo. |
+| `192` *Em breve* | O motorista está offline no momento | Motorista indicado desconectado. |
+| `193` *Em breve* | O motorista está ocupado no momento. | Motorista indicado em outra corrida. |
+| `194` *Em breve* | O motorista não pode fazer uma corrida para si mesmo. | Motorista e passageiro são a mesma pessoa. |
+| `195` *Em breve* | O motorista não atende a corridas com essa forma de pagamento. | Motorista indicado não aceita a forma de pagamento. |
+| `196` *Em breve* | O motorista não atende a corridas com o filtro inserido | Motorista indicado não atende os filtros. |
+| `197` *Em breve* | O motorista não atende a corridas com esse percentual de desconto | Desconto acima do aceito pelo motorista indicado. |
+| `198` *Em breve* | O motorista não atende a corridas nessa categoria | Motorista indicado não atende a categoria. |
+| `199` *Em breve* | O motorista que você selecionou já tem uma corrida agendada para este horário. | Motorista indicado já reservado no horário do agendamento. |
+
+## Cupom
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `6` | Cliente não encontrado ou não pertence à bandeira autenticada. | Algum cliente_id informado não existe na central autenticada. Só na v2. |
+| `78` | Erro ao salvar o cupom | Falha ao gravar o cupom. |
+| `80` | Limite de uso incorreto. | limite_de_uso fora dos valores aceitos. |
+| `81` | Gerador de cupom inexistente. | Gerador de cupom inexistente ou não acessível ao usuário. |
+| `82` | Tipo de desconto do cupom incorreto. | tipo_desconto diferente de percentual ou valor_fixo. |
+| `83` | Período da data inválido. | Período do cupom fora do período do gerador ou com fim antes do início. |
+| `84` | Data/Hora inicial inválido. | data_hora_inicio inválida ou fora do gerador. |
+| `85` | Data/Hora final inválido. | data_hora_final inválida ou fora do gerador. |
+| `86` | O desconto informado não é válido. | desconto não numérico. |
+| `87` | O desconto está fora do permitido entre 0 e 100. | Desconto percentual menor ou igual a 0 ou maior que 100. |
+| `88` | O desconto deve ser maior que 0. | Desconto de valor fixo menor ou igual a 0. |
+| `89` | O limite de uso individual informado não é válido. | limite_de_uso_individual não numérico. |
+| `90` | O limite de uso individual deve ser maior que 0. | limite_de_uso_individual menor ou igual a 0. |
+| `91` | Algum tipo de pagamento informado para o cupom não é válido para o gerador | Forma de pagamento do cupom não permitida pelo gerador. |
+| `92` | Pattern do cupom incorreto | codigo_pattern com marcadores inválidos. |
+| `93` | Limite de uso não permitido. | limite_de_uso diferente do definido no gerador. |
+| `94` | Limite de cupons criados para o gerador alcançado. | Gerador já atingiu a quantidade máxima de cupons. |
+| `95` | O limite de uso individual não pode ser maior que o máximo permitido para o gerador | limite_de_uso_individual acima do máximo do gerador. |
+| `131` | Área escolhida inválida. | area_id inexistente, ou ausente em cupom com restrição por destino. |
+| `132` | O código promocional não pode ter mais que \{tamanho\} caracteres. | Código do cupom acima do tamanho máximo. |
+| `135` | O limite de uso único não é permitido quando múltiplos clientes receberão o cupom. | Cupom de uso único enviado para mais de um cliente. Código com mais de um significado; veja abaixo. |
+| `136` | O valor_maximo informado não é válido. | valor_maximo não numérico ou menor ou igual a 0 em cupom percentual. Código com mais de um significado; veja abaixo. |
+| `137` | O valor_maximo não pode ser maior que o máximo permitido para o gerador | valor_maximo acima do teto do gerador. |
+| `143` | Local de aplicação do cupom inválido. | Local de aplicação (partida/destino) fora dos valores aceitos. |
+| `144` | Cupom com restrição por área de destino indisponível para esta central. | Cupom por área de destino em central que não suporta. |
+| `145` | Cupom com restrição por área de destino não disponível para centrais que fazem somente entregas. | Cupom por área de destino em central só de entregas. |
+| `146` | Não foi possível sortear um código livre para o codigo_pattern após 5 tentativas. | codigo_pattern não gerou código livre em 5 tentativas. Só na v2. |
+| `158` *Em breve* | O código promocional inserido já expirou ou é inválido. | Cupom inexistente ou expirado. |
+| `159` *Em breve* | O código promocional inserido não é válido na sua região. | Cupom de outra central. Na estimativa, chega com o mesmo texto do 160. |
+| `160` *Em breve* | O cupom não é válido para o local de partida da corrida. | Partida (ou destino) fora da área em que o cupom vale. Na estimativa, a mensagem é "O código promocional inserido não está disponível na sua região.", igual à do 159. |
+| `161` *Em breve* | O código promocional inserido já foi resgatado e está esgotado. | Cupom de uso único já utilizado/esgotado. Mesmo texto do 162. |
+| `162` *Em breve* | O código promocional inserido já foi resgatado e está esgotado. | Passageiro atingiu o limite de uso do cupom. Mesmo texto do 161. |
+| `163` *Em breve* | O código promocional inserido é exclusivo para a primeira corrida do cliente. | Cupom de primeira corrida para passageiro que já fez corrida. |
+| `164` *Em breve* | O cupom inserido não é válido para essa corrida. | Cupom não se aplica à corrida (valor só conhecido no fim). |
+| `165` *Em breve* | Este cupom é válido para corridas de até \{moeda\} \{valor\}. Sua estimativa atual está acima desse valor. | Estimativa acima do valor máximo de corrida do cupom. |
+| `166` *Em breve* | Este cupom não é válido para corridas sem destino. | Cupom exige destino e a corrida não tem. |
+
+## Cancelamento
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `25` | Solicitação não encontrada. | id_mch inexistente, de outra central ou de outra empresa. |
+| `26` | Motivo do cancelamento não encontrado. | motivo_id inexistente. |
+| `102` | Não é possível cancelar a corrida em andamento com o motivo selecionado. | Empresa de entregas cancelando com motivo não permitido para o status atual. |
+| `151` | Não é possível cancelar uma solicitação que já foi finalizada, cancelada ou não atendida | Corrida já finalizada, cancelada ou não atendida. Em entregas, "corrida" vira "entrega" no texto. |
+| `152` | Não foi possível cancelar a corrida | Falha ao gravar o cancelamento (ex.: status mudou no meio). Em entregas, "corrida" vira "entrega" no texto. |
+
+## Corrida corporativa: empresa, funcionário, voucher e e-Ticket
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `21` | Empresa não encontrada. | Empresa informada não existe na central (ou não tem passageiro vinculado). |
+| `22` | Centro de Custo não encontrado. | Centro de custo informado não existe. |
+| `23` | Centro de Custo não pertence a empresa. | Centro de custo informado é de outra empresa. |
+| `38` | Empresa inválida | Empresa inativa, de outra central, ou diferente da empresa do usuário autenticado. |
+| `43` | Tipo de pagamento inválido para essa empresa. | Forma de pagamento da entrega não habilitada para a empresa informada. Código com mais de um significado; veja abaixo. |
+| `74` | ERRO_AO_SALVAR_FUNCIONARIO | Falha ao cadastrar o passageiro como funcionário da empresa na abertura corporativa. Hoje, a mensagem chega como o identificador em maiúsculas. |
+| `112` | Empresa não possui cadastro ou não está ativa | Entrega aberta para empresa inativa. |
+| `127` | FUNCIONARIO_INVALIDO | Funcionário desligado ou inativo pedindo corrida com voucher/e-Ticket. Hoje, a mensagem chega como o identificador em maiúsculas. |
+| `200` *Em breve* | Cliente não habilitado para corridas corporativas. | Passageiro sem vínculo ativo com a empresa. |
+| `201` *Em breve* | Tipo de pagamento inconsistente. | Voucher e e-Ticket juntos, ou forma de pagamento incompatível com corrida corporativa. |
+| `202` *Em breve* | Tipo de pagamento não previsto. | Funcionário não pode usar voucher ou e-Ticket. |
+| `203` *Em breve* | Série ou número do voucher inválido(a). | Série do voucher ausente ou inválida quando a central exige. |
+| `204` *Em breve* | Número do voucher inválido. | Número do voucher ausente quando a central exige. |
+| `205` *Em breve* | Bandeira do voucher inválida. | Central do voucher ausente ou sem parceria. |
+| `206` *Em breve* | Número do voucher inválido ou já utilizado. | Voucher já usado ou inexistente. |
+| `207` *Em breve* | Erro ao solicitar a corrida: O valor ultrapassa o limite mensal do e-Ticket da empresa. / … do seu e-Ticket. | Limite mensal do e-Ticket do centro de custo ou do funcionário excedido. |
+| `208` *Em breve* | Você não possui limite cadastrado para corridas corporativas. | Funcionário sem limite cadastrado. |
+| `209` *Em breve* | Seu saldo é insuficiente para efetuar corridas corporativas. | Saldo do funcionário insuficiente. |
+| `210` *Em breve* | Centro de custo não possui limite cadastrado para corridas corporativas. | Centro de custo sem limite cadastrado. |
+| `211` *Em breve* | Saldo do centro de custo é insuficiente para efetuar corridas corporativas. | Saldo do centro de custo insuficiente. |
+
+## Entregas
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `33` | A entrega precisa ter pelo menos uma parada | Entrega aberta ou estimada com lista de paradas vazia. |
+| `33` | Não é possível excluir a última entrega da solicitação. | Tentativa de excluir a única parada da entrega. Só na v2. |
+| `97` | Solicitação foi agrupada, realize o filtro pela solicitação agrupadora | A solicitação consultada foi agrupada em outra; a resposta traz solicitacao_agrupadora_id. |
+| `118` | Código de confirmação não permitido, configuração desabilitada. | Parada com codigo_confirmacao quando a central/empresa não usa código de confirmação. Hoje, neste erro, `errors` vem como um objeto, e não como lista. |
+| `120` | Não foi possível realizar a solicitação da Delivery Much | Pedido do provedor Delivery Much com a integração desabilitada na empresa. Hoje, neste erro, `errors` vem como um objeto, e não como lista. |
+| `126` | Uma solicitação pode conter no máximo \{limite\} entregas. Sua solicitação contém \{qtd\}. Reduza o número de entregas para prosseguir. | Mais entregas/paradas que o limite configurado para a empresa. Na estimativa, hoje a mensagem chega como `erro_limite_paradas_excedido`. |
+| `135` | Status inválido para exclusão. | Excluir parada de entrega cancelada, finalizada, não atendida ou de programada já disparada/cancelada. Só na v2. Código com mais de um significado; veja abaixo. |
+| `136` | Código de confirmação obrigatório em todas as paradas quando exigir_codigo_confirmacao é enviado como verdadeiro. | exigir_codigo_confirmacao verdadeiro e alguma parada sem codigo_confirmacao (e sem url_confirmacao). Código com mais de um significado; veja abaixo. |
+| `136` | Entrega não encontrada. | Parada ou entrega inexistente, de outra central ou de outra empresa. Só na v2. Código com mais de um significado; veja abaixo. |
+| `140` | A entrega não possui estimativa individual gravada; não é possível excluir a parada. | Programada com tarifa por entrega em que alguma entrega restante não tem estimativa gravada. Só na v2. |
+| `141` | Os valores das entregas não conferem com as paradas informadas. | Agrupamento com tarifa por entrega em que uma entrega sem estimativa gravada não pôde ser precificada. Só na v2. |
+| `142` | URL de confirmação inválida, informe um endereço https válido e acessível. | url_confirmacao da parada não é https válida. |
+
+## Créditos e saque
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `64` | Valor da transação zero ou negativo. | Valor de saque/recarga menor ou igual a zero. |
+| `65` | Sistema de créditos indisponível no momento, tente novamente mais tarde. | Sistema de pagamentos/créditos fora do ar ou em modo de consulta. |
+| `69` | Identificação encontrada para mais de uma empresa. | Identificação da empresa corresponde a mais de uma empresa. |
+| `71` | Falha na operação, verifique se todos os parâmetros enviados estão corretos. | Falha ao gravar o lançamento manual de crédito por dado inválido. |
+
+## Empresas
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `105` | Erro durante o processo de atualização dos dados da empresa. | Validação do cadastro da empresa recusou os dados; a resposta traz fields com os erros. |
+| `106` | Esta empresa foi deletada e não pode ter seus dados atualizados. | Atualização de empresa deletada. |
+| `107` | Não é possível atualizar os dados recebidos. | Nenhum campo atualizável enviado. |
+
+## Webhooks
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `98` | Tipo de webhook não permitido para a ação | Empresa cadastrando webhook de mensagens de corrida, ou atualização/exclusão de webhook de engajamento. Código com mais de um significado; veja abaixo. |
+| `99` | Tipo do Webhook incorreto | tipo do webhook fora dos tipos aceitos. |
+| `100` | Responsabilidade do Webhook incorreto | responsabilidade fora dos valores aceitos (só central). |
+| `101` | Já existe um webhook cadastrado com esses parâmetros. Por favor, escolha outros | Mesma URL já cadastrada para posição no mesmo escopo, ou limite de webhooks por tipo atingido. |
+| `119` | ID do webhook inválido | id do webhook inexistente ou de outra central/empresa. |
+
+## Notificações em lista (só v2)
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `6` | Destinatário não encontrado ou não pertence à bandeira autenticada. | ID da lista inexistente ou de outra central. Volta como falha do ID em data.falhas (HTTP 207), ou em errors (HTTP 404) quando nenhum ID é notificado. |
+| `157` *Em breve* | Destinatário sem dispositivo registrado para receber notificações. | ID da central sem aplicativo com token de notificação registrado. Volta como falha do ID em data.falhas (HTTP 207), ou em errors (HTTP 404) quando nenhum ID é notificado. |
+
+## Score do condutor (só v2)
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `236` *Em breve* | Programa de níveis indisponível. | Central do condutor sem o programa de níveis ativo: fora do beta ou com o programa pausado. HTTP 403. |
+| `237` *Em breve* | Falha na operação | O serviço de score não respondeu ou respondeu com erro. HTTP 500, sem dado parcial. |
+
+No mesmo endpoint, `id` não numérico ou igual a zero responde `218`, condutor inexistente ou de outra central responde `56`, e gestor de empresa ou sem a permissão de integração de condutores responde `63`.
+
+## Validação do corpo da requisição (só v2)
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `218` *Em breve* | '\{campo\}': Deve ser numérico. | Campo numérico com valor não numérico. Em `cpf`, `telefone` e `cep` do condutor, a mensagem é "Deve ser do tipo texto(string) númerico ou inteiro.". |
+| `219` *Em breve* | '\{campo\}': Deve ser do tipo texto (string). | Campo de texto com outro tipo. |
+| `220` *Em breve* | '\{campo\}': Deve ser do tipo texto (string) ou numérico. | id_externo (corridas, entregas e paradas) com outro tipo. |
+| `221` *Em breve* | '\{campo\}': Deve ter no máximo \{n\} caracteres. | Texto acima do tamanho máximo. |
+| `222` *Em breve* | '\{campo\}': Deve estar dentre os valores: \{valores\} | Valor fora da lista aceita. |
+| `223` *Em breve* | '\{campo\}': Deve ser um valor booleano (true ou false). | Campo booleano com outro valor. |
+| `224` *Em breve* | '\{campo\}': Deve ser um Array JSON válido. | Campo de lista com outro tipo. |
+| `225` *Em breve* | '\{campo\}': Deve ter no máximo \{n\} itens. | Lista acima do tamanho máximo. |
+| `226` *Em breve* | '\{campo\}': Formato inválido para Data/Hora. | data_hora_solicitacao_min/max fora do formato. |
+| `227` *Em breve* | '\{campo\}': Deve ser um formato de Data/Hora válido em ISO8601 | Data e hora fora do ISO 8601. |
+| `228` *Em breve* | '\{campo\}': Deve ser um formato de data válido (YYYY-MM-DD) | Data fora de AAAA-MM-DD. |
+| `229` *Em breve* | '\{campo\}': Deve ser um formato de data válido (DD/MM/YYYY) | Data fora de DD/MM/AAAA ou inexistente. Também sai como "Deve ser uma data válida no formato DD/MM/YYYY.". |
+| `230` *Em breve* | '\{campo\}': Deve ser um formato de hora válido (HH:MM:SS) | Hora em formato inválido. Também sai como "Deve ser um formato de hora válido (HH:MM:SS ou HH:MM).". |
+| `232` *Em breve* | '\{campo\}': Deve ser alfanumérico. | cnpj do condutor com caracteres inválidos. |
+| `233` *Em breve* | '\{campo\}': Formato inválido. | Valor fora do formato esperado pelo campo. No filtro `nome` da listagem de condutores, que exige ao menos 3 caracteres, a mensagem é outra. |
+
+O `231` está reservado para a validação de telefone, mas nenhum endpoint usa essa regra hoje, então ele não é devolvido.
+
+Esses códigos valem para o validador padrão do corpo. Regras próprias de alguns endpoints, como valor mínimo ou faixa, ainda chegam com `code: 0`.
+
+## Códigos com mais de um significado
+
+Alguns códigos foram publicados com mais de um significado e não podem ser renumerados sem quebrar integrações existentes. Nesses casos, use o endpoint chamado para saber qual é o erro.
+
+| code | Significados |
+|---|---|
+| `43` | Data de nascimento inválida, na atualização do motorista; tipo de pagamento inválido para a empresa, na criação de entrega e no cadastro de empresa. |
+| `98` | Status indisponível para busca, na consulta de solicitações; tipo de webhook não permitido para a ação, no cadastro, na atualização e na exclusão de webhooks. |
+| `125` | Nome de passageiro inválido, na criação de corrida; motorista sem veículo, na atualização do motorista. |
+| `135` | Limite de uso único com vários clientes, na criação de cupom (v1); status inválido para exclusão, na exclusão de parada de entrega (v2). |
+| `136` | Valor máximo do cupom inválido, na criação de cupom; código de confirmação obrigatório, na criação de entrega; entrega não encontrada, na exclusão de parada (v2). |
+
+O `6`, o `33` e o `68` aparecem em mais de uma seção, mas com um significado só, aplicado a recursos diferentes: registro não encontrado, entrega que ficaria sem parada e usuário sem permissão.

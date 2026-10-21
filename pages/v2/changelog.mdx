@@ -154,7 +154,294 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="22 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="score-condutor" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Score do condutor
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novo endpoint que consulta o score de um condutor no programa de níveis da central: os mesmos
+      pontos e nível que o condutor vê na tela "Meu Score" do aplicativo, sem precisar acessar o painel.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/condutores/{id}/score" href="/pages/v2/referencia/condutores/endpoint/get-score" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="pontos" /> do trimestre vigente, <ParamBadge name="nivel" /> atual e <ParamBadge name="proximo_nivel" /> com as metas de pontos e de taxa de aceitação. No último nível, <ParamBadge name="proximo_nivel" /> vem <code>null</code>.</li>
+        <li><ParamBadge name="taxa_aceitacao" /> em porcentagem, ou <code>null</code> quando o condutor ainda não tem ofertas suficientes para o cálculo.</li>
+        <li><ParamBadge name="trimestre" /> com o início, o fim e os dias restantes do trimestre em que os pontos são contados.</li>
+        <li>Com a Api-Key de uma central agrupadora, o endpoint consulta condutores das centrais filhas. Condutor de outra central responde <code>404</code>.</li>
+        <li>Central do condutor sem o programa de níveis ativo responde <code>403</code>. O endpoint exige gestor da central, sem empresa vinculada, com a permissão de integração de condutores.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
+  <Entry date="22 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="codigos-de-erro" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Códigos de erro próprios
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      As recusas da estimativa, da criação e do cancelamento de corrida que voltavam com <code>code: 0</code> passam a
+      ter código próprio, assim como os erros de validação do corpo da requisição. A documentação ganha a página
+      <a href="/pages/v2/referencia/codigos-de-erro"> Códigos de erro</a>, com a lista completa.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/corridas/estimativas" href="/pages/v2/referencia/corridas/endpoint/post-estimativas" />
+    <EndpointBadge method="POST" path="/api/v2/integracao/corridas" href="/pages/v2/referencia/corridas/endpoint/post-criar" />
+    <EndpointBadge method="POST" path="/api/v2/integracao/corridas/{id}/cancelar" href="/pages/v2/referencia/corridas/endpoint/post-cancelar" />
+
+    <ChangeSection type="changed">
+      <p style={{ marginBottom: "10px" }}>Códigos que já estão valendo:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><code>147</code> e <code>148</code> — trajeto indisponível e falha ao calcular a rota.</li>
+        <li><code>149</code> e <code>150</code> — sem motoristas por perto e sem motoristas que atendam aos filtros.</li>
+        <li><code>151</code> e <code>152</code> — corrida que não pode mais ser cancelada e falha ao gravar o cancelamento.</li>
+        <li><code>153</code> — passageiro já tem uma corrida em atendimento.</li>
+        <li><code>154</code> a <code>156</code> — nenhuma categoria disponível, sem tarifa para o trajeto e percurso acima do limite da tarifa.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="changed">
+      <p style={{ marginBottom: "10px" }}>Códigos que entram com esta atualização:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><code>234</code> — partida fora da área atendida pela central.</li>
+        <li><code>158</code> a <code>166</code> — cupom expirado, de outra central, fora da área, esgotado, acima do limite de uso, exclusivo para a primeira corrida, não aplicável, acima do valor máximo ou sem destino.</li>
+        <li><code>167</code> a <code>175</code> — situação do passageiro: inexistente, de outra central, suspenso, inativo, aguardando ativação, bloqueado, deletado, em deleção ou suspenso por avaliação.</li>
+        <li><code>176</code> a <code>185</code> — data e hora do agendamento, categoria que não aceita agendamento ou só aceita, categoria exclusiva, tarifa e estimativa expiradas.</li>
+        <li><code>186</code> a <code>199</code> — motorista indicado na solicitação que não existe, não atende a corrida ou está indisponível.</li>
+        <li><code>200</code> a <code>211</code> — corrida corporativa, voucher, e-Ticket e saldo de funcionário ou centro de custo.</li>
+        <li><code>212</code> a <code>217</code> — central fora de operação, coordenada fora da faixa e cidade inválida.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="changed">
+      <p style={{ marginBottom: "10px" }}>
+        Os erros do validador padrão do corpo da v2 passam de <code>0</code> a um código por regra
+        (<code>218</code> a <code>233</code>): campo numérico, texto, booleano, lista, tamanho máximo, valor fora da
+        lista aceita e formatos de data, hora e documento. Campo obrigatório continua com <code>2</code>. Regras
+        próprias de alguns endpoints, como valor mínimo ou faixa, continuam com <code>0</code>.
+      </p>
+    </ChangeSection>
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: 0 }}>
+        Exemplos de erro na estimativa, na criação e no cancelamento de corrida, e a página
+        <a href="/pages/v2/referencia/codigos-de-erro"> Códigos de erro</a>.
+      </p>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "14px",
+      lineHeight: "1.6",
+    }}>
+      Até a publicação, esses erros continuam chegando com <code>code: 0</code> e a mesma mensagem. Trate o erro pelo
+      <code> code</code>, e não pelo texto: a <code>message</code> muda conforme o tipo da central e alguns textos trazem
+      valores dinâmicos.
+    </div>
+  </Entry>
+
+  <Entry date="22 out 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 id="busca-cliente-cpf-cnpj" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Busca por CPF ou CNPJ na consulta de clientes
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      A consulta de clientes passa a buscar o cliente por CPF ou CNPJ num filtro só e a devolver o
+      CNPJ dele. Os filtros por CPF, e-mail, telefone e nome voltam à referência.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/clientes" href="/pages/v2/referencia/clientes/endpoint/get" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="cnpj" /> — CNPJ do cliente, como foi cadastrado. Vem <code>null</code> quando não informado.</li>
+        <li>Parâmetro de query <ParamBadge name="cpf_cnpj" /> — CPF ou CNPJ, com ou sem máscara, inclusive o CNPJ alfanumérico (ex: <code>123.456.789-09</code>, <code>11.222.333/0001-81</code> ou <code>AB.12C.D34/EFGH-83</code>). A busca faz correspondência exata só no documento do tipo informado. Ignora <code>status_cliente</code> e paginação. Retorna 400 quando o valor não é um CPF nem um CNPJ válido, ou quando vem junto com <code>cpf</code>.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="changed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="cpf" />, <ParamBadge name="email" />, <ParamBadge name="telefone" /> e <ParamBadge name="nome" /> voltam à referência do endpoint, com o comportamento anunciado em <a href="/pages/v2/changelog#filtros-busca-clientes-condutores">25 de junho</a>. A referência de <ParamBadge name="status_cliente" />, <ParamBadge name="limite" /> e <ParamBadge name="pagina" /> volta a dizer quando eles são ignorados.</li>
+        <li>A referência de <ParamBadge name="ultimo_acesso_apos" />, <ParamBadge name="ultimo_acesso_antes_de" /> e <ParamBadge name="nunca_acessou" /> passa a dizer que eles se combinam também com as buscas diretas (<code>cpf_cnpj</code>, <code>cpf</code>, <code>email</code> e <code>telefone</code>), como a consulta já fazia.</li>
+        <li>A referência de <ParamBadge name="foto_url" /> passa a dizer que ele é preenchido em toda busca direta por um cliente (<code>id</code>, <code>cpf_cnpj</code>, <code>cpf</code>, <code>email</code> ou <code>telefone</code>), e não só na busca por <code>id</code>; na listagem paginada continua <code>null</code>. A entrada de <a href="/pages/v2/changelog#dados-engajamento-clientes">6 de outubro</a> citava só o <code>id</code>.</li>
+        <li>A referência de <ParamBadge name="id" />, na v2 e na v1, deixa de dizer que os demais parâmetros são ignorados: <code>status_cliente</code> e paginação são ignorados, e os demais filtros se combinam com ele, como a consulta já fazia.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/v2/integracao/clientes/{id}" href="/pages/v2/referencia/clientes/endpoint/get-by-id" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Mesmo campo <ParamBadge name="cnpj" />, no cliente retornado.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/integracao/cliente" href="/pages/v1/referencia/clientes/endpoint/get" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Mesmo campo <ParamBadge name="cnpj" />, em cada cliente da resposta da v1.</li>
+          <li>Parâmetro de query <ParamBadge name="cpf_cnpj" /> — CPF ou CNPJ, com ou sem máscara, inclusive o CNPJ alfanumérico, com correspondência exata só no documento do tipo informado. Ignora <code>status_cliente</code> e paginação. Retorna 400 quando o valor não é um CPF nem um CNPJ válido, ou quando vem junto com <code>cpf</code>.</li>
+          <li><ParamBadge name="cpf" />, <ParamBadge name="email" />, <ParamBadge name="telefone" /> e <ParamBadge name="nome" />, que a v1 já aceitava, passam a constar na referência da v1.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+  </Entry>
+
+  <Entry date="20 out 2026">
+    <h2 id="criar-dinamica-area" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Criação de dinâmica por área
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novo endpoint que cria uma dinâmica por área na central autenticada: a área desenhada em GeoJSON
+      e o fator aplicado às corridas que começam ou terminam nela. A dinâmica passa a valer no preço
+      logo após a criação, igual a uma criada pelo painel. O polígono das dinâmicas passa a ter limite
+      de vértices, também na alteração de vértices.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/dinamicas/area" href="/pages/v2/referencia/dinamicas/endpoint/post-area" />
+    <EndpointBadge method="PATCH" path="/api/v2/integracao/dinamicas/area/{id}/vertices" href="/pages/v2/referencia/dinamicas/endpoint/patch-vertices" />
+    <EndpointBadge method="PATCH" path="/api/v2/integracao/dinamicas/area/{id}" href="/pages/v2/referencia/dinamicas/endpoint/patch-area" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="nome" /> (até 100 caracteres), <ParamBadge name="poligono" />, <ParamBadge name="tipo_calculo" /> (<code>M</code> ou <code>F</code>), <ParamBadge name="tipo_fator" /> (<code>P</code> ou <code>R</code>) e <ParamBadge name="fator" /> obrigatórios; <ParamBadge name="cor_preenchimento" /> (<code>#RRGGBB</code>) e <ParamBadge name="ativo" /> opcionais. O <ParamBadge name="fator" /> aceita até uma casa decimal com <code>M</code> e até duas com <code>F</code>.</li>
+        <li><ParamBadge name="poligono" /> — GeoJSON <code>Polygon</code> com um anel fechado, ao menos 3 vértices distintos e no máximo 200 posições sem contar o fechamento.</li>
+        <li>Sem <ParamBadge name="cor_preenchimento" />, a área fica vermelha para acréscimo e azul para desconto, como no painel.</li>
+        <li>Resposta <code>201</code> com <ParamBadge name="id" />, os campos gravados e o polígono em GeoJSON. O endpoint não é idempotente: reenviar a requisição cria outra dinâmica.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="changed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "6px" }}>
+        <li>A alteração de vértices aceita no máximo 200 vértices. Área que já tem mais de 200 pode ser editada com até a quantidade atual, sem crescer; acima do limite, a resposta é <code>400</code>.</li>
+        <li>O <ParamBadge name="nome" /> da dinâmica, na criação e ao trocar o nome, aceita só letras, números, acentos e a pontuação do teclado, o mesmo conjunto que a tela de Dinâmica mantém; não aceita <code>{"< > \" ' & \\"}</code>, emoji, quebra de linha nem símbolos como <code>€ — … ’</code>, e com eles a resposta é <code>400</code>.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="20 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="evento-engajamento-estimativa-nao-solicitada" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Evento de engajamento da estimativa não solicitada
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Os webhooks de engajamento podem assinar um novo evento, entregue quando o passageiro simula uma corrida
+      no app e não a pede dentro de uma janela configurável. O evento traz o embarque, o destino e os preços que
+      o passageiro viu, por categoria e por forma de pagamento.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/engajamento/{id}/permissoes" href="/pages/v2/referencia/engajamento/permissoes/endpoint/post" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="estimativa_passageiro_app_nao_solicitada" /> — novo valor aceito em <ParamBadge name="eventos" />. Só a simulação do app com passageiro identificado e com destino gera o evento, uma vez por webhook.</li>
+        <li><strong>Limitação:</strong> o preço enviado não considera o saldo da carteira do passageiro, porque o uso do saldo é decidido no aparelho.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="PUT" path="/api/v2/integracao/engajamento/{id}/permissoes" href="/pages/v2/referencia/engajamento/permissoes/endpoint/put" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="estimativa_passageiro_app_nao_solicitada" /> — mesmo evento, na bandeira única enviada em <ParamBadge name="bandeira" />.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/engajamento" href="/pages/v2/referencia/engajamento/endpoint/post" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="janela_estimativa_segundos" /> — opcional, inteiro de 30 a 300: quantos segundos depois da simulação o evento <code>estimativa_passageiro_app_nao_solicitada</code> sai. Só vale para esse evento: os demais eventos de engajamento continuam saindo na hora. Ausente ou nulo vale 30. Fora da faixa, texto ou decimal é recusado com 400.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="PUT" path="/api/v2/integracao/engajamento/{id}" href="/pages/v2/referencia/engajamento/endpoint/put" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="janela_estimativa_segundos" /> — mesma faixa. Ausente mantém a janela gravada, e nulo volta ao padrão de 30.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/v2/integracao/engajamento" href="/pages/v2/referencia/engajamento/endpoint/get" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li><ParamBadge name="janela_estimativa_segundos" /> — a janela gravada de cada webhook para o evento <code>estimativa_passageiro_app_nao_solicitada</code>, ou 30 quando não configurada.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+  </Entry>
+
+  <Entry date="20 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="webhook-status-dados-da-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Dados da corrida no Webhook de Status
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      O Webhook de Status passa a entregar o passageiro e o condutor dentro do próprio POST, e no status
+      Aceita também o carro que vai chegar e a chave PIX do condutor. Os campos são aditivos: nada do que
+      já era enviado mudou de nome, formato ou valor. O contrato completo está em <a href="/pages/v2/referencia/webhooks/sobre">Webhooks &gt; Sobre</a>.
+    </p>
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="passenger" /> — em todo status, com <ParamBadge name="client_id" />, <ParamBadge name="name" /> e <ParamBadge name="phone" />. O nome e o telefone são os do passageiro da corrida, que nem sempre é o titular da conta; o <ParamBadge name="client_id" /> é sempre o da conta.</li>
+        <li><ParamBadge name="driver" /> — em todo status, com <ParamBadge name="driver_id" />, <ParamBadge name="name" />, <ParamBadge name="phone" />, <ParamBadge name="cpf" />, <ParamBadge name="vtr" /> e <ParamBadge name="category" />. Vem nulo enquanto a solicitação não tem condutor.</li>
+        <li><ParamBadge name="vehicle" /> — apenas no status <code>A</code>, com <ParamBadge name="model" />, <ParamBadge name="plate" />, <ParamBadge name="color" /> e <ParamBadge name="color_hex" />. Condutor sem veículo vinculado recebe os quatro campos nulos.</li>
+        <li><ParamBadge name="driver.pix_key" /> — apenas no status <code>A</code>, para quem paga o condutor por fora da plataforma. É dado pessoal: trate como trata CPF. Nos demais status a chave não aparece no bloco.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> quem já consome o Webhook de Status não precisa mudar nada — <code>datetime</code>, <code>event_id</code>, <code>request_id</code>, <code>status_code</code>, <code>status_label</code>, <code>stop_id</code> e <code>links</code> continuam iguais. Para esperar o veículo e a chave PIX, teste <code>status_code == "A"</code>, e não a presença da chave no payload.
+    </div>
+  </Entry>
+
+  <Entry date="16 out 2026">
+    <h2 id="correcoes-documentacao-v2" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Correções na documentação da API v2
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Formatos, valores aceitos, limites e exemplos que a documentação descrevia diferente do que a API faz.
+      A API não mudou.
+    </p>
+
+    <ChangeSection type="fixed">
+      <ul style={{ margin: 0, paddingLeft: "18px" }}>
+        <li>Centros de custo da empresa: o path é <code>/corridas/empresas/{"{id}"}/centro-custo</code>.</li>
+        <li>Condutores: a busca por <code>cpf</code> é exata, e a atualização de áreas de bloqueio aceita até 100 condutores.</li>
+        <li>Empresas: o cadastro exige <code>endereco.uf</code>, <code>aceita_ticket</code> e <code>aceita_voucher</code>; a atualização em lote aceita até 200 empresas, e <code>tipos_pagamento</code> vazio mantém as formas atuais.</li>
+        <li>Dinâmicas: a última faixa recusa <code>km_maximo</code> preenchido.</li>
+        <li>Áreas geográficas: a listagem traz as áreas de filial e as cercas eletrônicas.</li>
+        <li>Webhook de status: o status <code>T</code> (<code>REDISTRIBUTED</code>).</li>
+        <li>Introdução: o parâmetro de paginação é <code>pagina</code>, e os erros de chave trazem <code>code</code>.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
+  <Entry date="15 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="criar-area" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Criação de área
     </h2>
@@ -173,7 +460,7 @@ export const EndpointBadge = ({ method, path, href }) => (
         <li><ParamBadge name="area_bloqueio" />, com <ParamBadge name="hora_bloqueio_inicio" /> e <ParamBadge name="hora_bloqueio_fim" /> opcionais (<code>HH:mm</code>), torna a área uma área de bloqueio da central. Central que faz somente entregas recebe <code>400</code>.</li>
         <li>Resposta <code>201</code> com <ParamBadge name="id" />, os campos gravados e o polígono em GeoJSON.</li>
         <li>Nome já usado por outra área da central, sem diferenciar maiúsculas, minúsculas e acentos, responde <code>409</code>. Gestor com empresa vinculada recebe <code>400</code> com <code>code</code> 68.</li>
-        <li>Limite próprio de rate limit, 200 * faixa requisições por minuto. Detalhes na <a href="/pages/v2/referencia/introducao#rate-limit">introdução</a>.</li>
+        <li>Limite próprio de rate limit, 200 * faixa requisições por minuto. Detalhes na página <a href="/pages/v2/referencia/rate-limit">Rate limit</a>.</li>
       </ul>
     </ChangeSection>
   </Entry>
@@ -203,7 +490,7 @@ export const EndpointBadge = ({ method, path, href }) => (
     </ChangeSection>
   </Entry>
 
-  <Entry date="15 out 2026" label="Em breve" labelColor="#ea580c">
+  <Entry date="15 out 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="notificacoes-falhas-por-destinatario" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Falhas por destinatário nas notificações em lista
     </h2>
@@ -235,7 +522,40 @@ export const EndpointBadge = ({ method, path, href }) => (
     </ChangeSection>
   </Entry>
 
-  <Entry date="14 out 2026" label="Em breve" labelColor="#ea580c">
+  <Entry date="15 out 2026" label="Novo" labelColor="#3b82f6">
+    <h2 id="extrato-creditos-central" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Extrato de créditos da central
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Consulte pela API os lançamentos do extrato de créditos da central, com a mesma classificação e os filtros da tela de extrato do painel.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/financeiro/extrato" href="/pages/v2/referencia/financeiro/endpoint/get-extrato" />
+
+    <ChangeSection type="added">
+      <p style={{ marginBottom: "10px" }}>Novo endpoint com os parâmetros de query:</p>
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="data_ini" /> e <ParamBadge name="data_fim" /> — período de até 31 dias, com início nos últimos 6 meses. Opcional com <ParamBadge name="solicitacao_id" /> ou <ParamBadge name="registro_manual_id" />, que usam o período da própria solicitação ou do registro.</li>
+        <li><ParamBadge name="pagina" /> — página de 10 lançamentos; a última é a que vem com menos de 10.</li>
+        <li><ParamBadge name="tipo" />, <ParamBadge name="subfiltros[]" />, <ParamBadge name="situacao" /> e <ParamBadge name="tipo_usuario[]" /> — os filtros da tela de extrato; <ParamBadge name="situacao" /> e <ParamBadge name="tipo_usuario[]" /> exigem um subfiltro disponível para a central.</li>
+        <li><ParamBadge name="taxista_id" />, <ParamBadge name="cliente_id" />, <ParamBadge name="empresa_id" />, <ParamBadge name="solicitacao_id" /> e <ParamBadge name="registro_manual_id" /> — recortam o extrato por pessoa, corrida ou registro manual da central.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> cada lançamento traz <code>tipo_operacao</code> (código estável, com o prefixo <code>estorno_</code> nos estornos) e <code>operacao_descricao</code>. O endpoint exige Api-Key e autenticação HTTP Basic de um gestor da central com a permissão <code>API - Carteira de créditos</code>, e tem limite próprio de 40 requisições por minuto.
+    </div>
+  </Entry>
+
+  <Entry date="13 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="historico-punicoes-condutores" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Histórico de punições dos condutores
     </h2>
@@ -282,7 +602,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       Cada item é uma punição aplicada. Uma punição liberada antes do fim continua sendo um único item, com
       situação <code>R</code> e a data da liberação em <ParamBadge name="data_revogacao" />. Os horários seguem o fuso
       da central, sem indicação de fuso. Só há histórico das punições aplicadas a partir do lançamento. O endpoint tem limite de 10 requisições por minuto por{" "}
-      <code>api-key</code> — veja a seção <a href="/pages/v2/referencia/introducao#rate-limit">Rate limit</a>.
+      <code>api-key</code> — veja a seção <a href="/pages/v2/referencia/rate-limit">Rate limit</a>.
     </div>
   </Entry>
 
@@ -338,7 +658,7 @@ export const EndpointBadge = ({ method, path, href }) => (
         <li>Resposta <code>201</code> com <ParamBadge name="id" /> e <ParamBadge name="codigo" /> de cada cupom, na ordem enviada.</li>
         <li>Todos os erros de todos os itens voltam juntos, com <ParamBadge name="field" /> no formato <code>cupons.N.campo</code> e os mesmos <code>code</code> do <code>POST /cupons</code>. Nenhum cupom é criado quando há erro.</li>
         <li>A cota de cada gerador é conferida somando os cupons já criados e os do lote; código repetido no lote ou já em uso é recusado.</li>
-        <li>Limite próprio de rate limit, 20 * faixa requisições por minuto, sem o limite por gerador. Detalhes na <a href="/pages/v2/referencia/introducao#rate-limit">introdução</a>.</li>
+        <li>Limite próprio de rate limit, 20 * faixa requisições por minuto, sem o limite por gerador. Detalhes na página <a href="/pages/v2/referencia/rate-limit">Rate limit</a>.</li>
       </ul>
     </ChangeSection>
   </Entry>
@@ -910,7 +1230,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       A posição vem do serviço de localização em tempo real, a mesma fonte do mapa de condutores do painel.
       Condutor sem posição publicada recentemente não aparece na lista, mesmo estando livre. O retorno não é
       paginado: traz todos os condutores que atendem aos filtros. O endpoint tem limite de 10
-      requisições por minuto por <code>api-key</code> — veja a seção <a href="/pages/v2/referencia/introducao#rate-limit">Rate limit</a>.
+      requisições por minuto por <code>api-key</code> — veja a seção <a href="/pages/v2/referencia/rate-limit">Rate limit</a>.
     </div>
   </Entry>
 
