@@ -126,6 +126,13 @@
                     ]
                   },
                   {
+                    "group": "Desafios de passageiro",
+                    "pages": [
+                      "pages/v2/referencia/desafios-passageiro/endpoint/post",
+                      "pages/v2/referencia/desafios-passageiro/endpoint/delete"
+                    ]
+                  },
+                  {
                     "group": "Configurações",
                     "pages": [
                       "pages/v2/referencia/configuracoes/endpoint/patch",

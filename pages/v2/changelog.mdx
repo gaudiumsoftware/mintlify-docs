@@ -465,6 +465,31 @@ export const EndpointBadge = ({ method, path, href }) => (
     </ChangeSection>
   </Entry>
 
+  <Entry date="15 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="desafios-passageiro" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Desafios de passageiro
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novos endpoints que criam e cancelam um desafio de passageiro direto do CRM da central, para uma
+      lista fechada de clientes. Só os clientes da lista veem o desafio no app, contam corridas nele e
+      recebem o push diário; ninguém entra depois da criação.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/desafios-passageiro" href="/pages/v2/referencia/desafios-passageiro/endpoint/post" />
+    <EndpointBadge method="DELETE" path="/api/v2/integracao/desafios-passageiro/{id}" href="/pages/v2/referencia/desafios-passageiro/endpoint/delete" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="nome" />, <ParamBadge name="data_hora_inicio" />, <ParamBadge name="data_hora_fim" /> (UTC), <ParamBadge name="meta_corridas" /> e <ParamBadge name="recompensa" /> (créditos ou personalizada), com as mesmas regras do painel.</li>
+        <li><ParamBadge name="selecao" /> com <code>tipo</code> <code>lista</code> e de 1 a 10.000 <ParamBadge name="cliente_ids" />. Entram os clientes ativos e do app da central autenticada.</li>
+        <li>Resposta <code>201</code> quando todos os ids entram e <code>207</code> quando algum é recusado, com o <code>motivo</code> de cada um em <ParamBadge name="recusados" />. Nenhum id aceito responde <code>400</code>.</li>
+        <li>Central com desafio ativo ou programado responde <code>409</code>; central sem o desafio de passageiro liberado responde <code>403</code>.</li>
+        <li>O <code>DELETE</code> tem o mesmo efeito do cancelamento no painel, inclusive o push de desafio encerrado. Desafio de outra central responde <code>404</code>; desafio já encerrado responde <code>409</code>.</li>
+        <li>Requer gestor da central (não de empresa conveniada) com a permissão <code>Gerenciar desafios</code>. O Cargo Integrador não tem essa permissão.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="15 out 2026" label="Melhoria" labelColor="#16A34A">
     <h2 id="notificacoes-falhas-por-destinatario" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Falhas por destinatário nas notificações em lista

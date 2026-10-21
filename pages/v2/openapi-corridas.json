@@ -9098,6 +9098,479 @@
         }
       }
     },
+    "/desafios-passageiro": {
+      "post": {
+        "summary": "Criar desafio de passageiro",
+        "description": "Cria um desafio de passageiro para uma lista fechada de clientes da central. Só os clientes da lista veem o desafio no app, contam corridas nele e recebem o push diário; a lista é gravada na criação e não muda depois, nem por cadastro novo nem por troca de área.\n\nRegras importantes:\n- `selecao.tipo` aceita só `lista`, com de 1 a 10.000 `cliente_ids`. Id repetido conta uma vez.\n- Entra na lista o cliente da central da Api-Key (da área dela ou cadastrado nela sem área), ativo e do app. Os demais voltam em `data.recusados`, cada um com o `motivo`: `cliente_nao_encontrado` (id inexistente ou de outra central), `cliente_inativo` ou `cliente_fora_do_app`.\n- A resposta é `201` quando todos os ids entram e `207` quando algum é recusado. `data.selecao.quantidade_clientes_desafiados` é o total que entrou.\n- Nenhum id aceito responde `400` e o desafio não é criado.\n- `data_hora_inicio` e `data_hora_fim` são em UTC (ISO 8601) e são gravadas no fuso da central. O início precisa estar no futuro, o fim depois do início e fora da meia-noite no horário da central (como no painel), e as duas até `2038-01-19T03:14:07Z`.\n- A central tem no máximo um desafio de passageiro ativo ou programado; com um em andamento, a criação responde `409`.\n- A recompensa é em créditos (`valor`, creditado na carteira do passageiro ao bater a meta) ou personalizada (`descricao`, entregue pela central e aprovada no painel), com as mesmas regras do painel.\n- Não há push na criação: o push do primeiro dia faz o lançamento.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira. O cargo do gestor deve ser da central (não de empresa conveniada) e ter a permissão `Gerenciar desafios`; o Cargo Integrador não tem essa permissão, então use a credencial de um gestor da central. A central precisa ter o desafio de passageiro liberado.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "nome",
+                  "data_hora_inicio",
+                  "data_hora_fim",
+                  "meta_corridas",
+                  "recompensa",
+                  "selecao"
+                ],
+                "properties": {
+                  "nome": {
+                    "type": "string",
+                    "maxLength": 30,
+                    "description": "Nome do desafio, exibido no app.",
+                    "example": "Volta ao app"
+                  },
+                  "data_hora_inicio": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Início do desafio em UTC (`YYYY-MM-DDTHH:MM:SSZ`). Precisa estar no futuro.",
+                    "example": "2026-11-01T03:00:00Z"
+                  },
+                  "data_hora_fim": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Fim do desafio em UTC (`YYYY-MM-DDTHH:MM:SSZ`), depois do início.",
+                    "example": "2026-11-30T02:59:00Z"
+                  },
+                  "meta_corridas": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5000,
+                    "description": "Corridas finalizadas pelo app que o passageiro precisa fazer para concluir o desafio.",
+                    "example": 3
+                  },
+                  "recompensa": {
+                    "type": "object",
+                    "required": [
+                      "tipo"
+                    ],
+                    "description": "Recompensa de quem bate a meta.",
+                    "properties": {
+                      "tipo": {
+                        "type": "string",
+                        "enum": [
+                          "creditos",
+                          "personalizada"
+                        ],
+                        "description": "`creditos` credita `valor` na carteira do passageiro; `personalizada` é entregue pela central e aprovada no painel."
+                      },
+                      "valor": {
+                        "type": "number",
+                        "description": "Valor em créditos. Obrigatório quando `tipo` é `creditos`.",
+                        "example": 15.5
+                      },
+                      "descricao": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "description": "Descrição da recompensa. Obrigatória quando `tipo` é `personalizada`.",
+                        "example": "Camiseta da central"
+                      }
+                    }
+                  },
+                  "selecao": {
+                    "type": "object",
+                    "required": [
+                      "tipo",
+                      "cliente_ids"
+                    ],
+                    "description": "Público do desafio.",
+                    "properties": {
+                      "tipo": {
+                        "type": "string",
+                        "enum": [
+                          "lista"
+                        ],
+                        "description": "Só `lista` nesta versão."
+                      },
+                      "cliente_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 10000,
+                        "items": {
+                          "type": "integer"
+                        },
+                        "description": "Ids dos clientes desafiados, de 1 a 10.000.",
+                        "example": [
+                          83983,
+                          83984,
+                          83985
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "recompensa_em_creditos": {
+                  "summary": "Recompensa em créditos",
+                  "value": {
+                    "nome": "Volta ao app",
+                    "data_hora_inicio": "2026-11-01T03:00:00Z",
+                    "data_hora_fim": "2026-11-30T02:59:00Z",
+                    "meta_corridas": 3,
+                    "recompensa": {
+                      "tipo": "creditos",
+                      "valor": 15.5
+                    },
+                    "selecao": {
+                      "tipo": "lista",
+                      "cliente_ids": [
+                        83983,
+                        83984,
+                        83985,
+                        99
+                      ]
+                    }
+                  }
+                },
+                "recompensa_personalizada": {
+                  "summary": "Recompensa personalizada",
+                  "value": {
+                    "nome": "Desafio de novembro",
+                    "data_hora_inicio": "2026-11-01T03:00:00Z",
+                    "data_hora_fim": "2026-11-30T02:59:00Z",
+                    "meta_corridas": 5,
+                    "recompensa": {
+                      "tipo": "personalizada",
+                      "descricao": "Camiseta da central"
+                    },
+                    "selecao": {
+                      "tipo": "lista",
+                      "cliente_ids": [
+                        83983,
+                        83984
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Desafio criado com todos os clientes da lista",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": 215,
+                    "nome": "Volta ao app",
+                    "data_hora_inicio": "2026-11-01T03:00:00Z",
+                    "data_hora_fim": "2026-11-30T02:59:00Z",
+                    "meta_corridas": 3,
+                    "recompensa": {
+                      "tipo": "creditos",
+                      "valor": 15.5
+                    },
+                    "selecao": {
+                      "tipo": "lista",
+                      "quantidade_clientes_desafiados": 3
+                    },
+                    "recusados": []
+                  }
+                }
+              }
+            }
+          },
+          "207": {
+            "description": "Desafio criado; parte dos clientes foi recusada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": 215,
+                    "nome": "Volta ao app",
+                    "data_hora_inicio": "2026-11-01T03:00:00Z",
+                    "data_hora_fim": "2026-11-30T02:59:00Z",
+                    "meta_corridas": 3,
+                    "recompensa": {
+                      "tipo": "creditos",
+                      "valor": 15.5
+                    },
+                    "selecao": {
+                      "tipo": "lista",
+                      "quantidade_clientes_desafiados": 3
+                    },
+                    "recusados": [
+                      {
+                        "cliente_id": 99,
+                        "motivo": "cliente_nao_encontrado"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Payload inválido, regra do desafio, nenhum cliente aceito ou gestor sem permissão. O desafio não é criado. Gestor de empresa conveniada recebe o erro de permissão.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "selecao_invalida": {
+                    "summary": "Tipo de seleção diferente de lista",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 222,
+                          "message": "'selecao.tipo': Deve estar dentre os valores: lista"
+                        }
+                      ]
+                    }
+                  },
+                  "lista_acima_do_limite": {
+                    "summary": "Mais de 10.000 ids",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 225,
+                          "message": "'selecao.cliente_ids': Deve ter no máximo 10000 itens."
+                        }
+                      ]
+                    }
+                  },
+                  "inicio_no_passado": {
+                    "summary": "Início anterior ao momento atual",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'data_hora_inicio': A data/hora de início do desafio não pode ser anterior a momento atual"
+                        }
+                      ]
+                    }
+                  },
+                  "nenhum_cliente_aceito": {
+                    "summary": "Nenhum id da lista pode participar",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 242,
+                          "message": "Nenhum dos clientes informados pode participar do desafio."
+                        }
+                      ]
+                    }
+                  },
+                  "sem_permissao": {
+                    "summary": "Gestor sem a permissão Gerenciar desafios",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 68,
+                          "message": "O usuário informado não tem permissão para realizar essa operação."
+                        }
+                      ]
+                    }
+                  },
+                  "fim_a_meia_noite": {
+                    "summary": "Fim à meia-noite no horário da central",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'data_hora_fim': A hora final não pode ser 00:00."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Usuário ou senha do Basic Auth inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": "B5",
+                      "message": "Usuário e/ou senhas inválidos."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Desafio de passageiro não liberado para a central",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 240,
+                      "message": "O desafio de passageiro não está liberado para esta central."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "A central já tem um desafio de passageiro ativo ou programado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 241,
+                      "message": "A central já tem um desafio de passageiro ativo ou programado."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/desafios-passageiro/{id}": {
+      "delete": {
+        "summary": "Cancelar desafio de passageiro",
+        "description": "Cancela um desafio de passageiro da central, com o mesmo efeito do cancelamento no painel: a contagem de corridas para, o progresso e as recompensas já creditadas ficam, e quem já tinha corrida contabilizada e ainda não tinha concluído recebe o push de desafio encerrado.\n\nRegras importantes:\n- Vale para qualquer desafio de passageiro da central, criado pela API ou pelo painel.\n- Desafio já cancelado responde `200` sem disparar o push de novo. Repetir a chamada é seguro.\n- Desafio já encerrado (passou de `data_hora_fim`) não é cancelado e responde `409`, como no painel: o cancelamento travaria a aprovação das recompensas personalizadas.\n- Desafio inexistente ou de outra central responde `404`.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira, com a permissão `Gerenciar desafios` no cargo da central, como o `POST /desafios-passageiro`.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Identificador do desafio, o `id` devolvido por `POST /desafios-passageiro`.",
+            "schema": {
+              "type": "integer",
+              "example": 215
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Desafio cancelado, ou já cancelado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id": 215,
+                    "ativo": false
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Gestor sem a permissão Gerenciar desafios no cargo da central, ou gestor de empresa conveniada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 68,
+                      "message": "O usuário informado não tem permissão para realizar essa operação."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Usuário ou senha do Basic Auth inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": "B5",
+                      "message": "Usuário e/ou senhas inválidos."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Desafio inexistente ou de outra central",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 243,
+                      "message": "Desafio de passageiro não encontrado ou não pertence à central autenticada."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Desafio já encerrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 244,
+                      "message": "O desafio de passageiro já foi encerrado e não pode ser cancelado."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/dinamicas/area": {
       "get": {
         "summary": "Obter dinâmicas por área",

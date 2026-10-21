@@ -352,6 +352,18 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 
 No mesmo endpoint, `id` não numérico ou igual a zero responde `218`, condutor inexistente ou de outra central responde `56`, e gestor de empresa ou sem a permissão de integração de condutores responde `63`.
 
+## Desafio de passageiro (só v2)
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `240` *Em breve* | O desafio de passageiro não está liberado para esta central. | Central fora do grupo do desafio de passageiro, no `POST /desafios-passageiro`. HTTP 403. |
+| `241` *Em breve* | A central já tem um desafio de passageiro ativo ou programado. | `POST /desafios-passageiro` com outro desafio ativo ou programado na central, criado pela API ou pelo painel. HTTP 409. |
+| `242` *Em breve* | Nenhum dos clientes informados pode participar do desafio. | Nenhum `cliente_ids` é da central, ativo e do app. HTTP 400, sem criar o desafio. |
+| `243` *Em breve* | Desafio de passageiro não encontrado ou não pertence à central autenticada. | `DELETE /desafios-passageiro/{id}` com desafio inexistente ou de outra central. HTTP 404. |
+| `244` *Em breve* | O desafio de passageiro já foi encerrado e não pode ser cancelado. | `DELETE /desafios-passageiro/{id}` depois do fim do desafio. HTTP 409. |
+
+Nos mesmos endpoints, gestor sem a permissão `Gerenciar desafios` no cargo da central ou gestor de empresa conveniada responde `68`, e os erros de formato do corpo usam os códigos de validação abaixo.
+
 ## Validação do corpo da requisição (só v2)
 
 | code | Mensagem | Quando ocorre |
