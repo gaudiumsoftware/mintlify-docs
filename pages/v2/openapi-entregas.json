@@ -4256,20 +4256,27 @@
             }
           },
           "400": {
-            "description": "ID do condutor não numérico ou igual a zero",
+            "description": "O score não foi consultado porque o `id` do condutor é inválido. Só chega aqui um `id` igual a zero ou grande demais para ser um inteiro, depois de passar pelas checagens de usuário, permissão e licença.\n\nOutros `code` deste status:\n\n- `218`: `id` numérico com dígitos demais, que não cabe num inteiro; a mensagem é a mesma do `id` igual a zero.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/RespostaErro"
                 },
-                "example": {
-                  "success": false,
-                  "errors": [
-                    {
-                      "code": 218,
-                      "message": "'id': Deve ser numérico."
+                "examples": {
+                  "id_zero": {
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 218,
+                          "message": "'id': Deve ser numérico."
+                        }
+                      ]
                     }
-                  ]
+                  },
+                  "chave_nao_informada": {
+                    "$ref": "#/components/examples/ChaveNaoInformada"
+                  }
                 }
               }
             }
@@ -4283,73 +4290,58 @@
                 },
                 "examples": {
                   "api_key_invalida": {
-                    "summary": "Api-Key inválida",
-                    "value": {
-                      "success": false,
-                      "errors": [
-                        {
-                          "code": "B4",
-                          "message": "Você não está autorizado a acessar este recurso."
-                        }
-                      ]
-                    }
+                    "$ref": "#/components/examples/ApiKeyInvalida"
                   },
-                  "gestor_invalido": {
-                    "summary": "Usuário ou senha do Basic Auth inválidos",
-                    "value": {
-                      "success": false,
-                      "errors": [
-                        {
-                          "code": "B5",
-                          "message": "Usuário e/ou senhas inválidos."
-                        }
-                      ]
-                    }
+                  "gestor_nao_autenticado": {
+                    "$ref": "#/components/examples/GestorNaoAutenticado"
                   }
                 }
               }
             }
           },
           "403": {
-            "description": "Gestor sem acesso, central sem licença de integração ou programa de níveis indisponível",
+            "description": "O score não foi consultado por falta de acesso: o usuário autenticado precisa ser gestor da central, sem empresa, com a permissão de integração de condutores, e a central precisa ter a licença de integração via API. Também vem como `403` quando a central do condutor não usa o programa de níveis ou o programa está pausado. Aqui esses erros chegam como `403` com `code` próprio, não como `400`.\n\nOutros `code` deste status:\n\n- `236`: a central do condutor ainda não tem o programa de níveis liberado; o programa de níveis da central do condutor está desativado ou pausado, e a consulta do score do condutor não encontra programa ativo; o programa de níveis da central do condutor é desativado ou pausado entre a leitura do score e a leitura do trimestre vigente.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/RespostaErro"
                 },
                 "examples": {
-                  "sem_permissao": {
-                    "summary": "Gestor vinculado a uma empresa ou sem a permissão de integração de condutores",
-                    "value": {
-                      "success": false,
-                      "errors": [
-                        {
-                          "code": 63,
-                          "message": "Você não tem permissão para realizar essa operação."
-                        }
-                      ]
-                    }
+                  "usuario_de_empresa": {
+                    "$ref": "#/components/examples/UsuarioDeEmpresa"
                   },
                   "licenca_invalida": {
-                    "summary": "Central sem a licença de integração via API",
+                    "$ref": "#/components/examples/LicencaInvalida"
+                  }
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "O condutor não existe ou não é da central autenticada nem de uma central filha dela. Os dois casos têm a mesma resposta, para não revelar condutores de outras centrais.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro"
+                },
+                "examples": {
+                  "condutor_inexistente": {
                     "value": {
                       "success": false,
                       "errors": [
                         {
-                          "code": 19,
-                          "message": "Não é possível utilizar a API com a sua licença."
-                        }
-                      ]
-                    }
-                  },
-                  "score_indisponivel": {
-                    "summary": "Central do condutor sem o programa de níveis ativo",
-                    "value": {
-                      "success": false,
-                      "errors": [
-                        {
-                          "code": 236,
-                          "message": "Programa de níveis indisponível."
+                          "code": 56,
+                          "message": "Condutor não encontrado"
                         }
                       ]
                     }
@@ -4358,53 +4350,31 @@
               }
             }
           },
-          "404": {
-            "description": "Condutor inexistente ou de outra central",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "success": false,
-                  "errors": [
-                    {
-                      "code": 56,
-                      "message": "Condutor não encontrado"
-                    }
-                  ]
-                }
-              }
-            }
-          },
           "429": {
-            "description": "Limite de requisições excedido. Os limites estão na página [Rate limit](/pages/v2/entregas/rate-limit).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "success": false
-                }
-              }
-            }
+            "$ref": "#/components/responses/ErroLimite429"
           },
           "500": {
-            "description": "Erro interno",
+            "description": "Falha ao consultar o score do condutor. A falha desta operação chega com `code` 237.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/RespostaErro"
                 },
-                "example": {
-                  "success": false,
-                  "errors": [
-                    {
-                      "code": 237,
-                      "message": "Falha na operação"
+                "examples": {
+                  "falha_score": {
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 237,
+                          "message": "Falha na operação"
+                        }
+                      ]
                     }
-                  ]
+                  },
+                  "falha_operacao": {
+                    "$ref": "#/components/examples/FalhaOperacao"
+                  }
                 }
               }
             }
