@@ -712,7 +712,7 @@
           {
             "name": "cpf",
             "in": "query",
-            "description": "CPF do condutor. Aceita valor completo ou parcial, com ou sem máscara, por exemplo: `123.456.789-09` ou `12345`.",
+            "description": "CPF completo do condutor, com ou sem máscara, por exemplo: `123.456.789-09` ou `12345678909`. A busca é exata: um CPF parcial não encontra o condutor.",
             "schema": {
               "oneOf": [
                 {
@@ -1338,6 +1338,315 @@
         }
       }
     },
+    "/condutores/{id}/score": {
+      "get": {
+        "summary": "Consultar score do condutor",
+        "description": "Retorna o score do condutor no programa de níveis da central: os pontos do trimestre vigente, o nível atual, o próximo nível com as metas, a taxa de aceitação e a janela do trimestre.\n\nO condutor precisa ser da central autenticada ou, quando ela é agrupadora, de uma central filha. O score é sempre o da central do próprio condutor, onde os níveis foram configurados.\n\nResponde `403` quando a central do condutor não usa o programa de níveis ou está com ele pausado.\n\nPara acessar este endpoint, o usuário autenticado deve ser um gestor da central, sem empresa vinculada, com a permissão de integração de condutores, e a central deve ter a licença de integração via API ativa.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID do condutor.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "condutor_id": {
+                          "type": "integer",
+                          "description": "ID do condutor consultado."
+                        },
+                        "pontos": {
+                          "type": "integer",
+                          "description": "Pontos do condutor no trimestre vigente."
+                        },
+                        "nivel": {
+                          "type": "object",
+                          "description": "Nível atual do condutor. Condutor ainda sem avaliação fica no nível 1.",
+                          "properties": {
+                            "numero": {
+                              "type": "integer",
+                              "description": "Posição do nível na escada da central, a partir de 1."
+                            },
+                            "nome": {
+                              "type": "string",
+                              "description": "Nome do nível, como configurado pela central."
+                            }
+                          }
+                        },
+                        "proximo_nivel": {
+                          "type": "object",
+                          "nullable": true,
+                          "description": "Próximo nível da escada. Vem `null` quando o condutor já está no último nível.",
+                          "properties": {
+                            "numero": {
+                              "type": "integer"
+                            },
+                            "nome": {
+                              "type": "string"
+                            },
+                            "meta_pontos": {
+                              "type": "integer",
+                              "description": "Pontos exigidos para chegar ao nível."
+                            },
+                            "meta_taxa_aceitacao": {
+                              "type": "integer",
+                              "description": "Taxa de aceitação mínima, em porcentagem, exigida para chegar ao nível."
+                            },
+                            "pontos_restantes": {
+                              "type": "integer",
+                              "description": "Pontos que faltam para chegar ao nível."
+                            }
+                          }
+                        },
+                        "taxa_aceitacao": {
+                          "type": "number",
+                          "nullable": true,
+                          "description": "Taxa de aceitação do condutor, em porcentagem. Vem `null` quando o condutor ainda não recebeu ofertas suficientes para o cálculo ou quando o dado está indisponível. Nunca vem `0` no lugar de `null`."
+                        },
+                        "trimestre": {
+                          "type": "object",
+                          "description": "Trimestre vigente do programa de níveis, no qual os pontos são contados. O trimestre é definido pelo calendário UTC: o próximo começa à meia-noite UTC do primeiro dia (21h da véspera em Brasília), e os pontos passam a contar nele.",
+                          "properties": {
+                            "ano": {
+                              "type": "integer"
+                            },
+                            "trimestre": {
+                              "type": "integer",
+                              "description": "De 1 a 4."
+                            },
+                            "data_inicio": {
+                              "type": "string",
+                              "format": "date",
+                              "description": "Primeiro dia do trimestre, `AAAA-MM-DD`."
+                            },
+                            "data_fim": {
+                              "type": "string",
+                              "format": "date",
+                              "description": "Último dia do trimestre, `AAAA-MM-DD`."
+                            },
+                            "dias_restantes": {
+                              "type": "integer",
+                              "description": "Dias que faltam até o fim do trimestre, contando o dia atual e `data_fim`, pelo horário UTC. No último dia do trimestre vem `1`."
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "__links": {
+                      "type": "object",
+                      "description": "Links HATEOAS do domínio, indexados pelo rel."
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "condutor_id": 5574,
+                    "pontos": 420,
+                    "nivel": {
+                      "numero": 2,
+                      "nome": "Prata"
+                    },
+                    "proximo_nivel": {
+                      "numero": 3,
+                      "nome": "Ouro",
+                      "meta_pontos": 600,
+                      "meta_taxa_aceitacao": 80,
+                      "pontos_restantes": 180
+                    },
+                    "taxa_aceitacao": 87.5,
+                    "trimestre": {
+                      "ano": 2026,
+                      "trimestre": 4,
+                      "data_inicio": "2026-10-01",
+                      "data_fim": "2026-12-31",
+                      "dias_restantes": 71
+                    }
+                  },
+                  "__links": {
+                    "self": {
+                      "href": "api/v2/integracao/condutores/{id}/score",
+                      "metodo": "get"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID do condutor não numérico ou igual a zero",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 218,
+                      "message": "'id': Deve ser numérico."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Api-Key ou credenciais do gestor inválidas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "api_key_invalida": {
+                    "summary": "Api-Key inválida",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": "B4",
+                          "message": "Você não está autorizado a acessar este recurso."
+                        }
+                      ]
+                    }
+                  },
+                  "gestor_invalido": {
+                    "summary": "Usuário ou senha do Basic Auth inválidos",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": "B5",
+                          "message": "Usuário e/ou senhas inválidos."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Gestor sem acesso, central sem licença de integração ou programa de níveis indisponível",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "sem_permissao": {
+                    "summary": "Gestor vinculado a uma empresa ou sem a permissão de integração de condutores",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 63,
+                          "message": "Você não tem permissão para realizar essa operação."
+                        }
+                      ]
+                    }
+                  },
+                  "licenca_invalida": {
+                    "summary": "Central sem a licença de integração via API",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 19,
+                          "message": "Não é possível utilizar a API com a sua licença."
+                        }
+                      ]
+                    }
+                  },
+                  "score_indisponivel": {
+                    "summary": "Central do condutor sem o programa de níveis ativo",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 236,
+                          "message": "Programa de níveis indisponível."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Condutor inexistente ou de outra central",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 56,
+                      "message": "Condutor não encontrado"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Limite de requisições excedido. Os limites estão na página [Rate limit](/pages/v2/referencia/rate-limit).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 237,
+                      "message": "Falha na operação"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/condutores/areas-bloqueio/batch": {
       "put": {
         "summary": "Atualizar áreas de bloqueio em lote",
@@ -1355,8 +1664,8 @@
                 "properties": {
                   "condutores": {
                     "type": "array",
-                    "description": "Lista de IDs numéricos de condutores. Limite máximo de 1000 itens.",
-                    "maxItems": 1000,
+                    "description": "Lista de IDs numéricos de condutores. Limite máximo de 100 itens.",
+                    "maxItems": 100,
                     "items": {
                       "type": "integer"
                     }
@@ -2704,7 +3013,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "JSON_INVALIDO"
+                          "message": "JSON inválido"
                         }
                       ]
                     }
@@ -2719,7 +3028,7 @@
     "/configuracoes/areas-geograficas": {
       "get": {
         "summary": "Listar áreas geográficas",
-        "description": "Responsável por listar as áreas de bloqueio disponíveis para central.",
+        "description": "Lista as áreas geográficas da central que não são áreas de tarifa: as áreas de filial e as cercas eletrônicas. São essas áreas que podem ser usadas nos bloqueios e nas permissões dos condutores.",
         "parameters": [
           {
             "name": "limite",
@@ -6076,7 +6385,7 @@
         }
       }
     },
-    "/corridas/empresas/{id}/centros-custo": {
+    "/corridas/empresas/{id}/centro-custo": {
       "get": {
         "summary": "Listar centros de custo da empresa",
         "description": "Lista centros de custo de uma empresa para uso no domínio de corridas.",
@@ -9957,7 +10266,7 @@
       },
       "put": {
         "summary": "Substituir faixas de distância da dinâmica",
-        "description": "Substitui o conjunto inteiro de faixas de distância da dinâmica da área. Envie as faixas em ordem crescente informando só o limite final de cada uma (`km_maximo`): a primeira começa em 0 km, cada faixa começa no limite da anterior e a última é sempre aberta, então o `km_maximo` dela é ignorado.\n\nRegras, as mesmas da tela da central:\n- de 2 a 10 faixas, ou a partir de 1 quando há valores por categoria;\n- `km_maximo` crescente, com no máximo uma casa decimal;\n- um único `tipo_calculo` para todas as faixas. Com `M`, os valores ficam entre 1.1 e 5, com no máximo uma casa decimal; com `F`, entre 0.5 e 99.9, com no máximo duas, e o valor adicional precisa estar liberado para a central;\n- com `valores` por categoria, todas as categorias de `categorias_elegiveis` precisam estar em todas as faixas, e o `valor` de cada faixa precisa ser igual ao da primeira categoria elegível, que é a base da matriz;\n- área em automação que altera o fator não aceita faixas.\n\nLista `faixas` vazia volta a área para valor único, mantendo o valor da primeira faixa. Para mudar também o `tipo_calculo`, use depois `PATCH /dinamicas/area/{id}`.\n\nEnviar o mesmo conjunto que já está configurado não cria versão nova e responde \"Nenhuma alteração detectada.\". O `id` da área não muda com este endpoint. Já o `PATCH` de nome ou de vértices cria uma área nova: depois deles, use o `id` devolvido.\n\nCom `versao`, a resposta é 409 se a dinâmica tiver sido alterada depois da sua leitura e o conjunto enviado for diferente do vigente. Uma alteração em andamento na mesma área também responde 409; reenvie em instantes.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
+        "description": "Substitui o conjunto inteiro de faixas de distância da dinâmica da área. Envie as faixas em ordem crescente informando só o limite final de cada uma (`km_maximo`): a primeira começa em 0 km, cada faixa começa no limite da anterior e a última é sempre aberta: envie o `km_maximo` dela nulo ou omita o campo. Um valor ali é recusado com 400 (`A última faixa é sempre aberta: envie km_maximo nulo ou omita o campo.`).\n\nRegras, as mesmas da tela da central:\n- de 2 a 10 faixas, ou a partir de 1 quando há valores por categoria;\n- `km_maximo` crescente, com no máximo uma casa decimal;\n- um único `tipo_calculo` para todas as faixas. Com `M`, os valores ficam entre 1.1 e 5, com no máximo uma casa decimal; com `F`, entre 0.5 e 99.9, com no máximo duas, e o valor adicional precisa estar liberado para a central;\n- com `valores` por categoria, todas as categorias de `categorias_elegiveis` precisam estar em todas as faixas, e o `valor` de cada faixa precisa ser igual ao da primeira categoria elegível, que é a base da matriz;\n- área em automação que altera o fator não aceita faixas.\n\nLista `faixas` vazia volta a área para valor único, mantendo o valor da primeira faixa. Para mudar também o `tipo_calculo`, use depois `PATCH /dinamicas/area/{id}`.\n\nEnviar o mesmo conjunto que já está configurado não cria versão nova e responde \"Nenhuma alteração detectada.\". O `id` da área não muda com este endpoint. Já o `PATCH` de nome ou de vértices cria uma área nova: depois deles, use o `id` devolvido.\n\nCom `versao`, a resposta é 409 se a dinâmica tiver sido alterada depois da sua leitura e o conjunto enviado for diferente do vigente. Uma alteração em andamento na mesma área também responde 409; reenvie em instantes.\n\nRequer Api-Key (bandeira) + autenticação HTTP Basic de um gestor ativo da bandeira.",
         "parameters": [
           {
             "name": "id",
@@ -10597,7 +10906,7 @@
                       "errors": [
                         {
                           "code": 0,
-                          "message": "JSON_INVALIDO"
+                          "message": "JSON inválido"
                         }
                       ]
                     }
@@ -10702,6 +11011,8 @@
                   "situacao_cadastral",
                   "categorias",
                   "tipos_pagamento",
+                  "aceita_ticket",
+                  "aceita_voucher",
                   "cobrar_retorno",
                   "obrigar_finalizacao_com_retorno_pela_empresa",
                   "solicitacao_rapida"
@@ -10737,6 +11048,7 @@
                     "type": "object",
                     "required": [
                       "logradouro",
+                      "uf",
                       "cidade",
                       "bairro",
                       "cep"
@@ -10759,14 +11071,7 @@
                         "type": "string"
                       },
                       "cep": {
-                        "oneOf": [
-                          {
-                            "type": "integer"
-                          },
-                          {
-                            "type": "string"
-                          }
-                        ]
+                        "type": "string"
                       }
                     }
                   },
@@ -10778,14 +11083,7 @@
                     ],
                     "properties": {
                       "ddd": {
-                        "oneOf": [
-                          {
-                            "type": "string"
-                          },
-                          {
-                            "type": "integer"
-                          }
-                        ]
+                        "type": "string"
                       },
                       "numero": {
                         "type": "string"
@@ -10825,6 +11123,14 @@
                       ]
                     },
                     "description": "Array vazio indica todos os tipos. B: Débito (máquina), C: Crédito (máquina), D: Dinheiro, F: Faturado, H: Whatsapp, P: Picpay, R: Carteira de Créditos, X: Pix"
+                  },
+                  "aceita_ticket": {
+                    "type": "boolean",
+                    "description": "Indica se a empresa aceita pagamento por ticket."
+                  },
+                  "aceita_voucher": {
+                    "type": "boolean",
+                    "description": "Indica se a empresa aceita pagamento por voucher."
                   },
                   "area_atuacao_empresa_id": {
                     "type": "integer"
@@ -10870,6 +11176,7 @@
                 "nome_fantasia": "Teste",
                 "endereco": {
                   "logradouro": "Rua 1",
+                  "uf": "SP",
                   "cidade": "Barretos",
                   "bairro": "Centro",
                   "cep": "14783-215"
@@ -10881,6 +11188,8 @@
                 "situacao_cadastral": "A",
                 "categorias": [],
                 "tipos_pagamento": [],
+                "aceita_ticket": false,
+                "aceita_voucher": false,
                 "cobrar_retorno": false,
                 "obrigar_finalizacao_com_retorno_pela_empresa": false,
                 "solicitacao_rapida": {
@@ -10929,8 +11238,8 @@
                   },
                   "empresas": {
                     "type": "array",
-                    "description": "IDs das empresas a serem atualizadas. Limite máximo de 1000 itens.",
-                    "maxItems": 1000,
+                    "description": "IDs das empresas a serem atualizadas. Limite máximo de 200 itens.",
+                    "maxItems": 200,
                     "items": {
                       "type": "integer"
                     }
@@ -10958,7 +11267,7 @@
                         "X"
                       ]
                     },
-                    "description": "Array vazio indica todos os tipos. B: Débito (máquina), C: Crédito (máquina), D: Dinheiro, F: Faturado, H: Whatsapp, P: Picpay, R: Carteira de Créditos, X: Pix"
+                    "description": "Array vazio ou ausente mantém as formas de pagamento atuais. B: Débito (máquina), C: Crédito (máquina), D: Dinheiro, F: Faturado, H: Whatsapp, P: Picpay, R: Carteira de Créditos, X: Pix"
                   },
                   "area_atuacao_empresa_id": {
                     "type": "integer"

@@ -31,6 +31,8 @@ Os valores da tabela são **limites base**. O limite efetivo de cada grupo é o 
 | Extrato de créditos | `/api/v2/integracao/financeiro/extrato` | 40 requisições por minuto |
 | Padrão | `/api/v2/integracao/*` | 1000 * faixa requisições por minuto |
 
+O score do condutor (`/api/v2/integracao/condutores/{id}/score`) não tem limite próprio: entra no grupo Condutores, com limite de 750 * faixa requisições por minuto, e soma no mesmo contador das demais rotas do grupo.
+
 ## Limites por recurso
 
 Alguns endpoints têm, além do limite do grupo, um limite **por recurso informado na requisição**: a mesma `api-key` só pode operar o mesmo recurso, identificado na requisição, um número fixo de vezes por minuto. Esses limites são fixos e não são multiplicados pela faixa.
