@@ -185,6 +185,14 @@ No status Aceita (`A`), e só nele, o payload traz também o bloco `vehicle`, co
 | `F` | `FINISHED` | Solicitação finalizada |
 | `U` | `GROUPED` | Solicitação agrupada em andamento |
 | `T` | `REDISTRIBUTED` | Solicitação sendo redistribuída para outro condutor |
+| `CF` | `CANCELLATION_FEE_CHARGED` | Ocorrência: o cancelamento gerou taxa de cancelamento |
+| `FR` | `FARE_RECALCULATED` | Ocorrência: o valor da corrida foi recalculado |
+| `NA` | `NO_ACCEPTANCE_TIMEOUT` | Ocorrência: a solicitação está há 60 segundos sem aceite |
+| `DL` | `DRIVER_LATE` | Ocorrência: o condutor passou do prazo de chegada ao local |
+| `LR` | `PASSENGER_LOW_RATING` | Ocorrência: o condutor avaliou o passageiro com nota 1, 2 ou 3 |
+| `RR` | `ROUTE_RECALCULATED` | Ocorrência: a rota foi recalculada porque o condutor saiu dela |
+
+Os códigos marcados como **ocorrência** não mudam o status da solicitação: veja [Ocorrências da corrida](#ocorrências-da-corrida).
 
 #### Como usar
 
@@ -197,7 +205,9 @@ No status Aceita (`A`), e só nele, o payload traz também o bloco `vehicle`, co
 | Campo | Formato | Requerido | Descrição |
 | :--- | :--- | :--- | :--- |
 | `datetime` | ISO-8601 | SIM | Data e hora do evento gerado pela Machine. |
-| `event_id` | UUID | SIM | Identificação única do evento (idempotência). |
+| `event_id` | UUID | SIM | Identificação da tentativa de entrega. Muda a cada reenvio do mesmo evento: para deduplicar, use `source_event_id`. |
+| `source_event_id` | String | SIM | Identificação estável do evento, igual em todos os reenvios. Trate como texto opaco. |
+| `event_type` | ENUM | SIM | `STATUS` para mudança de status, chegada ao local e parada; `OCCURRENCE` para as [ocorrências da corrida](#ocorrências-da-corrida). |
 | `request_id` | INT | SIM | Identificador da solicitação |
 | `status_code` | VARCHAR(2) | SIM | Código do status |
 | `status_label` | ENUM | SIM | Status descritivo |
@@ -206,6 +216,9 @@ No status Aceita (`A`), e só nele, o payload traz também o bloco `vehicle`, co
 | `passenger` | Object | SIM | Passageiro da corrida. As três chaves vêm sempre, com valor ou nulas. |
 | `driver` | Object | NÃO | Condutor da solicitação. Nulo enquanto a solicitação não tem condutor. |
 | `vehicle` | Object | NÃO | Veículo do condutor. Enviado apenas no status `ACCEPTED` (`A`). |
+| `waiting_time_seconds` | INT | NÃO | Segundos entre o aceite e a chegada do condutor. Enviado apenas nos eventos de chegada (`ARRIVED_AT_LOCATION` e `NEAR_LOCATION`); nulo quando o horário ainda não está disponível. |
+| `accepted_estimate_seconds` | INT | NÃO | Estimativa, feita no aceite, do tempo até a chegada do condutor. Enviado junto de `waiting_time_seconds`. |
+| `occurrence` | Object | NÃO | Dados da ocorrência. Enviado apenas quando `event_type` é `OCCURRENCE`. |
 
 ### Links no Payload
 
@@ -282,6 +295,73 @@ Condutor sem veículo vinculado recebe o bloco com os quatro campos nulos — n�
 - **Decida por `status_code`, não pela presença da chave.** `vehicle` e `driver.pix_key` acompanham o status `A`; a regra para esperá-los é `status_code == "A"`.
 - **Distinga nulo de ausente.** Campo nulo é dado que não existe no cadastro; chave ausente é bloco que não se aplica àquele status.
 - **Não confunda `driver` nulo com condutor sem dados.** `driver: null` significa que a solicitação ainda não tem condutor.
+
+### Tempo de espera do passageiro
+
+Os eventos de chegada do condutor trazem quanto tempo o passageiro esperou desde o aceite:
+
+- `ARRIVED_AT_LOCATION` (`AP`): até o condutor marcar que chegou ao local de embarque.
+- `NEAR_LOCATION` (`AN`), quando a central recebe esse evento: até o GPS registrar o condutor nos arredores do local.
+
+Use o `NEAR_LOCATION` e, quando ele não vier, o `ARRIVED_AT_LOCATION`. Compare `waiting_time_seconds` com `accepted_estimate_seconds` para saber se o condutor chegou antes ou depois do previsto.
+
+## Ocorrências da corrida
+
+Além das mudanças de status, o Webhook de Status entrega **ocorrências**: situações da corrida que podem pedir uma ação da central, mas que não mudam o status da solicitação. Elas chegam com `event_type: "OCCURRENCE"` e o bloco `occurrence`, e usam o mesmo formato, a mesma assinatura e os mesmos reenvios dos demais eventos.
+
+Todo webhook de status recebe todas as ocorrências. Para ignorar as que não interessam, descarte pelo `status_label`.
+
+```json
+{
+ "datetime": "2026-10-21T13:20:05Z",
+ "event_id": "0199a3e2-7f10-7c3a-9b2d-4e5f6a7b8c9d",
+ "source_event_id": "48213377",
+ "event_type": "OCCURRENCE",
+ "request_id": 12345,
+ "status_code": "CF",
+ "status_label": "CANCELLATION_FEE_CHARGED",
+ "stop_id": null,
+ "passenger": {
+   "client_id": 4321,
+   "name": "Maria Souza",
+   "phone": "5511999998888"
+ },
+ "driver": {
+   "driver_id": 321,
+   "name": "João da Silva",
+   "phone": "5511988887777",
+   "cpf": "12345678901",
+   "vtr": "0421",
+   "category": "Executivo"
+ },
+ "links": {
+   "request": "https://api.taximachine.com.br/api/v1/request/12345"
+ },
+ "occurrence": {
+   "amount": 7.5,
+   "payment_status": "PAID"
+ }
+}
+```
+
+### Conteúdo do bloco `occurrence`
+
+| `status_label` | Quando é enviado | Campos de `occurrence` |
+| :--- | :--- | :--- |
+| `CANCELLATION_FEE_CHARGED` | O cancelamento gerou taxa, cobrada na hora ou deixada como pendência. Estorno e abono posteriores não geram ocorrência. | `amount`: valor da taxa. `payment_status`: `PAID`, `AWAITING_PAYMENT`, `CONFIRMING_PAYMENT`, `DISCARDED` ou `UNKNOWN`. |
+| `FARE_RECALCULATED` | O valor da corrida foi recalculado: por alteração de trajeto ou pelo taxímetro do condutor ao finalizar. | `previous_amount` e `new_amount`. `reason`: `ROUTE_CHANGE` ou `TAXIMETER`. Distância e tempo atualizados estão em `links.request`. |
+| `NO_ACCEPTANCE_TIMEOUT` | A solicitação chegou a 60 segundos sem aceite, cancelamento ou não atendimento. Enviado uma vez por solicitação. Solicitações agendadas não geram. | `seconds_without_acceptance`. |
+| `DRIVER_LATE` | O condutor passou do prazo de chegada ao local: a estimativa feita no aceite mais a tolerância de atraso configurada pela central para a taxa de cancelamento. Centrais sem essa tolerância não recebem. Não é enviado se o condutor chegar aos arredores, marcar a chegada ou iniciar a corrida antes do prazo. | `deadline` (ISO-8601) e `accepted_estimate_seconds`. |
+| `PASSENGER_LOW_RATING` | O condutor avaliou o passageiro com nota 1, 2 ou 3. Enviado **apenas aos webhooks da central** (responsável `solicitante`), nunca aos de empresa. | `rating`. |
+| `ROUTE_RECALCULATED` | O app do passageiro pediu uma rota nova porque o condutor saiu mais de 50 metros da rota anterior. Abrir o mapa de novo e trocar o destino não geram. | `recalculation_number`: número do recálculo na corrida. |
+
+### Como consumir as ocorrências
+
+- **Não trate ocorrência como status.** Uma ocorrência pode chegar depois de `FINISHED` ou `CANCELED`. Se você guarda o último status da solicitação, atualize-o só com eventos `event_type: "STATUS"`.
+- **Deduplique por `source_event_id`.** A entrega é *at-least-once*: o mesmo evento pode chegar mais de uma vez, sempre com o mesmo `source_event_id` e com `event_id` diferente.
+- **Não conte com a ordem.** As ocorrências podem chegar antes ou depois dos eventos de status do mesmo momento. Ordene por `datetime`.
+- **`PASSENGER_LOW_RATING` e `ROUTE_RECALCULATED` são de melhor esforço.** Em falha momentânea da plataforma, podem não ser enviadas. `ROUTE_RECALCULATED` só existe quando o passageiro está com o app aberto acompanhando a corrida.
+- **`rating` é dado pessoal do passageiro.** Use-o para o atendimento da central e não o repasse a quem não precisa dele.
 
 ---
 
