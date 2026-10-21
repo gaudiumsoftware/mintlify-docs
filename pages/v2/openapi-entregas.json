@@ -82,7 +82,7 @@
       },
       "RespostaLimiteExcedido": {
         "type": "object",
-        "description": "Corpo da resposta `429`, devolvido pelo gateway sem a lista `errors`.",
+        "description": "Corpo da resposta `429`, sem a lista `errors`.",
         "required": [
           "success"
         ],
@@ -123,26 +123,13 @@
     "examples": {
       "ChaveNaoInformada": {
         "summary": "Nenhuma chave de API enviada",
-        "description": "A requisição não trouxe o header `api-key` nem o `app-key`.",
+        "description": "A requisição não trouxe o header `api-key`.",
         "value": {
           "success": false,
           "errors": [
             {
               "code": "B1",
               "message": "Chave da api não informada."
-            }
-          ]
-        }
-      },
-      "ChavesConflitantes": {
-        "summary": "api-key e app-key enviadas juntas",
-        "description": "A requisição trouxe os headers `api-key` e `app-key` ao mesmo tempo. Envie só a `api-key`.",
-        "value": {
-          "success": false,
-          "errors": [
-            {
-              "code": "B2",
-              "message": "Desculpe, não foi possível entender sua solicitação."
             }
           ]
         }
@@ -160,22 +147,9 @@
           ]
         }
       },
-      "SomenteAppKey": {
-        "summary": "Só a app-key enviada",
-        "description": "A requisição trouxe o header `app-key` sem a `api-key`. A v2 aceita só a `api-key`.",
-        "value": {
-          "success": false,
-          "errors": [
-            {
-              "code": "B3",
-              "message": "Você não está autorizado a acessar este recurso."
-            }
-          ]
-        }
-      },
       "ApiKeyInvalida": {
         "summary": "api-key inexistente",
-        "description": "A `api-key` não está cadastrada. Na operação normal, o gateway barra antes a chave que não conhece e devolve `403`. Este erro só chega quando o gateway não consegue consultar as chaves.",
+        "description": "A `api-key` não está cadastrada. Normalmente uma chave não reconhecida recebe `403`; este `401` aparece só em situações excepcionais.",
         "value": {
           "success": false,
           "errors": [
@@ -224,11 +198,6 @@
             }
           ]
         }
-      },
-      "ChaveDesconhecidaGateway": {
-        "summary": "api-key desconhecida pelo gateway",
-        "description": "O gateway não reconhece a `api-key` enviada e recusa a requisição antes de ela chegar à API. A resposta vem em texto puro, sem o envelope JSON.",
-        "value": "-"
       },
       "LimiteExcedido": {
         "summary": "Limite de requisições excedido",
@@ -492,11 +461,16 @@
           ],
           "success": false
         }
+      },
+      "ApiKeyNaoReconhecida": {
+        "summary": "api-key não reconhecida",
+        "description": "A `api-key` enviada não é reconhecida, e a requisição é recusada antes de ser processada. A resposta vem em texto puro, sem o envelope JSON.",
+        "value": "-"
       }
     },
     "responses": {
       "ErroRequisicao400": {
-        "description": "A requisição não trouxe a chave de API ou trouxe chaves conflitantes.",
+        "description": "A requisição não trouxe a `api-key`.",
         "content": {
           "application/json": {
             "schema": {
@@ -505,16 +479,13 @@
             "examples": {
               "chave_nao_informada": {
                 "$ref": "#/components/examples/ChaveNaoInformada"
-              },
-              "chaves_conflitantes": {
-                "$ref": "#/components/examples/ChavesConflitantes"
               }
             }
           }
         }
       },
       "ErroRequisicaoCorpo400": {
-        "description": "A requisição não trouxe a chave de API, trouxe chaves conflitantes ou enviou um corpo com JSON malformado.",
+        "description": "A requisição não trouxe a `api-key` ou enviou um corpo com JSON malformado.",
         "content": {
           "application/json": {
             "schema": {
@@ -523,9 +494,6 @@
             "examples": {
               "chave_nao_informada": {
                 "$ref": "#/components/examples/ChaveNaoInformada"
-              },
-              "chaves_conflitantes": {
-                "$ref": "#/components/examples/ChavesConflitantes"
               },
               "json_invalido": {
                 "$ref": "#/components/examples/JsonInvalido"
@@ -535,16 +503,13 @@
         }
       },
       "ErroAutenticacao401": {
-        "description": "A chave de API não foi aceita: só a `app-key` foi enviada, ou a `api-key` não existe.",
+        "description": "A `api-key` enviada não foi aceita.",
         "content": {
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/RespostaErro"
             },
             "examples": {
-              "somente_app_key": {
-                "$ref": "#/components/examples/SomenteAppKey"
-              },
               "api_key_invalida": {
                 "$ref": "#/components/examples/ApiKeyInvalida"
               }
@@ -553,15 +518,15 @@
         }
       },
       "ErroAcesso403": {
-        "description": "O gateway não reconhece a `api-key` enviada. O corpo vem em `text/plain`, sem o envelope JSON.",
+        "description": "A `api-key` enviada não é reconhecida. O corpo vem em texto puro (`-`), sem o envelope JSON.",
         "content": {
           "text/plain": {
             "schema": {
               "type": "string"
             },
             "examples": {
-              "chave_desconhecida_gateway": {
-                "$ref": "#/components/examples/ChaveDesconhecidaGateway"
+              "api_key_nao_reconhecida": {
+                "$ref": "#/components/examples/ApiKeyNaoReconhecida"
               }
             }
           }
@@ -597,7 +562,7 @@
         }
       },
       "ErroInterno500": {
-        "description": "Falha inesperada no processamento. Também chegam neste status um erro interno sem tratamento, com o `code` original, e a falha de comunicação interna (tempo limite de 5 segundos), com `code` 0 e a mensagem \"Falha na comunicação com a API V1 (Local): \" seguida do motivo. Veja [Códigos de erro](/pages/v2/entregas/codigos-de-erro).",
+        "description": "Falha inesperada no processamento. Também chegam neste status, com `code` 0, falhas de comunicação interna que excedem o tempo limite de 5 segundos; nesse caso, a operação pode ter sido concluída. Veja [Códigos de erro](/pages/v2/entregas/codigos-de-erro).",
         "content": {
           "application/json": {
             "schema": {
@@ -701,9 +666,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -796,9 +758,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
@@ -970,9 +929,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
@@ -1227,9 +1183,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -1419,9 +1372,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -1433,7 +1383,7 @@
             "$ref": "#/components/responses/ErroAutenticacao401"
           },
           "403": {
-            "description": "O endereço existe, mas pertence a outro consumidor, diferente do informado no caminho.",
+            "description": "O endereço não pertence ao consumidor informado no caminho.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1458,8 +1408,8 @@
                   "type": "string"
                 },
                 "examples": {
-                  "chave_desconhecida_gateway": {
-                    "$ref": "#/components/examples/ChaveDesconhecidaGateway"
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
                   }
                 }
               }
@@ -1546,7 +1496,7 @@
             "$ref": "#/components/responses/ErroAutenticacao401"
           },
           "403": {
-            "description": "O endereço existe, mas pertence a outro consumidor, diferente do informado no caminho.",
+            "description": "O endereço não pertence ao consumidor informado no caminho.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1571,8 +1521,8 @@
                   "type": "string"
                 },
                 "examples": {
-                  "chave_desconhecida_gateway": {
-                    "$ref": "#/components/examples/ChaveDesconhecidaGateway"
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
                   }
                 }
               }
@@ -1670,9 +1620,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -1691,9 +1638,6 @@
                   },
                   "usuario_invalido": {
                     "$ref": "#/components/examples/UsuarioInvalido"
-                  },
-                  "somente_app_key": {
-                    "$ref": "#/components/examples/SomenteAppKey"
                   },
                   "api_key_invalida": {
                     "$ref": "#/components/examples/ApiKeyInvalida"
@@ -1720,8 +1664,8 @@
                   "type": "string"
                 },
                 "examples": {
-                  "chave_desconhecida_gateway": {
-                    "$ref": "#/components/examples/ChaveDesconhecidaGateway"
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
                   }
                 }
               }
@@ -2196,9 +2140,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -2259,9 +2200,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -2277,9 +2215,6 @@
                 "examples": {
                   "central_nao_ativa": {
                     "$ref": "#/components/examples/CentralNaoAtiva"
-                  },
-                  "somente_app_key": {
-                    "$ref": "#/components/examples/SomenteAppKey"
                   },
                   "api_key_invalida": {
                     "$ref": "#/components/examples/ApiKeyInvalida"
@@ -2306,8 +2241,8 @@
                   "type": "string"
                 },
                 "examples": {
-                  "chave_desconhecida_gateway": {
-                    "$ref": "#/components/examples/ChaveDesconhecidaGateway"
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
                   }
                 }
               }
@@ -2477,9 +2412,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -2497,9 +2429,6 @@
                 "examples": {
                   "central_nao_ativa": {
                     "$ref": "#/components/examples/CentralNaoAtiva"
-                  },
-                  "somente_app_key": {
-                    "$ref": "#/components/examples/SomenteAppKey"
                   },
                   "api_key_invalida": {
                     "$ref": "#/components/examples/ApiKeyInvalida"
@@ -2526,8 +2455,8 @@
                   "type": "string"
                 },
                 "examples": {
-                  "chave_desconhecida_gateway": {
-                    "$ref": "#/components/examples/ChaveDesconhecidaGateway"
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
                   }
                 }
               }
@@ -2639,7 +2568,7 @@
             }
           },
           "400": {
-            "description": "O corpo da alteração foi recusado. Todos os campos são opcionais, mas ao menos um deve vir. Os erros de formato chegam juntos; só quando passam em todos a operação confere o valor de `fator`, a área por faixas e o nome. Esta operação não confere tamanho nem espaços em branco do `nome`, nem as casas decimais do `fator`, como a criação faz.\n\nOutros `code` deste status:\n\n- `0`: o `tipo_calculo` enviado é diferente do atual e o corpo não traz `fator`; o corpo traz `fator` ou `tipo_fator` e o valor resultante está fora de 1,1 a 5 (multiplicador, acréscimo) ou de 0,50 a 99,90 (valor adicional), ou é um desconto numa central sem acesso a dinâmica de desconto. Alterar só `nome` ou `ativo` não confere o valor; o `fator` ou o `tipo_calculo` muda o valor de uma área que tem faixas de distância. Nome, ativo e tipo de fator continuam permitidos; o valor se altera em `PUT /dinamicas/area/{id}/faixas`.",
+            "description": "O corpo da alteração foi recusado. Todos os campos são opcionais, mas ao menos um deve vir. Os erros de formato chegam juntos; só quando passam em todos a operação confere o valor de `fator`, a área por faixas e o nome.\n\nOutros `code` deste status:\n\n- `0`: o `tipo_calculo` enviado é diferente do atual e o corpo não traz `fator`; o corpo traz `fator` ou `tipo_fator` e o valor resultante está fora de 1,1 a 5 (multiplicador, acréscimo) ou de 0,50 a 99,90 (valor adicional), ou é um desconto numa central sem acesso a dinâmica de desconto. Alterar só `nome` ou `ativo` não confere o valor; o `fator` ou o `tipo_calculo` muda o valor de uma área que tem faixas de distância. Nome, ativo e tipo de fator continuam permitidos; o valor se altera em `PUT /dinamicas/area/{id}/faixas`.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2706,9 +2635,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
@@ -3012,9 +2938,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
@@ -3522,9 +3445,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -3834,9 +3754,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -4110,9 +4027,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -4131,9 +4045,6 @@
                   },
                   "gestor_nao_autenticado": {
                     "$ref": "#/components/examples/GestorNaoAutenticado"
-                  },
-                  "somente_app_key": {
-                    "$ref": "#/components/examples/SomenteAppKey"
                   }
                 }
               }
@@ -4176,8 +4087,8 @@
                   "type": "string"
                 },
                 "examples": {
-                  "chave_desconhecida_gateway": {
-                    "$ref": "#/components/examples/ChaveDesconhecidaGateway"
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
                   }
                 }
               }
@@ -4667,9 +4578,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -5140,9 +5048,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -5300,9 +5205,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
@@ -5488,9 +5390,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -5675,9 +5574,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -5847,9 +5743,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -5988,9 +5881,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -6097,9 +5987,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -6173,9 +6060,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -6278,9 +6162,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -6804,9 +6685,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -6824,9 +6702,6 @@
                 "examples": {
                   "gestor_nao_autenticado": {
                     "$ref": "#/components/examples/GestorNaoAutenticado"
-                  },
-                  "somente_app_key": {
-                    "$ref": "#/components/examples/SomenteAppKey"
                   },
                   "api_key_invalida": {
                     "$ref": "#/components/examples/ApiKeyInvalida"
@@ -6994,9 +6869,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -7120,9 +6992,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -7143,9 +7012,6 @@
                   },
                   "usuario_invalido": {
                     "$ref": "#/components/examples/UsuarioInvalido"
-                  },
-                  "somente_app_key": {
-                    "$ref": "#/components/examples/SomenteAppKey"
                   },
                   "api_key_invalida": {
                     "$ref": "#/components/examples/ApiKeyInvalida"
@@ -7172,8 +7038,8 @@
                   "type": "string"
                 },
                 "examples": {
-                  "chave_desconhecida_gateway": {
-                    "$ref": "#/components/examples/ChaveDesconhecidaGateway"
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
                   }
                 }
               }
@@ -7397,9 +7263,6 @@
                   "gestor_nao_autenticado": {
                     "$ref": "#/components/examples/GestorNaoAutenticado"
                   },
-                  "somente_app_key": {
-                    "$ref": "#/components/examples/SomenteAppKey"
-                  },
                   "api_key_invalida": {
                     "$ref": "#/components/examples/ApiKeyInvalida"
                   }
@@ -7425,8 +7288,8 @@
                   "type": "string"
                 },
                 "examples": {
-                  "chave_desconhecida_gateway": {
-                    "$ref": "#/components/examples/ChaveDesconhecidaGateway"
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
                   }
                 }
               }
@@ -8141,9 +8004,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -8161,9 +8021,6 @@
                 "examples": {
                   "gestor_nao_autenticado": {
                     "$ref": "#/components/examples/GestorNaoAutenticado"
-                  },
-                  "somente_app_key": {
-                    "$ref": "#/components/examples/SomenteAppKey"
                   },
                   "api_key_invalida": {
                     "$ref": "#/components/examples/ApiKeyInvalida"
@@ -8190,8 +8047,8 @@
                   "type": "string"
                 },
                 "examples": {
-                  "chave_desconhecida_gateway": {
-                    "$ref": "#/components/examples/ChaveDesconhecidaGateway"
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
                   }
                 }
               }
@@ -8847,9 +8704,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -8867,9 +8721,6 @@
                 "examples": {
                   "gestor_nao_autenticado": {
                     "$ref": "#/components/examples/GestorNaoAutenticado"
-                  },
-                  "somente_app_key": {
-                    "$ref": "#/components/examples/SomenteAppKey"
                   },
                   "api_key_invalida": {
                     "$ref": "#/components/examples/ApiKeyInvalida"
@@ -8896,8 +8747,8 @@
                   "type": "string"
                 },
                 "examples": {
-                  "chave_desconhecida_gateway": {
-                    "$ref": "#/components/examples/ChaveDesconhecidaGateway"
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
                   }
                 }
               }
@@ -9028,9 +8879,6 @@
                   "gestor_nao_autenticado": {
                     "$ref": "#/components/examples/GestorNaoAutenticado"
                   },
-                  "somente_app_key": {
-                    "$ref": "#/components/examples/SomenteAppKey"
-                  },
                   "api_key_invalida": {
                     "$ref": "#/components/examples/ApiKeyInvalida"
                   }
@@ -9056,8 +8904,8 @@
                   "type": "string"
                 },
                 "examples": {
-                  "chave_desconhecida_gateway": {
-                    "$ref": "#/components/examples/ChaveDesconhecidaGateway"
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
                   }
                 }
               }
@@ -9307,9 +9155,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -9330,9 +9175,6 @@
                   },
                   "central_nao_ativa": {
                     "$ref": "#/components/examples/CentralNaoAtiva"
-                  },
-                  "somente_app_key": {
-                    "$ref": "#/components/examples/SomenteAppKey"
                   },
                   "api_key_invalida": {
                     "$ref": "#/components/examples/ApiKeyInvalida"
@@ -9359,8 +9201,8 @@
                   "type": "string"
                 },
                 "examples": {
-                  "chave_desconhecida_gateway": {
-                    "$ref": "#/components/examples/ChaveDesconhecidaGateway"
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
                   }
                 }
               }
@@ -9493,9 +9335,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -9516,9 +9355,6 @@
                   },
                   "central_nao_ativa": {
                     "$ref": "#/components/examples/CentralNaoAtiva"
-                  },
-                  "somente_app_key": {
-                    "$ref": "#/components/examples/SomenteAppKey"
                   },
                   "api_key_invalida": {
                     "$ref": "#/components/examples/ApiKeyInvalida"
@@ -9545,8 +9381,8 @@
                   "type": "string"
                 },
                 "examples": {
-                  "chave_desconhecida_gateway": {
-                    "$ref": "#/components/examples/ChaveDesconhecidaGateway"
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
                   }
                 }
               }
@@ -9615,9 +9451,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -9764,9 +9597,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -9901,9 +9731,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -9973,9 +9800,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -10319,9 +10143,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -10504,9 +10325,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -10655,9 +10473,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
@@ -10851,9 +10666,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
@@ -11104,9 +10916,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
@@ -11484,9 +11293,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -11512,9 +11318,6 @@
                         }
                       ]
                     }
-                  },
-                  "somente_app_key": {
-                    "$ref": "#/components/examples/SomenteAppKey"
                   },
                   "api_key_invalida": {
                     "$ref": "#/components/examples/ApiKeyInvalida"
@@ -11626,9 +11429,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -12054,9 +11854,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -12203,9 +12000,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -12224,9 +12018,6 @@
                   },
                   "usuario_invalido": {
                     "$ref": "#/components/examples/UsuarioInvalido"
-                  },
-                  "somente_app_key": {
-                    "$ref": "#/components/examples/SomenteAppKey"
                   },
                   "api_key_invalida": {
                     "$ref": "#/components/examples/ApiKeyInvalida"
@@ -12253,8 +12044,8 @@
                   "type": "string"
                 },
                 "examples": {
-                  "chave_desconhecida_gateway": {
-                    "$ref": "#/components/examples/ChaveDesconhecidaGateway"
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
                   }
                 }
               }
@@ -12393,9 +12184,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -12528,9 +12316,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -12548,9 +12333,6 @@
                 "examples": {
                   "credenciais_basic_invalidas": {
                     "$ref": "#/components/examples/CredenciaisBasicInvalidas"
-                  },
-                  "somente_app_key": {
-                    "$ref": "#/components/examples/SomenteAppKey"
                   },
                   "api_key_invalida": {
                     "$ref": "#/components/examples/ApiKeyInvalida"
@@ -12795,9 +12577,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -12815,9 +12594,6 @@
                 "examples": {
                   "credenciais_basic_invalidas": {
                     "$ref": "#/components/examples/CredenciaisBasicInvalidas"
-                  },
-                  "somente_app_key": {
-                    "$ref": "#/components/examples/SomenteAppKey"
                   },
                   "api_key_invalida": {
                     "$ref": "#/components/examples/ApiKeyInvalida"
@@ -13041,9 +12817,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -13061,9 +12834,6 @@
                 "examples": {
                   "credenciais_basic_invalidas": {
                     "$ref": "#/components/examples/CredenciaisBasicInvalidas"
-                  },
-                  "somente_app_key": {
-                    "$ref": "#/components/examples/SomenteAppKey"
                   },
                   "api_key_invalida": {
                     "$ref": "#/components/examples/ApiKeyInvalida"
@@ -13381,9 +13151,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -13659,9 +13426,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -13918,9 +13682,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -14026,9 +13787,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -14149,9 +13907,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -14183,8 +13938,8 @@
                   "type": "string"
                 },
                 "examples": {
-                  "chave_desconhecida_gateway": {
-                    "$ref": "#/components/examples/ChaveDesconhecidaGateway"
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
                   }
                 }
               }
@@ -14282,9 +14037,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -14476,9 +14228,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -14951,9 +14700,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -15100,9 +14846,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -15510,9 +15253,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -15603,9 +15343,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -15686,9 +15423,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -15758,9 +15492,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -15830,9 +15561,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -15957,9 +15685,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -16129,9 +15854,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
@@ -16305,9 +16027,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -16444,9 +16163,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -16976,9 +16692,6 @@
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
                   },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
-                  },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
                   }
@@ -17079,9 +16792,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -17238,9 +16948,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
@@ -17592,9 +17299,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   },
                   "json_invalido": {
                     "$ref": "#/components/examples/JsonInvalido"
@@ -17996,9 +17700,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -18014,9 +17715,6 @@
                 "examples": {
                   "gestor_nao_autenticado": {
                     "$ref": "#/components/examples/GestorNaoAutenticado"
-                  },
-                  "somente_app_key": {
-                    "$ref": "#/components/examples/SomenteAppKey"
                   },
                   "api_key_invalida": {
                     "$ref": "#/components/examples/ApiKeyInvalida"
@@ -18054,8 +17752,8 @@
                   "type": "string"
                 },
                 "examples": {
-                  "chave_desconhecida_gateway": {
-                    "$ref": "#/components/examples/ChaveDesconhecidaGateway"
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
                   }
                 }
               }
@@ -18227,9 +17925,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -18336,9 +18031,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
@@ -18450,9 +18142,6 @@
                   },
                   "chave_nao_informada": {
                     "$ref": "#/components/examples/ChaveNaoInformada"
-                  },
-                  "chaves_conflitantes": {
-                    "$ref": "#/components/examples/ChavesConflitantes"
                   }
                 }
               }
