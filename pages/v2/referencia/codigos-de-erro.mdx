@@ -77,6 +77,8 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 | `104` | JSON inválido | Corpo não é um JSON válido ou veio vazio. |
 | `108` | Campo \{campo\} é inválido. \{extra\}. | Campo com valor inválido (mensagem, taxa do motorista, destinatário) ou erro de validação do cadastro do motorista sem código próprio. |
 | `109` | Campo \{campo\} deve ser um número inteiro positivo. | id/area_id/destinatario_id não inteiro positivo. |
+| `238` *Em breve* | 'cpf_cnpj': Não pode ser usado junto com o filtro cpf. | Consulta de clientes com os filtros `cpf_cnpj` e `cpf` ao mesmo tempo. |
+| `239` *Em breve* | 'cpf_cnpj': CPF ou CNPJ inválido. | Filtro `cpf_cnpj` da consulta de clientes que não é CPF nem CNPJ válido. |
 
 ## Endereço e rota
 
