@@ -295,6 +295,39 @@ export const EndpointBadge = ({ method, path, href }) => (
     </div>
   </Entry>
 
+  <Entry date="21 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="webhook-status-ocorrencias" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Ocorrências da corrida no Webhook de Status
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      O Webhook de Status passa a entregar ocorrências da corrida que podem pedir uma ação da central, sem
+      mudar o status da solicitação, e o tempo que o passageiro esperou pelo condutor. Os campos são aditivos.
+      O contrato completo está em <a href="/pages/v2/referencia/webhooks/sobre#ocorrências-da-corrida">Webhooks &gt; Sobre</a>.
+    </p>
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>Seis ocorrências, com <ParamBadge name="event_type" /> <code>OCCURRENCE</code> e o bloco <ParamBadge name="occurrence" />: <code>CANCELLATION_FEE_CHARGED</code>, <code>FARE_RECALCULATED</code>, <code>NO_ACCEPTANCE_TIMEOUT</code>, <code>DRIVER_LATE</code>, <code>PASSENGER_LOW_RATING</code> e <code>ROUTE_RECALCULATED</code>.</li>
+        <li><ParamBadge name="event_type" /> em todo evento: <code>STATUS</code> para mudança de status, chegada e parada; <code>OCCURRENCE</code> para as ocorrências.</li>
+        <li><ParamBadge name="source_event_id" /> em todo evento, igual em todos os reenvios do mesmo evento. É a chave para deduplicar; o <code>event_id</code> muda a cada tentativa.</li>
+        <li><ParamBadge name="waiting_time_seconds" /> e <ParamBadge name="accepted_estimate_seconds" /> nos eventos de chegada do condutor.</li>
+        <li><code>PASSENGER_LOW_RATING</code> é enviado apenas aos webhooks da central, nunca aos de empresa.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{
+      marginTop: "20px",
+      padding: "14px 18px",
+      borderRadius: "10px",
+      background: "rgba(59, 130, 246, 0.08)",
+      border: "1px solid rgba(59, 130, 246, 0.2)",
+      fontSize: "13px",
+      lineHeight: "1.6",
+    }}>
+      <strong>Nota:</strong> quem guarda o último status da solicitação deve atualizá-lo só com eventos <code>event_type: "STATUS"</code>: uma ocorrência pode chegar depois de <code>FINISHED</code> ou <code>CANCELED</code>. A entrega é <em>at-least-once</em> e a ordem entre ocorrências e status não é garantida.
+    </div>
+  </Entry>
+
   <Entry date="20 out 2026">
     <h2 id="criar-dinamica-area" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Criação de dinâmica por área
