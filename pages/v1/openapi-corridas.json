@@ -224,7 +224,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 148,
+                          "code": 239,
                           "message": "'cpf_cnpj': CPF ou CNPJ inválido."
                         }
                       ]
@@ -236,7 +236,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 147,
+                          "code": 238,
                           "message": "'cpf_cnpj': Não pode ser usado junto com o filtro cpf."
                         }
                       ]
