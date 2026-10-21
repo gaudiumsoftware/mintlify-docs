@@ -10617,7 +10617,7 @@
                       "success": false,
                       "errors": [
                         {
-                          "code": 0,
+                          "code": 223,
                           "message": "'ignorar_periodo_dedicado': Deve ser um valor booleano (true ou false)."
                         }
                       ]
