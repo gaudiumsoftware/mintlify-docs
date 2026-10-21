@@ -10538,6 +10538,234 @@
         }
       }
     },
+    "/entregas/programadas/{id}/despachar": {
+      "post": {
+        "summary": "Despachar entrega programada",
+        "description": "Antecipa para agora o disparo da entrega programada informada em `{id}`, com a mesma regra do **Despachar agora** da Gestão de Pedidos. A data e a hora da programada passam a ser as do momento da chamada, no horário local da central, e a estimativa é recalculada.\n\nO endpoint não cria a entrega na hora: a resposta volta com a programada ainda em `A` (aguardando), e a entrega é criada no ciclo seguinte do agendador, em até 1 minuto. Consulte o resultado em `GET /entregas/programadas/{id}`: a programada passa para a situação `D` (disparada).\n\nSó é possível despachar a programada que está aguardando o disparo (situação `A`). Programada agrupada automaticamente ou em uso pela junção automática é recusada.\n\nQuando a empresa da entrega está em um período com entregadores dedicados e nenhum deles está livre, a entrega fica restrita aos dedicados. Envie `ignorar_periodo_dedicado` como `true` para que ela possa ir também para entregadores de fora do período.\n\nO gestor de empresa só encontra as programadas da própria empresa.\n\nPara acessar este endpoint, o usuário autenticado deve ter a permissão `API - Corrida/Entrega`.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID da entrega programada",
+            "schema": {
+              "type": "integer",
+              "example": 456
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ignorar_periodo_dedicado": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Permite que a entrega vá para entregadores de fora do período dedicado da empresa quando nenhum entregador dedicado está livre. Equivale a confirmar **Solicitar outros entregadores** no painel. Sem período dedicado ativo, não tem efeito.",
+                    "example": false
+                  }
+                }
+              },
+              "example": {
+                "ignorar_periodo_dedicado": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Programada enviada para despacho",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "data": {
+                    "id_mch_programada": 456,
+                    "situacao": "A",
+                    "data_previsao_disparo": "20/10/2026",
+                    "hora_previsao_disparo": "12:26:14"
+                  },
+                  "message": "Entrega programada enviada para despacho.",
+                  "__links": {
+                    "self": {
+                      "href": "api/v2/integracao/entregas/programadas/456/despachar",
+                      "metodo": "post"
+                    },
+                    "visualizar-entrega-programada": {
+                      "href": "api/v2/integracao/entregas/programadas/456",
+                      "metodo": "get"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida ou programada bloqueada pela junção automática",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "flag_invalida": {
+                    "summary": "ignorar_periodo_dedicado com valor que não é booleano",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "'ignorar_periodo_dedicado': Deve ser um valor booleano (true ou false)."
+                        }
+                      ]
+                    }
+                  },
+                  "agrupada_automaticamente": {
+                    "summary": "Programada agrupada automaticamente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A solicitação que você tentou alterar foi agrupada automaticamente e nenhuma alteração pode ser feita."
+                        }
+                      ]
+                    }
+                  },
+                  "em_juncao_automatica": {
+                    "summary": "Programada em uso pela junção automática",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A solicitação que você tentou alterar está sendo utilizada no processo de junção automática e será liberada em instantes."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado — usuário ou senha do gestor inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": "B5",
+                      "message": "Usuário e/ou senhas inválidos."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Gestor sem a permissão API - Corrida/Entrega",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 68,
+                      "message": "O usuário informado não tem permissão para realizar essa operação."
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Programada não encontrada — inexistente, de outra central, de outra empresa (gestor de empresa) ou de corrida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Não foi possível encontrar a solicitação programada"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado da programada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "examples": {
+                  "disparo_em_andamento": {
+                    "summary": "Outro disparo da mesma programada em andamento",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Já existe um disparo em andamento para essa solicitação. Aguarde alguns segundos e tente novamente."
+                        }
+                      ]
+                    }
+                  },
+                  "situacao_invalida": {
+                    "summary": "Programada que não está aguardando o disparo (já disparada, cancelada ou agrupada)",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível disparar a solicitação"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Falha ao gravar o despacho. Nada é alterado na programada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "success": false,
+                  "errors": [
+                    {
+                      "code": 0,
+                      "message": "Não foi possível disparar a solicitação"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/entregas/bandeiras/areas-atuacao": {
       "get": {
         "summary": "Listar áreas de atuação",

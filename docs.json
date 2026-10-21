@@ -395,6 +395,7 @@
                           "pages/v2/entregas/endpoint/get-programadas-by-id",
                           "pages/v2/entregas/endpoint/put-programadas-by-id",
                           "pages/v2/entregas/endpoint/post-programadas-cancelar",
+                          "pages/v2/entregas/endpoint/post-programadas-despachar",
                           "pages/v2/entregas/endpoint/post-programadas-estimativas",
                           "pages/v2/entregas/endpoint/post-programadas-agrupar",
                           "pages/v2/entregas/endpoint/post-programadas-agrupar-programadas",
