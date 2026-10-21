@@ -12414,7 +12414,7 @@
     "/login-unico/validar": {
       "post": {
         "summary": "Validar login único",
-        "description": "Troca o token do login único pelos dados do passageiro ou do condutor que abriu o site da central pelo app.\n\nCom o login único ligado, o app abre o link da central com o parâmetro `Mch-Token` na URL. O servidor da central lê esse parâmetro e chama este endpoint com ele. O token vale por 60 segundos e uma vez só: a primeira validação apaga o token, e as seguintes recebem o erro `245`.\n\nO token pertence à central: a Api-Key dela e a de qualquer associada validam os tokens das pessoas da central e das associadas. O campo `bandeira_id` da resposta diz a central ou a associada da pessoa.\n\nChame este endpoint só do servidor da central. A Api-Key e a senha do gestor não podem ir para o navegador.\n\nPara acessar este endpoint, o usuário autenticado deve ser um gestor da central, sem empresa vinculada, com a permissão `API - Login único`, e a central deve ter a licença de integração via API ativa.",
+        "description": "Troca o token do login único pelos dados do passageiro ou do condutor que abriu o site da central pelo app.\n\nCom o login único ligado, o app abre o link da central com o parâmetro `Mch-Token` na URL. O servidor da central lê esse parâmetro e chama este endpoint com ele. O token vale por 60 segundos e uma vez só: a primeira validação apaga o token, e as seguintes recebem o erro `245`.\n\nO token pertence à central: a Api-Key dela e a de qualquer associada validam os tokens das pessoas da central e das associadas. O campo `bandeira_id` da resposta diz a central ou a associada da pessoa.\n\nChame este endpoint só do servidor da central. A Api-Key e a senha do gestor não podem ir para o navegador.\n\nPara acessar este endpoint, o usuário autenticado deve ser um gestor da central, sem empresa vinculada, com a permissão Login único, da seção API do cargo, e a central deve ter a licença de integração via API ativa.",
         "requestBody": {
           "required": true,
           "content": {
@@ -12580,7 +12580,7 @@
                 },
                 "examples": {
                   "sem_permissao": {
-                    "summary": "Gestor vinculado a uma empresa ou sem a permissão `API - Login único`",
+                    "summary": "Gestor vinculado a uma empresa ou sem a permissão Login único",
                     "value": {
                       "success": false,
                       "errors": [
