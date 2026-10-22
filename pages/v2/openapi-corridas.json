@@ -10,10 +10,10 @@
   },
   "servers": [
     {
-      "url": "https://api-vendas.taximachine.com.br/api/v2/integracao"
+      "url": "https://api.taximachine.com.br/api/v2/integracao"
     },
     {
-      "url": "https://api.taximachine.com.br/api/v2/integracao"
+      "url": "https://api-vendas.taximachine.com.br/api/v2/integracao"
     }
   ],
   "security": [
