@@ -170,6 +170,7 @@ export const EndpointBadge = ({ method, path, href }) => (
       <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
         <li><ParamBadge name="avaliacao_condutor" /> no fim da resposta, com <ParamBadge name="nota" /> (inteiro de 1 a 5) e <ParamBadge name="avaliado_em" /> (momento da avaliação, em ISO 8601 e em UTC).</li>
         <li>Corrida ainda não avaliada traz <code>avaliacao_condutor: null</code>. Nenhum campo existente muda.</li>
+        <li>Em entregas, a nota pode ter sido dada pela empresa no painel, e não pelo passageiro.</li>
       </ul>
     </ChangeSection>
   </Entry>
