@@ -198,6 +198,7 @@
                   {
                     "group": "Login único",
                     "pages": [
+                      "pages/v2/referencia/login-unico/sobre",
                       "pages/v2/referencia/login-unico/endpoint/post-validar"
                     ]
                   }
@@ -520,6 +521,7 @@
                   {
                     "group": "Login único",
                     "pages": [
+                      "pages/v2/entregas/login-unico/sobre",
                       "pages/v2/entregas/login-unico/endpoint/post-validar"
                     ]
                   }

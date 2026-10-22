@@ -1,0 +1,154 @@
+---
+title: 'Sobre'
+description: 'Receba no site da central o passageiro e o condutor já logados, a partir do link aberto no app.'
+icon: 'book-open'
+tag: 'Em breve'
+---
+
+Com o login único, o passageiro e o condutor que tocam no link da central dentro do app chegam ao site dela já identificados, sem digitar e-mail ou senha. O app abre o link com um token na URL, e o servidor do site troca esse token pelos dados da pessoa na API de Integração.
+
+Vale para a aba de página personalizada do app do passageiro e para os Links Personalizados do app do condutor.
+
+---
+
+## Como funciona
+
+1. A pessoa toca no link da central no app.
+2. O app abre o link com o parâmetro `Mch-Token`: `https://seusite.com.br/promocoes?Mch-Token=9f2c4be1...`. Se o link já tem query, o parâmetro entra no fim dela, antes do `#`.
+3. O servidor do site lê o `Mch-Token` e chama [`POST /login-unico/validar`](/pages/v2/referencia/login-unico/endpoint/post-validar) com ele.
+4. A API devolve quem é a pessoa: `tipo`, `id`, `bandeira_id` e, quando o cadastro tem, `telefone` e `email`.
+5. O site cria a sessão da pessoa e redireciona para a mesma URL sem o `Mch-Token`.
+
+Enquanto o login único estiver desligado para a central, o app abre o link como sempre abriu, sem o `Mch-Token`. Para ligar, fale com o suporte da Machine.
+
+<Warning>
+  **Valide sempre no servidor do site.** A chamada leva a `api-key` e a senha do usuário da API. Elas não podem ir para o navegador, nem em JavaScript da página.
+</Warning>
+
+---
+
+## Antes de começar
+
+A central prepara três coisas, uma vez só.
+
+1. **Licença de integração via API.** Vem com o plano da central. Sem ela, a validação responde `403` com o código `19`. Em dúvida, fale com o suporte da Machine.
+2. **Chave de API.** Um administrador da central abre **Configurações > Integrações**, na aba **Machine API**, e clica em **Gerar chave API**. A tela pode pedir o código de 6 dígitos do aplicativo autenticador. A chave começa com `mch_api_` e fica na mesma aba: o ícone de olho mostra a chave, e o de copiar copia.
+3. **Usuário da API.** Em **Cadastro > Minha equipe**, no card **Integrador**, clique em **Criar usuário** e preencha nome, e-mail e telefone. A senha chega no e-mail cadastrado. O e-mail e a senha desse usuário vão na autenticação `Basic`.
+
+O cargo Integrador já tem todas as permissões de API, inclusive a do login único. Para usar um usuário de outro cargo, marque a permissão **Login único**, na seção **API** das permissões do cargo. O usuário precisa ser da mesma central da chave e não pode estar vinculado a uma empresa.
+
+---
+
+## Regras do token
+
+- **Vale por 60 segundos e uma vez só.** A primeira validação apaga o token. Uma segunda chamada com o mesmo token recebe o erro `245`, igual a um token que não existe.
+- **O nome do parâmetro diferencia maiúsculas de minúsculas.** Leia `Mch-Token`, não `mch-token`.
+- **Token inválido é visita sem login, não erro.** Se a validação responder `400` com o código `245`, ou se a API não responder, mostre o site como para qualquer visitante. Não mostre mensagem de erro: pode ser só um link antigo aberto de novo.
+- **Tire o token da URL depois de validar.** Redirecione para a mesma URL sem o `Mch-Token`. Assim o token não fica no histórico do navegador, e recarregar a página não tenta validar de novo.
+- **Identifique a pessoa por `tipo` e `id` juntos.** Um passageiro e um condutor podem ter o mesmo `id`.
+- **A `api-key` da central e a de qualquer associada validam o token.** O campo `bandeira_id` diz a central ou a associada da pessoa.
+
+---
+
+## Exemplos
+
+Os dois exemplos validam o token, guardam a pessoa na sessão e redirecionam para a URL sem o `Mch-Token`. As credenciais vêm de variáveis de ambiente do servidor. Para testar na homologação, use `https://api-vendas.taximachine.com.br/api/v2/integracao` em `MACHINE_API_URL`.
+
+<CodeGroup>
+
+```php PHP
+<?php
+
+function validarLoginUnico(string $token): ?array
+{
+    $url = (getenv('MACHINE_API_URL') ?: 'https://api.taximachine.com.br/api/v2/integracao') . '/login-unico/validar';
+
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 5,
+        CURLOPT_USERPWD => getenv('MACHINE_API_USUARIO') . ':' . getenv('MACHINE_API_SENHA'),
+        CURLOPT_HTTPHEADER => [
+            'api-key: ' . getenv('MACHINE_API_KEY'),
+            'Content-Type: application/json',
+        ],
+        CURLOPT_POSTFIELDS => json_encode(['token' => $token]),
+    ]);
+    $corpo = curl_exec($ch);
+    $status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    curl_close($ch);
+
+    if ($corpo === false || $status !== 200) {
+        return null;
+    }
+
+    return json_decode($corpo, true)['data'] ?? null;
+}
+
+$token = $_GET['Mch-Token'] ?? null;
+
+if (is_string($token)) {
+    $pessoa = validarLoginUnico($token);
+
+    if ($pessoa !== null) {
+        session_start();
+        $_SESSION['machine_tipo'] = $pessoa['tipo'];
+        $_SESSION['machine_id'] = $pessoa['id'];
+    }
+
+    $partes = parse_url($_SERVER['REQUEST_URI']);
+    parse_str($partes['query'] ?? '', $query);
+    unset($query['Mch-Token']);
+    header('Location: ' . $partes['path'] . ($query ? '?' . http_build_query($query) : ''));
+    exit;
+}
+```
+
+```javascript Node
+// Node 18 ou mais novo, com Express e express-session.
+async function validarLoginUnico(token) {
+  const url = `${process.env.MACHINE_API_URL ?? 'https://api.taximachine.com.br/api/v2/integracao'}/login-unico/validar`;
+  const credenciais = Buffer.from(`${process.env.MACHINE_API_USUARIO}:${process.env.MACHINE_API_SENHA}`).toString('base64');
+
+  try {
+    const resposta = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'api-key': process.env.MACHINE_API_KEY,
+        'Authorization': `Basic ${credenciais}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ token }),
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!resposta.ok) {
+      return null;
+    }
+    const corpo = await resposta.json();
+    return corpo.data ?? null;
+  } catch {
+    return null;
+  }
+}
+
+app.use(async (req, res, next) => {
+  const token = req.query['Mch-Token'];
+  if (typeof token !== 'string') {
+    return next();
+  }
+
+  const pessoa = await validarLoginUnico(token);
+  if (pessoa) {
+    req.session.machine = { tipo: pessoa.tipo, id: pessoa.id };
+  }
+
+  const semToken = new URL(req.originalUrl, 'http://site');
+  semToken.searchParams.delete('Mch-Token');
+  res.redirect(semToken.pathname + semToken.search);
+});
+```
+
+</CodeGroup>
+
+A resposta completa, os erros e os códigos estão na referência de [`POST /login-unico/validar`](/pages/v2/referencia/login-unico/endpoint/post-validar).
