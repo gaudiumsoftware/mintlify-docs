@@ -162,9 +162,8 @@
 })();
 
 /* Seletor de ambiente nas páginas de endpoint. O tema só mostra a URL base como um <select>
-   discreto, sem rótulo: o integrador não percebe que a URL padrão é a de vendas (a
-   primeira da lista `servers` do OpenAPI) e precisa descobrir que a URL é clicável para
-   chegar à produção. Aqui cada <select> de URL base ganha, acima da linha da URL, um
+   discreto, sem rótulo: o integrador não percebe qual ambiente está selecionado e precisa
+   descobrir que a URL é clicável para trocá-lo. Aqui cada <select> de URL base ganha, acima da linha da URL, um
    alternador com os dois ambientes sempre visíveis e uma nota do que cada um significa. O
    <select> continua sendo a fonte da verdade (é ele que alimenta o cURL e o "Try it"); o
    alternador só o lê e o altera. A escolha fica salva no navegador, para não ter que repeti-la
@@ -240,10 +239,12 @@
     Array.prototype.forEach.call(
       controle.querySelectorAll("button[data-ambiente]"),
       function (botao) {
-        botao.setAttribute(
-          "aria-pressed",
-          botao.getAttribute("data-ambiente") === atual ? "true" : "false"
-        );
+        var ambiente = botao.getAttribute("data-ambiente");
+        var indice = indiceDoAmbiente(select, ambiente);
+        botao.setAttribute("aria-pressed", ambiente === atual ? "true" : "false");
+        if (indice !== -1) {
+          botao.setAttribute("title", select.options[indice].textContent);
+        }
       }
     );
     controle.querySelector(".env-switch-note").textContent =
@@ -261,17 +262,18 @@
     titulo.textContent = "Ambiente";
     controle.appendChild(titulo);
 
-    Array.prototype.forEach.call(select.options, function (opcao, indice) {
+    Array.prototype.forEach.call(select.options, function (opcao) {
       var ambiente = ambienteDaUrl(opcao.textContent);
       var botao = document.createElement("button");
       botao.type = "button";
       botao.className = "env-switch-option";
       botao.setAttribute("data-ambiente", ambiente);
-      botao.setAttribute("title", opcao.textContent);
       botao.innerHTML = '<span class="env-switch-dot"></span>';
       botao.appendChild(document.createTextNode(AMBIENTES[ambiente].rotulo));
       botao.addEventListener("click", function (evento) {
         evento.stopPropagation();
+        var indice = indiceDoAmbiente(select, ambiente);
+        if (indice === -1) return;
         gravarPreferencia(ambiente);
         selecionar(select, indice);
         atualizarAposRender(controle, select);
@@ -363,6 +365,12 @@
     if (!descricao) return;
     if (!cartao || !cartao.parentElement) {
       descricao.removeAttribute("data-detalhes-movido");
+      Array.prototype.forEach.call(
+        document.querySelectorAll(".endpoint-detalhes"),
+        function (bloco) {
+          bloco.remove();
+        }
+      );
       return;
     }
 
@@ -375,24 +383,47 @@
       return;
     }
 
+    /* Assinatura do que foi copiado, guardada na propriedade do elemento (não no DOM) para
+       saber se a descrição mudou sem reconstruir o bloco a cada mutação da página. */
     var fonte = extras
       .map(function (no) {
-        return no.outerHTML;
+        return no.textContent;
       })
-      .join("");
+      .join("\u0000");
 
     descricao.setAttribute("data-detalhes-movido", "");
-    if (existente && existente.getAttribute("data-fonte") === fonte) return;
+    if (existente && existente.fonteDetalhes === fonte) return;
     if (existente) existente.remove();
 
     var bloco = document.createElement("div");
     bloco.className = "endpoint-detalhes prose prose-gray dark:prose-invert";
-    bloco.setAttribute("data-fonte", fonte);
+    bloco.fonteDetalhes = fonte;
     extras.forEach(function (no) {
-      bloco.appendChild(no.cloneNode(true));
+      var copia = no.cloneNode(true);
+      /* O id do original continua no DOM (oculto); a cópia não pode repeti-lo */
+      if (copia.hasAttribute("id")) copia.removeAttribute("id");
+      Array.prototype.forEach.call(copia.querySelectorAll("[id]"), function (el) {
+        el.removeAttribute("id");
+      });
+      bloco.appendChild(copia);
     });
     cartao.insertAdjacentElement("afterend", bloco);
   }
+
+  /* O clone não leva os handlers do React: o botão de copiar de um bloco de código da cópia
+     fica sem ação, então o clique é tratado aqui. */
+  document.addEventListener("click", function (evento) {
+    var botao = evento.target.closest(
+      ".endpoint-detalhes .code-block-copy-button button"
+    );
+    if (!botao) return;
+
+    var bloco = botao.closest(".code-block");
+    var codigo = bloco && bloco.querySelector("pre");
+    if (!codigo || !navigator.clipboard) return;
+
+    navigator.clipboard.writeText(codigo.textContent).catch(function () {});
+  });
 
   function iniciar() {
     moverDetalhes();
