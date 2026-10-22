@@ -11090,7 +11090,7 @@
     "/corridas/programadas/{id}/despachar": {
       "post": {
         "summary": "Despachar corrida programada",
-        "description": "Antecipa para agora o disparo da corrida programada informada em `{id}`, com a mesma regra do disparo imediato da lista de corridas programadas do painel. A data e a hora da programada passam a ser as do momento da chamada, no horário local da central, e a estimativa é recalculada.\n\nO endpoint não cria a corrida na hora. Ele responde `202` e a corrida é criada no ciclo seguinte do agendador, em até 1 minuto. Consulte o resultado em `GET /corridas/programadas/{id}`: a programada passa para disparada. Se o agendador não conseguir criar a corrida, por exemplo por falha na pré-autorização do pagamento, a programada fica em erro e não é disparada de novo.\n\nSó é possível despachar a programada que está aguardando o disparo. Programada agrupada automaticamente ou em uso pela junção automática é recusada.\n\nO gestor de empresa só encontra as programadas da própria empresa.\n\nPara acessar este endpoint, o usuário autenticado deve ter a permissão `API - Corrida/Entrega`.",
+        "description": "Antecipa para agora o disparo da corrida programada informada em `{id}`, com a mesma regra do disparo imediato da lista de corridas programadas do painel. A data e a hora da programada passam a ser as do momento da chamada, no horário local da central, e a estimativa é recalculada.\n\nO endpoint não cria a corrida na hora. Ele responde `202` e a corrida é criada no ciclo seguinte do agendador, em até 1 minuto. Consulte o resultado em `GET /corridas/programadas/{id}`: a programada passa para a situação `D` (disparada). Se o agendador não conseguir criar a corrida, por exemplo por falha na pré-autorização do pagamento, a programada fica na situação `X` (erro) e não é disparada de novo.\n\nSó é possível despachar a programada que está aguardando o disparo (situação `A`). Programada agrupada automaticamente ou em uso pela junção automática é recusada.\n\nA requisição não tem corpo. Se um corpo for enviado, ele precisa ser JSON válido e o conteúdo é ignorado.\n\nO gestor de empresa só encontra as programadas da própria empresa.\n\nPara acessar este endpoint, o usuário autenticado deve ter a permissão `API - Corrida/Entrega`.",
         "parameters": [
           {
             "name": "id",
@@ -11116,7 +11116,7 @@
             }
           },
           "400": {
-            "description": "A requisição foi recusada na validação da v2 ou porque a programada está bloqueada pela junção automática.\n\nOutros `code` deste status:\n\n- `0`: a programada foi agrupada automaticamente; a programada está em uso pelo processo de junção automática; o corpo não é um JSON válido.",
+            "description": "A requisição foi recusada na validação da v2 ou porque a programada está bloqueada pela junção automática.\n\nOutros `code` deste status:\n\n- `0`: a programada foi agrupada automaticamente; a programada está em uso pelo processo de junção automática; o corpo, que é opcional e ignorado, foi enviado com JSON inválido.",
             "content": {
               "application/json": {
                 "schema": {
