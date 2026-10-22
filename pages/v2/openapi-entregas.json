@@ -18616,11 +18616,11 @@
             }
           },
           "400": {
-            "description": "Token inválido, vencido ou já usado, ou corpo que não é JSON",
+            "description": "Token inválido, vencido ou já usado, `api-key` ausente ou corpo que não é JSON",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/RespostaErro"
                 },
                 "examples": {
                   "token_invalido": {
@@ -18635,64 +18635,40 @@
                       ]
                     }
                   },
+                  "chave_nao_informada": {
+                    "$ref": "#/components/examples/ChaveNaoInformada"
+                  },
                   "json_invalido": {
-                    "summary": "Corpo que não é JSON",
-                    "value": {
-                      "success": false,
-                      "errors": [
-                        {
-                          "code": 0,
-                          "message": "JSON inválido"
-                        }
-                      ]
-                    }
+                    "$ref": "#/components/examples/JsonInvalido"
                   }
                 }
               }
             }
           },
           "401": {
-            "description": "Api-Key ou credenciais do gestor inválidas",
+            "description": "Usuário ou senha do Basic Auth inválidos. Uma `api-key` não reconhecida normalmente recebe `403`; o `401` com `B4` aparece só em situações excepcionais.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/RespostaErro"
                 },
                 "examples": {
-                  "api_key_invalida": {
-                    "summary": "Api-Key inválida",
-                    "value": {
-                      "success": false,
-                      "errors": [
-                        {
-                          "code": "B4",
-                          "message": "Você não está autorizado a acessar este recurso."
-                        }
-                      ]
-                    }
+                  "gestor_nao_autenticado": {
+                    "$ref": "#/components/examples/GestorNaoAutenticado"
                   },
-                  "gestor_invalido": {
-                    "summary": "Usuário ou senha do Basic Auth inválidos",
-                    "value": {
-                      "success": false,
-                      "errors": [
-                        {
-                          "code": "B5",
-                          "message": "Usuário e/ou senhas inválidos."
-                        }
-                      ]
-                    }
+                  "api_key_invalida": {
+                    "$ref": "#/components/examples/ApiKeyInvalida"
                   }
                 }
               }
             }
           },
           "403": {
-            "description": "Gestor sem acesso ou central sem licença de integração",
+            "description": "Gestor sem acesso, central sem licença de integração ou `api-key` não reconhecida. A `api-key` não reconhecida recebe o corpo em texto puro (`-`), sem o envelope JSON.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/RespostaErro"
                 },
                 "examples": {
                   "sem_permissao": {
@@ -18708,52 +18684,27 @@
                     }
                   },
                   "licenca_invalida": {
-                    "summary": "Central sem a licença de integração via API",
-                    "value": {
-                      "success": false,
-                      "errors": [
-                        {
-                          "code": 19,
-                          "message": "Não é possível utilizar a API com a sua licença."
-                        }
-                      ]
-                    }
+                    "$ref": "#/components/examples/LicencaInvalida"
+                  }
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
                   }
                 }
               }
             }
           },
           "429": {
-            "description": "Limite de requisições excedido. Os limites estão na página [Rate limit](/pages/v2/entregas/rate-limit).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "success": false
-                }
-              }
-            }
+            "$ref": "#/components/responses/ErroLimite429"
           },
           "500": {
-            "description": "Erro interno",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "success": false,
-                  "errors": [
-                    {
-                      "code": 0,
-                      "message": "Falha na operação"
-                    }
-                  ]
-                }
-              }
-            }
+            "$ref": "#/components/responses/ErroInterno500"
           }
         }
       }

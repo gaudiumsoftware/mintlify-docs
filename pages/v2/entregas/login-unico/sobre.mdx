@@ -143,15 +143,20 @@ app.use(async (req, res, next) => {
     return next();
   }
 
-  const pessoa = await validarLoginUnico(token);
-  if (pessoa) {
-    await new Promise((ok, falha) => req.session.regenerate((erro) => (erro ? falha(erro) : ok())));
-    req.session.machine = { tipo: pessoa.tipo, id: pessoa.id };
+  try {
+    const pessoa = await validarLoginUnico(token);
+    if (pessoa) {
+      await new Promise((ok, falha) => req.session.regenerate((erro) => (erro ? falha(erro) : ok())));
+      req.session.machine = { tipo: pessoa.tipo, id: pessoa.id };
+    }
+  } catch (erro) {
+    return next(erro);
   }
 
   const semToken = new URL(req.originalUrl, 'http://site');
   semToken.searchParams.delete('Mch-Token');
-  res.redirect(semToken.pathname + semToken.search);
+  const caminho = semToken.pathname.startsWith('//') ? '/' : semToken.pathname;
+  res.redirect(caminho + semToken.search);
 });
 ```
 
