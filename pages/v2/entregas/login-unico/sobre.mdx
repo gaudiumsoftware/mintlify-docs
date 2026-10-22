@@ -7,7 +7,7 @@ tag: 'Em breve'
 
 Com o login único, o passageiro e o condutor que tocam no link da central dentro do app chegam ao site dela já identificados, sem digitar e-mail ou senha. O app abre o link com um token na URL, e o servidor do site troca esse token pelos dados da pessoa na API de Integração.
 
-Vale para a aba de página personalizada do app do passageiro e para os Links Personalizados do app do condutor.
+Vale para o botão personalizado do app do passageiro e, no app do condutor, para os itens do menu personalizado e o botão personalizado.
 
 ---
 
@@ -19,11 +19,26 @@ Vale para a aba de página personalizada do app do passageiro e para os Links Pe
 4. A API devolve quem é a pessoa: `tipo`, `id`, `bandeira_id` e, quando o cadastro tem, `telefone` e `email`.
 5. O site cria a sessão da pessoa e redireciona para a mesma URL sem o `Mch-Token`.
 
-Enquanto o login único estiver desligado para a central, o app abre o link como sempre abriu, sem o `Mch-Token`. Para ligar, fale com o suporte da Machine.
-
 <Warning>
   **Valide sempre no servidor do site.** A chamada leva a `api-key` e a senha do usuário da API. Elas não podem ir para o navegador, nem em JavaScript da página.
 </Warning>
+
+---
+
+## Ligar o login único
+
+1. Peça ao suporte da Machine para ligar o login único na central.
+2. No painel, abra **Configurações > Gerais**, aba **Recursos Premium**.
+3. Marque **Abrir já logado** em cada destino que deve abrir o site já logado:
+   - **Item 1** e **Item 2** do menu personalizado do app do condutor;
+   - o botão personalizado do app do condutor;
+   - o botão personalizado do app do passageiro.
+4. Salve.
+
+- **Só link `https://` recebe o `Mch-Token`.** O painel não salva a opção marcada em link que não começa com `https://`.
+- **Destino desmarcado abre sem o `Mch-Token`**, como sempre abriu. Enquanto o login único estiver desligado para a central, todos os destinos abrem assim.
+- **Pessoa que não está ativa entra sem login.** Passageiro ou condutor suspenso, inativo ou aguardando ativação abre o link sem o `Mch-Token`.
+- **As associadas seguem a central.** A opção marcada na central vale para os mesmos destinos das associadas.
 
 ---
 
