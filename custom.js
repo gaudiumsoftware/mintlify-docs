@@ -160,3 +160,246 @@
     document.addEventListener("DOMContentLoaded", iniciar);
   }
 })();
+
+/* Seletor de ambiente nas páginas de endpoint. O tema só mostra a URL base como um <select>
+   discreto, sem rótulo: o integrador não percebe que a URL padrão é a de vendas (a
+   primeira da lista `servers` do OpenAPI) e precisa descobrir que a URL é clicável para
+   chegar à produção. Aqui cada <select> de URL base ganha, acima da linha da URL, um
+   alternador com os dois ambientes sempre visíveis e uma nota do que cada um significa. O
+   <select> continua sendo a fonte da verdade (é ele que alimenta o cURL e o "Try it"); o
+   alternador só o lê e o altera. A escolha fica salva no navegador, para não ter que repeti-la
+   a cada página. */
+(function () {
+  var SELETOR_SELECT = 'select[aria-label="Select base URL"]';
+  var CHAVE = "docs-ambiente-api";
+
+  var AMBIENTES = {
+    vendas: {
+      rotulo: "Vendas",
+      nota: "Ambiente de vendas, separado de produção.",
+    },
+    producao: {
+      rotulo: "Produção",
+      nota: "Ambiente real das centrais: ações permanentes.",
+    },
+  };
+
+  function ambienteDaUrl(url) {
+    return url.indexOf("api-vendas.") !== -1 ? "vendas" : "producao";
+  }
+
+  function lerPreferencia() {
+    try {
+      return window.localStorage.getItem(CHAVE);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function gravarPreferencia(ambiente) {
+    try {
+      window.localStorage.setItem(CHAVE, ambiente);
+    } catch (e) {}
+  }
+
+  function ambienteSelecionado(select) {
+    var opcao = select.options[select.selectedIndex];
+    return opcao ? ambienteDaUrl(opcao.textContent) : null;
+  }
+
+  /* O <select> é controlado pelo React: atribuir `.value` direto não notifica o tema.
+     O setter nativo seguido de um `change` que borbulha é o que ele escuta. */
+  function selecionar(select, indice) {
+    var setter = Object.getOwnPropertyDescriptor(
+      window.HTMLSelectElement.prototype,
+      "value"
+    ).set;
+    setter.call(select, String(indice));
+    select.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  function indiceDoAmbiente(select, ambiente) {
+    for (var i = 0; i < select.options.length; i++) {
+      if (ambienteDaUrl(select.options[i].textContent) === ambiente) return i;
+    }
+    return -1;
+  }
+
+  /* Logo após o `change`, o React ainda devolve o valor antigo ao <select> até terminar a
+     renderização; ler no quadro seguinte garante o estado final. */
+  function atualizarAposRender(controle, select) {
+    setTimeout(function () {
+      atualizar(controle, select);
+    }, 50);
+  }
+
+  function atualizar(controle, select) {
+    var atual = ambienteSelecionado(select);
+    controle.setAttribute("data-ambiente", atual);
+    Array.prototype.forEach.call(
+      controle.querySelectorAll("button[data-ambiente]"),
+      function (botao) {
+        botao.setAttribute(
+          "aria-pressed",
+          botao.getAttribute("data-ambiente") === atual ? "true" : "false"
+        );
+      }
+    );
+    controle.querySelector(".env-switch-note").textContent =
+      AMBIENTES[atual].nota;
+  }
+
+  function criarControle(select) {
+    var controle = document.createElement("div");
+    controle.className = "env-switch";
+    controle.setAttribute("role", "group");
+    controle.setAttribute("aria-label", "Ambiente da API");
+
+    var titulo = document.createElement("span");
+    titulo.className = "env-switch-label";
+    titulo.textContent = "Ambiente";
+    controle.appendChild(titulo);
+
+    Array.prototype.forEach.call(select.options, function (opcao, indice) {
+      var ambiente = ambienteDaUrl(opcao.textContent);
+      var botao = document.createElement("button");
+      botao.type = "button";
+      botao.className = "env-switch-option";
+      botao.setAttribute("data-ambiente", ambiente);
+      botao.setAttribute("title", opcao.textContent);
+      botao.innerHTML = '<span class="env-switch-dot"></span>';
+      botao.appendChild(document.createTextNode(AMBIENTES[ambiente].rotulo));
+      botao.addEventListener("click", function (evento) {
+        evento.stopPropagation();
+        gravarPreferencia(ambiente);
+        selecionar(select, indice);
+        atualizarAposRender(controle, select);
+      });
+      controle.appendChild(botao);
+    });
+
+    var nota = document.createElement("span");
+    nota.className = "env-switch-note";
+    controle.appendChild(nota);
+
+    select.addEventListener("change", function () {
+      atualizarAposRender(controle, select);
+    });
+
+    return controle;
+  }
+
+  function instalar() {
+    var selects = document.querySelectorAll(SELETOR_SELECT);
+
+    Array.prototype.forEach.call(selects, function (select) {
+      if (select.hasAttribute("data-ambiente-ligado")) return;
+
+      /* O cartão que envolve a linha "método + URL + Try it" */
+      var cartao = select.closest('[class*="rounded-2xl"]');
+      if (!cartao || select.options.length < 2) return;
+
+      select.setAttribute("data-ambiente-ligado", "");
+      var controle = criarControle(select);
+      cartao.insertBefore(controle, cartao.firstChild);
+
+      var preferido = lerPreferencia();
+      if (preferido && preferido !== ambienteSelecionado(select)) {
+        var indice = indiceDoAmbiente(select, preferido);
+        if (indice !== -1) selecionar(select, indice);
+      }
+      atualizar(controle, select);
+      atualizarAposRender(controle, select);
+    });
+  }
+
+  function iniciar() {
+    instalar();
+
+    var agendado = false;
+    new MutationObserver(function () {
+      if (agendado) return;
+      agendado = true;
+      requestAnimationFrame(function () {
+        agendado = false;
+        instalar();
+      });
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+
+  if (document.body) {
+    iniciar();
+  } else {
+    document.addEventListener("DOMContentLoaded", iniciar);
+  }
+})();
+
+/* Descrição do endpoint: o tema renderiza a `description` inteira do OpenAPI no topo da
+   página, acima da URL. Quando ela é longa (regras de filtro, campos da resposta, permissões),
+   o integrador só chega à URL e aos parâmetros depois de rolar a explicação inteira. Aqui só o
+   primeiro parágrafo fica no topo como descrição curta; o restante é copiado para logo abaixo
+   do cartão da URL, antes dos parâmetros. A descrição do OpenAPI não muda (o MCP e o Copiar
+   página continuam com o texto completo): é uma cópia, e o original fica oculto pelo CSS. Se o
+   script não rodar, a página mostra a descrição inteira no topo, como o tema faz. */
+(function () {
+  var SELETOR_DESCRICAO = 'header > div[class*="prose"]';
+  var SELETOR_CARTAO = '.method-pill';
+
+  function cartaoDaUrl() {
+    var metodo = document.querySelector(SELETOR_CARTAO);
+    return metodo ? metodo.closest('[class*="rounded-2xl"]') : null;
+  }
+
+  function moverDetalhes() {
+    var descricao = document.querySelector(SELETOR_DESCRICAO);
+    var cartao = cartaoDaUrl();
+    if (!descricao || !cartao || !cartao.parentElement) return;
+
+    var existente = cartao.parentElement.querySelector(":scope > .endpoint-detalhes");
+    var extras = Array.prototype.slice.call(descricao.children, 1);
+
+    if (extras.length === 0) {
+      if (existente) existente.remove();
+      descricao.removeAttribute("data-detalhes-movido");
+      return;
+    }
+
+    var fonte = extras
+      .map(function (no) {
+        return no.outerHTML;
+      })
+      .join("");
+
+    descricao.setAttribute("data-detalhes-movido", "");
+    if (existente && existente.getAttribute("data-fonte") === fonte) return;
+    if (existente) existente.remove();
+
+    var bloco = document.createElement("div");
+    bloco.className = "endpoint-detalhes prose prose-gray dark:prose-invert";
+    bloco.setAttribute("data-fonte", fonte);
+    extras.forEach(function (no) {
+      bloco.appendChild(no.cloneNode(true));
+    });
+    cartao.insertAdjacentElement("afterend", bloco);
+  }
+
+  function iniciar() {
+    moverDetalhes();
+
+    var agendado = false;
+    new MutationObserver(function () {
+      if (agendado) return;
+      agendado = true;
+      setTimeout(function () {
+        agendado = false;
+        moverDetalhes();
+      }, 0);
+    }).observe(document.body, { childList: true, subtree: true });
+  }
+
+  if (document.body) {
+    iniciar();
+  } else {
+    document.addEventListener("DOMContentLoaded", iniciar);
+  }
+})();
