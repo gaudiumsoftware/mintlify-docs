@@ -50,6 +50,7 @@
                       "pages/v2/referencia/corridas/endpoint/get-programada-by-id",
                       "pages/v2/referencia/corridas/endpoint/post-cancelar",
                       "pages/v2/referencia/corridas/endpoint/post-cancelar-programada",
+                      "pages/v2/referencia/corridas/endpoint/post-despachar-programada",
                       "pages/v2/referencia/corridas/endpoint/get-posicao-condutor",
                       "pages/v2/referencia/corridas/endpoint/get-status",
                       "pages/v2/referencia/corridas/endpoint/get-centros-custo",

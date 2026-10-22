@@ -228,7 +228,7 @@ export const EndpointBadge = ({ method, path, href }) => (
 
     <ChangeSection type="added">
       <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-        <li>Só despacha programada aguardando o disparo (situação <code>A</code>). A resposta volta com a programada ainda em <code>A</code>; acompanhe a passagem para <code>D</code> em <code>GET /entregas/programadas/{"{id}"}</code>.</li>
+        <li>Só despacha programada aguardando o disparo (situação <code>A</code>). A resposta é <code>202</code>, com a mensagem de que a entrega será disparada a seguir; acompanhe a passagem para <code>D</code> em <code>GET /entregas/programadas/{"{id}"}</code>.</li>
         <li><ParamBadge name="ignorar_periodo_dedicado" /> — opcional, padrão <code>false</code>. Com <code>true</code>, a entrega pode ir para entregadores de fora do período dedicado da empresa quando nenhum dedicado está livre, como o Solicitar outros entregadores do painel.</li>
         <li>Exige a permissão <code>API - Corrida/Entrega</code>. O gestor de empresa só despacha as programadas da própria empresa.</li>
         <li>Programada agrupada automaticamente ou em uso pela junção automática responde <code>400</code>; outro disparo em andamento ou programada que não está aguardando responde <code>409</code>.</li>

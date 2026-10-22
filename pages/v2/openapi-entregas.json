@@ -15767,7 +15767,7 @@
     "/entregas/programadas/{id}/despachar": {
       "post": {
         "summary": "Despachar entrega programada",
-        "description": "Antecipa para agora o disparo da entrega programada informada em `{id}`, com a mesma regra do **Despachar agora** da Gestão de Pedidos. A data e a hora da programada passam a ser as do momento da chamada, no horário local da central, e a estimativa é recalculada.\n\nO endpoint não cria a entrega na hora: a resposta volta com a programada ainda em `A` (aguardando), e a entrega é criada no ciclo seguinte do agendador, em até 1 minuto. Consulte o resultado em `GET /entregas/programadas/{id}`: a programada passa para a situação `D` (disparada). Se o agendador não conseguir criar a entrega, por exemplo por falha na pré-autorização do pagamento, a programada fica na situação `X` (erro) e não é disparada de novo.\n\nSó é possível despachar a programada que está aguardando o disparo (situação `A`). Programada agrupada automaticamente ou em uso pela junção automática é recusada.\n\nQuando a empresa da entrega está em um período com entregadores dedicados e nenhum deles está livre, a entrega fica restrita aos dedicados. Envie `ignorar_periodo_dedicado` como `true` para que ela possa ir também para entregadores de fora do período.\n\nO gestor de empresa só encontra as programadas da própria empresa.\n\nPara acessar este endpoint, o usuário autenticado deve ter a permissão `API - Corrida/Entrega`.",
+        "description": "Antecipa para agora o disparo da entrega programada informada em `{id}`, com a mesma regra do **Despachar agora** da Gestão de Pedidos. A data e a hora da programada passam a ser as do momento da chamada, no horário local da central, e a estimativa é recalculada.\n\nO endpoint não cria a entrega na hora. Ele responde `202` e a entrega é criada no ciclo seguinte do agendador, em até 1 minuto. Consulte o resultado em `GET /entregas/programadas/{id}`: a programada passa para a situação `D` (disparada). Se o agendador não conseguir criar a entrega, por exemplo por falha na pré-autorização do pagamento, a programada fica na situação `X` (erro) e não é disparada de novo.\n\nSó é possível despachar a programada que está aguardando o disparo. Programada agrupada automaticamente ou em uso pela junção automática é recusada.\n\nQuando a empresa da entrega está em um período com entregadores dedicados e nenhum deles está livre, a entrega fica restrita aos dedicados. Envie `ignorar_periodo_dedicado` como `true` para que ela possa ir também para entregadores de fora do período.\n\nO gestor de empresa só encontra as programadas da própria empresa.\n\nPara acessar este endpoint, o usuário autenticado deve ter a permissão `API - Corrida/Entrega`.",
         "parameters": [
           {
             "name": "id",
@@ -15802,39 +15802,23 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Programada enviada para despacho",
+          "202": {
+            "description": "Aceita. A entrega será criada no ciclo seguinte do agendador.",
             "content": {
               "application/json": {
                 "example": {
                   "success": true,
-                  "data": {
-                    "id_mch_programada": 456,
-                    "situacao": "A",
-                    "data_previsao_disparo": "20/10/2026",
-                    "hora_previsao_disparo": "12:26:14"
-                  },
-                  "message": "Entrega programada enviada para despacho.",
-                  "__links": {
-                    "self": {
-                      "href": "api/v2/integracao/entregas/programadas/456/despachar",
-                      "metodo": "post"
-                    },
-                    "visualizar-entrega-programada": {
-                      "href": "api/v2/integracao/entregas/programadas/456",
-                      "metodo": "get"
-                    }
-                  }
+                  "message": "A entrega programada será disparada a seguir."
                 }
               }
             }
           },
           "400": {
-            "description": "Requisição inválida ou programada bloqueada pela junção automática",
+            "description": "A requisição foi recusada na validação da v2 ou porque a programada está bloqueada pela junção automática.\n\nOutros `code` deste status:\n\n- `223`: `ignorar_periodo_dedicado` com valor que não é booleano.\n- `0`: a programada foi agrupada automaticamente; a programada está em uso pelo processo de junção automática; o corpo não é um JSON válido.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/RespostaErro"
                 },
                 "examples": {
                   "flag_invalida": {
@@ -15872,74 +15856,89 @@
                         }
                       ]
                     }
+                  },
+                  "chave_nao_informada": {
+                    "$ref": "#/components/examples/ChaveNaoInformada"
+                  },
+                  "json_invalido": {
+                    "$ref": "#/components/examples/JsonInvalido"
                   }
                 }
               }
             }
           },
           "401": {
-            "description": "Não autorizado — usuário ou senha do gestor inválidos",
+            "description": "O login ou a senha do gestor não conferem, ou a `api-key` não foi aceita.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/RespostaErro"
                 },
-                "example": {
-                  "success": false,
-                  "errors": [
-                    {
-                      "code": "B5",
-                      "message": "Usuário e/ou senhas inválidos."
-                    }
-                  ]
+                "examples": {
+                  "gestor_nao_autenticado": {
+                    "$ref": "#/components/examples/GestorNaoAutenticado"
+                  },
+                  "api_key_invalida": {
+                    "$ref": "#/components/examples/ApiKeyInvalida"
+                  }
                 }
               }
             }
           },
           "403": {
-            "description": "Gestor sem a permissão API - Corrida/Entrega",
+            "description": "O usuário autenticado não tem a permissão `API - Corrida/Entrega` no cargo da central nem no da empresa, ou a `api-key` não é reconhecida.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/RespostaErro"
                 },
-                "example": {
-                  "success": false,
-                  "errors": [
-                    {
-                      "code": 68,
-                      "message": "O usuário informado não tem permissão para realizar essa operação."
-                    }
-                  ]
+                "examples": {
+                  "sem_permissao": {
+                    "$ref": "#/components/examples/SemPermissaoCode68"
+                  }
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
+                  }
                 }
               }
             }
           },
           "404": {
-            "description": "Programada não encontrada — inexistente, de outra central, de outra empresa (gestor de empresa) ou de corrida",
+            "description": "Programada não encontrada para quem chama: inexistente, de outra central, de outra empresa (gestor de empresa) ou de corrida. A resposta é sempre `code` 0.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/RespostaErro"
                 },
-                "example": {
-                  "success": false,
-                  "errors": [
-                    {
-                      "code": 0,
-                      "message": "Não foi possível encontrar a solicitação programada"
+                "examples": {
+                  "programada_nao_encontrada": {
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível encontrar a solicitação programada"
+                        }
+                      ]
                     }
-                  ]
+                  }
                 }
               }
             }
           },
           "409": {
-            "description": "Conflito com o estado da programada",
+            "description": "Conflito com o estado da programada. Todos com `code` 0.\n\nOutros `code` deste status:\n\n- `0`: outro disparo da mesma programada está em andamento (bloqueio de até 10 segundos); a programada não está aguardando o disparo (já disparada, cancelada ou agrupada).",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/RespostaErro"
                 },
                 "examples": {
                   "disparo_em_andamento": {
@@ -15955,7 +15954,7 @@
                     }
                   },
                   "situacao_invalida": {
-                    "summary": "Programada que não está aguardando o disparo (já disparada, cancelada ou agrupada)",
+                    "summary": "Programada que não está aguardando o disparo",
                     "value": {
                       "success": false,
                       "errors": [
@@ -15970,21 +15969,32 @@
               }
             }
           },
+          "429": {
+            "$ref": "#/components/responses/ErroLimite429"
+          },
           "500": {
-            "description": "Falha ao gravar o despacho. Nada é alterado na programada. A mensagem é a mesma do 409 de programada que não está aguardando; diferencie os dois casos pelo status HTTP",
+            "description": "Falha ao gravar o despacho, e nada é alterado na programada. A mensagem é a mesma do 409 de programada que não está aguardando; diferencie os dois casos pelo status HTTP. Falhas inesperadas chegam com \"Falha na operação\".",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
+                  "$ref": "#/components/schemas/RespostaErro"
                 },
-                "example": {
-                  "success": false,
-                  "errors": [
-                    {
-                      "code": 0,
-                      "message": "Não foi possível disparar a solicitação"
+                "examples": {
+                  "falha_gravacao": {
+                    "summary": "Falha ao gravar o despacho",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível disparar a solicitação"
+                        }
+                      ]
                     }
-                  ]
+                  },
+                  "falha_operacao": {
+                    "$ref": "#/components/examples/FalhaOperacao"
+                  }
                 }
               }
             }

@@ -11087,6 +11087,219 @@
         }
       }
     },
+    "/corridas/programadas/{id}/despachar": {
+      "post": {
+        "summary": "Despachar corrida programada",
+        "description": "Antecipa para agora o disparo da corrida programada informada em `{id}`, com a mesma regra do disparo imediato da lista de corridas programadas do painel. A data e a hora da programada passam a ser as do momento da chamada, no horário local da central, e a estimativa é recalculada.\n\nO endpoint não cria a corrida na hora. Ele responde `202` e a corrida é criada no ciclo seguinte do agendador, em até 1 minuto. Consulte o resultado em `GET /corridas/programadas/{id}`: a programada passa para disparada. Se o agendador não conseguir criar a corrida, por exemplo por falha na pré-autorização do pagamento, a programada fica em erro e não é disparada de novo.\n\nSó é possível despachar a programada que está aguardando o disparo. Programada agrupada automaticamente ou em uso pela junção automática é recusada.\n\nO gestor de empresa só encontra as programadas da própria empresa.\n\nPara acessar este endpoint, o usuário autenticado deve ter a permissão `API - Corrida/Entrega`.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID da corrida programada",
+            "schema": {
+              "type": "integer",
+              "example": 456
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Aceita. A corrida será criada no ciclo seguinte do agendador.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "message": "A corrida programada será disparada a seguir."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A requisição foi recusada na validação da v2 ou porque a programada está bloqueada pela junção automática.\n\nOutros `code` deste status:\n\n- `0`: a programada foi agrupada automaticamente; a programada está em uso pelo processo de junção automática; o corpo não é um JSON válido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro"
+                },
+                "examples": {
+                  "agrupada_automaticamente": {
+                    "summary": "Programada agrupada automaticamente",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A solicitação que você tentou alterar foi agrupada automaticamente e nenhuma alteração pode ser feita."
+                        }
+                      ]
+                    }
+                  },
+                  "em_juncao_automatica": {
+                    "summary": "Programada em uso pela junção automática",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "A solicitação que você tentou alterar está sendo utilizada no processo de junção automática e será liberada em instantes."
+                        }
+                      ]
+                    }
+                  },
+                  "chave_nao_informada": {
+                    "$ref": "#/components/examples/ChaveNaoInformada"
+                  },
+                  "json_invalido": {
+                    "$ref": "#/components/examples/JsonInvalido"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "O login ou a senha do gestor não conferem, ou a `api-key` não foi aceita.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro"
+                },
+                "examples": {
+                  "gestor_nao_autenticado": {
+                    "$ref": "#/components/examples/GestorNaoAutenticado"
+                  },
+                  "api_key_invalida": {
+                    "$ref": "#/components/examples/ApiKeyInvalida"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "O usuário autenticado não tem a permissão `API - Corrida/Entrega` no cargo da central nem no da empresa, ou a `api-key` não é reconhecida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro"
+                },
+                "examples": {
+                  "sem_permissao": {
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 68,
+                          "message": "O usuário informado não tem permissão para realizar essa operação."
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Programada não encontrada para quem chama: inexistente, de outra central, de outra empresa (gestor de empresa) ou de entrega. A resposta é sempre `code` 0.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro"
+                },
+                "examples": {
+                  "programada_nao_encontrada": {
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível encontrar a solicitação programada"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflito com o estado da programada. Todos com `code` 0.\n\nOutros `code` deste status:\n\n- `0`: outro disparo da mesma programada está em andamento (bloqueio de até 10 segundos); a programada não está aguardando o disparo (já disparada, cancelada ou agrupada).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro"
+                },
+                "examples": {
+                  "disparo_em_andamento": {
+                    "summary": "Outro disparo da mesma programada em andamento",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Já existe um disparo em andamento para essa solicitação. Aguarde alguns segundos e tente novamente."
+                        }
+                      ]
+                    }
+                  },
+                  "situacao_invalida": {
+                    "summary": "Programada que não está aguardando o disparo",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível disparar a solicitação"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/ErroLimite429"
+          },
+          "500": {
+            "description": "Falha ao gravar o despacho, e nada é alterado na programada. A mensagem é a mesma do 409 de programada que não está aguardando; diferencie os dois casos pelo status HTTP. Falhas inesperadas chegam com \"Falha na operação\".",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro"
+                },
+                "examples": {
+                  "falha_gravacao": {
+                    "summary": "Falha ao gravar o despacho",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 0,
+                          "message": "Não foi possível disparar a solicitação"
+                        }
+                      ]
+                    }
+                  },
+                  "falha_operacao": {
+                    "$ref": "#/components/examples/FalhaOperacao"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/corridas/{id}": {
       "get": {
         "summary": "Consultar corrida",
