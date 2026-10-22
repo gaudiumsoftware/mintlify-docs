@@ -155,6 +155,28 @@ export const EndpointBadge = ({ method, path, href }) => (
   </div>
 
   <Entry date="22 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="score-condutor" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Score do condutor
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novo endpoint que consulta o score de um condutor no programa de níveis da central: os mesmos
+      pontos e nível que o condutor vê na tela "Meu Score" do aplicativo, sem precisar acessar o painel.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/condutores/{id}/score" href="/pages/v2/referencia/condutores/endpoint/get-score" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="pontos" /> do trimestre vigente, <ParamBadge name="nivel" /> atual e <ParamBadge name="proximo_nivel" /> com as metas de pontos e de taxa de aceitação. No último nível, <ParamBadge name="proximo_nivel" /> vem <code>null</code>.</li>
+        <li><ParamBadge name="taxa_aceitacao" /> em porcentagem, ou <code>null</code> quando o condutor ainda não tem ofertas suficientes para o cálculo.</li>
+        <li><ParamBadge name="trimestre" /> com o início, o fim e os dias restantes do trimestre em que os pontos são contados.</li>
+        <li>Com a Api-Key de uma central agrupadora, o endpoint consulta condutores das centrais filhas. Condutor de outra central responde <code>404</code>.</li>
+        <li>Central do condutor sem o programa de níveis ativo responde <code>403</code>. O endpoint exige gestor da central, sem empresa vinculada, com a permissão de integração de condutores.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
+  <Entry date="22 out 2026" label="Em breve" labelColor="#ea580c">
     <h2 id="codigos-de-erro" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Códigos de erro próprios
     </h2>
@@ -223,6 +245,65 @@ export const EndpointBadge = ({ method, path, href }) => (
     </div>
   </Entry>
 
+  <Entry date="22 out 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 id="busca-cliente-cpf-cnpj" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Busca por CPF ou CNPJ na consulta de clientes
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      A consulta de clientes passa a buscar o cliente por CPF ou CNPJ num filtro só e a devolver o
+      CNPJ dele. Os filtros por CPF, e-mail, telefone e nome voltam à referência.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/clientes" href="/pages/v2/referencia/clientes/endpoint/get" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="cnpj" /> — CNPJ do cliente, como foi cadastrado. Vem <code>null</code> quando não informado.</li>
+        <li>Parâmetro de query <ParamBadge name="cpf_cnpj" /> — CPF ou CNPJ, com ou sem máscara, inclusive o CNPJ alfanumérico (ex: <code>123.456.789-09</code>, <code>11.222.333/0001-81</code> ou <code>AB.12C.D34/EFGH-83</code>). A busca faz correspondência exata só no documento do tipo informado. Ignora <code>status_cliente</code> e paginação. Retorna 400 quando o valor não é um CPF nem um CNPJ válido, ou quando vem junto com <code>cpf</code>.</li>
+      </ul>
+    </ChangeSection>
+
+    <ChangeSection type="changed">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="cpf" />, <ParamBadge name="email" />, <ParamBadge name="telefone" /> e <ParamBadge name="nome" /> voltam à referência do endpoint, com o comportamento anunciado em <a href="/pages/v2/changelog#filtros-busca-clientes-condutores">25 de junho</a>. A referência de <ParamBadge name="status_cliente" />, <ParamBadge name="limite" /> e <ParamBadge name="pagina" /> volta a dizer quando eles são ignorados.</li>
+        <li>A referência de <ParamBadge name="ultimo_acesso_apos" />, <ParamBadge name="ultimo_acesso_antes_de" /> e <ParamBadge name="nunca_acessou" /> passa a dizer que eles se combinam também com as buscas diretas (<code>cpf_cnpj</code>, <code>cpf</code>, <code>email</code> e <code>telefone</code>), como a consulta já fazia.</li>
+        <li>A referência de <ParamBadge name="foto_url" /> passa a dizer que ele é preenchido em toda busca direta por um cliente (<code>id</code>, <code>cpf_cnpj</code>, <code>cpf</code>, <code>email</code> ou <code>telefone</code>), e não só na busca por <code>id</code>; na listagem paginada continua <code>null</code>. A entrada de <a href="/pages/v2/changelog#dados-engajamento-clientes">6 de outubro</a> citava só o <code>id</code>.</li>
+        <li>A referência de <ParamBadge name="id" />, na v2 e na v1, deixa de dizer que os demais parâmetros são ignorados: <code>status_cliente</code> e paginação são ignorados, e os demais filtros se combinam com ele, como a consulta já fazia.</li>
+      </ul>
+    </ChangeSection>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/v2/integracao/clientes/{id}" href="/pages/v2/referencia/clientes/endpoint/get-by-id" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Mesmo campo <ParamBadge name="cnpj" />, no cliente retornado.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="GET" path="/api/integracao/cliente" href="/pages/v1/referencia/clientes/endpoint/get" />
+
+      <ChangeSection type="added">
+        <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+          <li>Mesmo campo <ParamBadge name="cnpj" />, em cada cliente da resposta da v1.</li>
+          <li>Parâmetro de query <ParamBadge name="cpf_cnpj" /> — CPF ou CNPJ, com ou sem máscara, inclusive o CNPJ alfanumérico, com correspondência exata só no documento do tipo informado. Ignora <code>status_cliente</code> e paginação. Retorna 400 quando o valor não é um CPF nem um CNPJ válido, ou quando vem junto com <code>cpf</code>.</li>
+          <li><ParamBadge name="cpf" />, <ParamBadge name="email" />, <ParamBadge name="telefone" /> e <ParamBadge name="nome" />, que a v1 já aceitava, passam a constar na referência da v1.</li>
+        </ul>
+      </ChangeSection>
+    </div>
+  </Entry>
+
+  <Entry date="21 out 2026">
+    <h2 id="cenarios-de-erro" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Cenários de erro em todos os endpoints
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Revisamos toda a documentação da API v2. Cada endpoint agora mostra os erros que pode devolver,
+      com o status HTTP, o <code>code</code>, a mensagem e quando cada um ocorre.
+    </p>
+  </Entry>
   <Entry date="20 out 2026">
     <h2 id="criar-dinamica-area" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Criação de dinâmica por área

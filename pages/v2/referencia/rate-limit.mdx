@@ -41,6 +41,8 @@ Os valores da tabela são **limites base**. O limite efetivo de cada grupo é o 
 | Mensagens da corrida (envio) | `/api/v2/integracao/mensagens/corridas/passageiro`<br />`/api/v2/integracao/mensagens/corridas/condutor` | 900 * faixa requisições por minuto |
 | Padrão | `/api/v2/integracao/*` | 1000 * faixa requisições por minuto |
 
+O score do condutor (`/api/v2/integracao/condutores/{id}/score`) não tem limite próprio: entra no grupo Condutores, com limite de 750 * faixa requisições por minuto, e soma no mesmo contador das demais rotas do grupo.
+
 O limite de mensagens da corrida vale para o envio; a leitura (`/api/v2/integracao/mensagens/corridas/passageiro/*` e `/api/v2/integracao/mensagens/corridas/condutor/*`) segue o limite Padrão.
 
 ## Limites por recurso

@@ -30,7 +30,7 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 |---|---|
 | `0` | Erro inesperado no processamento ("Falha na operação"), ou erro que ainda não tem código próprio. Nesse caso, a `message` descreve o motivo. |
 | sem `code` | Na v1, os erros de chave de acesso e de método HTTP chegam como uma lista de textos: `"errors": ["Chave da API inválida."]`. |
-| `B1` a `B6` | Na v2, os erros de chave de acesso e de usuário trazem um `code` em texto. Veja a tabela abaixo. |
+| `B1`, `B4`, `B5`, `B6` | Na v2, os erros de chave de acesso e de usuário trazem um `code` em texto. A exceção é a `api-key` não reconhecida, que chega com HTTP `403` e corpo em texto puro, sem `code`. Veja a tabela abaixo. |
 | `401`, `404` e `503` | Em algumas rotas da v2 que não repassam a operação para a v1 (como mensagens da corrida e posição de condutores), o `code` repete o status HTTP: credenciais inválidas (`401`), corrida que não pertence à central (`404`) e serviço indisponível (`503`). |
 
 ### Autenticação na v2
@@ -38,9 +38,8 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 | code | HTTP | Mensagem | Quando ocorre |
 |---|---|---|---|
 | `B1` | 400 | Chave da api não informada. | Nenhuma chave enviada no header. |
-| `B2` | 400 | Desculpe, não foi possível entender sua solicitação. | `api-key` e `app-key` enviadas juntas. |
-| `B3` | 401 | Você não está autorizado a acessar este recurso. | Só a `app-key` foi enviada, sem a `api-key`. |
-| `B4` | 401 | Você não está autorizado a acessar este recurso. | `api-key` inexistente. |
+| sem `code` | 403 | `-` (texto puro, sem o envelope JSON) | `api-key` não reconhecida. É a resposta usual para uma chave inválida. |
+| `B4` | 401 | Você não está autorizado a acessar este recurso. | `api-key` inexistente, em situações excepcionais. Normalmente, uma chave não reconhecida recebe o `403` sem `code` da linha acima. |
 | `B5` | 401 | Usuário e/ou senhas inválidos. | Login ou senha do Basic Auth inválidos. |
 | `B6` | 403 | Você não tem permissão para acessar este recurso. | Rota exclusiva de empresa chamada por usuário sem empresa vinculada. |
 
@@ -77,6 +76,8 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 | `104` | JSON inválido | Corpo não é um JSON válido ou veio vazio. |
 | `108` | Campo \{campo\} é inválido. \{extra\}. | Campo com valor inválido (mensagem, taxa do motorista, destinatário) ou erro de validação do cadastro do motorista sem código próprio. |
 | `109` | Campo \{campo\} deve ser um número inteiro positivo. | id/area_id/destinatario_id não inteiro positivo. |
+| `238` *Em breve* | 'cpf_cnpj': Não pode ser usado junto com o filtro cpf. | Consulta de clientes com os filtros `cpf_cnpj` e `cpf` ao mesmo tempo. |
+| `239` *Em breve* | 'cpf_cnpj': CPF ou CNPJ inválido. | Filtro `cpf_cnpj` da consulta de clientes que não é CPF nem CNPJ válido. |
 
 ## Endereço e rota
 
@@ -289,6 +290,7 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 | `209` *Em breve* | Seu saldo é insuficiente para efetuar corridas corporativas. | Saldo do funcionário insuficiente. |
 | `210` *Em breve* | Centro de custo não possui limite cadastrado para corridas corporativas. | Centro de custo sem limite cadastrado. |
 | `211` *Em breve* | Saldo do centro de custo é insuficiente para efetuar corridas corporativas. | Saldo do centro de custo insuficiente. |
+| `235` | A empresa não possui cidade cadastrada. Cadastre a cidade da empresa ou envie o endereço de partida (partida.endereco e partida.bairro) na requisição. | Entrega sem `partida.endereco` e `partida.bairro` para uma empresa sem cidade cadastrada, que seria usada como partida. |
 
 ## Entregas
 
@@ -340,6 +342,15 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 |---|---|---|
 | `6` | Destinatário não encontrado ou não pertence à bandeira autenticada. | ID da lista inexistente ou de outra central. Volta como falha do ID em data.falhas (HTTP 207), ou em errors (HTTP 404) quando nenhum ID é notificado. |
 | `157` *Em breve* | Destinatário sem dispositivo registrado para receber notificações. | ID da central sem aplicativo com token de notificação registrado. Volta como falha do ID em data.falhas (HTTP 207), ou em errors (HTTP 404) quando nenhum ID é notificado. |
+
+## Score do condutor (só v2)
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `236` *Em breve* | Programa de níveis indisponível. | Central do condutor sem o programa de níveis ativo: fora do beta ou com o programa pausado. HTTP 403. |
+| `237` *Em breve* | Falha na operação | O serviço de score não respondeu ou respondeu com erro. HTTP 500, sem dado parcial. |
+
+No mesmo endpoint, `id` não numérico ou igual a zero responde `218`, condutor inexistente ou de outra central responde `56`, e gestor de empresa ou sem a permissão de integração de condutores responde `63`.
 
 ## Validação do corpo da requisição (só v2)
 
