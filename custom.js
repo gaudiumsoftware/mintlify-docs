@@ -214,7 +214,7 @@
       window.HTMLSelectElement.prototype,
       "value"
     ).set;
-    setter.call(select, String(indice));
+    setter.call(select, select.options[indice].value);
     select.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
@@ -235,6 +235,7 @@
 
   function atualizar(controle, select) {
     var atual = ambienteSelecionado(select);
+    if (!atual) return;
     controle.setAttribute("data-ambiente", atual);
     Array.prototype.forEach.call(
       controle.querySelectorAll("button[data-ambiente]"),
@@ -282,8 +283,14 @@
     nota.className = "env-switch-note";
     controle.appendChild(nota);
 
+    /* Também vale a troca feita pelo <select> nativo, que continua visível: a preferência é
+       gravada depois da renderização, quando o <select> já tem o valor final. */
     select.addEventListener("change", function () {
-      atualizarAposRender(controle, select);
+      setTimeout(function () {
+        var atual = ambienteSelecionado(select);
+        if (atual) gravarPreferencia(atual);
+        atualizar(controle, select);
+      }, 50);
     });
 
     return controle;
@@ -353,7 +360,11 @@
   function moverDetalhes() {
     var descricao = document.querySelector(SELETOR_DESCRICAO);
     var cartao = cartaoDaUrl();
-    if (!descricao || !cartao || !cartao.parentElement) return;
+    if (!descricao) return;
+    if (!cartao || !cartao.parentElement) {
+      descricao.removeAttribute("data-detalhes-movido");
+      return;
+    }
 
     var existente = cartao.parentElement.querySelector(":scope > .endpoint-detalhes");
     var extras = Array.prototype.slice.call(descricao.children, 1);

@@ -141,7 +141,7 @@ nav[aria-label="Main"] li.navbar-link a[href*="forms.monday.com"] {
 }
 
 /* Alternador de ambiente (vendas / produção) acima da URL do endpoint.
-   Criado pelo custom.js; o cor de cada ambiente vem de --env-cor. */
+   Criado pelo custom.js; a cor de cada ambiente vem de --env-cor. */
 .env-switch {
   --env-cor: #b45309;
   --env-fundo: rgba(245, 158, 11, 0.14);
