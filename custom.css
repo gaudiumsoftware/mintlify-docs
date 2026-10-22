@@ -250,3 +250,53 @@ header > div[data-detalhes-movido] > :not(:first-child) {
 .endpoint-detalhes > :last-child {
   margin-bottom: 0;
 }
+
+/* Changelog: o menu lateral esquerdo só tem o item da própria página e não serve de navegação.
+   Escondê-lo dá largura ao texto, que passava do limite e invadia o "On this page" na direita.
+   Só a partir de `lg`: abaixo disso o #sidebar é o menu do celular e precisa continuar. */
+@media (min-width: 1024px) {
+  html[data-current-path="/pages/v2/changelog"] #sidebar,
+  html[data-current-path="/pages/v2/changelog-entregas"] #sidebar {
+    display: none !important;
+  }
+}
+
+/* Changelog: o conteúdo de cada entrada precisa poder encolher (min-width: 0) para que
+   blocos largos, como o caminho de um endpoint, não empurrem a página para fora da coluna. */
+.changelog-entry-conteudo {
+  min-width: 0;
+}
+
+.changelog-badge {
+  max-width: 100%;
+}
+
+.changelog-badge > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Changelog no celular: a data passa para cima do texto, em linha, e a linha da timeline sai.
+   O !important é porque a largura mínima da data vem de estilo inline no componente Entry. */
+@media (max-width: 640px) {
+  .changelog-entry {
+    flex-direction: column;
+    gap: 12px !important;
+  }
+
+  .changelog-entry-data {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 10px;
+    min-width: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  .changelog-entry-data > div {
+    margin-top: 0 !important;
+  }
+
+  .changelog-entry-linha {
+    display: none;
+  }
+}
