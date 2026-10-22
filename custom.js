@@ -183,8 +183,19 @@
     },
   };
 
+  var HOSTS = {
+    "api-vendas.taximachine.com.br": "vendas",
+    "api.taximachine.com.br": "producao",
+  };
+
+  /* Só os dois hosts conhecidos têm ambiente; qualquer outro (sandbox, staging) devolve null
+     para não ser apresentado como produção. */
   function ambienteDaUrl(url) {
-    return url.indexOf("api-vendas.") !== -1 ? "vendas" : "producao";
+    try {
+      return HOSTS[new URL(url).hostname] || null;
+    } catch (e) {
+      return null;
+    }
   }
 
   function lerPreferencia() {
@@ -308,6 +319,12 @@
       var cartao = select.closest('[class*="rounded-2xl"]');
       if (!cartao || select.options.length < 2) return;
 
+      /* Com um servidor desconhecido na lista, o <select> do tema fica como está */
+      var conhecidos = Array.prototype.every.call(select.options, function (opcao) {
+        return ambienteDaUrl(opcao.textContent) !== null;
+      });
+      if (!conhecidos) return;
+
       select.setAttribute("data-ambiente-ligado", "");
       var controle = criarControle(select);
       cartao.insertBefore(controle, cartao.firstChild);
@@ -329,10 +346,10 @@
     new MutationObserver(function () {
       if (agendado) return;
       agendado = true;
-      requestAnimationFrame(function () {
+      setTimeout(function () {
         agendado = false;
         instalar();
-      });
+      }, 0);
     }).observe(document.body, { childList: true, subtree: true });
   }
 
@@ -351,26 +368,35 @@
    página continuam com o texto completo): é uma cópia, e o original fica oculto pelo CSS. Se o
    script não rodar, a página mostra a descrição inteira no topo, como o tema faz. */
 (function () {
+  /* A busca fica dentro da área de conteúdo, para não pegar tags de método da navegação
+     lateral ou da busca */
+  var SELETOR_AREA = "#content-area";
   var SELETOR_DESCRICAO = 'header > div[class*="prose"]';
-  var SELETOR_CARTAO = '.method-pill';
+  var SELETOR_CARTAO = ".method-pill";
 
-  function cartaoDaUrl() {
-    var metodo = document.querySelector(SELETOR_CARTAO);
+  function cartaoDaUrl(area) {
+    var metodo = area.querySelector(SELETOR_CARTAO);
     return metodo ? metodo.closest('[class*="rounded-2xl"]') : null;
   }
 
+  function limpar(descricao) {
+    if (descricao) descricao.removeAttribute("data-detalhes-movido");
+    Array.prototype.forEach.call(
+      document.querySelectorAll(".endpoint-detalhes"),
+      function (bloco) {
+        bloco.remove();
+      }
+    );
+  }
+
   function moverDetalhes() {
-    var descricao = document.querySelector(SELETOR_DESCRICAO);
-    var cartao = cartaoDaUrl();
-    if (!descricao) return;
-    if (!cartao || !cartao.parentElement) {
-      descricao.removeAttribute("data-detalhes-movido");
-      Array.prototype.forEach.call(
-        document.querySelectorAll(".endpoint-detalhes"),
-        function (bloco) {
-          bloco.remove();
-        }
-      );
+    var area = document.querySelector(SELETOR_AREA);
+    if (!area) return;
+
+    var descricao = area.querySelector(SELETOR_DESCRICAO);
+    var cartao = cartaoDaUrl(area);
+    if (!descricao || !cartao || !cartao.parentElement) {
+      limpar(descricao);
       return;
     }
 
@@ -378,8 +404,7 @@
     var extras = Array.prototype.slice.call(descricao.children, 1);
 
     if (extras.length === 0) {
-      if (existente) existente.remove();
-      descricao.removeAttribute("data-detalhes-movido");
+      limpar(descricao);
       return;
     }
 
@@ -425,12 +450,31 @@
     navigator.clipboard.writeText(codigo.textContent).catch(function () {});
   });
 
+  /* Mutações causadas pelo próprio script (a cópia inserida, o alternador de ambiente) não
+     mudam a descrição e não precisam de nova passada */
+  function ehNosso(no) {
+    var elemento = no.nodeType === 1 ? no : no.parentElement;
+    return !!elemento && !!elemento.closest(".endpoint-detalhes, .env-switch");
+  }
+
+  function mutacaoRelevante(registros) {
+    return registros.some(function (registro) {
+      if (ehNosso(registro.target)) return false;
+      var nos = Array.prototype.slice
+        .call(registro.addedNodes)
+        .concat(Array.prototype.slice.call(registro.removedNodes));
+      return nos.some(function (no) {
+        return !ehNosso(no);
+      });
+    });
+  }
+
   function iniciar() {
     moverDetalhes();
 
     var agendado = false;
-    new MutationObserver(function () {
-      if (agendado) return;
+    new MutationObserver(function (registros) {
+      if (agendado || !mutacaoRelevante(registros)) return;
       agendado = true;
       setTimeout(function () {
         agendado = false;
