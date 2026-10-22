@@ -167,7 +167,7 @@ export const EndpointBadge = ({ method, path, href }) => (
 
     <ChangeSection type="added">
       <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
-        <li>Só despacha programada aguardando o disparo. A resposta é <code>202</code>, com a mensagem de que a corrida será disparada a seguir; acompanhe o resultado em <code>GET /corridas/programadas/{"{id}"}</code>.</li>
+        <li>Só despacha programada aguardando o disparo (situação <code>A</code>). A resposta é <code>202</code>, com a mensagem de que a corrida será disparada a seguir; acompanhe a passagem para <code>D</code> em <code>GET /corridas/programadas/{"{id}"}</code>.</li>
         <li>Não tem corpo na requisição.</li>
         <li>Exige a permissão <code>API - Corrida/Entrega</code>. O gestor de empresa só despacha as programadas da própria empresa.</li>
         <li>Programada agrupada automaticamente ou em uso pela junção automática responde <code>400</code>; outro disparo em andamento ou programada que não está aguardando responde <code>409</code>.</li>
