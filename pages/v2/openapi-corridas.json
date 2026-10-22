@@ -11184,15 +11184,7 @@
                 },
                 "examples": {
                   "sem_permissao": {
-                    "value": {
-                      "success": false,
-                      "errors": [
-                        {
-                          "code": 68,
-                          "message": "O usuário informado não tem permissão para realizar essa operação."
-                        }
-                      ]
-                    }
+                    "$ref": "#/components/examples/SemPermissao"
                   }
                 }
               },
@@ -11232,7 +11224,7 @@
             }
           },
           "409": {
-            "description": "Conflito com o estado da programada. Todos com `code` 0.\n\nOutros `code` deste status:\n\n- `0`: outro disparo da mesma programada está em andamento (bloqueio de até 10 segundos); a programada não está aguardando o disparo (já disparada, cancelada ou agrupada).",
+            "description": "Conflito com o estado da programada.\n\nOutros `code` deste status:\n\n- `0`: outro disparo da mesma programada está em andamento (bloqueio de até 10 segundos); a programada não está aguardando o disparo (já disparada, cancelada ou agrupada).",
             "content": {
               "application/json": {
                 "schema": {

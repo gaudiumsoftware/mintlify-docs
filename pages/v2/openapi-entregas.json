@@ -15767,7 +15767,7 @@
     "/entregas/programadas/{id}/despachar": {
       "post": {
         "summary": "Despachar entrega programada",
-        "description": "Antecipa para agora o disparo da entrega programada informada em `{id}`, com a mesma regra do **Despachar agora** da Gestão de Pedidos. A data e a hora da programada passam a ser as do momento da chamada, no horário local da central, e a estimativa é recalculada.\n\nO endpoint não cria a entrega na hora. Ele responde `202` e a entrega é criada no ciclo seguinte do agendador, em até 1 minuto. Consulte o resultado em `GET /entregas/programadas/{id}`: a programada passa para a situação `D` (disparada). Se o agendador não conseguir criar a entrega, por exemplo por falha na pré-autorização do pagamento, a programada fica na situação `X` (erro) e não é disparada de novo.\n\nSó é possível despachar a programada que está aguardando o disparo. Programada agrupada automaticamente ou em uso pela junção automática é recusada.\n\nQuando a empresa da entrega está em um período com entregadores dedicados e nenhum deles está livre, a entrega fica restrita aos dedicados. Envie `ignorar_periodo_dedicado` como `true` para que ela possa ir também para entregadores de fora do período.\n\nO gestor de empresa só encontra as programadas da própria empresa.\n\nPara acessar este endpoint, o usuário autenticado deve ter a permissão `API - Corrida/Entrega`.",
+        "description": "Antecipa para agora o disparo da entrega programada informada em `{id}`, com a mesma regra do **Despachar agora** da Gestão de Pedidos. A data e a hora da programada passam a ser as do momento da chamada, no horário local da central, e a estimativa é recalculada.\n\nO endpoint não cria a entrega na hora. Ele responde `202` e a entrega é criada no ciclo seguinte do agendador, em até 1 minuto. Consulte o resultado em `GET /entregas/programadas/{id}`: a programada passa para a situação `D` (disparada). Se o agendador não conseguir criar a entrega, por exemplo por falha na pré-autorização do pagamento, a programada fica na situação `X` (erro) e não é disparada de novo.\n\nSó é possível despachar a programada que está aguardando o disparo (situação `A`). Programada agrupada automaticamente ou em uso pela junção automática é recusada.\n\nQuando a empresa da entrega está em um período com entregadores dedicados e nenhum deles está livre, a entrega fica restrita aos dedicados. Envie `ignorar_periodo_dedicado` como `true` para que ela possa ir também para entregadores de fora do período.\n\nO gestor de empresa só encontra as programadas da própria empresa.\n\nPara acessar este endpoint, o usuário autenticado deve ter a permissão `API - Corrida/Entrega`.",
         "parameters": [
           {
             "name": "id",
@@ -15934,7 +15934,7 @@
             }
           },
           "409": {
-            "description": "Conflito com o estado da programada. Todos com `code` 0.\n\nOutros `code` deste status:\n\n- `0`: outro disparo da mesma programada está em andamento (bloqueio de até 10 segundos); a programada não está aguardando o disparo (já disparada, cancelada ou agrupada).",
+            "description": "Conflito com o estado da programada.\n\nOutros `code` deste status:\n\n- `0`: outro disparo da mesma programada está em andamento (bloqueio de até 10 segundos); a programada não está aguardando o disparo (já disparada, cancelada ou agrupada).",
             "content": {
               "application/json": {
                 "schema": {
