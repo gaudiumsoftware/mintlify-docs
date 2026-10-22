@@ -93,14 +93,19 @@ if (is_string($token)) {
 
     if ($pessoa !== null) {
         session_start();
+        session_regenerate_id(true);
         $_SESSION['machine_tipo'] = $pessoa['tipo'];
         $_SESSION['machine_id'] = $pessoa['id'];
     }
 
-    $partes = parse_url($_SERVER['REQUEST_URI']);
+    $partes = parse_url($_SERVER['REQUEST_URI']) ?: [];
+    $path = $partes['path'] ?? '/';
+    if ($path === '' || $path[0] !== '/' || strpos($path, '//') === 0 || strpos($path, '\\') !== false) {
+        $path = '/';
+    }
     parse_str($partes['query'] ?? '', $query);
     unset($query['Mch-Token']);
-    header('Location: ' . $partes['path'] . ($query ? '?' . http_build_query($query) : ''));
+    header('Location: ' . $path . ($query ? '?' . http_build_query($query) : ''));
     exit;
 }
 ```
@@ -108,7 +113,7 @@ if (is_string($token)) {
 ```javascript Node
 // Node 18 ou mais novo, com Express e express-session.
 async function validarLoginUnico(token) {
-  const url = `${process.env.MACHINE_API_URL ?? 'https://api.taximachine.com.br/api/v2/integracao'}/login-unico/validar`;
+  const url = `${process.env.MACHINE_API_URL || 'https://api.taximachine.com.br/api/v2/integracao'}/login-unico/validar`;
   const credenciais = Buffer.from(`${process.env.MACHINE_API_USUARIO}:${process.env.MACHINE_API_SENHA}`).toString('base64');
 
   try {
@@ -140,6 +145,7 @@ app.use(async (req, res, next) => {
 
   const pessoa = await validarLoginUnico(token);
   if (pessoa) {
+    await new Promise((ok, falha) => req.session.regenerate((erro) => (erro ? falha(erro) : ok())));
     req.session.machine = { tipo: pessoa.tipo, id: pessoa.id };
   }
 
