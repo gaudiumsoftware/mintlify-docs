@@ -313,7 +313,13 @@
     var selects = document.querySelectorAll(SELETOR_SELECT);
 
     Array.prototype.forEach.call(selects, function (select) {
-      if (select.hasAttribute("data-ambiente-ligado")) return;
+      /* Select já ligado: só resincroniza o alternador, caso o tema tenha reaproveitado o
+         elemento e mudado o valor sem disparar `change` */
+      var ligado = select.controleAmbiente;
+      if (ligado && ligado.isConnected) {
+        atualizar(ligado, select);
+        return;
+      }
 
       /* O cartão que envolve a linha "método + URL + Try it" */
       var cartao = select.closest('[class*="rounded-2xl"]');
@@ -325,8 +331,8 @@
       });
       if (!conhecidos) return;
 
-      select.setAttribute("data-ambiente-ligado", "");
       var controle = criarControle(select);
+      select.controleAmbiente = controle;
       cartao.insertBefore(controle, cartao.firstChild);
 
       var preferido = lerPreferencia();
