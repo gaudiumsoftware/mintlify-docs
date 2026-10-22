@@ -171,6 +171,8 @@
 (function () {
   var SELETOR_SELECT = 'select[aria-label="Select base URL"]';
   var CHAVE = "docs-ambiente-api";
+  /* Tempo para o React terminar de renderizar depois de um `change` do <select> */
+  var ESPERA_RENDER_MS = 50;
 
   var AMBIENTES = {
     vendas: {
@@ -240,7 +242,7 @@
   function atualizarAposRender(controle, select) {
     setTimeout(function () {
       atualizar(controle, select);
-    }, 50);
+    }, ESPERA_RENDER_MS);
   }
 
   function atualizar(controle, select) {
@@ -258,8 +260,12 @@
         }
       }
     );
-    controle.querySelector(".env-switch-note").textContent =
-      AMBIENTES[atual].nota;
+    /* Atribuir `textContent` recria o nó de texto mesmo com o mesmo valor, e isso é uma
+       mutação do DOM que o observer da página enxergaria: só escreve se mudou. */
+    var nota = controle.querySelector(".env-switch-note");
+    if (nota.textContent !== AMBIENTES[atual].nota) {
+      nota.textContent = AMBIENTES[atual].nota;
+    }
   }
 
   function criarControle(select) {
@@ -303,7 +309,7 @@
         var atual = ambienteSelecionado(select);
         if (atual) gravarPreferencia(atual);
         atualizar(controle, select);
-      }, 50);
+      }, ESPERA_RENDER_MS);
     });
 
     return controle;
@@ -345,12 +351,31 @@
     });
   }
 
+  /* Mutações do próprio alternador não pedem nova passada: sem este filtro, reescrever a nota
+     disparava o observer, que reescrevia a nota, em laço. */
+  function ehDoAlternador(no) {
+    var elemento = no.nodeType === 1 ? no : no.parentElement;
+    return !!elemento && !!elemento.closest(".env-switch");
+  }
+
+  function mutacaoRelevante(registros) {
+    return registros.some(function (registro) {
+      if (ehDoAlternador(registro.target)) return false;
+      var nos = Array.prototype.slice
+        .call(registro.addedNodes)
+        .concat(Array.prototype.slice.call(registro.removedNodes));
+      return nos.some(function (no) {
+        return !ehDoAlternador(no);
+      });
+    });
+  }
+
   function iniciar() {
     instalar();
 
     var agendado = false;
-    new MutationObserver(function () {
-      if (agendado) return;
+    new MutationObserver(function (registros) {
+      if (agendado || !mutacaoRelevante(registros)) return;
       agendado = true;
       setTimeout(function () {
         agendado = false;
