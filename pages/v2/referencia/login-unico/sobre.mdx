@@ -67,7 +67,7 @@ O cargo Integrador já tem todas as permissões de API, inclusive a do login ún
 
 ## Exemplos
 
-Os exemplos validam o token, guardam a pessoa na sessão e redirecionam para a URL sem o `Mch-Token`. Uma resposta diferente de `200` e de `400` indica erro de configuração (credencial, permissão, licença ou limite), e os exemplos a registram no log do servidor. As credenciais vêm de variáveis de ambiente do servidor. Para testar na homologação, use `https://api-vendas.taximachine.com.br/api/v2/integracao` em `MACHINE_API_URL`.
+Os exemplos validam o token, guardam a pessoa na sessão e redirecionam para a URL sem o `Mch-Token`. Fora o `400` com o código `245`, que é token inválido, uma resposta diferente de `200` ou uma falha na chamada indica erro de configuração (credencial, permissão, licença, limite) ou API indisponível, e os exemplos a registram no log do servidor. As credenciais vêm de variáveis de ambiente do servidor. Para testar na homologação, use `https://api-vendas.taximachine.com.br/api/v2/integracao` em `MACHINE_API_URL`.
 
 <CodeGroup>
 
@@ -95,7 +95,8 @@ function validarLoginUnico(string $token): ?array
     curl_close($ch);
 
     if ($status !== 200) {
-        if ($status !== 400) {
+        $codigo = json_decode((string) $corpo, true)['errors'][0]['code'] ?? null;
+        if ($status !== 400 || $codigo !== 245) {
             error_log('login-unico: HTTP ' . $status . ' ' . ($corpo === false ? 'sem resposta' : $corpo));
         }
         return null;
@@ -123,7 +124,7 @@ if (is_string($token)) {
     }
     $query = implode('&', array_filter(
         explode('&', $partes['query'] ?? ''),
-        fn ($par) => $par !== '' && $par !== 'Mch-Token' && strpos($par, 'Mch-Token=') !== 0
+        fn ($par) => $par !== '' && urldecode(explode('=', $par, 2)[0]) !== 'Mch-Token'
     ));
     header('Location: ' . $path . ($query !== '' ? '?' . $query : ''));
     exit;
@@ -132,6 +133,14 @@ if (is_string($token)) {
 
 ```javascript Node
 // Node 18 ou mais novo, com Express e express-session.
+function codigoDoErro(corpo) {
+  try {
+    return JSON.parse(corpo).errors?.[0]?.code;
+  } catch {
+    return undefined;
+  }
+}
+
 async function validarLoginUnico(token) {
   const url = `${process.env.MACHINE_API_URL || 'https://api.taximachine.com.br/api/v2/integracao'}/login-unico/validar`;
   const credenciais = Buffer.from(`${process.env.MACHINE_API_USUARIO}:${process.env.MACHINE_API_SENHA}`).toString('base64');
@@ -148,14 +157,16 @@ async function validarLoginUnico(token) {
       signal: AbortSignal.timeout(5000),
     });
     if (!resposta.ok) {
-      if (resposta.status !== 400) {
-        console.error(`login-unico: HTTP ${resposta.status} ${await resposta.text()}`);
+      const corpo = await resposta.text();
+      if (resposta.status !== 400 || codigoDoErro(corpo) !== 245) {
+        console.error(`login-unico: HTTP ${resposta.status} ${corpo}`);
       }
       return null;
     }
     const corpo = await resposta.json();
     return corpo.data ?? null;
-  } catch {
+  } catch (erro) {
+    console.error('login-unico: falha ao chamar a API', erro);
     return null;
   }
 }
@@ -195,6 +206,13 @@ app = Flask(__name__)
 app.secret_key = os.environ['FLASK_SECRET_KEY']
 
 
+def codigo_do_erro(resposta):
+    try:
+        return resposta.json()['errors'][0]['code']
+    except (ValueError, KeyError, IndexError, TypeError):
+        return None
+
+
 def validar_login_unico(token):
     url = os.environ.get('MACHINE_API_URL', 'https://api.taximachine.com.br/api/v2/integracao') + '/login-unico/validar'
     try:
@@ -206,11 +224,12 @@ def validar_login_unico(token):
             timeout=5,
         )
         if resposta.status_code != 200:
-            if resposta.status_code != 400:
+            if resposta.status_code != 400 or codigo_do_erro(resposta) != 245:
                 app.logger.error('login-unico: HTTP %s %s', resposta.status_code, resposta.text)
             return None
         return resposta.json().get('data')
-    except (requests.RequestException, ValueError):
+    except (requests.RequestException, ValueError) as erro:
+        app.logger.error('login-unico: falha ao chamar a API: %s', erro)
         return None
 
 
@@ -241,16 +260,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 public class LoginUnicoFilter extends OncePerRequestFilter {
@@ -273,7 +294,7 @@ public class LoginUnicoFilter extends OncePerRequestFilter {
                 .build();
             HttpResponse<String> resposta = http.send(requisicao, HttpResponse.BodyHandlers.ofString());
             if (resposta.statusCode() != 200) {
-                if (resposta.statusCode() != 400) {
+                if (resposta.statusCode() != 400 || codigoDoErro(resposta.body()) != 245) {
                     logger.error("login-unico: HTTP " + resposta.statusCode() + " " + resposta.body());
                 }
                 return null;
@@ -281,10 +302,27 @@ public class LoginUnicoFilter extends OncePerRequestFilter {
             JsonNode dados = json.readTree(resposta.body()).path("data");
             return dados.isObject() ? dados : null;
         } catch (IOException e) {
+            logger.error("login-unico: falha ao chamar a API", e);
             return null;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             return null;
+        }
+    }
+
+    private int codigoDoErro(String corpo) {
+        try {
+            return json.readTree(corpo).path("errors").path(0).path("code").asInt(0);
+        } catch (IOException e) {
+            return 0;
+        }
+    }
+
+    private static boolean ehMchToken(String par) {
+        try {
+            return URLDecoder.decode(par.split("=", 2)[0], StandardCharsets.UTF_8).equals("Mch-Token");
+        } catch (IllegalArgumentException e) {
+            return false;
         }
     }
 
@@ -309,12 +347,10 @@ public class LoginUnicoFilter extends OncePerRequestFilter {
         }
 
         String caminho = req.getRequestURI().startsWith("//") ? "/" : req.getRequestURI();
-        String semToken = UriComponentsBuilder.fromPath(caminho)
-            .query(req.getQueryString())
-            .replaceQueryParam("Mch-Token")
-            .build()
-            .toUriString();
-        res.sendRedirect(semToken);
+        String query = req.getQueryString() == null ? "" : Arrays.stream(req.getQueryString().split("&"))
+            .filter(par -> !par.isEmpty() && !ehMchToken(par))
+            .collect(Collectors.joining("&"));
+        res.sendRedirect(query.isEmpty() ? caminho : caminho + "?" + query);
     }
 }
 ```
