@@ -67,7 +67,7 @@ O cargo Integrador já tem todas as permissões de API, inclusive a do login ún
 
 ## Exemplos
 
-Os dois exemplos validam o token, guardam a pessoa na sessão e redirecionam para a URL sem o `Mch-Token`. As credenciais vêm de variáveis de ambiente do servidor. Para testar na homologação, use `https://api-vendas.taximachine.com.br/api/v2/integracao` em `MACHINE_API_URL`.
+Os exemplos validam o token, guardam a pessoa na sessão e redirecionam para a URL sem o `Mch-Token`. As credenciais vêm de variáveis de ambiente do servidor. Para testar na homologação, use `https://api-vendas.taximachine.com.br/api/v2/integracao` em `MACHINE_API_URL`.
 
 <CodeGroup>
 
@@ -173,6 +173,137 @@ app.use(async (req, res, next) => {
   const caminho = semToken.pathname.startsWith('//') ? '/' : semToken.pathname;
   res.redirect(caminho + semToken.search);
 });
+```
+
+```python Python
+# Python 3.9 ou mais novo, com Flask e requests.
+import os
+from urllib.parse import urlencode
+
+import requests
+from flask import Flask, redirect, request, session
+
+app = Flask(__name__)
+app.secret_key = os.environ['FLASK_SECRET_KEY']
+
+
+def validar_login_unico(token):
+    url = os.environ.get('MACHINE_API_URL', 'https://api.taximachine.com.br/api/v2/integracao') + '/login-unico/validar'
+    try:
+        resposta = requests.post(
+            url,
+            json={'token': token},
+            headers={'api-key': os.environ['MACHINE_API_KEY']},
+            auth=(os.environ['MACHINE_API_USUARIO'], os.environ['MACHINE_API_SENHA']),
+            timeout=5,
+        )
+        if resposta.status_code != 200:
+            return None
+        return resposta.json().get('data')
+    except (requests.RequestException, ValueError):
+        return None
+
+
+@app.before_request
+def login_unico():
+    token = request.args.get('Mch-Token')
+    if token is None:
+        return None
+
+    pessoa = validar_login_unico(token)
+    if pessoa:
+        session.clear()
+        session['machine'] = {'tipo': pessoa['tipo'], 'id': pessoa['id']}
+
+    query = [(chave, valor) for chave, valor in request.args.items(multi=True) if chave != 'Mch-Token']
+    caminho = '/' if request.path.startswith('//') else request.path
+    return redirect(caminho + ('?' + urlencode(query) if query else ''))
+```
+
+```java Java
+// Java 17 ou mais novo, com Spring Boot 3 (spring-boot-starter-web).
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Base64;
+import java.util.Map;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.UriComponentsBuilder;
+
+@Component
+public class LoginUnicoFilter extends OncePerRequestFilter {
+
+    private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
+    private final ObjectMapper json = new ObjectMapper();
+
+    private JsonNode validarLoginUnico(String token) {
+        String url = System.getenv().getOrDefault("MACHINE_API_URL", "https://api.taximachine.com.br/api/v2/integracao") + "/login-unico/validar";
+        String credenciais = Base64.getEncoder().encodeToString(
+            (System.getenv("MACHINE_API_USUARIO") + ":" + System.getenv("MACHINE_API_SENHA")).getBytes(StandardCharsets.UTF_8));
+
+        try {
+            HttpRequest requisicao = HttpRequest.newBuilder(URI.create(url))
+                .timeout(Duration.ofSeconds(5))
+                .header("api-key", System.getenv("MACHINE_API_KEY"))
+                .header("Authorization", "Basic " + credenciais)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(json.writeValueAsString(Map.of("token", token))))
+                .build();
+            HttpResponse<String> resposta = http.send(requisicao, HttpResponse.BodyHandlers.ofString());
+            if (resposta.statusCode() != 200) {
+                return null;
+            }
+            JsonNode dados = json.readTree(resposta.body()).path("data");
+            return dados.isObject() ? dados : null;
+        } catch (IOException e) {
+            return null;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return null;
+        }
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
+            throws ServletException, IOException {
+        String token = req.getParameter("Mch-Token");
+        if (token == null) {
+            chain.doFilter(req, res);
+            return;
+        }
+
+        JsonNode pessoa = validarLoginUnico(token);
+        if (pessoa != null) {
+            HttpSession anterior = req.getSession(false);
+            if (anterior != null) {
+                anterior.invalidate();
+            }
+            HttpSession sessao = req.getSession(true);
+            sessao.setAttribute("machine_tipo", pessoa.path("tipo").asText());
+            sessao.setAttribute("machine_id", pessoa.path("id").asText());
+        }
+
+        String caminho = req.getRequestURI().startsWith("//") ? "/" : req.getRequestURI();
+        String semToken = UriComponentsBuilder.fromPath(caminho)
+            .query(req.getQueryString())
+            .replaceQueryParam("Mch-Token")
+            .build()
+            .toUriString();
+        res.sendRedirect(semToken);
+    }
+}
 ```
 
 </CodeGroup>
