@@ -29,6 +29,13 @@ html[data-current-path="/pages/v2/welcome"] [data-component-part="products-selec
   margin-left: 0 !important;
 }
 
+/* Página nova escrita antes do deploy (`tag: 'xxxx-xx-xx'`): a GitHub Action
+   changelog-data troca o marcador pela data no merge na main. Até lá a pill fica escondida. */
+#sidebar-content div:has(> .nav-tag-pill > [data-nav-tag^="xxxx"]) {
+  display: none !important;
+  margin-left: 0 !important;
+}
+
 /* Tag "Em breve" (`tag: 'Em breve'` no frontmatter): página de endpoint ou funcionalidade
    que ainda não entrou em produção. Não expira; quando a entrega chega em produção, a tag é
    trocada à mão pela data de publicação e passa a valer a regra do "Novo". */
