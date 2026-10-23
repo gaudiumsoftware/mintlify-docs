@@ -67,7 +67,7 @@ O cargo Integrador já tem todas as permissões de API, inclusive a do login ún
 
 ## Exemplos
 
-Os exemplos validam o token, guardam a pessoa na sessão e redirecionam para a URL sem o `Mch-Token`. As credenciais vêm de variáveis de ambiente do servidor. Para testar na homologação, use `https://api-vendas.taximachine.com.br/api/v2/integracao` em `MACHINE_API_URL`.
+Os exemplos validam o token, guardam a pessoa na sessão e redirecionam para a URL sem o `Mch-Token`. Uma resposta diferente de `200` e de `400` indica erro de configuração (credencial, permissão, licença ou limite), e os exemplos a registram no log do servidor. As credenciais vêm de variáveis de ambiente do servidor. Para testar na homologação, use `https://api-vendas.taximachine.com.br/api/v2/integracao` em `MACHINE_API_URL`.
 
 <CodeGroup>
 
@@ -94,7 +94,10 @@ function validarLoginUnico(string $token): ?array
     $status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
     curl_close($ch);
 
-    if ($corpo === false || $status !== 200) {
+    if ($status !== 200) {
+        if ($status !== 400) {
+            error_log('login-unico: HTTP ' . $status . ' ' . ($corpo === false ? 'sem resposta' : $corpo));
+        }
         return null;
     }
 
@@ -118,9 +121,11 @@ if (is_string($token)) {
     if ($path === '' || $path[0] !== '/' || strpos($path, '//') === 0 || strpos($path, '\\') !== false) {
         $path = '/';
     }
-    parse_str($partes['query'] ?? '', $query);
-    unset($query['Mch-Token']);
-    header('Location: ' . $path . ($query ? '?' . http_build_query($query) : ''));
+    $query = implode('&', array_filter(
+        explode('&', $partes['query'] ?? ''),
+        fn ($par) => $par !== '' && $par !== 'Mch-Token' && strpos($par, 'Mch-Token=') !== 0
+    ));
+    header('Location: ' . $path . ($query !== '' ? '?' . $query : ''));
     exit;
 }
 ```
@@ -143,6 +148,9 @@ async function validarLoginUnico(token) {
       signal: AbortSignal.timeout(5000),
     });
     if (!resposta.ok) {
+      if (resposta.status !== 400) {
+        console.error(`login-unico: HTTP ${resposta.status} ${await resposta.text()}`);
+      }
       return null;
     }
     const corpo = await resposta.json();
@@ -198,6 +206,8 @@ def validar_login_unico(token):
             timeout=5,
         )
         if resposta.status_code != 200:
+            if resposta.status_code != 400:
+                app.logger.error('login-unico: HTTP %s %s', resposta.status_code, resposta.text)
             return None
         return resposta.json().get('data')
     except (requests.RequestException, ValueError):
@@ -263,6 +273,9 @@ public class LoginUnicoFilter extends OncePerRequestFilter {
                 .build();
             HttpResponse<String> resposta = http.send(requisicao, HttpResponse.BodyHandlers.ofString());
             if (resposta.statusCode() != 200) {
+                if (resposta.statusCode() != 400) {
+                    logger.error("login-unico: HTTP " + resposta.statusCode() + " " + resposta.body());
+                }
                 return null;
             }
             JsonNode dados = json.readTree(resposta.body()).path("data");
