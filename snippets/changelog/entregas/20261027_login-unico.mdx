@@ -1,0 +1,23 @@
+import { Entry, ChangeSection, ParamBadge, EndpointBadge } from "/snippets/changelog/componentes.jsx";
+
+<Entry date="27 out 2026" label="Em breve" labelColor="#ea580c">
+  <h2 id="login-unico" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+    Login único no site da central
+  </h2>
+  <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+    O passageiro e o condutor que tocam no link da central dentro do app chegam ao site dela já identificados.
+    O app abre o link com o parâmetro <code>Mch-Token</code>, e o servidor do site troca esse token pelos dados
+    da pessoa no endpoint novo. O passo a passo está no <a href="/pages/v2/entregas/login-unico/sobre">tutorial do login único</a>.
+  </p>
+
+  <EndpointBadge method="POST" path="/api/v2/integracao/login-unico/validar" href="/pages/v2/entregas/login-unico/endpoint/post-validar" />
+
+  <ChangeSection type="added">
+    <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+      <li>Devolve <ParamBadge name="tipo" />, <ParamBadge name="id" /> e <ParamBadge name="bandeira_id" /> da pessoa e, quando o cadastro tem, <ParamBadge name="telefone" /> e <ParamBadge name="email" />.</li>
+      <li>O token vale por 60 segundos e uma vez só. Token ausente, vencido, já usado ou de outra central responde <code>400</code> com o código <code>245</code>.</li>
+      <li>A central escolhe no painel quais destinos do app enviam o token, e só link <code>https</code> recebe o <code>Mch-Token</code>.</li>
+      <li>O endpoint exige gestor da central, sem empresa vinculada, com a permissão Login único, e a licença de integração via API.</li>
+    </ul>
+  </ChangeSection>
+</Entry>

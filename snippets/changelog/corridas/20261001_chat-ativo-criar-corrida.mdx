@@ -1,0 +1,27 @@
+import { Entry, ChangeSection, ParamBadge, EndpointBadge } from "/snippets/changelog/componentes.jsx";
+
+<Entry date="1 out 2026" label="Novo" labelColor="#3b82f6">
+  <h2 id="chat-ativo-criar-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+    Parâmetro que habilita o chat da corrida
+  </h2>
+  <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+    A criação de corrida aceita o campo <code>chat_ativo</code>. Ele é o que habilita o chat da
+    corrida: sem <code>true</code>, a corrida não tem chat, os endpoints de mensagem recusam e o
+    condutor não vê a caixa de texto no app.
+  </p>
+
+  <EndpointBadge method="POST" path="/api/v2/integracao/corridas" href="/pages/v2/referencia/corridas/endpoint/post-criar" />
+
+  <div style={{ marginTop: "24px" }}>
+    <EndpointBadge method="POST" path="/api/v2/integracao/corridas/programadas" href="/pages/v2/referencia/corridas/endpoint/post-criar-programada" />
+  </div>
+
+  <ChangeSection type="added">
+    <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+      <li><ParamBadge name="chat_ativo" /> opcional no corpo da criação de corrida, booleano, com padrão <code>false</code>.</li>
+      <li>Vale também na criação de corrida programada: a marca passa para a corrida quando ela é disparada.</li>
+      <li>Com o chat habilitado, os dois lados escrevem desde o início da corrida — você não precisa esperar o condutor, nem ele a você.</li>
+      <li>O envio de mensagem na conversa da corrida passa a aceitar também a corrida em espera.</li>
+    </ul>
+  </ChangeSection>
+</Entry>

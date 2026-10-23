@@ -1,0 +1,40 @@
+import { Entry, ChangeSection, ParamBadge, EndpointBadge } from "/snippets/changelog/componentes.jsx";
+
+<Entry date="22 out 2026" label="Melhoria" labelColor="#16A34A">
+  <h2 id="codigos-de-erro" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+    Códigos de erro de validação
+  </h2>
+  <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+    Os erros de validação do corpo da requisição, que voltavam com <code>code: 0</code>, passam a ter um código por
+    regra. A documentação ganha a página <a href="/pages/v2/entregas/codigos-de-erro">Códigos de erro</a>, com a
+    lista completa.
+  </p>
+
+  <ChangeSection type="changed">
+    <p style={{ marginBottom: "10px" }}>
+      No validador padrão do corpo da v2, cada regra tem o próprio código (<code>218</code> a
+      <code> 233</code>): campo numérico, texto, booleano, lista, tamanho máximo, valor fora da lista aceita e
+      formatos de data, hora e documento. Campo obrigatório continua com <code>2</code>. Regras próprias de alguns
+      endpoints, como valor mínimo ou faixa, continuam com <code>0</code>.
+    </p>
+  </ChangeSection>
+
+  <ChangeSection type="added">
+    <p style={{ marginBottom: 0 }}>
+      A página <a href="/pages/v2/entregas/codigos-de-erro">Códigos de erro</a>.
+    </p>
+  </ChangeSection>
+
+  <div style={{
+    marginTop: "20px",
+    padding: "14px 18px",
+    borderRadius: "10px",
+    background: "rgba(59, 130, 246, 0.08)",
+    border: "1px solid rgba(59, 130, 246, 0.2)",
+    fontSize: "14px",
+    lineHeight: "1.6",
+  }}>
+    Trate o erro pelo <code>code</code>, e não pelo texto: a <code>message</code> traz o nome do campo e, em alguns
+    casos, valores dinâmicos.
+  </div>
+</Entry>
