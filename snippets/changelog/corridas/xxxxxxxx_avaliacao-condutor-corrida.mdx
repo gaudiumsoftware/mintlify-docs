@@ -1,0 +1,24 @@
+import { Entry, ChangeSection, ParamBadge, EndpointBadge } from "/snippets/changelog/componentes.jsx";
+
+<Entry date="xxxxxxxx" label="Em breve" labelColor="#ea580c">
+  <h2 id="avaliacao-condutor-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+    Nota do passageiro ao condutor na consulta de corrida
+  </h2>
+  <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+    A consulta de uma corrida vai passar a trazer a nota individual que o passageiro deu ao condutor naquela
+    corrida, e não mais só a média exposta em outro endpoint.
+  </p>
+
+  <EndpointBadge method="GET" path="/api/v2/integracao/corridas/{id}" href="/pages/v2/referencia/corridas/endpoint/get-by-id" />
+
+  <div style={{ marginTop: "24px" }}>
+    <EndpointBadge method="GET" path="/api/v2/integracao/corridas/{id}/detalhes" href="/pages/v2/referencia/corridas/endpoint/get-detalhes" />
+  </div>
+
+  <ChangeSection type="added">
+    <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+      <li><ParamBadge name="avaliacao_condutor" /> — objeto <code>{'{nota, avaliado_em}'}</code>, com <code>nota</code> de 1 a 5 e <code>avaliado_em</code> em ISO 8601 UTC. Vem <code>null</code> quando a corrida não foi avaliada.</li>
+      <li>Em central que só faz entregas, a nota pode ter sido lançada pela empresa no painel, sem como distinguir dessa forma a origem.</li>
+    </ul>
+  </ChangeSection>
+</Entry>
