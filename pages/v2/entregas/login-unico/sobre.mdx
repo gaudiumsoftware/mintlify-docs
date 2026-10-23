@@ -59,7 +59,7 @@ O cargo Integrador já tem todas as permissões de API, inclusive a do login ún
 - **Vale por 60 segundos e uma vez só.** A primeira validação apaga o token. Uma segunda chamada com o mesmo token recebe o erro `245`, igual a um token que não existe.
 - **O nome do parâmetro diferencia maiúsculas de minúsculas.** Leia `Mch-Token`, não `mch-token`.
 - **Token inválido é visita sem login, não erro.** Se a validação responder `400` com o código `245`, ou se a API não responder, mostre o site como para qualquer visitante. Não mostre mensagem de erro: pode ser só um link antigo aberto de novo.
-- **Tire o token da URL depois de validar.** Redirecione para a mesma URL sem o `Mch-Token`. Assim o token não fica no histórico do navegador, e recarregar a página não tenta validar de novo.
+- **Tire o token da URL depois de validar.** Redirecione para a mesma URL sem o `Mch-Token`. Assim o token não fica no histórico do navegador, e recarregar a página não tenta validar de novo. Valide e redirecione antes de mostrar qualquer conteúdo: uma página que carrega recurso de terceiro (analytics, fonte, anúncio) com o token na URL pode mandá-lo no cabeçalho `Referer`.
 - **Identifique a pessoa por `tipo` e `id` juntos.** Um passageiro e um condutor podem ter o mesmo `id`.
 - **A `api-key` da central e a de qualquer associada validam o token.** O campo `bandeira_id` diz a central ou a associada da pessoa.
 
