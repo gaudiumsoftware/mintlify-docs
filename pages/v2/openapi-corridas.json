@@ -1566,6 +1566,13 @@
                       "items": {
                         "$ref": "#/components/schemas/Cliente"
                       }
+                    },
+                    "__links": {
+                      "type": "object",
+                      "description": "Links HATEOAS das operações relacionadas, indexados pelo nome da relação (rel). `self` aponta para a própria listagem e `visualizar-cliente` para a consulta de um cliente; nos `href`, `{id}` indica o identificador a ser substituído.",
+                      "additionalProperties": {
+                        "$ref": "#/components/schemas/LinkHateoasMapa"
+                      }
                     }
                   }
                 },
@@ -1642,7 +1649,17 @@
                         "cartoes": []
                       }
                     }
-                  ]
+                  ],
+                  "__links": {
+                    "self": {
+                      "href": "api/v2/integracao/clientes",
+                      "metodo": "get"
+                    },
+                    "visualizar-cliente": {
+                      "href": "api/v2/integracao/clientes/{id}",
+                      "metodo": "get"
+                    }
+                  }
                 }
               }
             }
