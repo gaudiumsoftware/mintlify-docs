@@ -154,6 +154,30 @@ export const EndpointBadge = ({ method, path, href }) => (
     </p>
   </div>
 
+  <Entry date="23 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="mensagem-id-envio-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Id da mensagem no envio da conversa da corrida
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      O envio de mensagem na conversa da corrida passa a devolver o id da mensagem gravada. Com ele você
+      relaciona o envio à mensagem que chega no webhook e na leitura da conversa, sem depender do sequencial.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/mensagens/corridas/passageiro" href="/pages/v2/referencia/mensagens/endpoint/post-corrida-passageiro" />
+
+    <div style={{ marginTop: "24px" }}>
+      <EndpointBadge method="POST" path="/api/v2/integracao/mensagens/corridas/condutor" href="/pages/v2/referencia/mensagens/endpoint/post-corrida-condutor" />
+    </div>
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="mensagem_id" /> na resposta de sucesso, ao lado de <ParamBadge name="conversa_id" /> e <ParamBadge name="sequencial" />.</li>
+        <li>É o mesmo <code>message_id</code> do <a href="/pages/v2/referencia/webhooks/sobre#webhook-de-mensagens-da-corrida">Webhook de Mensagens da Corrida</a> e o mesmo <code>id</code> que a leitura da conversa devolve em cada mensagem.</li>
+        <li>Campo novo apenas na resposta: nada muda no corpo que você já envia.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="27 out 2026" label="Em breve" labelColor="#ea580c">
     <h2 id="login-unico" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Login único no site da central
