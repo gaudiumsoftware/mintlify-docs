@@ -21,6 +21,7 @@ const DATADA = /^\d{8}_[a-z0-9_-]+\.mdx$/;
 const PENDENTE = /^x{8}_[a-z0-9_-]+\.mdx$/;
 const MARCADOR_DATA = /date=(['"])xxxxxxxx\1/g;
 const MARCADOR_TAG = /^tag:[ \t]*(['"])xxxx-xx-xx\1[ \t]*$/m;
+const FRONTMATTER = /^---\n[\s\S]*?\n---\n/;
 const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
 
 export function ordenarEntradas(arquivos, { previa = false } = {}) {
@@ -28,6 +29,18 @@ export function ordenarEntradas(arquivos, { previa = false } = {}) {
     .filter((nome) => DATADA.test(nome) || (previa && PENDENTE.test(nome)))
     .sort()
     .reverse();
+}
+
+function lerPasta(raiz, pasta) {
+  const arquivos = readdirSync(join(raiz, pasta)).filter((nome) => !nome.startsWith("."));
+  for (const nome of arquivos) {
+    if (!DATADA.test(nome) && !PENDENTE.test(nome)) {
+      throw new Error(
+        `Arquivo fora do padrão: ${nome} em ${pasta}. Use AAAAMMDD_<id>.mdx ou xxxxxxxx_<id>.mdx, com o id em minúsculas`,
+      );
+    }
+  }
+  return arquivos;
 }
 
 export function nomeDoImport(arquivo) {
@@ -71,7 +84,7 @@ export function gerarIndice({ raiz, previa = false }) {
   const alteradas = [];
   for (const { pasta, pagina } of MODALIDADES) {
     if (!existsSync(join(raiz, pasta))) continue;
-    const arquivos = ordenarEntradas(readdirSync(join(raiz, pasta)), { previa });
+    const arquivos = ordenarEntradas(lerPasta(raiz, pasta), { previa });
     const caminhoPagina = join(raiz, pagina);
     const atual = readFileSync(caminhoPagina, "utf8");
     const novo = aplicarIndice(atual, `/${pasta}`, arquivos);
@@ -93,8 +106,14 @@ function dataValida(texto) {
 export function dataDePublicacao(origem) {
   let iso = origem;
   if (origem instanceof Date) {
-    iso = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" }).format(origem);
-  } else if (!dataValida(origem)) {
+    const partes = Object.fromEntries(
+      new Intl.DateTimeFormat("en-US", { timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit", day: "2-digit" })
+        .formatToParts(origem)
+        .map(({ type, value }) => [type, value]),
+    );
+    iso = `${partes.year}-${partes.month}-${partes.day}`;
+  }
+  if (!dataValida(iso)) {
     throw new Error(`Data "${origem}" fora do formato AAAA-MM-DD ou inexistente`);
   }
   const [ano, mes, dia] = iso.split("-");
@@ -105,7 +124,7 @@ export function aplicarDatas({ raiz, data }) {
   const renomeacoes = [];
   for (const { pasta } of MODALIDADES) {
     if (!existsSync(join(raiz, pasta))) continue;
-    for (const nome of readdirSync(join(raiz, pasta)).filter((n) => PENDENTE.test(n))) {
+    for (const nome of lerPasta(raiz, pasta).filter((n) => PENDENTE.test(n))) {
       const destino = join(pasta, nome.replace(/^x{8}/, data.compacta));
       if (existsSync(join(raiz, destino))) throw new Error(`${destino} já existe`);
       const origem = join(pasta, nome);
@@ -131,8 +150,10 @@ export function aplicarDatas({ raiz, data }) {
   for (const relativo of paginas.sort()) {
     const caminho = join(raiz, "pages", relativo);
     const conteudo = readFileSync(caminho, "utf8");
-    if (!MARCADOR_TAG.test(conteudo)) continue;
-    writeFileSync(caminho, conteudo.replace(MARCADOR_TAG, (_, aspas) => `tag: ${aspas}${data.iso}${aspas}`));
+    const frontmatter = conteudo.match(FRONTMATTER)?.[0];
+    if (!frontmatter || !MARCADOR_TAG.test(frontmatter)) continue;
+    const novo = frontmatter.replace(MARCADOR_TAG, (_, aspas) => `tag: ${aspas}${data.iso}${aspas}`);
+    writeFileSync(caminho, novo + conteudo.slice(frontmatter.length));
     alterados.push(join("pages", relativo));
   }
   return alterados;

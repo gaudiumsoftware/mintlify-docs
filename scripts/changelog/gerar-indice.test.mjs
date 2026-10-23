@@ -185,3 +185,22 @@ test("não renomeia nada quando sobra marcador numa entrada", () => {
   assert.equal(existsSync(join(raiz, "snippets/changelog/corridas/xxxxxxxx_a.mdx")), true);
   assert.equal(readFileSync(join(raiz, "snippets/changelog/corridas/xxxxxxxx_a.mdx"), "utf8"), '<Entry date="xxxxxxxx">\n</Entry>\n');
 });
+
+test("falha quando há arquivo fora do padrão na pasta de entradas", () => {
+  for (const nome of ["20261101_Login-Unico.mdx", "20261101_login.md", "XXXXXXXX_foo.mdx"]) {
+    const raiz = montarRepo();
+    writeFileSync(join(raiz, "snippets/changelog/corridas", nome), "");
+    writeFileSync(join(raiz, "snippets/changelog/corridas/.DS_Store"), "");
+    assert.throws(() => gerarIndice({ raiz }), new RegExp(`fora do padrão: ${nome.replace(".", "\\.")}`));
+    assert.throws(() => aplicarDatas({ raiz, data: dataDePublicacao("2026-10-16") }), /fora do padrão/);
+  }
+});
+
+test("troca a tag marcador só no frontmatter", () => {
+  const raiz = montarRepo();
+  const pagina = join(raiz, "pages/v2/referencia/endpoint/fluxo.mdx");
+  const corpo = "---\ntitle: 'Fluxo'\n---\n\n```yaml\ntag: 'xxxx-xx-xx'\n```\n";
+  writeFileSync(pagina, corpo);
+  assert.deepEqual(aplicarDatas({ raiz, data: dataDePublicacao("2026-10-16") }), []);
+  assert.equal(readFileSync(pagina, "utf8"), corpo);
+});
