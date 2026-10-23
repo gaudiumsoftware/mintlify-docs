@@ -139,3 +139,164 @@ nav[aria-label="Main"] li.navbar-link a[href*="forms.monday.com"] {
   font-weight: 500;
   line-height: var(--bodyMd, 20px); /* 142.857% */
 }
+
+/* Alternador de ambiente (vendas / produção) acima da URL do endpoint.
+   Criado pelo custom.js; a cor de cada ambiente vem de --env-cor. */
+.env-switch {
+  --env-cor: #b45309;
+  --env-fundo: rgba(245, 158, 11, 0.14);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px 8px;
+}
+
+html.dark .env-switch {
+  --env-cor: #fbbf24;
+  --env-fundo: rgba(251, 191, 36, 0.16);
+}
+
+.env-switch[data-ambiente="producao"] {
+  --env-cor: #15803d;
+  --env-fundo: rgba(22, 163, 74, 0.14);
+}
+
+html.dark .env-switch[data-ambiente="producao"] {
+  --env-cor: #4ade80;
+  --env-fundo: rgba(74, 222, 128, 0.16);
+}
+
+.env-switch-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.55;
+  margin-right: 2px;
+}
+
+.env-switch-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(128, 128, 128, 0.3);
+  background: transparent;
+  color: inherit;
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  opacity: 0.65;
+  cursor: pointer;
+  transition: opacity 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.env-switch-option:hover {
+  opacity: 1;
+  background: rgba(128, 128, 128, 0.12);
+}
+
+.env-switch-option[aria-pressed="true"] {
+  opacity: 1;
+  font-weight: 700;
+  color: var(--env-cor);
+  border-color: var(--env-cor);
+  background: var(--env-fundo);
+}
+
+.env-switch-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+}
+
+.env-switch-option[aria-pressed="true"] .env-switch-dot {
+  background: currentColor;
+}
+
+.env-switch-note {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--env-cor);
+}
+
+@media (max-width: 640px) {
+  .env-switch-note {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+}
+
+/* Descrição longa do endpoint, movida para abaixo da URL pelo custom.js. Na descrição do
+   topo ficam só o primeiro bloco; o restante, já copiado, é ocultado aqui. */
+header > div[data-detalhes-movido] > :not(:first-child) {
+  display: none;
+}
+
+.endpoint-detalhes {
+  max-width: none;
+  padding: 2px 6px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.endpoint-detalhes > :first-child {
+  margin-top: 0;
+}
+
+.endpoint-detalhes > :last-child {
+  margin-bottom: 0;
+}
+
+/* Changelog: o menu lateral esquerdo só tem o item da própria página e não serve de navegação.
+   Escondê-lo dá largura ao texto, que passava do limite e invadia o "On this page" na direita.
+   Só a partir de `lg`: abaixo disso o #sidebar é o menu do celular e precisa continuar. */
+@media (min-width: 1024px) {
+  html[data-current-path="/pages/v2/changelog"] #sidebar,
+  html[data-current-path="/pages/v2/changelog-entregas"] #sidebar {
+    display: none !important;
+  }
+}
+
+/* Changelog: o conteúdo de cada entrada precisa poder encolher (min-width: 0) para que
+   blocos largos, como o caminho de um endpoint, não empurrem a página para fora da coluna. */
+.changelog-entry-conteudo {
+  min-width: 0;
+}
+
+.changelog-badge {
+  max-width: 100%;
+}
+
+.changelog-badge > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Changelog no celular: a data passa para cima do texto, em linha, e a linha da timeline sai.
+   O !important é porque a largura mínima da data vem de estilo inline no componente Entry. */
+@media (max-width: 640px) {
+  .changelog-entry {
+    flex-direction: column;
+    gap: 12px !important;
+  }
+
+  .changelog-entry-data {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 10px;
+    min-width: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  .changelog-entry-data > div {
+    margin-top: 0 !important;
+  }
+
+  .changelog-entry-linha {
+    display: none;
+  }
+}
