@@ -19,11 +19,14 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
+
+      - name: Roda os testes do gerador do índice
+        run: node --test 'scripts/changelog/*.test.mjs'
 
       - name: Confere o trecho gerado das páginas de changelog
         run: |
@@ -42,22 +45,25 @@ jobs:
     steps:
       - name: Gera o token do GitHub App
         id: token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1.12.0
         with:
           app-id: ${{ secrets.CHANGELOG_APP_ID }}
           private-key: ${{ secrets.CHANGELOG_APP_PRIVATE_KEY }}
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
+          ref: main
           token: ${{ steps.token.outputs.token }}
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 22
 
-      - name: Calcula a data de publicação em São Paulo
+      - name: Calcula a data do merge em São Paulo
         id: data
-        run: echo "iso=$(TZ=America/Sao_Paulo date +%F)" >> "$GITHUB_OUTPUT"
+        env:
+          MOMENTO_DO_MERGE: ${{ github.event.head_commit.timestamp }}
+        run: echo "iso=$(TZ=America/Sao_Paulo date -d "${MOMENTO_DO_MERGE:-now}" +%F)" >> "$GITHUB_OUTPUT"
 
       - name: Aplica as datas e regenera as páginas
         env:
@@ -79,5 +85,8 @@ jobs:
           git config user.email "${usuario_id}+${APP_SLUG}[bot]@users.noreply.github.com"
           git add -A -- snippets/changelog pages
           git commit -m "docs(changelog): aplica a data de publicação ${DATA}"
-          git pull --rebase origin main
-          git push origin HEAD:main
+          for _ in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep 5
+          done
+          exit 1
