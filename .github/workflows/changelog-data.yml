@@ -1,0 +1,83 @@
+name: Changelog — data de publicação
+
+# O mintlify-docs só é mergeado depois do deploy dos outros serviços, então o dia do
+# merge na main é a data de publicação. Este workflow troca os marcadores
+# (xxxxxxxx_<slug>.mdx, date="xxxxxxxx" e tag: 'xxxx-xx-xx') por essa data e regenera
+# as páginas de changelog. Em pull request, só confere que o trecho gerado das páginas
+# não foi editado à mão.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checar-indice:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Confere o trecho gerado das páginas de changelog
+        run: |
+          node scripts/changelog/gerar-indice.mjs
+          if ! git diff --exit-code -- pages/v2/changelog.mdx pages/v2/changelog-entregas.mdx; then
+            echo "::error::O trecho entre os marcadores changelog:* é gerado. Não edite à mão: crie a entrada em snippets/changelog/<modalidade>/xxxxxxxx_<slug>.mdx."
+            exit 1
+          fi
+
+  aplicar-datas:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: changelog-data
+      cancel-in-progress: false
+    steps:
+      - name: Gera o token do GitHub App
+        id: token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.CHANGELOG_APP_ID }}
+          private-key: ${{ secrets.CHANGELOG_APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ steps.token.outputs.token }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Calcula a data de publicação em São Paulo
+        id: data
+        run: echo "iso=$(TZ=America/Sao_Paulo date +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: Aplica as datas e regenera as páginas
+        env:
+          CHANGELOG_DATA: ${{ steps.data.outputs.iso }}
+        run: node scripts/changelog/gerar-indice.mjs --datas
+
+      - name: Commita e envia
+        env:
+          GH_TOKEN: ${{ steps.token.outputs.token }}
+          APP_SLUG: ${{ steps.token.outputs.app-slug }}
+          DATA: ${{ steps.data.outputs.iso }}
+        run: |
+          if [ -z "$(git status --porcelain -- snippets/changelog pages)" ]; then
+            echo "Nenhum marcador encontrado; nada a commitar."
+            exit 0
+          fi
+          usuario_id=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)
+          git config user.name "${APP_SLUG}[bot]"
+          git config user.email "${usuario_id}+${APP_SLUG}[bot]@users.noreply.github.com"
+          git add -A -- snippets/changelog pages
+          git commit -m "docs(changelog): aplica a data de publicação ${DATA}"
+          git pull --rebase origin main
+          git push origin HEAD:main
