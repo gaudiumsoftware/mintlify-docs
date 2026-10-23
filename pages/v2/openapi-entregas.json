@@ -7669,11 +7669,21 @@
                   },
                   "vinculo": {
                     "type": "string",
-                    "description": "Tipo de vínculo."
+                    "description": "Vínculo do condutor com o veículo: `T` titular, `A` auxiliar. Obrigatório quando `possui_vinculo` é `true`.",
+                    "enum": [
+                      "T",
+                      "A"
+                    ]
                   },
                   "veiculo_tipo": {
                     "type": "string",
-                    "description": "Tipo do veículo do condutor."
+                    "description": "Tipo do veículo: `C` carro, `M` moto, `T` táxi, `B` bicicleta.",
+                    "enum": [
+                      "C",
+                      "M",
+                      "T",
+                      "B"
+                    ]
                   },
                   "placa": {
                     "type": "string",
@@ -7689,7 +7699,25 @@
                   },
                   "cor": {
                     "type": "string",
-                    "description": "Cor do veículo."
+                    "description": "Cor do veículo em hexadecimal minúsculo de 6 dígitos, sem `#`: `ffffff` branco, `c0c0c0` prata, `ffff00` amarelo, `0000cd` azul, `ff8c00` laranja, `ff0000` vermelho, `000000` preto, `808080` cinza, `00994c` verde, `964b00` marrom, `ff69b4` rosa, `800080` roxo, `ffd700` dourado, `f5f5dc` bege, `831d1c` vinho, `67a03d` verde-claro.",
+                    "enum": [
+                      "ffffff",
+                      "c0c0c0",
+                      "ffff00",
+                      "0000cd",
+                      "ff8c00",
+                      "ff0000",
+                      "000000",
+                      "808080",
+                      "00994c",
+                      "964b00",
+                      "ff69b4",
+                      "800080",
+                      "ffd700",
+                      "f5f5dc",
+                      "831d1c",
+                      "67a03d"
+                    ]
                   },
                   "porta_malas_grande": {
                     "type": "boolean",
@@ -8023,7 +8051,7 @@
       },
       "put": {
         "summary": "Atualizar condutor completo",
-        "description": "Atualiza completamente os dados do condutor. Todos os campos do corpo são obrigatórios, com exceção da regra entre `cpf` e `cnpj`: é obrigatório enviar pelo menos um dos dois.",
+        "description": "Atualiza completamente os dados do condutor. Todos os campos do corpo são obrigatórios, com exceção da regra entre `cpf` e `cnpj`: é obrigatório enviar pelo menos um dos dois.\n\nTodos os campos obrigatórios precisam vir preenchidos: string vazia conta como campo ausente. Informe `cpf` ou `cnpj`.",
         "parameters": [
           {
             "name": "id",
@@ -8049,12 +8077,11 @@
                   "telefone",
                   "status_condutor",
                   "endereco",
-                  "numero_endereco",
+                  "endereco_numero",
                   "complemento",
                   "cep",
                   "bairro",
                   "possui_vinculo",
-                  "vinculo",
                   "veiculo_tipo",
                   "placa",
                   "modelo",
@@ -8093,15 +8120,9 @@
                   "endereco": {
                     "type": "string"
                   },
-                  "numero_endereco": {
-                    "oneOf": [
-                      {
-                        "type": "integer"
-                      },
-                      {
-                        "type": "string"
-                      }
-                    ]
+                  "endereco_numero": {
+                    "type": "string",
+                    "description": "Número do endereço do condutor. Campo vazio conta como ausente."
                   },
                   "complemento": {
                     "type": "string"
@@ -8124,10 +8145,22 @@
                     "type": "boolean"
                   },
                   "vinculo": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Vínculo do condutor com o veículo: `T` titular, `A` auxiliar. Obrigatório quando `possui_vinculo` é `true`.",
+                    "enum": [
+                      "T",
+                      "A"
+                    ]
                   },
                   "veiculo_tipo": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                      "C",
+                      "M",
+                      "T",
+                      "B"
+                    ],
+                    "description": "Tipo do veículo: `C` carro, `M` moto, `T` táxi, `B` bicicleta."
                   },
                   "placa": {
                     "type": "string"
@@ -8139,7 +8172,26 @@
                     "type": "integer"
                   },
                   "cor": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                      "ffffff",
+                      "c0c0c0",
+                      "ffff00",
+                      "0000cd",
+                      "ff8c00",
+                      "ff0000",
+                      "000000",
+                      "808080",
+                      "00994c",
+                      "964b00",
+                      "ff69b4",
+                      "800080",
+                      "ffd700",
+                      "f5f5dc",
+                      "831d1c",
+                      "67a03d"
+                    ],
+                    "description": "Cor do veículo em hexadecimal minúsculo de 6 dígitos, sem `#`: `ffffff` branco, `c0c0c0` prata, `ffff00` amarelo, `0000cd` azul, `ff8c00` laranja, `ff0000` vermelho, `000000` preto, `808080` cinza, `00994c` verde, `964b00` marrom, `ff69b4` rosa, `800080` roxo, `ffd700` dourado, `f5f5dc` bege, `831d1c` vinho, `67a03d` verde-claro."
                   },
                   "porta_malas_grande": {
                     "type": "boolean"
@@ -8215,18 +8267,17 @@
                 "telefone": "(21) 99876-5432",
                 "status_condutor": "A",
                 "endereco": "Rua Exemplo",
-                "numero_endereco": "123",
                 "complemento": "Apto 45",
                 "cep": "20000-000",
                 "bairro": "Centro",
                 "cpf": "123.456.789-09",
                 "possui_vinculo": true,
-                "vinculo": "permissionario",
-                "veiculo_tipo": "carro",
+                "vinculo": "T",
+                "veiculo_tipo": "C",
                 "placa": "ABC1D23",
                 "modelo": "Sedan",
                 "ano_modelo": 2023,
-                "cor": "Branco",
+                "cor": "ffffff",
                 "porta_malas_grande": true,
                 "adaptado_cadeirante": false,
                 "numero_viatura": 202,
@@ -8250,7 +8301,10 @@
                   "filtro_6": false
                 },
                 "informacoes_adicionais": "Disponível para corridas corporativas",
-                "observacao_interna_1": "Cadastro atualizado"
+                "observacao_interna_1": "Cadastro atualizado",
+                "observacao_interna_2": "Documentação conferida",
+                "observacao_interna_3": "Sem pendências",
+                "endereco_numero": "123"
               }
             }
           }
@@ -17039,9 +17093,13 @@
                 "type": "object",
                 "properties": {
                   "motivo_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "description": "Id do motivo do cancelamento."
                   }
-                }
+                },
+                "required": [
+                  "motivo_id"
+                ]
               }
             }
           }
@@ -22294,7 +22352,8 @@
                   "solicitacao_rapida": {
                     "type": "object",
                     "required": [
-                      "habilitar"
+                      "habilitar",
+                      "categoria"
                     ],
                     "properties": {
                       "habilitar": {
@@ -22302,7 +22361,7 @@
                       },
                       "categoria": {
                         "type": "integer",
-                        "description": "Obrigatório se habilitar for true"
+                        "description": "Id da categoria usada na solicitação rápida. Obrigatório sempre que `habilitar` for enviado, mesmo com `false`."
                       },
                       "tipo_pagamento": {
                         "type": "string",
@@ -23376,7 +23435,7 @@
           {
             "name": "data_ini",
             "in": "query",
-            "description": "Início do período (`YYYY-MM-DD`), no fuso da central. Precisa estar nos últimos 6 meses. Obrigatório, exceto com `solicitacao_id` ou `registro_manual_id`.",
+            "description": "Obrigatório, exceto quando `solicitacao_id` ou `registro_manual_id` for informado. Início do período (`YYYY-MM-DD`), no fuso da central. Precisa estar nos últimos 6 meses. Obrigatório, exceto com `solicitacao_id` ou `registro_manual_id`.",
             "schema": {
               "type": "string",
               "format": "date",
@@ -23386,7 +23445,7 @@
           {
             "name": "data_fim",
             "in": "query",
-            "description": "Fim do período (`YYYY-MM-DD`), no fuso da central. No máximo 31 dias depois de `data_ini`. Obrigatório, exceto com `solicitacao_id` ou `registro_manual_id`.",
+            "description": "Obrigatório, exceto quando `solicitacao_id` ou `registro_manual_id` for informado. Fim do período (`YYYY-MM-DD`), no fuso da central. No máximo 31 dias depois de `data_ini`. Obrigatório, exceto com `solicitacao_id` ou `registro_manual_id`.",
             "schema": {
               "type": "string",
               "format": "date",
