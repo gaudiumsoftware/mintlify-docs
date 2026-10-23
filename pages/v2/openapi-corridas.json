@@ -11090,7 +11090,7 @@
     "/corridas/{id}": {
       "get": {
         "summary": "Consultar corrida",
-        "description": "Consulta uma corrida específica pelo identificador interno da corrida.\n\nO campo `valor_corrida` traz o valor já líquido, com o desconto do cupom aplicado, e `valor_corrida_integral` traz o valor bruto da corrida, antes do desconto. Sem cupom aplicado, os dois campos são iguais.\n\nO bloco `desejado` traz o endereço de destino (`endereco`, `bairro`, `cidade`, `estado`, `lat` e `lng`) e vem `null` quando a corrida não tem destino definido.\n\nOs campos de data e hora `data_hora_solicitacao`, `data_hora_chegada_local`, `data_hora_aceite`, `data_hora_finalizacao`, `data_hora_cancelamento` e `data_hora_pendencia` continuam no horário da central e no formato `AAAA-MM-DD HH:MM:SS`. Cada um deles ganhou uma cópia com o sufixo `_utc` (por exemplo, `data_hora_aceite_utc`), em ISO 8601 e em UTC (por exemplo, `2023-11-07T05:31:56Z`), que vem `null` quando o original vem `null`.\n\nCada corrida traz também, na raiz, os dados de fechamento que antes só vinham no recibo, em qualquer status:\n\n- `data_hora_inicio`: início da corrida (`null` enquanto não iniciou), em ISO 8601 e em UTC (por exemplo, `2023-11-07T05:31:56Z`);\n- `tipo_pagamento`;\n- `desconto`: percentual de desconto (`0.00` quando não há);\n- `tarifa`, `id_categoria`, `categoria` e `descricao_categoria`;\n- `nome_cliente`;\n- `cpf_cliente`: só quando a corrida não é corporativa (sem `empresa_id`);\n- `cnpj_cpf_empresa`: só quando a corrida é corporativa (com `empresa_id`);\n- `codigo_cupom` e `gerador_cupom_id`: só quando a corrida usou cupom.",
+        "description": "Consulta uma corrida específica pelo identificador interno da corrida.\n\nO campo `valor_corrida` traz o valor já líquido, com o desconto do cupom aplicado, e `valor_corrida_integral` traz o valor bruto da corrida, antes do desconto. Sem cupom aplicado, os dois campos são iguais.\n\nO bloco `desejado` traz o endereço de destino (`endereco`, `bairro`, `cidade`, `estado`, `lat` e `lng`) e vem `null` quando a corrida não tem destino definido.\n\nOs campos de data e hora `data_hora_solicitacao`, `data_hora_chegada_local`, `data_hora_aceite`, `data_hora_finalizacao`, `data_hora_cancelamento` e `data_hora_pendencia` continuam no horário da central e no formato `AAAA-MM-DD HH:MM:SS`. Cada um deles ganhou uma cópia com o sufixo `_utc` (por exemplo, `data_hora_aceite_utc`), em ISO 8601 e em UTC (por exemplo, `2023-11-07T05:31:56Z`), que vem `null` quando o original vem `null`.\n\nCada corrida traz também, na raiz, os dados de fechamento que antes só vinham no recibo, em qualquer status:\n\n- `data_hora_inicio`: início da corrida (`null` enquanto não iniciou), em ISO 8601 e em UTC (por exemplo, `2023-11-07T05:31:56Z`);\n- `tipo_pagamento`;\n- `desconto`: percentual de desconto (`0.00` quando não há);\n- `tarifa`, `id_categoria`, `categoria` e `descricao_categoria`;\n- `nome_cliente`;\n- `cpf_cliente`: só quando a corrida não é corporativa (sem `empresa_id`);\n- `cnpj_cpf_empresa`: só quando a corrida é corporativa (com `empresa_id`);\n- `codigo_cupom` e `gerador_cupom_id`: só quando a corrida usou cupom.\n- `avaliacao_condutor`: nota que o passageiro deu ao condutor nesta corrida, com `nota` (inteiro de 1 a 5) e `avaliado_em` (momento da avaliação, em ISO 8601 e em UTC, por exemplo `2026-10-07T20:20:03Z`; `null` se a data não foi registrada). Vem `null` enquanto a corrida não foi avaliada. Em entregas, a nota pode ter sido dada pela empresa no painel, e não pelo passageiro.",
         "parameters": [
           {
             "name": "id",
@@ -11182,7 +11182,8 @@
                             "numero_pedido": "2"
                           }
                         ],
-                        "link_acompanhamento_solicitacao": "https://link-acompanhamento-exemplo/solicitacao/acompanhar/OTU2MzE0ODIyOTM1MQ=="
+                        "link_acompanhamento_solicitacao": "https://link-acompanhamento-exemplo/solicitacao/acompanhar/OTU2MzE0ODIyOTM1MQ==",
+                        "avaliacao_condutor": null
                       }
                     }
                   },
@@ -11253,7 +11254,11 @@
                           "lng": "-43.1804"
                         },
                         "paradas": [],
-                        "link_acompanhamento_solicitacao": ""
+                        "link_acompanhamento_solicitacao": "",
+                        "avaliacao_condutor": {
+                          "nota": 5,
+                          "avaliado_em": "2024-05-02T12:40:15Z"
+                        }
                       }
                     }
                   }
@@ -11552,7 +11557,7 @@
     "/corridas/{id}/detalhes": {
       "get": {
         "summary": "Consultar detalhes da corrida",
-        "description": "Consulta o payload detalhado de uma corrida, incluindo progresso, motorista, empresa e paradas.",
+        "description": "Consulta o payload detalhado de uma corrida, incluindo progresso, motorista, empresa e paradas.\n\nO campo `avaliacao_condutor` traz a nota que o passageiro deu ao condutor nesta corrida, com `nota` (inteiro de 1 a 5) e `avaliado_em` (momento da avaliação, em ISO 8601 e em UTC, por exemplo `2026-10-07T20:20:03Z`; `null` se a data não foi registrada). Vem `null` enquanto a corrida não foi avaliada. Em entregas, a nota pode ter sido dada pela empresa no painel, e não pelo passageiro.",
         "parameters": [
           {
             "name": "id",
@@ -11587,7 +11592,11 @@
                       "id": 12,
                       "nome": "Empresa Exemplo"
                     },
-                    "stops": []
+                    "stops": [],
+                    "avaliacao_condutor": {
+                      "nota": 5,
+                      "avaliado_em": "2024-05-02T12:40:15Z"
+                    }
                   }
                 }
               }

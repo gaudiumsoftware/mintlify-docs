@@ -176,6 +176,27 @@ export const EndpointBadge = ({ method, path, href }) => (
     </ChangeSection>
   </Entry>
 
+  <Entry date="22 out 2026" label="Melhoria" labelColor="#16A34A">
+    <h2 id="avaliacao-condutor-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Nota do passageiro ao condutor na corrida
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      A consulta de uma corrida passa a trazer a nota que o passageiro deu ao condutor naquela corrida, e não só
+      médias, para quem quer acompanhar a avaliação de cada atendimento.
+    </p>
+
+    <EndpointBadge method="GET" path="/api/v2/integracao/corridas/{id}" href="/pages/v2/referencia/corridas/endpoint/get-by-id" />
+    <EndpointBadge method="GET" path="/api/v2/integracao/corridas/{id}/detalhes" href="/pages/v2/referencia/corridas/endpoint/get-detalhes" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="avaliacao_condutor" /> no fim da resposta, com <ParamBadge name="nota" /> (inteiro de 1 a 5) e <ParamBadge name="avaliado_em" /> (momento da avaliação, em ISO 8601 e em UTC).</li>
+        <li>Corrida ainda não avaliada traz <code>avaliacao_condutor: null</code>. Nenhum campo existente muda.</li>
+        <li>Em entregas, a nota pode ter sido dada pela empresa no painel, e não pelo passageiro.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
   <Entry date="22 out 2026" label="Novo" labelColor="#3b82f6">
     <h2 id="score-condutor" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Score do condutor
