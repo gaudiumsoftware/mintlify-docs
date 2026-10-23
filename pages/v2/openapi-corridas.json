@@ -23377,6 +23377,188 @@
           }
         }
       }
+    },
+    "/login-unico/validar": {
+      "post": {
+        "summary": "Validar login único",
+        "description": "Troca o token do login único pelos dados do passageiro ou do condutor que abriu o site da central pelo app.\n\nCom o login único ligado, o app abre o link da central com o parâmetro `Mch-Token` na URL. O servidor da central lê esse parâmetro e chama este endpoint com ele. O token vale por 60 segundos e uma vez só: a primeira validação apaga o token, e as seguintes recebem o erro `245`.\n\nO token pertence à central: a Api-Key dela e a de qualquer associada validam os tokens das pessoas da central e das associadas. O campo `bandeira_id` da resposta diz a central ou a associada da pessoa.\n\nChame este endpoint só do servidor da central. A Api-Key e a senha do usuário da API não podem ir para o navegador.\n\nPara acessar este endpoint, o usuário autenticado deve ser um gestor da central, sem empresa vinculada, com a permissão Login único, da seção API do cargo, e a central deve ter a licença de integração via API ativa.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "token"
+                ],
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$",
+                    "description": "Valor do parâmetro `Mch-Token` da URL, sem alteração: 64 caracteres hexadecimais minúsculos.",
+                    "example": "9f2c4be17a0d58e3c6b2f914a7d03e5b81c6f2a94d7e0b35c8a1f6e2d4b79a03"
+                  }
+                }
+              },
+              "example": {
+                "token": "9f2c4be17a0d58e3c6b2f914a7d03e5b81c6f2a94d7e0b35c8a1f6e2d4b79a03"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "tipo",
+                        "id",
+                        "bandeira_id"
+                      ],
+                      "properties": {
+                        "tipo": {
+                          "type": "string",
+                          "enum": [
+                            "passageiro",
+                            "condutor"
+                          ],
+                          "description": "Quem abriu o site. Passageiro e condutor podem ter o mesmo `id`, então identifique a pessoa pelo par `tipo` e `id`."
+                        },
+                        "id": {
+                          "type": "integer",
+                          "description": "ID do passageiro ou do condutor."
+                        },
+                        "bandeira_id": {
+                          "type": "integer",
+                          "description": "ID da central ou da associada da pessoa."
+                        },
+                        "telefone": {
+                          "type": "string",
+                          "description": "Telefone do cadastro, como foi gravado. Fica fora da resposta quando o cadastro não tem telefone."
+                        },
+                        "email": {
+                          "type": "string",
+                          "description": "E-mail do cadastro. Fica fora da resposta quando o cadastro não tem e-mail."
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "success": true,
+                  "data": {
+                    "tipo": "passageiro",
+                    "id": 88231,
+                    "bandeira_id": 1057,
+                    "telefone": "21998765432",
+                    "email": "ana.souza@exemplo.com"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Token inválido, vencido ou já usado, `api-key` ausente ou corpo que não é JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro"
+                },
+                "examples": {
+                  "token_invalido": {
+                    "summary": "Token ausente, fora do formato, inexistente, vencido, já usado ou de outra central",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 245,
+                          "message": "Token do login único inválido, vencido ou já usado."
+                        }
+                      ]
+                    }
+                  },
+                  "chave_nao_informada": {
+                    "$ref": "#/components/examples/ChaveNaoInformada"
+                  },
+                  "json_invalido": {
+                    "$ref": "#/components/examples/JsonInvalido"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Usuário ou senha do Basic Auth inválidos. Uma `api-key` não reconhecida normalmente recebe `403`; o `401` com `B4` aparece só em situações excepcionais.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro"
+                },
+                "examples": {
+                  "gestor_nao_autenticado": {
+                    "$ref": "#/components/examples/GestorNaoAutenticado"
+                  },
+                  "api_key_invalida": {
+                    "$ref": "#/components/examples/ApiKeyInvalida"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Gestor sem acesso, central sem licença de integração ou `api-key` não reconhecida. A `api-key` não reconhecida recebe o corpo em texto puro (`-`), sem o envelope JSON.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RespostaErro"
+                },
+                "examples": {
+                  "sem_permissao": {
+                    "summary": "Gestor vinculado a uma empresa ou sem a permissão Login único",
+                    "value": {
+                      "success": false,
+                      "errors": [
+                        {
+                          "code": 63,
+                          "message": "Você não tem permissão para realizar essa operação."
+                        }
+                      ]
+                    }
+                  },
+                  "licenca_invalida": {
+                    "$ref": "#/components/examples/LicencaInvalida"
+                  }
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "api_key_nao_reconhecida": {
+                    "$ref": "#/components/examples/ApiKeyNaoReconhecida"
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/ErroLimite429"
+          },
+          "500": {
+            "$ref": "#/components/responses/ErroInterno500"
+          }
+        }
+      }
     }
   }
 }
