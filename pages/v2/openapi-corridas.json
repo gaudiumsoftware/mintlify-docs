@@ -18980,6 +18980,10 @@
                           "type": "integer",
                           "description": "Conversa da corrida em que a mensagem foi gravada."
                         },
+                        "mensagem_id": {
+                          "type": "integer",
+                          "description": "Identificador da mensagem gravada. É o mesmo `id` que a leitura devolve e o mesmo `message_id` do Webhook de Mensagens da Corrida."
+                        },
                         "sequencial": {
                           "type": "integer",
                           "description": "Posição da mensagem gravada na conversa. É o mesmo `sequencial` que a leitura devolve."
@@ -19001,6 +19005,7 @@
                     "solicitacao_id": 639,
                     "passageiro_id": 543,
                     "conversa_id": 8,
+                    "mensagem_id": 91011,
                     "sequencial": 3
                   },
                   "message": "Mensagem enviada com sucesso.",
@@ -19475,6 +19480,10 @@
                           "type": "integer",
                           "description": "Conversa da corrida em que a mensagem foi gravada."
                         },
+                        "mensagem_id": {
+                          "type": "integer",
+                          "description": "Identificador da mensagem gravada. É o mesmo `id` que a leitura devolve e o mesmo `message_id` do Webhook de Mensagens da Corrida."
+                        },
                         "sequencial": {
                           "type": "integer",
                           "description": "Posição da mensagem gravada na conversa. É o mesmo `sequencial` que a leitura devolve."
@@ -19496,6 +19505,7 @@
                     "solicitacao_id": 639,
                     "condutor_id": 12,
                     "conversa_id": 8,
+                    "mensagem_id": 91011,
                     "sequencial": 3
                   },
                   "message": "Mensagem enviada com sucesso.",
