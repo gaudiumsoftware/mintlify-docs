@@ -165,11 +165,10 @@ Nota do CP1: o `mint broken-links` mostra 8 links, nenhum no changelog. São os 
   `grep -rn "Com que \*\*data\*\*\|no topo os componentes" skills/documentar-no-mintlify references/documentacao-mintlify.md`
   não retorna nada, e `grep -n "xxxx-xx-xx" references/documentacao-mintlify.md skills/documentar-no-mintlify/SKILL.md`
   retorna ao menos uma linha em cada arquivo. A verificação do próprio repo, `bash skills/estilo-de-saida/references/detector-de-saida.sh`, passa.
-- **Files**: 2, em outro repositório (`/Users/matheusnishikawa/Gaudium/docker/sdd-artifacts`), numa branch e PR próprias.
+- **Files**: 2, em outro repositório (`sdd-artifacts`), numa branch e PR próprias.
 - **Notas**: depende da T2.4, porque a skill local é quem cria a entrada. O PR no
   `sdd-artifacts` segue o fluxo daquele repositório. O trabalho está na branch
-  `docs/documentar-no-mintlify-changelog-por-arquivo`, no worktree
-  `sdd-artifacts/.claude/worktrees/changelog-por-arquivo`, cortado de `origin/main` (`17d49ba`).
+  `docs/documentar-no-mintlify-changelog-por-arquivo`.
   Além dos dois arquivos, entrou uma entrada em `CHANGELOG.md` > `[Unreleased]`, que a skill
   `fluxo-git-e-versionamento` exige naquele repositório. Os dois PRs podem ser mergeados em
   qualquer ordem: a skill e a referência mandam seguir a skill local `changelog` quando o

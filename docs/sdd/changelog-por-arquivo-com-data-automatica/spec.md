@@ -1,6 +1,6 @@
 # Spec: Changelog da v2 em um arquivo por entrada, com data aplicada no merge
 
-> Para quem mantém o `mintlify-docs` e a automação do n8n que documenta a API V2:
+> Para quem mantém o `mintlify-docs` e a automação que documenta a API V2:
 > como o changelog passa a ser organizado e como as datas de publicação são gravadas
 > sem que ninguém precise conhecê-las ao escrever.
 
@@ -20,17 +20,17 @@ tanto na entrada (nome `xxxxxxxx_<slug>.mdx` → `20261016_<slug>.mdx` e `date="
 - `pages/v2/changelog.mdx` tem 1.775 linhas e 43 entradas, e 11 pessoas já o editaram.
   PRs paralelas entram em conflito, e cada entrada precisa ser encaixada à mão na ordem
   cronológica.
-- A IA 2 da automação do n8n (`plano-doc-api-v2.mdx`) abre a PR em "Pronto para lançar",
-  antes do deploy. Ela precisa de um jeito de escrever a entrada sem saber a data.
+- A automação de documentação abre a PR de doc quando a entrega fica pronta, antes do
+  deploy. Ela precisa de um jeito de escrever a entrada sem saber a data.
 
 **O changelog não anda sozinho.** A entrada do changelog é a última peça da documentação de
 uma entrega. A mesma PR precisa trazer a documentação do endpoint: o OpenAPI com
 parâmetros, corpo e exemplos de sucesso e de cada erro, a página `.mdx` e a entrada no
 `docs.json` quando o endpoint é novo. Quem gera essa parte é a skill `documentar-no-mintlify`,
-pelo dev ou pela IA 2 do n8n. Esta spec muda só a forma do changelog e da data, e não
+pelo dev ou pela automação de documentação. Esta spec muda só a forma do changelog e da data, e não
 reduz o que a PR de doc precisa conter.
 
-**Quem usa.** Os devs e a automação do n8n, que escrevem as entradas. Os integradores, que
+**Quem usa.** Os devs e a automação de documentação, que escrevem as entradas. Os integradores, que
 leem a página.
 
 **Sucesso se.** Uma PR com `xxxxxxxx_<slug>.mdx` e uma página com `tag: 'xxxx-xx-xx'` é
@@ -44,7 +44,6 @@ digitou a data.
 |--------|-------------|
 | Docs | Mintlify (MDX, `docs.json`, snippets com props e componentes `.jsx` em `snippets/`), `custom.js` e `custom.css` da tag `Novo` |
 | Automação no repo | GitHub Actions (o repositório ainda não tem `.github/`), script Node sem dependências |
-| Automação externa | Workflow n8n "Documentar API V2 no Mintlify" (`plano-doc-api-v2.mdx`) |
 | Agente | Skill `documentar-no-mintlify` e referência `changelog-mintlify.md` do plugin `gaudium-sdd-artifacts` |
 
 ## Escopo
@@ -77,15 +76,15 @@ digitou a data.
 - No repositório `sdd-artifacts`, a skill `documentar-no-mintlify` e a referência
   `references/documentacao-mintlify.md` passam a seguir o padrão novo. A página nova nasce com
   `tag: 'xxxx-xx-xx'`, a entrada é criada sem perguntar a data, e o changelog é descrito como
-  um arquivo por entrada. A IA 2 do n8n usa essa skill.
+  um arquivo por entrada. A automação de documentação usa essa skill.
 
 **Fora:**
 - A troca de `tag: 'Em breve'` por data. Ela continua manual, para páginas publicadas antes
   da entrega de propósito.
 - O changelog da v1, que não existe.
-- O aviso de falha da Action no Discord. Na v1, a falha fica no GitHub, que notifica quem
+- O aviso de falha da Action fora do GitHub. Na v1, a falha fica no GitHub, que notifica quem
   fez o merge.
-- O workflow do n8n, que é descrito em `plano-doc-api-v2.mdx`.
+- A automação de documentação, que tem planejamento próprio.
 
 ## Project Structure
 
@@ -108,7 +107,7 @@ custom.css                                 # esconde a pill de tag 'xxxx-xx-xx'
 |---------|--------------------------|
 | PR no `mintlify-docs` (snippets, migração, script, Action, CSS, skill) | Nada muda, e o changelog continua no arquivo único |
 | Secret do GitHub App no repositório | A Action falha no commit, e a entrada `xxxxxxxx_` fica fora da página. A tag `xxxx-xx-xx` fica escondida, e a falha aparece no Actions |
-| Workflow do n8n no padrão novo | O n8n ainda não existe em produção, então nada quebra |
+| Automação de documentação no padrão novo | Ela ainda não existe em produção, então nada quebra |
 | PR no `sdd-artifacts` (skill `documentar-no-mintlify` e referência) | Quem documenta com a skill recebe a pergunta da data e a orientação do arquivo único. A checagem de PR do `mintlify-docs` barra a edição do índice, e a revisão corrige o resto |
 
 Ordem de deploy: nenhuma. O secret precisa existir antes do primeiro merge de uma entrada no
@@ -162,8 +161,8 @@ padrão novo para que ela apareça.
 ## Decisões Resolvidas
 
 1. **A data é a do merge na `main`** → o `mintlify-docs` só é mergeado depois do deploy de
-   todos os outros serviços, então o merge marca a entrada em produção. O n8n não precisa
-   de sinal de fim do deploy.
+   todos os outros serviços, então o merge marca a entrada em produção. A automação de
+   documentação não precisa de sinal de fim do deploy.
 2. **O marcador da entrada fica no nome e no `date` do arquivo** → o Mintlify não injeta props
    num snippet que tem `import`, e sem `import` o snippet não enxerga o `Entry` (spike da
    T1.0). A Action troca os dois na mesma passada, e a checagem de PR cobre a divergência.
@@ -186,9 +185,9 @@ padrão novo para que ela apareça.
 ## Perguntas em Aberto
 
 1. **A `main` do `mintlify-docs` tem proteção, e qual GitHub App pode passar por ela?**
-   Decidir com quem administra a organização no GitHub antes do `/construir` da Action. O
-   Token Gaudito é um subworkflow do n8n e não serve direto na Action, que precisa da chave
-   do App como secret. Risco: sem bypass, a Action não grava e as entradas ficam invisíveis.
+   Decidir com quem administra a organização no GitHub antes do `/construir` da Action. A
+   Action precisa da chave do App como secret, guardada num Environment restrito à `main`.
+   Risco: sem bypass, a Action não grava e as entradas ficam invisíveis.
 
 ## Histórico de decisões
 
@@ -202,7 +201,7 @@ padrão novo para que ela apareça.
   as datas em ordem decrescente.
 - **2026-10-16, T2.5** — A atualização da `documentar-no-mintlify` e da referência
   `documentacao-mintlify.md` no `sdd-artifacts` sai de "Fora" e entra no escopo como T2.5,
-  por decisão do usuário. A IA 2 do n8n depende dessa skill.
+  por decisão do usuário. A automação de documentação depende dessa skill.
 - **2026-10-23, PRs** — A entrega foi dividida em duas PRs a partir da `main` atual. A
   primeira traz o changelog por arquivo (componentes, gerador com o modo `--datas`, migração,
   CSS e remoção da skill local `/changelog`), e a segunda só a GitHub Action. Até a segunda entrar, a data é
