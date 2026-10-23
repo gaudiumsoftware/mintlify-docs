@@ -156,3 +156,32 @@ test("falha quando o nome datado já existe", () => {
   assert.throws(() => aplicarDatas({ raiz, data: dataDePublicacao("2026-10-16") }), /20261016_b\.mdx já existe/);
   assert.equal(existsSync(join(raiz, "snippets/changelog/corridas/xxxxxxxx_b.mdx")), true);
 });
+
+test("falha quando dois arquivos geram o mesmo nome de import", () => {
+  assert.throws(
+    () => aplicarIndice(PAGINA, "/snippets/changelog/corridas", ["20260101_a-b.mdx", "20260101_a_b.mdx"]),
+    /20260101_a-b\.mdx e 20260101_a_b\.mdx geram o mesmo import Entrada20260101AB/,
+  );
+});
+
+test("recusa data que não existe", () => {
+  assert.throws(() => dataDePublicacao("2026-13-40"), /AAAA-MM-DD/);
+  assert.throws(() => dataDePublicacao("2026-02-30"), /AAAA-MM-DD/);
+  assert.equal(dataDePublicacao("2028-02-29").exibida, "29 fev 2028");
+});
+
+test("aceita o marcador de data com aspas simples", () => {
+  const raiz = montarRepo();
+  writeFileSync(join(raiz, "snippets/changelog/corridas/xxxxxxxx_b.mdx"), "<Entry date='xxxxxxxx'>\n</Entry>\n");
+  aplicarDatas({ raiz, data: dataDePublicacao("2026-10-16") });
+  assert.equal(readFileSync(join(raiz, "snippets/changelog/corridas/20261016_b.mdx"), "utf8"), "<Entry date='16 out 2026'>\n</Entry>\n");
+});
+
+test("não renomeia nada quando sobra marcador numa entrada", () => {
+  const raiz = montarRepo();
+  writeFileSync(join(raiz, "snippets/changelog/corridas/xxxxxxxx_a.mdx"), '<Entry date="xxxxxxxx">\n</Entry>\n');
+  writeFileSync(join(raiz, "snippets/changelog/corridas/xxxxxxxx_b.mdx"), '<Entry date = "xxxxxxxx">\n</Entry>\n');
+  assert.throws(() => aplicarDatas({ raiz, data: dataDePublicacao("2026-10-16") }), /xxxxxxxx_b\.mdx ainda tem o marcador xxxxxxxx/);
+  assert.equal(existsSync(join(raiz, "snippets/changelog/corridas/xxxxxxxx_a.mdx")), true);
+  assert.equal(readFileSync(join(raiz, "snippets/changelog/corridas/xxxxxxxx_a.mdx"), "utf8"), '<Entry date="xxxxxxxx">\n</Entry>\n');
+});
