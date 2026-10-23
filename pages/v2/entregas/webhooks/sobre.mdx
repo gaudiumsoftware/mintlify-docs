@@ -170,7 +170,9 @@ No status Aceita (`A`), e só nele, o payload traz também o bloco `vehicle`, co
 
 | Código (`status_code`) | Label (`status_label`) | Descrição |
 | :--- | :--- | :--- |
+| `AN` | `NEAR_LOCATION` | Condutor está nos arredores do local de partida |
 | `AP` | `ARRIVED_AT_LOCATION` | Condutor chegou ao local |
+| `AW` | `WAITING_PASSENGER_EXTENDED` | Espera no local de partida passou do tempo previsto |
 | `ER` | `STOP_FINISHED` | Parada finalizada |
 | `L` | `WAITING_RELEASE` | Aguardando liberação |
 | `R` | `WAITING_PAYMENT` | Aguardando pagamento |
@@ -185,6 +187,15 @@ No status Aceita (`A`), e só nele, o payload traz também o bloco `vehicle`, co
 | `F` | `FINISHED` | Solicitação finalizada |
 | `U` | `GROUPED` | Solicitação agrupada em andamento |
 | `T` | `REDISTRIBUTED` | Solicitação sendo redistribuída para outro condutor |
+
+#### Fases da solicitação aceita
+
+`NEAR_LOCATION` (`AN`), `ARRIVED_AT_LOCATION` (`AP`) e `WAITING_PASSENGER_EXTENDED` (`AW`) acontecem entre o aceite (`ACCEPTED`) e o início do atendimento (`IN_PROGRESS`). A solicitação continua no status `A` durante essas fases; por isso cada uma tem código próprio, para não ser confundida com um novo aceite.
+
+- `NEAR_LOCATION` e `WAITING_PASSENGER_EXTENDED` estão disponíveis para centrais habilitadas pela Machine.
+- Nem todo atendimento registra a chegada aos arredores: a solicitação pode ir de `ACCEPTED` direto para `ARRIVED_AT_LOCATION`, sem `NEAR_LOCATION`.
+- `WAITING_PASSENGER_EXTENDED` pode ser enviado mais de uma vez na mesma solicitação.
+- A consulta de status da solicitação devolve a fase atual (`fase`) e a data de cada uma delas.
 
 #### Como usar
 
