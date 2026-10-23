@@ -19,7 +19,7 @@ export const MODALIDADES = [
 
 const DATADA = /^\d{8}_[a-z0-9_-]+\.mdx$/;
 const PENDENTE = /^x{8}_[a-z0-9_-]+\.mdx$/;
-const MARCADOR_DATA = 'date="xxxxxxxx"';
+const MARCADOR_DATA = /date=(['"])xxxxxxxx\1/g;
 const MARCADOR_TAG = /^tag:[ \t]*(['"])xxxx-xx-xx\1[ \t]*$/m;
 const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
 
@@ -53,6 +53,14 @@ function substituirTrecho(conteudo, marcador, linhas, separador) {
 }
 
 export function aplicarIndice(conteudo, caminhoImport, arquivos) {
+  const vistos = new Map();
+  for (const arquivo of arquivos) {
+    const nome = nomeDoImport(arquivo);
+    if (vistos.has(nome)) {
+      throw new Error(`${vistos.get(nome)} e ${arquivo} geram o mesmo import ${nome}; renomeie um deles`);
+    }
+    vistos.set(nome, arquivo);
+  }
   const imports = arquivos.map((arquivo) => `import ${nomeDoImport(arquivo)} from "${caminhoImport}/${arquivo}";`);
   const entradas = arquivos.map((arquivo) => `<${nomeDoImport(arquivo)} />`);
   const comImports = substituirTrecho(conteudo, "imports", imports, "\n");
@@ -75,12 +83,19 @@ export function gerarIndice({ raiz, previa = false }) {
   return alteradas;
 }
 
+function dataValida(texto) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(texto)) return false;
+  const [ano, mes, dia] = texto.split("-").map(Number);
+  const data = new Date(Date.UTC(ano, mes - 1, dia));
+  return data.getUTCFullYear() === ano && data.getUTCMonth() === mes - 1 && data.getUTCDate() === dia;
+}
+
 export function dataDePublicacao(origem) {
   let iso = origem;
   if (origem instanceof Date) {
     iso = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" }).format(origem);
-  } else if (!/^\d{4}-\d{2}-\d{2}$/.test(origem)) {
-    throw new Error(`Data "${origem}" fora do formato AAAA-MM-DD`);
+  } else if (!dataValida(origem)) {
+    throw new Error(`Data "${origem}" fora do formato AAAA-MM-DD ou inexistente`);
   }
   const [ano, mes, dia] = iso.split("-");
   return { compacta: `${ano}${mes}${dia}`, iso, exibida: `${Number(dia)} ${MESES[Number(mes) - 1]} ${ano}` };
@@ -93,14 +108,21 @@ export function aplicarDatas({ raiz, data }) {
     for (const nome of readdirSync(join(raiz, pasta)).filter((n) => PENDENTE.test(n))) {
       const destino = join(pasta, nome.replace(/^x{8}/, data.compacta));
       if (existsSync(join(raiz, destino))) throw new Error(`${destino} já existe`);
-      renomeacoes.push({ origem: join(pasta, nome), destino });
+      const origem = join(pasta, nome);
+      const conteudo = readFileSync(join(raiz, origem), "utf8").replace(
+        MARCADOR_DATA,
+        (_, aspas) => `date=${aspas}${data.exibida}${aspas}`,
+      );
+      if (conteudo.includes("xxxxxxxx")) {
+        throw new Error(`${origem} ainda tem o marcador xxxxxxxx depois da troca; use date="xxxxxxxx" no <Entry>`);
+      }
+      renomeacoes.push({ origem, destino, conteudo });
     }
   }
 
   const alterados = [];
-  for (const { origem, destino } of renomeacoes) {
-    const conteudo = readFileSync(join(raiz, origem), "utf8");
-    writeFileSync(join(raiz, origem), conteudo.replaceAll(MARCADOR_DATA, `date="${data.exibida}"`));
+  for (const { origem, destino, conteudo } of renomeacoes) {
+    writeFileSync(join(raiz, origem), conteudo);
     renameSync(join(raiz, origem), join(raiz, destino));
     alterados.push(destino);
   }
