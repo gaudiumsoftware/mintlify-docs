@@ -1,0 +1,35 @@
+import { Entry, ChangeSection, ParamBadge, EndpointBadge } from "/snippets/changelog/componentes.jsx";
+
+<Entry date="xxxxxxxx" label="Novo" labelColor="#3b82f6">
+  <h2 id="nota-condutor-consulta-corrida" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+    Nota do passageiro ao condutor na consulta de corrida
+  </h2>
+  <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+    A consulta de corrida passa a trazer a nota individual que o passageiro deu ao condutor naquela corrida,
+    sem precisar de uma chamada extra.
+  </p>
+
+  <EndpointBadge method="GET" path="/api/v2/integracao/corridas/{id}" href="/pages/v2/referencia/corridas/endpoint/get-by-id" />
+
+  <div style={{ marginTop: "24px" }}>
+    <EndpointBadge method="GET" path="/api/v2/integracao/corridas/{id}/detalhes" href="/pages/v2/referencia/corridas/endpoint/get-detalhes" />
+  </div>
+
+  <ChangeSection type="added">
+    <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+      <li><ParamBadge name="avaliacao_condutor" /> — <code>{'{ nota, avaliado_em }'}</code>, com <code>nota</code> de 1 a 5 e <code>avaliado_em</code> em ISO 8601 UTC, ou <code>null</code> quando a corrida ainda não foi avaliada.</li>
+    </ul>
+  </ChangeSection>
+
+  <div style={{
+    marginTop: "20px",
+    padding: "14px 18px",
+    borderRadius: "10px",
+    background: "rgba(59, 130, 246, 0.08)",
+    border: "1px solid rgba(59, 130, 246, 0.2)",
+    fontSize: "13px",
+    lineHeight: "1.6",
+  }}>
+    <strong>Nota:</strong> em centrais que só fazem entregas, a nota pode ter sido lançada pela empresa no painel, e não há como distinguir a origem.
+  </div>
+</Entry>
