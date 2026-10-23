@@ -22,7 +22,7 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 
 > **Trate o erro pelo `code`, e não pelo texto**: a `message` muda conforme o tipo da central ("motorista" pode vir como "taxista", "mototaxista" ou "entregador"; "passageiro" como "cliente"), e alguns textos trazem valores dinâmicos, como `{campo}`, `{valor}` e `{maximo}`.
 
-> **Códigos novos**: os códigos marcados com *Em breve* passam a ser devolvidos em 22 de outubro de 2026, exceto o `157`, que passa a ser devolvido em 15 de outubro de 2026. Até lá, esses erros chegam com `code: 0` e a mesma mensagem.
+> **Códigos novos**: os códigos marcados com *Em breve* passam a ser devolvidos em 22 de outubro de 2026, exceto o `157`, que passa a ser devolvido em 15 de outubro de 2026. Até lá, esses erros chegam com `code: 0` e a mesma mensagem. O `245` chega junto com o endpoint de validação do login único, que ainda não tem data de lançamento.
 
 ## Códigos especiais
 
@@ -349,6 +349,14 @@ Os códigos são os mesmos na v1 e na v2: as rotas da v2 que repassam a operaç�
 | `237` *Em breve* | Falha na operação | O serviço de score não respondeu ou respondeu com erro. HTTP 500, sem dado parcial. |
 
 No mesmo endpoint, `id` não numérico ou igual a zero responde `218`, condutor inexistente ou de outra central responde `56`, e gestor de empresa ou sem a permissão de integração de condutores responde `63`.
+
+## Login único (só v2)
+
+| code | Mensagem | Quando ocorre |
+|---|---|---|
+| `245` *Em breve* | Token do login único inválido, vencido ou já usado. | Validação do login único com token ausente, fora do formato, inexistente, vencido, já usado ou de outra central. HTTP 400. |
+
+No mesmo endpoint, gestor de empresa ou sem a permissão Login único, da seção API do cargo, responde `63`, e central sem a licença de integração via API responde `19`.
 
 ## Validação do corpo da requisição (só v2)
 
