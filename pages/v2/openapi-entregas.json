@@ -263,7 +263,8 @@
           },
           "valor_corrida_integral": {
             "type": "string",
-            "description": "Valor da entrega antes do desconto, com duas casas decimais."
+            "description": "Valor da entrega antes do desconto, com duas casas decimais. Vem `null` em entrega que não foi finalizada.",
+            "nullable": true
           },
           "codigo_coleta": {
             "type": "string",
