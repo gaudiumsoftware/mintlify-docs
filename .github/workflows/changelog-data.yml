@@ -39,6 +39,9 @@ jobs:
   aplicar-datas:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
+    # Os secrets do GitHub App ficam no environment changelog, restrito à branch main, para
+    # que um job de pull request não consiga ler a chave.
+    environment: changelog
     concurrency:
       group: changelog-data
       cancel-in-progress: false
