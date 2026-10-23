@@ -121,7 +121,7 @@ arquivo por entrada, e mostram as mesmas entradas na mesma ordem de hoje.
 
 ## Pode Pular (opcional / posterior)
 
-- O aviso de falha da Action no Discord.
+- O aviso de falha da Action fora do GitHub.
 - A troca automática de `tag: 'Em breve'` por data.
 - O sufixo de sequência para entradas do mesmo dia.
 - A atualização da skill `documentar-no-mintlify` e da referência `documentacao-mintlify.md`
