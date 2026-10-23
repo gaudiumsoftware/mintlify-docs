@@ -1,0 +1,19 @@
+import { Entry, ChangeSection, ParamBadge, EndpointBadge } from "/snippets/changelog/componentes.jsx";
+
+<Entry date="24 set 2026" label="Melhoria" labelColor="#16A34A">
+  <h2 id="limite-webhook-mensagens" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+    Limite do webhook de mensagens igualado aos demais tipos
+  </h2>
+  <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+    O webhook do tipo <code>mensagens</code> deixa de ser limitado a 1 cadastro e passa a admitir até 5 webhooks
+    por tipo, como os outros.
+  </p>
+
+  <EndpointBadge method="POST" path="/api/v2/integracao/webhooks" href="/pages/v2/entregas/webhooks/endpoint/post" />
+
+  <ChangeSection type="changed">
+    <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+      <li>Até 5 webhooks do tipo <code>mensagens</code> por combinação de central, empresa e responsável.</li>
+    </ul>
+  </ChangeSection>
+</Entry>

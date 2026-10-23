@@ -1,0 +1,29 @@
+import { Entry, ChangeSection, ParamBadge, EndpointBadge } from "/snippets/changelog/componentes.jsx";
+
+<Entry date="14 jul 2026" label="Novo" labelColor="#3b82f6">
+  <h2 id="foto-cliente" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+    Foto do passageiro na consulta de clientes
+  </h2>
+  <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+    Os endpoints de consulta de clientes agora retornam a foto de cadastro do passageiro,
+    permitindo exibi-la na interface do integrador.
+  </p>
+
+  <EndpointBadge method="GET" path="/api/v2/integracao/clientes" href="/pages/v2/referencia/clientes/endpoint/get" />
+
+  <ChangeSection type="added">
+    <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+      <li><ParamBadge name="foto_url" /> — link temporário (presigned, expira em 30 minutos) da foto de cadastro do cliente. <code>null</code> quando não há foto cadastrada.</li>
+    </ul>
+  </ChangeSection>
+
+  <div style={{ marginTop: "24px" }}>
+    <EndpointBadge method="GET" path="/api/v2/integracao/clientes/{clienteId}" href="/pages/v2/referencia/clientes/endpoint/get-by-id" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li><ParamBadge name="foto_url" /> — link temporário (presigned, expira em 30 minutos) da foto de cadastro do cliente. <code>null</code> quando não há foto cadastrada.</li>
+      </ul>
+    </ChangeSection>
+  </div>
+</Entry>
