@@ -177,6 +177,27 @@ export const EndpointBadge = ({ method, path, href }) => (
   </Entry>
 
   <Entry date="22 out 2026" label="Em breve" labelColor="#ea580c">
+    <h2 id="despachar-entrega-programada" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
+      Despachar entrega programada
+    </h2>
+    <p style={{ fontSize: "15px", opacity: 0.7, marginBottom: "20px", lineHeight: "1.6" }}>
+      Novo endpoint que antecipa para agora o disparo de uma entrega programada, com a mesma regra do
+      Despachar agora da Gestão de Pedidos. A entrega é criada no ciclo seguinte do agendador, em até 1 minuto.
+    </p>
+
+    <EndpointBadge method="POST" path="/api/v2/integracao/entregas/programadas/{id}/despachar" href="/pages/v2/entregas/endpoint/post-programadas-despachar" />
+
+    <ChangeSection type="added">
+      <ul style={{ margin: 0, paddingLeft: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <li>Só despacha programada aguardando o disparo (situação <code>A</code>). A resposta é <code>202</code>, com a mensagem de que a entrega será disparada a seguir; acompanhe a passagem para <code>D</code> em <code>GET /entregas/programadas/{"{id}"}</code>.</li>
+        <li><ParamBadge name="ignorar_periodo_dedicado" /> — opcional, padrão <code>false</code>. Com <code>true</code>, a entrega pode ir para entregadores de fora do período dedicado da empresa quando nenhum dedicado está livre, como o Solicitar outros entregadores do painel.</li>
+        <li>Exige a permissão <code>API - Corrida/Entrega</code>. O gestor de empresa só despacha as programadas da própria empresa.</li>
+        <li>Programada agrupada automaticamente ou em uso pela junção automática responde <code>400</code>; outro disparo em andamento ou programada que não está aguardando responde <code>409</code>.</li>
+      </ul>
+    </ChangeSection>
+  </Entry>
+
+  <Entry date="22 out 2026" label="Em breve" labelColor="#ea580c">
     <h2 id="score-condutor" style={{ fontSize: "22px", fontWeight: "700", marginBottom: "6px", marginTop: 0 }}>
       Score do condutor
     </h2>
