@@ -1,0 +1,360 @@
+---
+title: 'Sobre'
+description: 'Receba no site da central o passageiro e o condutor já logados, a partir do link aberto no app.'
+icon: 'book-open'
+tag: 'Em breve'
+---
+
+Com o login único, o passageiro e o condutor que tocam no link da central dentro do app chegam ao site dela já identificados, sem digitar e-mail ou senha. O app abre o link com um token na URL, e o servidor do site troca esse token pelos dados da pessoa na API de Integração.
+
+Vale para o botão personalizado do app do passageiro e, no app do condutor, para os itens do menu personalizado e o botão personalizado.
+
+---
+
+## Como funciona
+
+1. A pessoa toca no link da central no app.
+2. O app abre o link com o parâmetro `Mch-Token`: `https://seusite.com.br/promocoes?Mch-Token=9f2c4be1...`. Se o link já tem query, o parâmetro entra no fim dela, antes do `#`.
+3. O servidor do site lê o `Mch-Token` e chama [`POST /login-unico/validar`](/pages/v2/entregas/login-unico/endpoint/post-validar) com ele.
+4. A API devolve quem é a pessoa: `tipo`, `id`, `bandeira_id` e, quando o cadastro tem, `telefone` e `email`.
+5. O site cria a sessão da pessoa e redireciona para a mesma URL sem o `Mch-Token`.
+
+<Warning>
+  **Valide sempre no servidor do site.** A chamada leva a `api-key` e a senha do usuário da API. Elas não podem ir para o navegador, nem em JavaScript da página.
+</Warning>
+
+---
+
+## Ligar o login único
+
+1. Peça ao suporte da Machine para ligar o login único na central.
+2. No painel, abra **Configurações > Gerais**, aba **Recursos Premium**.
+3. Marque **Ativar envio de token para login automático** em cada destino que deve levar o token ao site:
+   - **Item 1** e **Item 2** do menu personalizado do app do condutor;
+   - o botão personalizado do app do condutor;
+   - o botão personalizado do app do passageiro.
+4. Salve.
+
+- **Só link `https://` recebe o `Mch-Token`.** O painel não salva a opção marcada em link que não começa com `https://`.
+- **Destino desmarcado abre sem o `Mch-Token`**, como sempre abriu. Enquanto o login único estiver desligado para a central, todos os destinos abrem assim.
+- **Pessoa que não está ativa entra sem login.** Passageiro ou condutor suspenso, inativo ou aguardando ativação abre o link sem o `Mch-Token`.
+- **As associadas seguem a central.** A opção marcada na central vale para os mesmos destinos das associadas.
+
+---
+
+## Antes de começar
+
+A central prepara três coisas, uma vez só.
+
+1. **Licença de integração via API.** Vem com o plano da central. Sem ela, a validação responde `403` com o código `19`. Em dúvida, fale com o suporte da Machine.
+2. **Chave de API.** Um administrador da central abre **Configurações > Integrações**, na aba **Machine API**, e clica em **Gerar chave API**. A tela pode pedir o código de 6 dígitos do aplicativo autenticador. A chave começa com `mch_api_` e fica na mesma aba: o ícone de olho mostra a chave, e o de copiar copia.
+3. **Usuário da API.** Em **Cadastro > Minha equipe**, no card **Integrador**, clique em **Criar usuário** e preencha nome, e-mail e telefone. A senha chega no e-mail cadastrado. O e-mail e a senha desse usuário vão na autenticação `Basic`.
+
+O cargo Integrador já tem todas as permissões de API, inclusive a do login único. Para usar um usuário de outro cargo, marque a permissão **Login único**, na seção **API** das permissões do cargo. O usuário precisa ser da mesma central da chave e não pode estar vinculado a uma empresa.
+
+---
+
+## Regras do token
+
+- **Vale por 60 segundos e uma vez só.** A primeira validação apaga o token. Uma segunda chamada com o mesmo token recebe o erro `245`, igual a um token que não existe.
+- **O nome do parâmetro diferencia maiúsculas de minúsculas.** Leia `Mch-Token`, não `mch-token`.
+- **Token inválido é visita sem login, não erro.** Se a validação responder `400` com o código `245`, ou se a API não responder, mostre o site como para qualquer visitante. Não mostre mensagem de erro: pode ser só um link antigo aberto de novo.
+- **Tire o token da URL depois de validar.** Redirecione para a mesma URL sem o `Mch-Token`. Assim o token não fica no histórico do navegador, e recarregar a página não tenta validar de novo. Valide e redirecione antes de mostrar qualquer conteúdo: uma página que carrega recurso de terceiro (analytics, fonte, anúncio) com o token na URL pode mandá-lo no cabeçalho `Referer`.
+- **Identifique a pessoa por `tipo` e `id` juntos.** Um passageiro e um condutor podem ter o mesmo `id`.
+- **A `api-key` da central e a de qualquer associada validam o token.** O campo `bandeira_id` diz a central ou a associada da pessoa.
+
+---
+
+## Exemplos
+
+Os exemplos validam o token, guardam a pessoa na sessão e redirecionam para a URL sem o `Mch-Token`. Fora o `400` com o código `245`, que é token inválido, uma resposta diferente de `200` ou uma falha na chamada indica erro de configuração (credencial, permissão, licença, limite) ou API indisponível, e os exemplos a registram no log do servidor. As credenciais vêm de variáveis de ambiente do servidor. Para testar na homologação, use `https://api-vendas.taximachine.com.br/api/v2/integracao` em `MACHINE_API_URL`.
+
+<CodeGroup>
+
+```php PHP
+<?php
+
+function validarLoginUnico(string $token): ?array
+{
+    $url = (getenv('MACHINE_API_URL') ?: 'https://api.taximachine.com.br/api/v2/integracao') . '/login-unico/validar';
+
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_POST => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 5,
+        CURLOPT_USERPWD => getenv('MACHINE_API_USUARIO') . ':' . getenv('MACHINE_API_SENHA'),
+        CURLOPT_HTTPHEADER => [
+            'api-key: ' . getenv('MACHINE_API_KEY'),
+            'Content-Type: application/json',
+        ],
+        CURLOPT_POSTFIELDS => json_encode(['token' => $token]),
+    ]);
+    $corpo = curl_exec($ch);
+    $status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    curl_close($ch);
+
+    if ($status !== 200) {
+        $codigo = json_decode((string) $corpo, true)['errors'][0]['code'] ?? null;
+        if ($status !== 400 || $codigo !== 245) {
+            error_log('login-unico: HTTP ' . $status . ' ' . ($corpo === false ? 'sem resposta' : $corpo));
+        }
+        return null;
+    }
+
+    return json_decode($corpo, true)['data'] ?? null;
+}
+
+$token = $_GET['Mch-Token'] ?? null;
+
+if (is_string($token)) {
+    $pessoa = validarLoginUnico($token);
+
+    if ($pessoa !== null) {
+        session_start();
+        session_regenerate_id(true);
+        $_SESSION['machine_tipo'] = $pessoa['tipo'];
+        $_SESSION['machine_id'] = $pessoa['id'];
+    }
+
+    $partes = parse_url($_SERVER['REQUEST_URI']) ?: [];
+    $path = $partes['path'] ?? '/';
+    if ($path === '' || $path[0] !== '/' || strpos($path, '//') === 0 || strpos($path, '\\') !== false) {
+        $path = '/';
+    }
+    $query = implode('&', array_filter(
+        explode('&', $partes['query'] ?? ''),
+        fn ($par) => $par !== '' && urldecode(explode('=', $par, 2)[0]) !== 'Mch-Token'
+    ));
+    header('Location: ' . $path . ($query !== '' ? '?' . $query : ''));
+    exit;
+}
+```
+
+```javascript Node
+// Node 18 ou mais novo, com Express e express-session.
+function codigoDoErro(corpo) {
+  try {
+    return JSON.parse(corpo).errors?.[0]?.code;
+  } catch {
+    return undefined;
+  }
+}
+
+async function validarLoginUnico(token) {
+  const url = `${process.env.MACHINE_API_URL || 'https://api.taximachine.com.br/api/v2/integracao'}/login-unico/validar`;
+  const credenciais = Buffer.from(`${process.env.MACHINE_API_USUARIO}:${process.env.MACHINE_API_SENHA}`).toString('base64');
+
+  try {
+    const resposta = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'api-key': process.env.MACHINE_API_KEY,
+        'Authorization': `Basic ${credenciais}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ token }),
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!resposta.ok) {
+      const corpo = await resposta.text();
+      if (resposta.status !== 400 || codigoDoErro(corpo) !== 245) {
+        console.error(`login-unico: HTTP ${resposta.status} ${corpo}`);
+      }
+      return null;
+    }
+    const corpo = await resposta.json();
+    return corpo.data ?? null;
+  } catch (erro) {
+    console.error('login-unico: falha ao chamar a API', erro);
+    return null;
+  }
+}
+
+app.use(async (req, res, next) => {
+  const token = req.query['Mch-Token'];
+  if (typeof token !== 'string') {
+    return next();
+  }
+
+  try {
+    const pessoa = await validarLoginUnico(token);
+    if (pessoa) {
+      await new Promise((ok, falha) => req.session.regenerate((erro) => (erro ? falha(erro) : ok())));
+      req.session.machine = { tipo: pessoa.tipo, id: pessoa.id };
+    }
+  } catch (erro) {
+    return next(erro);
+  }
+
+  const semToken = new URL(req.originalUrl, 'http://site');
+  semToken.searchParams.delete('Mch-Token');
+  const caminho = semToken.pathname.startsWith('//') ? '/' : semToken.pathname;
+  res.redirect(caminho + semToken.search);
+});
+```
+
+```python Python
+# Python 3.9 ou mais novo, com Flask e requests.
+import os
+from urllib.parse import urlencode
+
+import requests
+from flask import Flask, redirect, request, session
+
+app = Flask(__name__)
+app.secret_key = os.environ['FLASK_SECRET_KEY']
+
+
+def codigo_do_erro(resposta):
+    try:
+        return resposta.json()['errors'][0]['code']
+    except (ValueError, KeyError, IndexError, TypeError):
+        return None
+
+
+def validar_login_unico(token):
+    url = os.environ.get('MACHINE_API_URL', 'https://api.taximachine.com.br/api/v2/integracao') + '/login-unico/validar'
+    try:
+        resposta = requests.post(
+            url,
+            json={'token': token},
+            headers={'api-key': os.environ['MACHINE_API_KEY']},
+            auth=(os.environ['MACHINE_API_USUARIO'], os.environ['MACHINE_API_SENHA']),
+            timeout=5,
+        )
+        if resposta.status_code != 200:
+            if resposta.status_code != 400 or codigo_do_erro(resposta) != 245:
+                app.logger.error('login-unico: HTTP %s %s', resposta.status_code, resposta.text)
+            return None
+        return resposta.json().get('data')
+    except (requests.RequestException, ValueError) as erro:
+        app.logger.error('login-unico: falha ao chamar a API: %s', erro)
+        return None
+
+
+@app.before_request
+def login_unico():
+    token = request.args.get('Mch-Token')
+    if token is None:
+        return None
+
+    pessoa = validar_login_unico(token)
+    if pessoa:
+        session.clear()
+        session['machine'] = {'tipo': pessoa['tipo'], 'id': pessoa['id']}
+
+    query = [(chave, valor) for chave, valor in request.args.items(multi=True) if chave != 'Mch-Token']
+    caminho = '/' if request.path.startswith('//') else request.path
+    return redirect(caminho + ('?' + urlencode(query) if query else ''))
+```
+
+```java Java
+// Java 17 ou mais novo, com Spring Boot 3 (spring-boot-starter-web).
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URLDecoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Map;
+import java.util.stream.Collectors;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+@Component
+public class LoginUnicoFilter extends OncePerRequestFilter {
+
+    private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
+    private final ObjectMapper json = new ObjectMapper();
+
+    private JsonNode validarLoginUnico(String token) {
+        String url = System.getenv().getOrDefault("MACHINE_API_URL", "https://api.taximachine.com.br/api/v2/integracao") + "/login-unico/validar";
+        String credenciais = Base64.getEncoder().encodeToString(
+            (System.getenv("MACHINE_API_USUARIO") + ":" + System.getenv("MACHINE_API_SENHA")).getBytes(StandardCharsets.UTF_8));
+
+        try {
+            HttpRequest requisicao = HttpRequest.newBuilder(URI.create(url))
+                .timeout(Duration.ofSeconds(5))
+                .header("api-key", System.getenv("MACHINE_API_KEY"))
+                .header("Authorization", "Basic " + credenciais)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(json.writeValueAsString(Map.of("token", token))))
+                .build();
+            HttpResponse<String> resposta = http.send(requisicao, HttpResponse.BodyHandlers.ofString());
+            if (resposta.statusCode() != 200) {
+                if (resposta.statusCode() != 400 || codigoDoErro(resposta.body()) != 245) {
+                    logger.error("login-unico: HTTP " + resposta.statusCode() + " " + resposta.body());
+                }
+                return null;
+            }
+            JsonNode dados = json.readTree(resposta.body()).path("data");
+            return dados.isObject() ? dados : null;
+        } catch (IOException e) {
+            logger.error("login-unico: falha ao chamar a API", e);
+            return null;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return null;
+        }
+    }
+
+    private int codigoDoErro(String corpo) {
+        try {
+            return json.readTree(corpo).path("errors").path(0).path("code").asInt(0);
+        } catch (IOException e) {
+            return 0;
+        }
+    }
+
+    private static boolean ehMchToken(String par) {
+        try {
+            return URLDecoder.decode(par.split("=", 2)[0], StandardCharsets.UTF_8).equals("Mch-Token");
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
+            throws ServletException, IOException {
+        String token = req.getParameter("Mch-Token");
+        if (token == null) {
+            chain.doFilter(req, res);
+            return;
+        }
+
+        JsonNode pessoa = validarLoginUnico(token);
+        if (pessoa != null) {
+            HttpSession anterior = req.getSession(false);
+            if (anterior != null) {
+                anterior.invalidate();
+            }
+            HttpSession sessao = req.getSession(true);
+            sessao.setAttribute("machine_tipo", pessoa.path("tipo").asText());
+            sessao.setAttribute("machine_id", pessoa.path("id").asText());
+        }
+
+        String caminho = req.getRequestURI().startsWith("//") ? "/" : req.getRequestURI();
+        String query = req.getQueryString() == null ? "" : Arrays.stream(req.getQueryString().split("&"))
+            .filter(par -> !par.isEmpty() && !ehMchToken(par))
+            .collect(Collectors.joining("&"));
+        res.sendRedirect(query.isEmpty() ? caminho : caminho + "?" + query);
+    }
+}
+```
+
+</CodeGroup>
+
+A resposta completa, os erros e os códigos estão na referência de [`POST /login-unico/validar`](/pages/v2/entregas/login-unico/endpoint/post-validar).
